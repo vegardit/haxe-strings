@@ -1,0 +1,14 @@
+{
+    "name": "haxe-strings",
+    "url": "https://github.com/vegardit/haxe-strings",
+	"license": "MIT",
+	"classPath": "src/",
+    "tags": [ "strings","cross","general","utils","helpers","vegardit" ],
+    "description": "Fully unit tested utility classes for String manipulation with UTF8 support and cross platform consistent behavior.",
+    "contributors": [
+        "Sebastian Thomschke, Vegard IT GmbH"
+    ],
+    "releasenote": "Initial release",
+    "version": "1.0.0-SNAPSHOT",
+    "dependencies": { }
+}
