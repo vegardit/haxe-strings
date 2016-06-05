@@ -8,18 +8,20 @@ It is extensively unit tested with over 900 individual test cases.
 
 The classes are under the package `hx.strings`.
 
+
 The `Strings` class
 -----------------
 
-The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/haxe/strings/Strings.hx) class provides handy utility methods for string manipulations.
+The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class provides handy utility methods for string manipulations.
 
 It also contains improved implementations of functions provided by Haxe's [StringTools](http://api.haxe.org/StringTools.html) class.
 
 Methods ending with the letter `8` (e.g. `length8()`, `indexOf8()`, `toLowerCase8()`) are improved versions of similar methods
 provided by Haxe's [String](http://api.haxe.org/String.html) class, offering UTF-8 support and consistent behavior across all platforms.
 
-The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/haxe/strings/Strings.hx) class can also be used as a [static extension](http://haxe.org/manual/lf-static-extension.html).
+The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class can also be used as a [static extension](http://haxe.org/manual/lf-static-extension.html).
 
+    
 Some examples
 -----------------
 
@@ -43,6 +45,7 @@ class MyClass {
 	    32.toChar().toString();      // returns " "
         32.toChar().isAscii();       // returns true
 	    6000.toChar().isAscii();     // returns false
+        6000.toChar().isUTF8();      // returns true
         
         // all functions are null-safe:
         var nullString:String = null;
@@ -73,6 +76,7 @@ class MyClass {
 }
 ```
 
+
 Using the latest code
 ---------------------
 
@@ -95,6 +99,7 @@ Using the latest code
   * for [OpenFL](http://www.openfl.org/)/[Lime](https://github.com/openfl/lime) projects add `<haxelib name="haxe-strings" />` to your [project.xml](http://www.openfl.org/documentation/projects/project-files/xml-format/)
   * for free-style projects add `-lib haxe-strings`  to `your *.hxml` file or as command line option when running the [Haxe compiler](http://haxe.org/manual/compiler-usage.html)
 
+      
 License
 -------
 All files are released under the [MIT license](https://github.com/vegardit/haxe-strings/blob/master/LICENSE.txt).

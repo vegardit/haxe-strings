@@ -4,11 +4,11 @@
 	"license": "MIT",
 	"classPath": "src/",
     "tags": [ "strings","cross","general","utils","helpers","vegardit" ],
-    "description": "Fully unit tested utility classes for String manipulation with UTF8 support and cross platform consistent behavior.",
+    "description": "A haxelib for consistent cross-platform UTF-8 string manipulation.",
     "contributors": [
         "vegardit"
     ],
     "releasenote": "Initial release",
-    "version": "1.0.0-SNAPSHOT",
+    "version": "1.0.0",
     "dependencies": { }
 }
