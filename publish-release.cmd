@@ -13,15 +13,13 @@ set DRAFT=false
 set PREPRELEASE=false
 
 REM extract release version
-for /f "tokens=*" %%a in ( 'findstr version haxelib.json' ) do ( set versionLine=%%a )
+for /f "tokens=*" %%a in ( 'findstr version haxelib.json' ) do (set versionLine=%%a)
 set RELEASE_VERSION=%versionLine:"version": "=%
-set RELEASE_VERSION=%RELEASE_VERSION:"version": "=%
 set RELEASE_VERSION=%RELEASE_VERSION:",=%
 
 REM extract release note
-for /f "tokens=*" %%a in ( 'findstr releasenote haxelib.json' ) do ( set releaseNoteLine=%%a )
+for /f "tokens=*" %%a in ( 'findstr releasenote haxelib.json' ) do (set releaseNoteLine=%%a)
 set RELEASE_NOTE=%releaseNoteLine:"releasenote": "=%
-set RELEASE_NOTE=%RELEASE_NOTE:"version": "=%
 set RELEASE_NOTE=%RELEASE_NOTE:",=%
 
 :: create github release https://developer.github.com/v3/repos/releases/#create-a-release
