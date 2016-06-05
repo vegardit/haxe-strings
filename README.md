@@ -32,19 +32,19 @@ using hx.strings.Strings; // augment all Strings with new functions
 
 class MyClass {
 
-	static function main() {
+    static function main() {
         // Strings are extended:
-	    "".isEmpty();      // returns true
-	    "   ".isBlank();   // returns true
-	    "123".isDigits();  // returns true
-	    "a".repeat(3);     // returns "aaa"
-	    "abc".reverse();   // returns "cba"
+        "".isEmpty();      // returns true
+        "   ".isBlank();   // returns true
+        "123".isDigits();  // returns true
+        "a".repeat(3);     // returns "aaa"
+        "abc".reverse();   // returns "cba"
 
-	    // Int's are extended too:
-	    32.toChar().isSpace();       // returns true
-	    32.toChar().toString();      // returns " "
+        // Int's are extended too:
+        32.toChar().isSpace();       // returns true
+        32.toChar().toString();      // returns " "
         32.toChar().isAscii();       // returns true
-	    6000.toChar().isAscii();     // returns false
+        6000.toChar().isAscii();     // returns false
         6000.toChar().isUTF8();      // returns true
         
         // all functions are null-safe:
@@ -53,18 +53,18 @@ class MyClass {
         nullString.length8();         // returns 0
         nullString.contains("cat");   // returns false
 
-	    // all methods support UTF-8 on all platforms:
-	    "кот".toUpperCase8();         // returns "КОТ"
-	    "кот".toUpperCaseFirstChar(); // returns "Кот"
-	    "はいはい".length8();          // returns 4
+        // all methods support UTF-8 on all platforms:
+        "кот".toUpperCase8();         // returns "КОТ"
+        "кот".toUpperCaseFirstChar(); // returns "Кот"
+        "はいはい".length8();          // returns 4
 
         // ANSI escape sequence processing:
         "\x1B[1;33mHello World!\x1B[0m".ansiToHtml(); // returns '<span style="color:yellow;font-weight:bold;">Hello World!</span>'
-	    "\x1B[1mHello World!\x1B[0m".stripAnsi();     // returns "Hello World!"
+        "\x1B[1mHello World!\x1B[0m".stripAnsi();     // returns "Hello World!"
 
-	    // use glob pattern matching:
-	    "src/**/*.hx".globToEReg().match("src/haxe/strings/Char.hx");            // returns true
-	    "assets/**/*.{js,css}".globToEReg().match("assets/theme/dark/dark.css"); // returns true
+        // use glob pattern matching:
+        "src/**/*.hx".globToEReg().match("src/haxe/strings/Char.hx");            // returns true
+        "assets/**/*.{js,css}".globToEReg().match("assets/theme/dark/dark.css"); // returns true
         
         // case formatting:
         "look at me".toUpperCamel();       // returns "LookAtMe"
@@ -72,7 +72,7 @@ class MyClass {
         "MyCSSClass".toLowerHyphen();      // returns "my-css-class"
         "MyCSSClass".toLowerUnderscore();  // returns "my_css_class"
         "myCSSClass".toUpperUnderscore();  // returns "MY_CSS_CLASS"
-	}
+    }
 }
 ```
 
