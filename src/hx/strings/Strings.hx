@@ -22,15 +22,15 @@ using hx.strings.Strings;
  */
 class Strings {
 
-    static var REGEX_ANSI_ESC = new EReg(Char.ESC + "\\[[;\\d]*m", "g");
+    static var REGEX_ANSI_ESC = Pattern.compile(Char.ESC + "\\[[;\\d]*m", "g");
     static var REGEX_HTML_UNESCAPE = new EReg("&(#\\d+|amp|nbsp|apos|lt|gt|quot);", "g");
-    static var REGEX_SPLIT_LINES = ~/\r?\n/g;
+    static var REGEX_SPLIT_LINES = Pattern.compile("\\r?\\n", "g");
     
     #if !php
-    static var REGEX_STRIP_XML_TAGS = ~/<[!a-zA-Z\/][^>]*>/g;
+    static var REGEX_STRIP_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", "g");
     #end
     
-    static var REGEX_IS_WINDOWS = ~/windows/i;
+    static var REGEX_IS_WINDOWS = Pattern.compile("windows", "i");
     
     public static inline var POS_NOT_FOUND:CharPos = -1;
 
@@ -52,7 +52,7 @@ class Strings {
         #else
         var os = Sys.systemName();
         #end
-        if (REGEX_IS_WINDOWS.match(os)) {
+        if (REGEX_IS_WINDOWS.matcher(os).matches()) {
             return NEW_LINE_WIN;
         } else {
             return NEW_LINE_NIX;
@@ -77,7 +77,7 @@ class Strings {
         #else
         var os = Sys.systemName();
         #end
-        if (REGEX_IS_WINDOWS.match(os)) {
+        if (REGEX_IS_WINDOWS.matcher(os).matches()) {
             return PATH_SEPARATOR_WIN;
         } else {
             return PATH_SEPARATOR_NIX;
@@ -638,7 +638,7 @@ class Strings {
             
         if (other == null) 
             return str == null ? 0 : 1;
-            
+
         #if neko
             // TODO https://github.com/HaxeFoundation/haxe/issues/5308
             return str > other ? 1 : (str == other ? 0 : -1);
@@ -2010,7 +2010,7 @@ class Strings {
         if (str.isEmpty())
             return [];
 
-        return REGEX_SPLIT_LINES.split(str);
+        return REGEX_SPLIT_LINES.splitAll(str);
     }
 
     /**
@@ -2067,7 +2067,7 @@ class Strings {
         if (str.isEmpty())
             return str;
 
-        return REGEX_ANSI_ESC.replace(str, "");
+        return REGEX_ANSI_ESC.replaceAll(str, "");
     }
 
     /**
@@ -2092,7 +2092,7 @@ class Strings {
         #if php
             return untyped __call__("strip_tags", xml);
         #else
-            return REGEX_STRIP_XML_TAGS.replace(xml, "");
+            return REGEX_STRIP_XML_TAGS.replaceAll(xml, "");
         #end
     }
 
@@ -2750,7 +2750,7 @@ class Strings {
         if (str.isEmpty())
             return str;
 
-        return REGEX_SPLIT_LINES.split(str).map(function(line) return line.trim()).join(NEW_LINE_NIX);
+        return REGEX_SPLIT_LINES.splitAll(str).map(function(line) return line.trim()).join(NEW_LINE_NIX);
     }
 
     /**

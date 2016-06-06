@@ -35,6 +35,7 @@ using hx.strings.Strings;
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
+@notThreadSafe
 class StringBuilder {
 
 	var sb = new StringBuf();
