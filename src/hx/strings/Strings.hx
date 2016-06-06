@@ -2431,6 +2431,21 @@ class Strings {
             
         return Bytes.ofString(str);
     }
+        
+    /**
+     * Casts the given <code>Int</code> to <code>hx.strings.Char</code>.
+     * 
+     * Static extension for <code>Int</code>.
+     * 
+     * <pre><code>
+     * >>> 32.toChar().toString() == " "
+     * >>> 32.toChar().isSpace()  == true
+     * </code></pre>
+     */
+    inline
+    public static function toChar(charCode:Int):Char {
+        return Char.of(charCode);
+    }
     
     /**
      * @return array containing the codes of all characters
@@ -2631,21 +2646,6 @@ class Strings {
             return str;
 
         return _splitWordsUnsafe(str).map(function(s) return s.toUpperCase8()).join("_");
-    }
-    
-    /**
-     * Casts the given <code>Int</code> to <code>hx.strings.Char</code>.
-     * 
-     * Static extension for <code>Int</code>.
-     * 
-     * <pre><code>
-     * >>> 32.toChar().toString() == " "
-     * >>> 32.toChar().isSpace()  == true
-     * </code></pre>
-     */
-    inline
-    public static function toChar(charCode:Int):Char {
-        return Char.of(charCode);
     }
     
     /**
