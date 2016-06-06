@@ -2414,6 +2414,30 @@ class Strings {
     }
     
     /**
+     * @return false if value is null, "", "false" or "0". otherwise returns true.
+     * 
+     * <pre><code>
+     * >>> Strings.toBool(null)    == false
+     * >>> Strings.toBool("")      == false
+     * >>> Strings.toBool("false") == false
+     * >>> Strings.toBool("0")     == false
+     * >>> Strings.toBool("true")  == true
+     * >>> Strings.toBool("1")     == true
+     * >>> Strings.toBool("2")     == true
+     * >>> Strings.toBool("dog")   == true
+     * </code></pre>
+     */
+    inline
+    public static function toBool(str:String):Bool {
+        if (str.isEmpty()) return false;
+        
+        return switch(str.toLowerCase()) {
+            case "false", "0", "no": false;
+            default: true;
+        }
+    }
+    
+    /**
      * @return the strings internal byte array
      * 
      * <pre><code>
@@ -2482,6 +2506,52 @@ class Strings {
         if(str == null)
             return null;
         return new EReg(str, opt);
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Strings.toFloat(null)    == null
+     * >>> Strings.toFloat("")      == null
+     * >>> Strings.toFloat("", -1)  == -1
+     * >>> Strings.toFloat("0")     == 0
+     * >>> Strings.toFloat("0", -1) == 0
+     * >>> Strings.toFloat("1")     == 1
+     * >>> Strings.toFloat("1.9")   == 1.9
+     * >>> Strings.toFloat("a")     == null
+     * >>> Strings.toFloat("a1")    == null
+     * >>> Strings.toFloat("1a")    == 1
+     * >>> Strings.toFloat("a", -1) == -1
+     * </code></pre>
+     */
+    inline
+    public static function toFloat(str:String, ifUnparseable:Null<Float>=null):Null<Float> {
+        var result = Std.parseFloat(str);
+        if (Math.isNaN(result))
+            return ifUnparseable;
+        return result;
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Strings.toInt(null)    == null
+     * >>> Strings.toInt("")      == null
+     * >>> Strings.toInt("", -1)  == -1
+     * >>> Strings.toInt("0")     == 0
+     * >>> Strings.toInt("0", -1) == 0
+     * >>> Strings.toInt("1")     == 1
+     * >>> Strings.toInt("1.9")   == 1
+     * >>> Strings.toInt("a")     == null
+     * >>> Strings.toInt("a1")    == null
+     * >>> Strings.toInt("1a")    == 1
+     * >>> Strings.toInt("a", -1) == -1
+     * </code></pre>
+     */
+    inline
+    public static function toInt(str:String, ifUnparseable:Null<Int>=null):Null<Int> {
+        var result = Std.parseInt(str);
+        if (result == null)
+            return ifUnparseable;
+        return result;
     }
     
     /**

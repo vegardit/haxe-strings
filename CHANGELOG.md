@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.1.0-SNAPSHOT] - 2016-06-??
 ### Added
 - hx.strings.Pattern class for threadsafe pattern matching
+- hx.strings.Strings.toBool()
+- hx.strings.Strings.toFloat()
+- hx.strings.Strings.toInt()
 
 ## 1.0.0 - 2016-06-05
 ### Added
