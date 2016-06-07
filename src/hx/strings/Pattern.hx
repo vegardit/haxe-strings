@@ -20,21 +20,19 @@ using hx.strings.Strings;
 @immutable
 @threadSafe
 class Pattern {
-
+    
     public var pattern(default, null):String;
     public var options(default, null):String;
 
     var ereg:EReg;
     var eregMatchAll:EReg;
     var eregMatchFirst:EReg;
-    
-    var isFirstMatcher = true;
-    var matchAllByDefault:Bool;
-    
+
     /**
      * @param pattern regular expression
      * @param options see http://haxe.org/manual/std-regex.html for possible values
      */
+    inline
     public static function compile(pattern:String, options:String = "") {
         return new Pattern(pattern, options);
     }
@@ -42,8 +40,14 @@ class Pattern {
     function new(pattern:String, options:String) {
         this.pattern = pattern;
         this.options = options;
-        this.matchAllByDefault = options.contains("g");
         this.ereg = new EReg(pattern, options);
+        if (options.contains("g")) {
+            this.eregMatchAll = ereg;
+            this.eregMatchFirst = null;
+        } else {
+            this.eregMatchAll = null;
+            this.eregMatchFirst = ereg;            
+        }
     }
 
     /**
@@ -55,7 +59,7 @@ class Pattern {
      */
     inline
     public function matcher(str:String):Matcher {
-        return new MatcherImpl(pattern, options, ereg, matchAllByDefault, str);
+        return new MatcherImpl(ereg, pattern, options, str);
     }
     
     /**
@@ -66,6 +70,7 @@ class Pattern {
      * >>> Pattern.compile("[.]", "g").replace("a.b.c", ":") == "a:b:c"
      * </code></pre>
      */
+    inline
     public function replace(str:String, replaceWith:String):String {
         return ereg.replace(str, replaceWith);
     }
@@ -79,7 +84,7 @@ class Pattern {
      * </code></pre>
      */
     public function replaceAll(str:String, replaceWith:String):String {
-        if (eregMatchAll == null) eregMatchAll = MatcherImpl.cloneEReg(ereg, pattern, "g" + options);
+        if (eregMatchAll == null) eregMatchAll = new EReg(pattern, "g" + options);
         return eregMatchAll.replace(str, replaceWith);
     }
     
@@ -92,7 +97,7 @@ class Pattern {
      * </code></pre>
      */
     public function replaceFirst(str:String, replaceWith:String):String {
-        if (eregMatchFirst == null) eregMatchFirst = MatcherImpl.cloneEReg(ereg, pattern, options.removeAll("g"));
+        if (eregMatchFirst == null) eregMatchFirst = new EReg(pattern, options.removeAll("g"));
         return eregMatchFirst.replace(str, replaceWith);
     }
 
@@ -117,7 +122,7 @@ class Pattern {
      * </code></pre>
      */
     public function splitAll(str:String):Array<String> {
-        if (eregMatchAll == null) eregMatchAll = MatcherImpl.cloneEReg(ereg, pattern, "g" + options);
+        if (eregMatchAll == null) eregMatchAll = new EReg(pattern, "g" + options);
         return eregMatchAll.split(str);
     }
 
@@ -130,14 +135,14 @@ class Pattern {
      * </code></pre>
      */
     public function splitOnce(str:String):Array<String> {
-        if (eregMatchFirst == null) eregMatchFirst = MatcherImpl.cloneEReg(ereg, pattern, options.removeAll("g"));
+        if (eregMatchFirst == null) eregMatchFirst = new EReg(pattern, options.removeAll("g"));
         return eregMatchFirst.split(str);
     }
 }
 
 @notThreadSafe
 interface Matcher {
-
+    
     /**
      * <pre><code>
      * >>> Pattern.compile(".*").matcher("a").matches() == true
@@ -208,29 +213,28 @@ interface Matcher {
 
 private class MatcherImpl implements Matcher {
     
-    var ereg:EReg;
-    var eregMatchFirst:EReg;
-    var eregMatchAll:EReg;
-
     var pattern:String;
     var options:String;
-    var matchAllByDefault:Bool;
-    
+
+    var ereg:EReg;
+    var eregMatchAll:EReg;
+    var eregMatchFirst:EReg;
+
     var str:String;
     
-    public function new(pattern:String, options:String, compiled:EReg, matchAllByDefault:Bool, str:String) {
-        this.ereg = cloneEReg(compiled, pattern, options);
-        if (matchAllByDefault) {
+    public function new(ereg:EReg, pattern:String, options:String, str:String) {
+        this.pattern = pattern;
+        this.options = options;
+        
+        this.ereg = cloneEReg(ereg, pattern, options);
+        if (options.indexOf("g") > -1) {
             this.eregMatchFirst = null;
             this.eregMatchAll = ereg;
-            this.matchAllByDefault = true;
         } else {
             this.eregMatchFirst = ereg;
             this.eregMatchAll = null;
-            this.matchAllByDefault = false;
         }
-        this.pattern = pattern;
-        this.options = options;
+        
         this.str = str;
     }
 
@@ -245,12 +249,12 @@ private class MatcherImpl implements Matcher {
     }
     
     public function replaceAll(replaceWith:String):String {
-        if (eregMatchAll == null) eregMatchAll = cloneEReg(ereg, pattern, "g" + options);
+        if (eregMatchAll == null) eregMatchAll = new EReg(pattern, "g" + options);
         return eregMatchAll.replace(str, replaceWith);
     }
     
     public function replaceFirst(replaceWith:String):String {
-        if (eregMatchFirst == null) eregMatchFirst = cloneEReg(ereg, pattern, options.removeAll("g"));
+        if (eregMatchFirst == null) eregMatchFirst = new EReg(pattern, options.removeAll("g"));
         return eregMatchFirst.replace(str, replaceWith);
     }
     
@@ -260,17 +264,17 @@ private class MatcherImpl implements Matcher {
     }
 
     public function splitAll():Array<String> {
-        if (eregMatchAll == null) eregMatchAll = cloneEReg(ereg, pattern, "g" + options);
+        if (eregMatchAll == null) eregMatchAll = new EReg(pattern, "g" + options);
         return eregMatchAll.split(str);
     }
     
     public function splitOnce():Array<String> {
-        if (eregMatchFirst == null) eregMatchFirst = cloneEReg(ereg, pattern, options.removeAll("g"));
+        if (eregMatchFirst == null) eregMatchFirst = new EReg(pattern, options.removeAll("g"));
         return eregMatchFirst.split(str);
     }
     
-    public static function cloneEReg(from:EReg, pattern:String, options:String) {
-        // partially copy internal state if possible to reuse the inner pre-compiled pattern instance
+    static function cloneEReg(from:EReg, pattern:String, options:String) {
+        // partially copy internal state (if possible) to reuse the inner pre-compiled pattern instance
         #if (neko || lua || cpp || hl)
             var clone = Type.createEmptyInstance(EReg);
             Reflect.setField(clone, "r", Reflect.field(from, "r"));
