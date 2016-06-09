@@ -1,7 +1,14 @@
 # haxe-strings - [StringTools](http://api.haxe.org/StringTools.html) on steroids.
 
-What is it?
------------
+1. [What is it?](#what-is-it)
+1. [The Strings class](#strings-class)
+1. [Some examples](#examples)
+1. [Installation](#installation)
+1. [Using the latest code](#latest)
+1. [License](#license)
+
+
+## <a name="what-is-it"></a>What is it?
 
 A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cross-platform UTF-8 string manipulation. 
 It is extensively unit tested with over 900 individual test cases.
@@ -9,8 +16,7 @@ It is extensively unit tested with over 900 individual test cases.
 The classes are under the package `hx.strings`.
 
 
-The `Strings` class
------------------
+## <a name="strings-class></a>The `Strings` class
 
 The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class provides handy utility methods for string manipulations.
 
@@ -22,8 +28,7 @@ provided by Haxe's [String](http://api.haxe.org/String.html) class, offering UTF
 The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class can also be used as a [static extension](http://haxe.org/manual/lf-static-extension.html).
 
     
-Some examples
------------------
+## <a name="examples></a>Some examples
 
 ```haxe
 package com.example;
@@ -77,29 +82,40 @@ class MyClass {
 ```
 
 
-Using the latest code
----------------------
+## <a name="installation"></a>Installation
+
+1. install the library via haxelib using the command:
+    ```
+    haxelib install haxe-strings
+    ```
+
+2. use in your Haxe project
+
+   * for [OpenFL](http://www.openfl.org/)/[Lime](https://github.com/openfl/lime) projects add `<haxelib name="haxe-strings" />` to your [project.xml](http://www.openfl.org/documentation/projects/project-files/xml-format/)
+   * for free-style projects add `-lib haxe-strings`  to `your *.hxml` file or as command line option when running the [Haxe compiler](http://haxe.org/manual/compiler-usage.html)
+
+
+## <a name="latest"></a>Using the latest code
+
+### Using `haxelib git`
+
+```
+haxelib git haxe-doctest https://github.com/vegardit/haxe-strings.git master
+```
+
+###  Using Subversion
 
 1. check-out the trunk
-    ```
-    haxelib git haxe-strings https://github.com/vegardit/haxe-strings.git src
-    ```
-
-    or with Subversion
     ```
     svn checkout https://github.com/vegardit/haxe-strings/trunk D:\haxe-projects\haxe-strings
     ```
 
 2. register the development release with haxe
     ```
-    haxelib dev haxe-strings D:\haxe-projects\haxe-strings
+    haxelib dev haxe-doctest D:\haxe-projects\haxe-strings
     ```
 
-3. use in your Haxe project
-  * for [OpenFL](http://www.openfl.org/)/[Lime](https://github.com/openfl/lime) projects add `<haxelib name="haxe-strings" />` to your [project.xml](http://www.openfl.org/documentation/projects/project-files/xml-format/)
-  * for free-style projects add `-lib haxe-strings`  to `your *.hxml` file or as command line option when running the [Haxe compiler](http://haxe.org/manual/compiler-usage.html)
+    
+## <a name="license"></a>License
 
-      
-License
--------
 All files are released under the [MIT license](https://github.com/vegardit/haxe-strings/blob/master/LICENSE.txt).
