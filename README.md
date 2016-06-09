@@ -16,7 +16,7 @@ It is extensively unit tested with over 900 individual test cases.
 The classes are under the package `hx.strings`.
 
 
-## <a name="strings-class></a>The hx.strings.Strings class
+## <a name="strings-class"></a>The `Strings` class
 
 The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class provides handy utility methods for string manipulations.
 
