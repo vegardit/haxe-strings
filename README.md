@@ -28,7 +28,7 @@ provided by Haxe's [String](http://api.haxe.org/String.html) class, offering UTF
 The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class can also be used as a [static extension](http://haxe.org/manual/lf-static-extension.html).
 
     
-## <a name="examples></a>Some examples
+## <a name="examples"></a>Some examples
 
 ```haxe
 package com.example;
