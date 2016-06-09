@@ -858,6 +858,7 @@ class Strings {
     
     /**
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
+     * @return a EReg object
      * 
      * <pre><code>
      * >>> Strings.globToEReg("**"+"/file?.txt").match("aa/bb/file1.txt") == true
@@ -871,6 +872,25 @@ class Strings {
     inline
     public static function globToEReg(globPattern:String, regexOptions:String = ""):EReg {
         return globPattern.globToRegEx().toEReg(regexOptions);
+    }
+    
+    /**
+     * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
+     * @return a hx.strings.Pattern object
+     * 
+     * <pre><code>
+     * >>> Strings.globToPattern("**"+"/file?.txt").matcher("aa/bb/file1.txt").matches() == true
+     * >>> Strings.globToPattern("*.txt").matcher("file.txt").matches()       == true
+     * >>> Strings.globToPattern("*.txt").matcher("file.pdf").matches()       == false
+     * >>> Strings.globToPattern("*.{pdf,txt}").matcher("file.txt").matches() == true
+     * >>> Strings.globToPattern("*.{pdf,txt}").matcher("file.pdf").matches() == true
+     * >>> Strings.globToPattern("*.{pdf,txt}").matcher("file.xml").matches() == false
+     * </code></pre>
+     */
+    inline
+    public static function globToPattern(globPattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):EReg {
+        return globPattern
+        return globPattern.globToRegEx().toPattern(regexOptions);
     }
     
     /**
@@ -2499,6 +2519,21 @@ class Strings {
         return [ for (i in 0...strLen) str._charCodeAt8Unsafe(i) ];
     }
 
+    /**
+     * @return an hx.strings.Pattern object using the given string as regular expression pattern.
+     * 
+     * <pre><code>
+     * >>> Strings.toPattern(null) == null
+     * >>> Strings.toPattern(".*").matcher("foo").matches() == true
+     * </code></pre>
+     */
+    inline
+    public static function toPattern(str:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):EReg {
+        if(str == null)
+            return null;
+        return new Pattern(str, options);
+    }
+    
     /**
      * @return an EReg object using the given string as regular expression pattern.
      * 
