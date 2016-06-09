@@ -8,7 +8,8 @@ package hx.strings;
 
 import haxe.Utf8;
 import haxe.ds.IntMap;
-import haxe.extern.EitherType;
+
+import hx.strings.internal.Either2;
 
 using hx.strings.Strings;
 
@@ -188,11 +189,11 @@ abstract Char(Int) from Int to Int {
      */
     public static inline var BRACKET_CURLY_RIGHT:Char = 125;
     
-    public static function of(ch:EitherType<String,Int>):Char {
-        if (Std.is(ch, String)) {
-            return cast(ch, String).charCodeAt8(0);    
+    public static function of(ch:Either2<String,Int>):Char {
+        return switch(ch.value) {
+            case a(str): str.charCodeAt8(0);                    
+            case b(int): int;
         }
-        return cast(ch, Int);
     }
     
     @:op(A + B)

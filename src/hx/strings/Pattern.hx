@@ -6,12 +6,132 @@
  */
 package hx.strings;
 
+import hx.strings.internal.Either3;
+
 using hx.strings.Strings;
 
 /**
- * Thread safe API for regex pattern matching backed by Haxe's EReg class
+ * @author Sebastian Thomschke, Vegard IT GmbH
+ */
+@notThreadSafe
+interface Matcher {
+    
+    /**
+     * Iterates over all matches and invokes the mapper function for each match.
+     * 
+     * @return a string with all matches replaced by the mapper
+     */
+    public function map(mapper:Matcher -> String):String;
+    
+	/**
+     * If no match attempt was made before Matcher#matches() will be excuted implicitly.
+     * 
+     * @return the substring captured by the n-th group of the current match.
+     *         If <b>n</b> is <code>0</code>, then returns the whole string of the current match.
+     * 
+     * @throws an exception if no capturing group with the given index <b>n</b> exists
+	 */
+    public function matched(n:Int = 0):String;
+
+    /**
+     * If no match attempt was made before Matcher#matches() will be excuted implicitly.
+     * 
+     * @return the position of the current match
+     * 
+     * @throws an exception if no match was found
+     * 
+     * <pre><code>
+     * >>> Pattern.compile("c").matcher("abcde").matchedPos() == { pos: 2, length: 1 }
+     * </code></pre>
+     */
+	public function matchedPos(): { pos:Int, len:Int };
+
+    /**
+     * Attempts to match the string against the pattern.
+     * 
+     * @return true if at least one match has been found
+     *
+     * <pre><code>
+     * >>> Pattern.compile(".*").matcher("a").matches() == true
+     * </code></pre>
+     */
+    public function matches():Bool;
+
+    /**
+     * Attempts to match the given region of the string against the pattern.
+     * 
+     * @return true if at least one match has been found
+     *
+     * <pre><code>
+     * >>> Pattern.compile("b").matcher("aba").matchesInRegion(0)    == true
+     * >>> Pattern.compile("b").matcher("aba").matchesInRegion(0, 1) == false
+     * >>> Pattern.compile("b").matcher("aba").matchesInRegion(0, 2) == true
+     * >>> Pattern.compile("b").matcher("aba").matchesInRegion(1)    == true
+     * >>> Pattern.compile("b").matcher("aba").matchesInRegion(2)    == false
+     * </code></pre>
+     */
+    public function matchesInRegion(pos:Int, len:Int=-1):Bool;
+    
+    /**
+     * If no match attempt was made before Matcher#matches() will be excuted implicitly.
+     * 
+     * @return the substring after the current match or "" if no match was found
+     *
+     * <pre><code>
+     * >>> Pattern.compile("b"     ).matcher("abab").substringAfterMatch() == "ab"
+     * >>> Pattern.compile("b", "g").matcher("abab").substringAfterMatch() == "ab"
+     * >>> Pattern.compile("c", "g").matcher("abab").substringAfterMatch() == ""
+     * </code></pre>
+     */
+    public function substringAfterMatch():String;
+    
+    /**
+     * If no match attempt was made before Matcher#matches() will be excuted implicitly.
+     * 
+     * @return the substring before the current match or "" if no match was found
+     *
+     * <pre><code>
+     * >>> Pattern.compile("b"     ).matcher("abab").substringBeforeMatch() == "a"
+     * >>> Pattern.compile("b", "g").matcher("abab").substringBeforeMatch() == "a"
+     * >>> Pattern.compile("c", "g").matcher("abab").substringBeforeMatch() == ""
+     * </code></pre>
+     */
+    public function substringBeforeMatch():String;
+}
+
+/**
+ * @author Sebastian Thomschke, Vegard IT GmbH
+ */
+@:enum
+abstract MatchingOption(String) {
+    
+    /**
+     * case insensitive matching
+     */
+    var IGNORE_CASE = "i";
+    
+    /**
+     * multiline matching, in the sense of that <code>^</code> and <code>$</code> represent the beginning and end of a line
+     */
+    var MULTILINE = "m";
+
+    #if (cpp || flash || java || neko || php)
+    /**
+     * the dot <code>.</code> will also match new lines
+     */
+    var DOTALL = "s";
+    #end
+    
+    /**
+     * All map, split and replace operations are performed on all matches within the given string
+     */
+    var MATCH_ALL = "g";
+}
+
+/**
+ * Thread safe API for regex pattern matching backed by Haxe's EReg class.
  * 
- * TODO implement missing regex operations
+ * UTF8 matching is enabled by default.
  * 
  * @see http://haxe.org/manual/std-regex.html
  * 
@@ -21,33 +141,41 @@ using hx.strings.Strings;
 @threadSafe
 class Pattern {
     
-    public var pattern(default, null):String;
-    public var options(default, null):String;
+    var pattern:String;
+    var options:String;
 
     var ereg:EReg;
-    var eregMatchAll:EReg;
-    var eregMatchFirst:EReg;
-
+    
     /**
      * @param pattern regular expression
-     * @param options see http://haxe.org/manual/std-regex.html for possible values
+     * @param options matching options
      */
     inline
-    public static function compile(pattern:String, options:String = "") {
-        return new Pattern(pattern, options);
+    public static function compile(pattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null) {
+        if(options == null)
+            return new Pattern(pattern, "");
+            
+        return new Pattern(pattern, switch(options.value) {
+            case a(str): str.toLowerCase8().filterChars(function(ch) {
+                    // remove unsupported flags
+                    return 
+                        ch == 'i' || ch == 'm' || ch == 'g'
+                        #if (cpp || flash || java || neko || php)
+                        || ch == 's'
+                        #end
+                        ;
+                });
+            case b(opt): opt.toString();
+            case c(arr): arr.join("");
+        });
     }
     
     function new(pattern:String, options:String) {
         this.pattern = pattern;
         this.options = options;
-        this.ereg = new EReg(pattern, options);
-        if (options.contains("g")) {
-            this.eregMatchAll = ereg;
-            this.eregMatchFirst = null;
-        } else {
-            this.eregMatchAll = null;
-            this.eregMatchFirst = ereg;            
-        }
+        
+        // explicitly enable UTF8
+        this.options += "u";
     }
 
     /**
@@ -59,246 +187,127 @@ class Pattern {
      */
     inline
     public function matcher(str:String):Matcher {
+        ereg = new EReg(pattern, options);
         return new MatcherImpl(ereg, pattern, options, str);
     }
-    
+
     /**
-     * Replaces either the first or all matches, depending on if the "g" option was specified when the pattern was compiled.
+     * Replaces all matches with <b>replaceWith</b>.
      * 
      * <pre><code>
      * >>> Pattern.compile("[.]"     ).replace("a.b.c", ":") == "a:b.c"
      * >>> Pattern.compile("[.]", "g").replace("a.b.c", ":") == "a:b:c"
      * </code></pre>
      */
-    inline
     public function replace(str:String, replaceWith:String):String {
+        if (ereg == null) ereg = new EReg(pattern, options);
         return ereg.replace(str, replaceWith);
-    }
-    
-    /**
-     * Replaces all matches with <b>replaceWith</b>
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).replaceAll("a.b.c", ":") == "a:b:c"
-     * >>> Pattern.compile("[.]", "g").replaceAll("a.b.c", ":") == "a:b:c"
-     * </code></pre>
-     */
-    public function replaceAll(str:String, replaceWith:String):String {
-        if (eregMatchAll == null) eregMatchAll = new EReg(pattern, "g" + options);
-        return eregMatchAll.replace(str, replaceWith);
-    }
-    
-    /**
-     * Replaces the first match with <b>replaceWith</b>
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).replaceFirst("a.b.c", ":") == "a:b.c"
-     * >>> Pattern.compile("[.]", "g").replaceFirst("a.b.c", ":") == "a:b.c"
-     * </code></pre>
-     */
-    public function replaceFirst(str:String, replaceWith:String):String {
-        if (eregMatchFirst == null) eregMatchFirst = new EReg(pattern, options.removeAll("g"));
-        return eregMatchFirst.replace(str, replaceWith);
     }
 
     /**
-     * Splits either on the first or all matches, depending on if the "g" option was specified when the pattern was compiled.
+     * Uses matches as separator to split the string.
      * 
      * <pre><code>
-     * >>> Pattern.compile("[.]"     ).split("a.b.c")  == [ "a", "b.c" ]
-     * >>> Pattern.compile("[.]", "g").split("a.b.c")  == [ "a", "b", "c" ]
+     * >>> Pattern.compile("[.]"     ).split("a.b.c") == [ "a", "b.c" ]
+     * >>> Pattern.compile("[.]", "g").split("a.b.c") == [ "a", "b", "c" ]
      * </code></pre>
      */
     public function split(str:String):Array<String> {
+        if (ereg == null) ereg = new EReg(pattern, options);
         return ereg.split(str);
     }
-    
-    /**
-     * Splits the string on all matches.
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).splitAll("a.b.c")  == [ "a", "b", "c" ]
-     * >>> Pattern.compile("[.]", "g").splitAll("a.b.c")  == [ "a", "b", "c" ]
-     * </code></pre>
-     */
-    public function splitAll(str:String):Array<String> {
-        if (eregMatchAll == null) eregMatchAll = new EReg(pattern, "g" + options);
-        return eregMatchAll.split(str);
-    }
-
-    /**
-     * Splits the string on the first match.
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).splitOnce("a.b.c") == [ "a", "b.c" ]
-     * >>> Pattern.compile("[.]", "g").splitOnce("a.b.c") == [ "a", "b.c" ]
-     * </code></pre>
-     */
-    public function splitOnce(str:String):Array<String> {
-        if (eregMatchFirst == null) eregMatchFirst = new EReg(pattern, options.removeAll("g"));
-        return eregMatchFirst.split(str);
-    }
-}
-
-@notThreadSafe
-interface Matcher {
-    
-    /**
-     * <pre><code>
-     * >>> Pattern.compile(".*").matcher("a").matches() == true
-     * </code></pre>
-     */
-    public function matches():Bool;
-    
-    /**
-     * Replaces either the first or all matches, depending on if the "g" option was specified when the pattern was compiled.
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).matcher("a.b.c").replace(":") == "a:b.c"
-     * >>> Pattern.compile("[.]", "g").matcher("a.b.c").replace(":") == "a:b:c"
-     * </code></pre>
-     */
-    public function replace(replaceWith:String):String;
-    
-    /**
-     * Replaces all matches with <b>replaceWith</b>
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).matcher("a.b.c").replaceAll(":") == "a:b:c"
-     * >>> Pattern.compile("[.]", "g").matcher("a.b.c").replaceAll(":") == "a:b:c"
-     * </code></pre>
-     */
-    public function replaceAll(replaceWith:String):String;
-
-    /**
-     * Replaces the first match with <b>replaceWith</b>
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).matcher("a.b.c").replaceFirst(":") == "a:b.c"
-     * >>> Pattern.compile("[.]", "g").matcher("a.b.c").replaceFirst(":") == "a:b.c"
-     * </code></pre>
-     */
-    public function replaceFirst(replaceWith:String):String;
-
-    /**
-     * Splits either on the first or all matches, depending on if the "g" option was specified when the pattern was compiled.
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).matcher("a.b.c").split()  == [ "a", "b.c" ]
-     * >>> Pattern.compile("[.]", "g").matcher("a.b.c").split()  == [ "a", "b", "c" ]
-     * </code></pre>
-     */
-    public function split():Array<String>;
-    
-    /**
-     * Splits the string on all matches.
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).matcher("a.b.c").splitAll()  == [ "a", "b", "c" ]
-     * >>> Pattern.compile("[.]", "g").matcher("a.b.c").splitAll()  == [ "a", "b", "c" ]
-     * </code></pre>
-     */
-    public function splitAll():Array<String>;
-
-    /**
-     * Splits the string on the first match.
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).matcher("a.b.c").splitOnce()  == [ "a", "b.c" ]
-     * >>> Pattern.compile("[.]", "g").matcher("a.b.c").splitOnce()  == [ "a", "b.c" ]
-     * </code></pre>
-     */
-    public function splitOnce():Array<String>;
 }
 
 private class MatcherImpl implements Matcher {
     
     var pattern:String;
     var options:String;
-
+    var isMatch:Null<Bool>;
     var ereg:EReg;
-    var eregMatchAll:EReg;
-    var eregMatchFirst:EReg;
-
+    
     var str:String;
     
     public function new(ereg:EReg, pattern:String, options:String, str:String) {
         this.pattern = pattern;
         this.options = options;
-        
         this.ereg = cloneEReg(ereg, pattern, options);
-        if (options.indexOf("g") > -1) {
-            this.eregMatchFirst = null;
-            this.eregMatchAll = ereg;
-        } else {
-            this.eregMatchFirst = ereg;
-            this.eregMatchAll = null;
-        }
-        
         this.str = str;
     }
+    
+    public function map(mapper:Matcher -> String):String {
+        return ereg.map(str, function(ereg) {
+            isMatch = true;
+            return mapper(this);
+        });
+    }
 
+    public function matched(n:Int = 0):String {
+        if (isMatch == null) matches();
+        if (isMatch == false) throw "No string matched";
+        
+        var result = ereg.matched(n);
+        #if (cs || php) // workaround for targets with non-compliant implementation
+        if (result == null) throw 'Group $n not found.';
+        #end
+        return result;
+    }
+    
     inline
     public function matches():Bool {
-        return ereg.match(str);
-    }
-    
-    inline
-    public function replace(replaceWith:String):String {
-        return ereg.replace(str, replaceWith);
-    }
-    
-    public function replaceAll(replaceWith:String):String {
-        if (eregMatchAll == null) eregMatchAll = new EReg(pattern, "g" + options);
-        return eregMatchAll.replace(str, replaceWith);
-    }
-    
-    public function replaceFirst(replaceWith:String):String {
-        if (eregMatchFirst == null) eregMatchFirst = new EReg(pattern, options.removeAll("g"));
-        return eregMatchFirst.replace(str, replaceWith);
-    }
-    
-    inline
-    public function split():Array<String> {
-        return ereg.split(str);
+        return isMatch = ereg.match(str);
     }
 
-    public function splitAll():Array<String> {
-        if (eregMatchAll == null) eregMatchAll = new EReg(pattern, "g" + options);
-        return eregMatchAll.split(str);
+    inline
+    public function matchesInRegion(pos:Int, len:Int=-1):Bool {
+        return isMatch = ereg.matchSub(str, pos, len);
     }
     
-    public function splitOnce():Array<String> {
-        if (eregMatchFirst == null) eregMatchFirst = new EReg(pattern, options.removeAll("g"));
-        return eregMatchFirst.split(str);
+    public function matchedPos(): { pos:Int, len:Int } {
+        if (isMatch == null) matches();
+        if (isMatch == false) throw "No string matched";
+
+        return ereg.matchedPos();
     }
     
+    public function substringAfterMatch():String {
+        if (isMatch == null) matches();
+        if (!isMatch) return "";
+        return ereg.matchedRight();
+    }
+    
+    public function substringBeforeMatch():String {
+        if (isMatch == null) matches();
+        if (!isMatch) return "";
+        return ereg.matchedLeft();
+    }
+
     static function cloneEReg(from:EReg, pattern:String, options:String) {
         // partially copy internal state (if possible) to reuse the inner pre-compiled pattern instance
+        // and avoid expensive reparsing of the pattern string
         #if (neko || lua || cpp || hl)
             var clone = Type.createEmptyInstance(EReg);
             Reflect.setField(clone, "r", Reflect.field(from, "r"));
-            Reflect.setField(clone, "global", options.indexOf("g") > -1);
+            Reflect.setField(clone, "global", Reflect.field(from, "global"));
         #elseif java
             var clone = Type.createEmptyInstance(EReg);
             Reflect.setField(clone, "pattern", pattern);
             Reflect.setField(clone, "matcher", Reflect.field(from, "matcher"));
-            Reflect.setField(clone, "isGlobal", options.indexOf("g") > -1);
-        #elseif js
-            var clone = Type.createEmptyInstance(EReg);
-            Reflect.setField(clone, "r", Reflect.field(from, "r"));
+            Reflect.setField(clone, "isGlobal", Reflect.field(from, "isGlobal"));
         #elseif php    
             var clone = Type.createEmptyInstance(EReg);
             Reflect.setField(clone, "pattern", pattern);
-            Reflect.setField(clone, "options", options);
-            Reflect.setField(clone, "global", options.indexOf("g") > -1);
+            Reflect.setField(clone, "options", Reflect.field(from, "options"));
+            Reflect.setField(clone, "global", Reflect.field(from, "global"));
             Reflect.setField(clone, "re", Reflect.field(from, "re"));
         #elseif python
             var clone = Type.createEmptyInstance(EReg);
             Reflect.setField(clone, "pattern", Reflect.field(from, "pattern"));
-            Reflect.setField(clone, "global", options.indexOf("g") > -1);
+            Reflect.setField(clone, "global", Reflect.field(from, "global"));
         #else
-            // not reusing internal state on c#, flash and untested platforms
+            // not reusing internal state on 
+            // - untested targets
+            // - targets where reflection fails (flash / cs)
+            // - targets where the compiled pattern and matcher not separated internally (js)
             var clone = new EReg(pattern, options);
         #end
         return clone;

@@ -10,6 +10,7 @@ import haxe.Int32;
 import haxe.Utf8;
 import haxe.crypto.Base64;
 import haxe.io.Bytes;
+import hx.strings.Pattern;
 
 using hx.strings.Strings;
 
@@ -22,15 +23,15 @@ using hx.strings.Strings;
  */
 class Strings {
 
-    static var REGEX_ANSI_ESC = Pattern.compile(Char.ESC + "\\[[;\\d]*m", "g");
-    static var REGEX_HTML_UNESCAPE = new EReg("&(#\\d+|amp|nbsp|apos|lt|gt|quot);", "g");
-    static var REGEX_SPLIT_LINES = Pattern.compile("\\r?\\n", "g");
+    static var REGEX_ANSI_ESC = Pattern.compile(Char.ESC + "\\[[;\\d]*m", MATCH_ALL);
+    static var REGEX_HTML_UNESCAPE = Pattern.compile("&(#\\d+|amp|nbsp|apos|lt|gt|quot);", MATCH_ALL);
+    static var REGEX_SPLIT_LINES = Pattern.compile("\\r?\\n", MATCH_ALL);
     
     #if !php
-    static var REGEX_STRIP_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", "g");
+    static var REGEX_STRIP_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
     #end
     
-    static var REGEX_IS_WINDOWS = Pattern.compile("windows", "i");
+    static var REGEX_IS_WINDOWS = Pattern.compile("windows", IGNORE_CASE);
     
     public static inline var POS_NOT_FOUND:CharPos = -1;
 
@@ -868,21 +869,21 @@ class Strings {
      * </code></pre>
      */
     inline
-    public static function globToEReg(globPattern:String):EReg {
-        return globPattern.globToRegEx().toEReg();
+    public static function globToEReg(globPattern:String, regexOptions:String = ""):EReg {
+        return globPattern.globToRegEx().toEReg(regexOptions);
     }
     
     /**
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
      * 
      * <pre><code>
-     * >>> Strings.globToRegEx(null)                == null
-     * >>> Strings.globToRegEx("")                  == ""
-     * >>> Strings.globToRegEx("file")              == "file$"
-     * >>> Strings.globToRegEx("*.txt")             == "[^\\\\^\\/]*\\.txt$"
-     * >>> Strings.globToRegEx("*file*")            == "[^\\\\^\\/]*file[^\\\\^\\/]*$"
-     * >>> Strings.globToRegEx("file?.txt")         == "file[^\\\\^\\/]\\.txt$"
-     * >>> Strings.globToRegEx("**"+"/file?.txt").toEReg().match("aa/bb/file1.txt") == true
+     * >>> Strings.globToRegEx(null)          == null
+     * >>> Strings.globToRegEx("")            == ""
+     * >>> Strings.globToRegEx("file")        == "file$"
+     * >>> Strings.globToRegEx("*.txt")       == "[^\\\\^\\/]*\\.txt$"
+     * >>> Strings.globToRegEx("*file*")      == "[^\\\\^\\/]*file[^\\\\^\\/]*$"
+     * >>> Strings.globToRegEx("file?.txt")   == "file[^\\\\^\\/]\\.txt$"
+     * >>> Strings.globToRegEx("**" + "/file?.txt").toEReg().match("aa/bb/file1.txt") == true
      * >>> Strings.globToRegEx("*.txt").toEReg().match("file.txt")       == true
      * >>> Strings.globToRegEx("*.txt").toEReg().match("file.pdf")       == false
      * >>> Strings.globToRegEx("*.{pdf,txt}").toEReg().match("file.txt") == true
@@ -1050,8 +1051,8 @@ class Strings {
         if (str.isEmpty())
             return str;
 
-        return REGEX_HTML_UNESCAPE.map(str, function(r:EReg):String {
-            var match:String = r.matched(0);
+        return REGEX_HTML_UNESCAPE.matcher(str).map(function(m:Matcher):String {
+            var match:String = m.matched();
             return switch(match) {
                 case "&amp;":  "&";
                 case "&apos;": "'";
@@ -2010,7 +2011,7 @@ class Strings {
         if (str.isEmpty())
             return [];
 
-        return REGEX_SPLIT_LINES.splitAll(str);
+        return REGEX_SPLIT_LINES.split(str);
     }
 
     /**
@@ -2067,7 +2068,7 @@ class Strings {
         if (str.isEmpty())
             return str;
 
-        return REGEX_ANSI_ESC.replaceAll(str, "");
+        return REGEX_ANSI_ESC.replace(str, "");
     }
 
     /**
@@ -2092,7 +2093,7 @@ class Strings {
         #if php
             return untyped __call__("strip_tags", xml);
         #else
-            return REGEX_STRIP_XML_TAGS.replaceAll(xml, "");
+            return REGEX_STRIP_XML_TAGS.replace(xml, "");
         #end
     }
 
@@ -2209,6 +2210,7 @@ class Strings {
      * >>> Strings.substringAfter("dogCATdogBAA", "BAA") == ""
      * >>> Strings.substringAfter("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfter("dogCATdogCAT", "")    == ""
+     * >>> Strings.substringAfter("dogCATdogCAT", "cow") == ""
      * >>> Strings.substringAfter("はいはい", "い")        == "はい"
      * </code></pre>
      */
@@ -2234,6 +2236,7 @@ class Strings {
      * >>> Strings.substringAfterIgnoreCase("dogCATdogBAA", "BAA") == ""
      * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "")    == ""
+     * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "cow") == ""
      * >>> Strings.substringAfterIgnoreCase("はいはい", "い")        == "はい"
      * </code></pre>
      */
@@ -2261,6 +2264,7 @@ class Strings {
      * >>> Strings.substringAfterLast("dogCATdogCAT", "CAT") == ""
      * >>> Strings.substringAfterLast("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfterLast("dogCATdogCAT", "")    == ""
+     * >>> Strings.substringAfterLast("dogCATdogCAT", "cow") == ""
      * >>> Strings.substringAfterLast("はいはい", "は")        == "い"
      * </code></pre>
      */
@@ -2287,6 +2291,7 @@ class Strings {
      * >>> Strings.substringAfterLastIgnoreCase("dogCATdogCAT", "CAT") == ""
      * >>> Strings.substringAfterLastIgnoreCase("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfterLastIgnoreCase("dogCATdogCAT", "")    == ""
+     * >>> Strings.substringAfterLastIgnoreCase("dogCATdogCAT", "cow") == ""
      * >>> Strings.substringAfterLastIgnoreCase("はいはい", "は")        == "い"
      * </code></pre>
      */
@@ -2314,6 +2319,7 @@ class Strings {
      * >>> Strings.substringBefore("dogCATdogCAT", "dog") == ""
      * >>> Strings.substringBefore("dogCATdogCAT", null)  == ""
      * >>> Strings.substringBefore("dogCATdogCAT", "")    == ""
+     * >>> Strings.substringBefore("dogCATdogCAT", "cow") == ""
      * >>> Strings.substringBefore("はいはい", "い")        == "は"
      * </code></pre>
      */
@@ -2820,7 +2826,7 @@ class Strings {
         if (str.isEmpty())
             return str;
 
-        return REGEX_SPLIT_LINES.splitAll(str).map(function(line) return line.trim()).join(NEW_LINE_NIX);
+        return REGEX_SPLIT_LINES.split(str).map(function(line) return line.trim()).join(NEW_LINE_NIX);
     }
 
     /**
