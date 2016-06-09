@@ -11,6 +11,7 @@ import haxe.Utf8;
 import haxe.crypto.Base64;
 import haxe.io.Bytes;
 import hx.strings.Pattern;
+import hx.strings.internal.Either3;
 
 using hx.strings.Strings;
 
@@ -140,6 +141,29 @@ class Strings {
         return words;
     }
 
+    /**
+     * <pre><code>
+     * >>> Strings.abbreviate(null, 0)         == null
+     * >>> Strings.abbreviate(null, 3)         == null
+     * >>> Strings.abbreviate("", 0)           == ""
+     * >>> Strings.abbreviate("", 3)           == ""
+     * >>> Strings.abbreviate("1234", 4)       == "1234"
+     * >>> Strings.abbreviate("12345", 4)      == "1..."
+     * >>> Strings.abbreviate("12345678", 5)   == "12..."
+     * >>> Strings.abbreviate("はいはいはい", 5)  == "はい..."
+     * </code></pre>
+     * 
+     * @throws exception if str > maxLength and maxLength < 4
+     */
+    public static function abbreviate(str:String, maxLength:Int):String {
+        if (str.length8() <= maxLength)
+            return str;
+            
+        if (maxLength < 4) throw "[maxLength] must not be smaller than 4";
+
+        return str.substring8(0, maxLength - 3) + "...";
+    }
+    
     /**
      * <pre><code>
      * >>> Strings.ansiToHtml(null)                                  == null
@@ -888,9 +912,8 @@ class Strings {
      * </code></pre>
      */
     inline
-    public static function globToPattern(globPattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):EReg {
-        return globPattern
-        return globPattern.globToRegEx().toPattern(regexOptions);
+    public static function globToPattern(globPattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
+        return globPattern.globToRegEx().toPattern(options);
     }
     
     /**
@@ -2227,7 +2250,7 @@ class Strings {
      * >>> Strings.substringAfter(null, "dog")           == null
      * >>> Strings.substringAfter("", "dog")             == ""
      * >>> Strings.substringAfter("dogCATdogCAT", "dog") == "CATdogCAT"
-     * >>> Strings.substringAfter("dogCATdogBAA", "BAA") == ""
+     * >>> Strings.substringAfter("dogCATdogCOW", "COW") == ""
      * >>> Strings.substringAfter("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfter("dogCATdogCAT", "")    == ""
      * >>> Strings.substringAfter("dogCATdogCAT", "cow") == ""
@@ -2253,7 +2276,7 @@ class Strings {
      * >>> Strings.substringAfterIgnoreCase(null, "dog")           == null
      * >>> Strings.substringAfterIgnoreCase("", "dog")             == ""
      * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "DOG") == "CATdogCAT"
-     * >>> Strings.substringAfterIgnoreCase("dogCATdogBAA", "BAA") == ""
+     * >>> Strings.substringAfterIgnoreCase("dogCATdogCOW", "COW") == ""
      * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "")    == ""
      * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "cow") == ""
@@ -2274,6 +2297,80 @@ class Strings {
             return "";
         }
         return str.substring(foundAt + separator.length);
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Strings.substringBetween(null, null, null)             == null
+     * >>> Strings.substringBetween("",   null, null)             == ""
+     * >>> Strings.substringBetween("  ", null, null)             == ""
+     * >>> Strings.substringBetween("  ", "", null)               == ""
+     * >>> Strings.substringBetween("dogCATdogCOW", "dog")        == "CAT"
+     * >>> Strings.substringBetween("dogCATdogCOW", "COW")        == ""
+     * >>> Strings.substringBetween("dogCATdogCOW", "dog", "COW") == "CATdog"
+     * >>> Strings.substringBetween("dogCATdogCAT", null)         == ""
+     * >>> Strings.substringBetween("dogCATdogCAT", "")           == ""
+     * >>> Strings.substringBetween("dogCATdogCAT", "cow")        == ""
+     * >>> Strings.substringBetween("はいはい", "い")               == "は"
+     * </code></pre>
+     */
+    public static function substringBetween(str:String, after:String, ?before:String):String {
+        if (str.isEmpty())
+            return str;
+            
+        if (before == null) before = after;
+        
+        if (after.isEmpty() || before.isEmpty()) 
+            return "";
+        
+        var foundAfterAt = str.indexOf(after);
+        if (foundAfterAt == POS_NOT_FOUND) {
+            return "";
+        }
+        var foundBeforeAt = str.indexOf(before, foundAfterAt + after.length);
+        if (foundBeforeAt == POS_NOT_FOUND) {
+            return "";
+        }
+        return str.substring(foundAfterAt + after.length, foundBeforeAt);
+    }
+
+    /**
+     * <pre><code>
+     * >>> Strings.substringBetweenIgnoreCase(null, null, null)             == null
+     * >>> Strings.substringBetweenIgnoreCase("",   null, null)             == ""
+     * >>> Strings.substringBetweenIgnoreCase("  ", null, null)             == ""
+     * >>> Strings.substringBetweenIgnoreCase("  ", "", null)               == ""
+     * >>> Strings.substringBetweenIgnoreCase("dogCATdogCOW", "dog")        == "CAT"
+     * >>> Strings.substringBetweenIgnoreCase("dogCATdogCOW", "COW")        == ""
+     * >>> Strings.substringBetweenIgnoreCase("dogCATdogCOW", "dog", "COW") == "CATdog"
+     * >>> Strings.substringBetweenIgnoreCase("dogCATdogCAT", null)         == ""
+     * >>> Strings.substringBetweenIgnoreCase("dogCATdogCAT", "")           == ""
+     * >>> Strings.substringBetweenIgnoreCase("dogCATdogCAT", "cow")        == ""
+     * >>> Strings.substringBetweenIgnoreCase("はいはい", "い")               == "は"
+     * </code></pre>
+     */
+    public static function substringBetweenIgnoreCase(str:String, after:String, ?before:String):String {
+        if (str.isEmpty())
+            return str;
+            
+        if (before == null) before = after;
+        
+        if (after.isEmpty() || before.isEmpty()) 
+            return "";
+        
+        var strLower = str.toLowerCase8();
+        after = after.toLowerCase8();
+        before = before.toLowerCase8();
+        
+        var foundAfterAt = strLower.indexOf(after);
+        if (foundAfterAt == POS_NOT_FOUND) {
+            return "";
+        }
+        var foundBeforeAt = strLower.indexOf(before, foundAfterAt + after.length);
+        if (foundBeforeAt == POS_NOT_FOUND) {
+            return "";
+        }
+        return str.substring(foundAfterAt + after.length, foundBeforeAt);
     }
     
     /**
@@ -2528,10 +2625,10 @@ class Strings {
      * </code></pre>
      */
     inline
-    public static function toPattern(str:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):EReg {
+    public static function toPattern(str:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
         if(str == null)
             return null;
-        return new Pattern(str, options);
+        return Pattern.compile(str, options);
     }
     
     /**

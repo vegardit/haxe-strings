@@ -31,7 +31,7 @@ class TestRunner extends DocTestRunner {
     public function testPattern():Void {
         
         {
-            var p:Pattern = Pattern.compile("DOG", [CASE_INSENSITIVE, MATCH_ALL]);
+            var p:Pattern = Pattern.compile("DOG", [IGNORE_CASE, MATCH_ALL]);
             var m:Matcher = p.matcher("dogcatdog");
 
             assertEquals(m.matchedPos(), { pos: 0, len: 3 });
@@ -43,7 +43,7 @@ class TestRunner extends DocTestRunner {
         }
 
         {
-            var p:Pattern = Pattern.compile("(D(.)G)", [CASE_INSENSITIVE, MATCH_ALL]);
+            var p:Pattern = Pattern.compile("(D(.)G)", [IGNORE_CASE, MATCH_ALL]);
             var m:Matcher = p.matcher("dOgcatdAg");
 
             assertEquals(m.matchedPos(), { pos: 0, len: 3 });
@@ -63,7 +63,7 @@ class TestRunner extends DocTestRunner {
         }
 
         {
-            var p:Pattern = Pattern.compile("DOG", [CASE_INSENSITIVE, MATCH_ALL]);
+            var p:Pattern = Pattern.compile("DOG", [IGNORE_CASE, MATCH_ALL]);
             var m:Matcher = p.matcher("cowcatcow");
 
             try { m.matchedPos(); fail(); } catch (e:Dynamic) {};
@@ -75,7 +75,7 @@ class TestRunner extends DocTestRunner {
         }
     
         {
-            var p:Pattern = Pattern.compile("DOG", [CASE_INSENSITIVE]);
+            var p:Pattern = Pattern.compile("DOG", [IGNORE_CASE]);
             var m:Matcher = p.matcher("dogcatdog");
 
             assertEquals(m.matchedPos(), { pos: 0, len: 3 });
