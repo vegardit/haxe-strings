@@ -141,9 +141,8 @@ abstract MatchingOption(String) {
 @threadSafe
 class Pattern {
     
-    var pattern:String;
-    var options:String;
-
+    public var pattern(default, null):String;
+    public var options(default, null):String;
     var ereg:EReg;
     
     /**
@@ -173,6 +172,7 @@ class Pattern {
     function new(pattern:String, options:String) {
         this.pattern = pattern;
         this.options = options;
+        this.ereg = new EReg(pattern, options);
         
         // explicitly enable UTF8
         this.options += "u";
@@ -187,7 +187,6 @@ class Pattern {
      */
     inline
     public function matcher(str:String):Matcher {
-        ereg = new EReg(pattern, options);
         return new MatcherImpl(ereg, pattern, options, str);
     }
 
@@ -199,8 +198,8 @@ class Pattern {
      * >>> Pattern.compile("[.]", "g").replace("a.b.c", ":") == "a:b:c"
      * </code></pre>
      */
+    inline
     public function replace(str:String, replaceWith:String):String {
-        if (ereg == null) ereg = new EReg(pattern, options);
         return ereg.replace(str, replaceWith);
     }
 
@@ -212,8 +211,8 @@ class Pattern {
      * >>> Pattern.compile("[.]", "g").split("a.b.c") == [ "a", "b", "c" ]
      * </code></pre>
      */
+    inline
     public function split(str:String):Array<String> {
-        if (ereg == null) ereg = new EReg(pattern, options);
         return ereg.split(str);
     }
 }
@@ -230,7 +229,7 @@ private class MatcherImpl implements Matcher {
     public function new(ereg:EReg, pattern:String, options:String, str:String) {
         this.pattern = pattern;
         this.options = options;
-        this.ereg = cloneEReg(ereg, pattern, options);
+        this.ereg = _cloneEReg(ereg, pattern, options);
         this.str = str;
     }
     
@@ -281,7 +280,8 @@ private class MatcherImpl implements Matcher {
         return ereg.matchedLeft();
     }
 
-    static function cloneEReg(from:EReg, pattern:String, options:String) {
+    static function _cloneEReg(from:EReg, pattern:String, options:String) {
+
         // partially copy internal state (if possible) to reuse the inner pre-compiled pattern instance
         // and avoid expensive reparsing of the pattern string
         #if (neko || lua || cpp || hl)
@@ -293,7 +293,11 @@ private class MatcherImpl implements Matcher {
             Reflect.setField(clone, "pattern", pattern);
             Reflect.setField(clone, "matcher", Reflect.field(from, "matcher"));
             Reflect.setField(clone, "isGlobal", Reflect.field(from, "isGlobal"));
-        #elseif php    
+        #elseif cs
+            var clone = Type.createEmptyInstance(EReg);
+            Reflect.setField(clone, "regex", Reflect.field(from, "regex"));
+            Reflect.setField(clone, "isGlobal", Reflect.field(from, "isGlobal"));
+        #elseif php
             var clone = Type.createEmptyInstance(EReg);
             Reflect.setField(clone, "pattern", pattern);
             Reflect.setField(clone, "options", Reflect.field(from, "options"));
@@ -306,8 +310,7 @@ private class MatcherImpl implements Matcher {
         #else
             // not reusing internal state on 
             // - untested targets
-            // - targets where reflection fails (flash / cs)
-            // - targets where the compiled pattern and matcher not separated internally (js)
+            // - targets where the compiled pattern and matcher not separated internally (js, flash)
             var clone = new EReg(pattern, options);
         #end
         return clone;
