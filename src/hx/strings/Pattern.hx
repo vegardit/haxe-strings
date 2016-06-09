@@ -23,14 +23,14 @@ interface Matcher {
      */
     public function map(mapper:Matcher -> String):String;
     
-	/**
+    /**
      * If no match attempt was made before Matcher#matches() will be excuted implicitly.
      * 
      * @return the substring captured by the n-th group of the current match.
      *         If <b>n</b> is <code>0</code>, then returns the whole string of the current match.
      * 
      * @throws an exception if no capturing group with the given index <b>n</b> exists
-	 */
+     */
     public function matched(n:Int = 0):String;
 
     /**
@@ -44,7 +44,7 @@ interface Matcher {
      * >>> Pattern.compile("c").matcher("abcde").matchedPos() == { pos: 2, length: 1 }
      * </code></pre>
      */
-	public function matchedPos(): { pos:Int, len:Int };
+    public function matchedPos(): { pos:Int, len:Int };
 
     /**
      * Attempts to match the string against the pattern.
