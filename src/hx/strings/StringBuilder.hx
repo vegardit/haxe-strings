@@ -17,19 +17,11 @@ using hx.strings.Strings;
  * >>> new StringBuilder().toString()                       == ""
  * >>> new StringBuilder("").toString()                     == ""
  * >>> new StringBuilder(null).toString()                   == ""
- * >>> new StringBuilder(null).add(null).toString()         == "null"
  * >>> new StringBuilder("hi").toString()                   == "hi"
- * >>> new StringBuilder("hi").add(null).toString()         == "hinull"
- * >>> new StringBuilder("hi").add(1).toString()            == "hi1"
- * >>> new StringBuilder("hi").addAll([1,2]).toString()     == "hi12"
  * >>> new StringBuilder("hi").prepend(1).toString()        == "1hi"
  * >>> new StringBuilder("hi").prepend(1).toString()        == "1hi"
  * >>> new StringBuilder("hi").prependAll([1,2]).toString() == "12hi"
- * >>> new StringBuilder("").length                         == 0
- * >>> new StringBuilder("hi").addAll([1,2]).length         == 4
- * >>> new StringBuilder("hi").clear().add(1).toString()    == "1"
  * >>> new StringBuilder("hi").addChar(12399).toString()    == "hiは"
- * >>> new StringBuilder("はい").add("は").add("い").length   == 4
  * >>> new StringBuilder("hi").prependChar(32).toString()   == " hi"
  * </code></pre>
  * 
@@ -58,6 +50,11 @@ class StringBuilder {
      * <b>Important:</b> Invocation may result in temporary string object generation during invocation
      * on platforms except Java.
      * 
+     * <pre><code>
+     * >>> new StringBuilder("").length                         == 0
+     * >>> new StringBuilder("はい").add("は").add("い").length   == 4
+     * </code></pre>
+     * 
 	 * @return the length of the string representation of all added items
 	 */
 	public var length(get, null): Int;
@@ -81,6 +78,12 @@ class StringBuilder {
 	}
 	
 	/**
+     * <pre><code>
+     * >>> new StringBuilder(null).add(null).toString()         == "null"
+     * >>> new StringBuilder("hi").add(null).toString()         == "hinull"
+     * >>> new StringBuilder("hi").add(1).toString()            == "hi1"
+     * </code></pre>
+     * 
 	 * @return <code>this</code> for chained operations
 	 */
     inline
@@ -113,6 +116,10 @@ class StringBuilder {
     }
 
     /**
+     * <pre><code>
+     * >>> new StringBuilder("hi").addAll([1,2]).toString()     == "hi12"
+     * >>> new StringBuilder("hi").addAll([1,2]).length         == 4
+     * </code></pre>
      * @return <code>this</code> for chained operations
      */
 	public function addAll<T>(items:Array<T>):StringBuilder {
@@ -127,6 +134,10 @@ class StringBuilder {
 	/**
 	 * Resets the builders internal buffer
      * 
+     * <pre><code>
+     * >>> new StringBuilder("hi").clear().add(1).toString()    == "1"
+     * </code></pre>
+     * 
      * @return <code>this</code> for chained operations
 	 */
 	public function clear():StringBuilder {
@@ -138,6 +149,18 @@ class StringBuilder {
         len = 0;
 		return this;
 	}
+    
+	/**
+     * <pre><code>
+     * >>> new StringBuilder("").isEmpty()      == true
+     * >>> new StringBuilder("cat").isEmpty()   == false
+     * </code></pre>
+     * 
+     * @return <code>true</code> if no chars/strings have been added to the string builder yet
+	 */
+    public function isEmpty():Bool {
+        return length == 0;
+    }
 	
 	/**
 	 * adds the operating system dependent new line character(s)

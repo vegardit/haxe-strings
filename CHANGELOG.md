@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - hx.strings.Strings.toFloat()
 - hx.strings.Strings.toInt()
 - hx.strings.Strings.toPattern()
+- hx.strings.StringBuilder.isEmpty()
 
 ## 1.0.0 - 2016-06-05
 ### Added
