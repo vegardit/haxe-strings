@@ -149,11 +149,10 @@ class Pattern {
      * @param pattern regular expression
      * @param options matching options
      */
-    inline
-    public static function compile(pattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null) {
+    public static function compile(pattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
         if(options == null)
             return new Pattern(pattern, "");
-            
+
         return new Pattern(pattern, switch(options.value) {
             case a(str): str.toLowerCase8().filterChars(function(ch) {
                     // remove unsupported flags

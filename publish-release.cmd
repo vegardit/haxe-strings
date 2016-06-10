@@ -7,7 +7,9 @@
 :: requires wget to be installed https://eternallybored.org/misc/wget/
 ::
 setlocal
-set ARTIFACT=haxe-strings
+set PROJECT_ROOT=%~dp0
+cd %PROJECT_ROOT%
+set ARTIFACT=haxe-doctest
 set REPO=vegardit/%ARTIFACT%
 set DRAFT=false
 set PREPRELEASE=false
@@ -22,6 +24,8 @@ for /f "tokens=*" %%a in ( 'findstr releasenote haxelib.json' ) do (set releaseN
 set RELEASE_NOTE=%releaseNoteLine:"releasenote": "=%
 set RELEASE_NOTE=%RELEASE_NOTE:",=%
 
+if not exist target mkdir target
+
 :: create github release https://developer.github.com/v3/repos/releases/#create-a-release
 (
   echo {
@@ -33,7 +37,7 @@ set RELEASE_NOTE=%RELEASE_NOTE:",=%
   echo "prerelease":%PREPRELEASE%
   echo }
 )>target/github_release.json
-wget --post-file=target/github_release.json "https://api.github.com/repos/%REPO%/releases?access_token=%GITHUB_ACCESS_TOKEN%" || goto :eof
+wget -qO- --post-file=target/github_release.json "https://api.github.com/repos/%REPO%/releases?access_token=%GITHUB_ACCESS_TOKEN%" || goto :eof
 
 :: create haxelib release
 zip target/haxelib-upload.zip src haxelib.json LICENSE.txt CONTRIBUTING.md README.md -r -9 || goto :eof
