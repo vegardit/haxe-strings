@@ -3059,6 +3059,62 @@ class Strings {
             return StringTools.urlEncode(str);
         #end
     }
+    
+    
+    /**
+     * <pre><code>
+     * >>> Strings.wrap(null,      2)         == null
+     * >>> Strings.wrap("",        2)         == ""
+     * >>> Strings.wrap("cat",     0)         == "cat"
+     * >>> Strings.wrap("cat",    -1)         == "cat"
+     * >>> Strings.wrap("cat",     1)         == "c\na\nt"
+     * >>> Strings.wrap("cat",     1, false)  == "cat"
+     * >>> Strings.wrap("cat dog", 2)         == "ca\nt \ndo\ng"
+     * >>> Strings.wrap("cat dog", 2, false)  == "cat\n dog"
+     * </code></pre>
+     */
+    public static function wrap(str:String, maxLineLength:Int, splitLongWords:Bool = true, newLineSeparator = "\n") {
+        if (str.length8() <= maxLineLength || maxLineLength < 1) 
+            return str;
+        
+        var sb = new StringBuilder();
+        var wordChars:Array<Char> = [];
+        var currLineLength = 0;
+        for (ch in str.toChars()) {
+            if (ch.isWhitespace()) {
+                if (wordChars.length > 0) {
+                    for (wordCh in wordChars) {
+                        if (currLineLength == maxLineLength && splitLongWords) {
+                            sb.add(newLineSeparator);
+                            currLineLength = 0;
+                        }
+                        currLineLength++;
+                        sb.addChar(wordCh);
+                    }
+                    wordChars = [];
+                }
+                if (currLineLength >= maxLineLength) {
+                    sb.add(newLineSeparator);
+                    currLineLength = 0;
+                }
+                sb.addChar(ch);
+                currLineLength++;
+            } else {
+                wordChars.push(ch);
+            }
+        }
+        if (wordChars.length > 0) {
+            for (wordCh in wordChars) {
+                if (currLineLength == maxLineLength && splitLongWords) {
+                    sb.add(newLineSeparator);
+                    currLineLength = 0;
+                }
+                currLineLength++;
+                sb.addChar(wordCh);
+            }
+        }
+        return sb.toString();
+    }
 }
 
 class ANSIState {
