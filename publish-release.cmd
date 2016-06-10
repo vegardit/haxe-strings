@@ -9,7 +9,7 @@
 setlocal
 set PROJECT_ROOT=%~dp0
 cd %PROJECT_ROOT%
-set ARTIFACT=haxe-doctest
+set ARTIFACT=haxe-strings
 set REPO=vegardit/%ARTIFACT%
 set DRAFT=false
 set PREPRELEASE=false
