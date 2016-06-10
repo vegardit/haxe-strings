@@ -9,6 +9,6 @@
         "vegardit"
     ],
     "releasenote": "added new methods to Strings class. introduced Pattern class.",
-    "version": "1.2.0",
+    "version": "1.1.0",
     "dependencies": { }
 }
