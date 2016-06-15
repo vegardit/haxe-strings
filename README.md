@@ -100,7 +100,7 @@ class MyClass {
 ### Using `haxelib git`
 
 ```
-haxelib git haxe-doctest https://github.com/vegardit/haxe-strings.git master
+haxelib git haxe-strings https://github.com/vegardit/haxe-strings.git master
 ```
 
 ###  Using Subversion
@@ -112,7 +112,7 @@ haxelib git haxe-doctest https://github.com/vegardit/haxe-strings.git master
 
 2. register the development release with haxe
     ```
-    haxelib dev haxe-doctest D:\haxe-projects\haxe-strings
+    haxelib dev haxe-strings D:\haxe-projects\haxe-strings
     ```
 
     
