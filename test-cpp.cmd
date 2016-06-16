@@ -21,6 +21,7 @@ haxe -main hx.strings.TestRunner ^
 -cp test ^
 -dce full ^
 -debug ^
+-D HXCPP_CHECK_POINTER ^
 -D dump=pretty ^
 -cpp target\cpp || goto :eof
 
