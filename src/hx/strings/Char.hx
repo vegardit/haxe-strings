@@ -19,7 +19,7 @@ using hx.strings.Strings;
  * <pre><code>
  * >>> Char.of(32)        == 32
  * >>> Char.of(32)        == Char.of(32)
- * >>> Char.of(32)        == " "
+ * >>> Char.of(32) == " " == true
  * >>> " " == Char.of(32) == true
  * >>> Char.of(32)        < 128
  * >>> Char.of(32)        < Char.of(50)
