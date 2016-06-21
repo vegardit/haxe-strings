@@ -8,12 +8,49 @@ package hx.strings;
 
 import haxe.Int32;
 import haxe.Utf8;
+import haxe.crypto.Adler32;
 import haxe.crypto.Base64;
+import haxe.crypto.Crc32;
+import haxe.crypto.Md5;
 import haxe.io.Bytes;
 import hx.strings.Pattern;
 import hx.strings.internal.Either3;
 
 using hx.strings.Strings;
+
+/**
+ * https://defuse.ca/checksums.htm
+ * 
+ * http://www.partow.net/programming/hashfunctions/
+ * http://programmers.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
+ * https://github.com/rurban/smhasher
+ */
+enum HashCodeAlgorithm {
+    
+    PLATFORM_SPECIFIC;
+    
+    ADLER32;
+
+    /**
+     * http://stackoverflow.com/questions/10953958/can-crc32-be-used-as-a-hash-function
+     */
+    CRC32B;
+    
+    /**
+     * http://www.cse.yorku.ca/~oz/hash.html
+     */
+    DJB2A; 
+    
+    /**
+     * Java String#hashCode()
+     */
+    JAVA;
+    
+    /**
+     * http://www.cse.yorku.ca/~oz/hash.html
+     */
+    SDBM;
+}
 
 /**
  * Utility functions for Strings with UTF-8 support and consistent behavior accross platforms. 
@@ -101,37 +138,45 @@ class Strings {
     /**
      * no bounds checking
      */
-    private static function _splitWordsUnsafe(str:String) {
+    private static function _splitAsciiWordsUnsafe(str:String) {
         var words = new Array<String>();
         var currentWord = new StringBuilder();
 
         var chars = str.toChars();
 
-        for (i in 0...chars.length) {
+        var len = chars.length;
+        var lastIndex = len - 1;
+        for (i in 0...len) {
             var ch = chars[i];
-            switch(ch) {
-                case Char.MINUS, Char.UNDERSCORE, Char.SPACE:
-                    if (currentWord.length > 0) {
+            if (ch.isAsciiAlpha()) {
+                var chNext = i < lastIndex ? chars[i + 1] : -1;
+                currentWord.addChar(ch);
+                if (chNext.isDigit()) {
+                    words.push(currentWord.toString());
+                    currentWord.clear();                    
+                } else if (ch.isUpperCase()) {
+                    if (chNext.isUpperCase() && chars.length > i + 2) {
+                        if(!chars[i + 2].isUpperCase()) {
+                            words.push(currentWord.toString());
+                            currentWord.clear();
+                        }
+                    }
+                } else /*if (!ch.isUpperCase()) */ {
+                    if(chNext.isUpperCase()) {
                         words.push(currentWord.toString());
                         currentWord.clear();
                     }
-                default:
-                    if(ch.isAsciiPrintable()) { // skip non-printable characters
-                        currentWord.addChar(ch);
-                        if (ch.isUpperCase()) {
-                            if (chars[i + 1].isUpperCase() && chars.length > i + 2) {
-                                if(!chars[i + 2].isUpperCase()) {
-                                    words.push(currentWord.toString());
-                                    currentWord.clear();
-                                }
-                            }
-                        } else {
-                            if(chars[i + 1].isUpperCase()) {
-                                words.push(currentWord.toString());
-                                currentWord.clear();
-                            }
-                        }
-                    }
+                }
+            } else if (ch.isDigit()) {
+                currentWord.addChar(ch);
+                var chNext = i < lastIndex ? chars[i + 1] : -1;
+                if (!chNext.isDigit()) {
+                    words.push(currentWord.toString());
+                    currentWord.clear();                    
+                }
+            } else if (currentWord.length > 0) {
+                words.push(currentWord.toString());
+                currentWord.clear();
             }
         }
         
@@ -782,6 +827,57 @@ class Strings {
 
         return StringTools.endsWith(searchIn, searchFor);
     }
+        
+    /**
+     * <pre><code>
+     * >>> Strings.endsWithAny(null, ["cat"])            == false
+     * >>> Strings.endsWithAny("", [""])                 == true
+     * >>> Strings.endsWithAny("dogcat", null)           == false
+     * >>> Strings.endsWithAny("dogcat", [null])         == false
+     * >>> Strings.endsWithAny("dogcat", [""])           == true
+     * >>> Strings.endsWithAny("dogcat", ["cat"])        == true
+     * >>> Strings.endsWithAny("dogcat", ["dog", "cat"]) == true
+     * >>> Strings.endsWithAny("dogcat", ["dog"])        == false
+     * >>> Strings.endsWithAny("はい", ["は", "い"])       == true
+     * >>> Strings.endsWithAny("はい", ["は"])            == false
+     * </code></pre>
+     */
+    public static function endsWithAny(searchIn:String, searchFor:Array<String>):Bool {
+        if (searchIn == null || searchFor == null)
+            return false;
+        
+        for (candidate in searchFor) {            
+            if (candidate != null && StringTools.endsWith(searchIn, candidate))
+                return true;
+        }
+        return false;
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Strings.endsWithAnyIgnoreCase(null, ["cat"])            == false
+     * >>> Strings.endsWithAnyIgnoreCase("", [""])                 == true
+     * >>> Strings.endsWithAnyIgnoreCase("dogcat", null)           == false
+     * >>> Strings.endsWithAnyIgnoreCase("dogcat", [null])         == false
+     * >>> Strings.endsWithAnyIgnoreCase("dogcat", [""])           == true
+     * >>> Strings.endsWithAnyIgnoreCase("dogcat", ["CAT"])        == true
+     * >>> Strings.endsWithAnyIgnoreCase("dogcat", ["DOG", "CAT"]) == true
+     * >>> Strings.endsWithAnyIgnoreCase("dogcat", ["DOG"])        == false
+     * >>> Strings.endsWithAnyIgnoreCase("はい", ["は", "い"])       == true
+     * >>> Strings.endsWithAnyIgnoreCase("はい", ["は"])            == false
+     * </code></pre>
+     */
+    public static function endsWithAnyIgnoreCase(searchIn:String, searchFor:Array<String>):Bool {
+        if (searchIn == null || searchFor == null)
+            return false;
+        
+        searchIn = searchIn.toLowerCase8();
+        for (candidate in searchFor) {            
+            if (candidate != null && StringTools.endsWith(searchIn, candidate.toLowerCase8()))
+                return true;
+        }
+        return false;
+    }
     
     /**
      * <pre><code>
@@ -1026,28 +1122,61 @@ class Strings {
     }
     
     /**
-     * @return a (platform dependent) hashcode for the given string
+     * @return a (by default platform dependent) hashcode for the given string
      * 
      * <pre><code>
-     * >>> Strings.hashCode(null)  == 0
-     * >>> Strings.hashCode("")    == 0
+     * >>> Strings.hashCode(null)                 == 0
+     * >>> Strings.hashCode("")                   == 0
+     * >>> Strings.hashCode("dog & cat")          != 0
+     * >>> Strings.hashCode("dog & cat", ADLER32) == 0x0E3302D9
+     * >>> Strings.hashCode("dog & cat", CRC32B)  == 0x285CEE6C
+     * >>> Strings.hashCode("dog & cat", DJB2A)   == 0x439DDCD9
+     * >>> Strings.hashCode("dog & cat", JAVA)    == 0x76C244F8
+     * >>> Strings.hashCode("dog & cat", SDBM)    == 0x329DB138
      * </code></pre>
      */
-    public static function hashCode(str:String):Int {
+    public static function hashCode(str:String, ?algo:HashCodeAlgorithm):Int {
         if (str.isEmpty())
             return 0;
 
-        #if java
-            return untyped __java__("str.hashCode()");
-        #elseif cs
-            return untyped __cs__("str.GetHashCode()");
-        #else
-            var hc:Int32 = 0;
-            for(i in 0...str.length8()) {
-                hc = 31 * hc + str._charCodeAt8Unsafe(i);
-            }
-            return hc;
-        #end
+        if (algo == null) algo = PLATFORM_SPECIFIC;
+        
+        return switch(algo) {                   
+            case ADLER32:    
+                Adler32.make(str.toBytes());
+
+            case CRC32B:
+                Crc32.make(str.toBytes());
+
+            case DJB2A:
+                var hc:Int32 = 5381;
+                for (ch in str.toChars()) 
+                    hc = ((hc << 5) + hc /* hc * 33 */) ^ ch;
+                hc;
+
+            case JAVA:
+                var hc:Int32 = 0;
+                for (ch in str.toChars()) 
+                    hc = ((hc << 5) - hc /* hc * 31 */) + ch;
+                hc;
+
+            case SDBM:
+                var hc:Int32 = 0;
+                for (ch in str.toChars()) 
+                    hc = ((hc << 6) + (hc << 16) - hc /* 65599 * hc */) + ch;
+                hc;
+                
+            default: // PLATFORM SPECIFIC
+                #if java
+                    untyped __java__("str.hashCode()");
+                #elseif cs
+                    untyped __cs__("str.GetHashCode()");
+                #elseif python
+                    untyped hash(str);
+                #else
+                    Crc32.make(str.toBytes());
+                #end
+        }
     }
     
     /**
@@ -2079,6 +2208,57 @@ class Strings {
     
     /**
      * <pre><code>
+     * >>> Strings.startsWithAny(null, ["cat"])            == false
+     * >>> Strings.startsWithAny("", [""])                 == true
+     * >>> Strings.startsWithAny("dogcat", null)           == false
+     * >>> Strings.startsWithAny("dogcat", [null])         == false
+     * >>> Strings.startsWithAny("dogcat", [""])           == true
+     * >>> Strings.startsWithAny("dogcat", ["dog"])        == true
+     * >>> Strings.startsWithAny("dogcat", ["dog", "cat"]) == true
+     * >>> Strings.startsWithAny("dogcat", ["cat"])        == false
+     * >>> Strings.startsWithAny("はい", ["は", "い"])       == true
+     * >>> Strings.startsWithAny("はい", ["い"])            == false
+     * </code></pre>
+     */
+    public static function startsWithAny(searchIn:String, searchFor:Array<String>):Bool {
+        if (searchIn == null || searchFor == null)
+            return false;
+        
+        for (candidate in searchFor) {            
+            if (candidate != null && StringTools.startsWith(searchIn, candidate))
+                return true;
+        }
+        return false;
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Strings.startsWithAnyIgnoreCase(null, ["cat"])            == false
+     * >>> Strings.startsWithAnyIgnoreCase("", [""])                 == true
+     * >>> Strings.startsWithAnyIgnoreCase("dogcat", null)           == false
+     * >>> Strings.startsWithAnyIgnoreCase("dogcat", [null])         == false
+     * >>> Strings.startsWithAnyIgnoreCase("dogcat", [""])           == true
+     * >>> Strings.startsWithAnyIgnoreCase("dogcat", ["DOG"])        == true
+     * >>> Strings.startsWithAnyIgnoreCase("dogcat", ["DOG", "CAT"]) == true
+     * >>> Strings.startsWithAnyIgnoreCase("dogcat", ["CAT"])        == false
+     * >>> Strings.startsWithAnyIgnoreCase("はい", ["は", "い"])       == true
+     * >>> Strings.startsWithAnyIgnoreCase("はい", ["い"])            == false
+     * </code></pre>
+     */
+    public static function startsWithAnyIgnoreCase(searchIn:String, searchFor:Array<String>):Bool {
+        if (searchIn == null || searchFor == null)
+            return false;
+        
+        searchIn = searchIn.toLowerCase8();
+        for (candidate in searchFor) {            
+            if (candidate != null && StringTools.startsWith(searchIn, candidate.toLowerCase8()))
+                return true;
+        }
+        return false;
+    }
+    
+    /**
+     * <pre><code>
      * >>> Strings.startsWithIgnoreCase(null, "cat")     == false
      * >>> Strings.startsWithIgnoreCase("", "")          == true
      * >>> Strings.startsWithIgnoreCase("dogcat", null)  == false
@@ -2751,21 +2931,27 @@ class Strings {
      * First character lower case, e.g., "stringBuilder".
      * 
      * <pre><code>
-     * >>> Strings.toLowerCamel(null)          == null
-     * >>> Strings.toLowerCamel("")            == ""
-     * >>> Strings.toLowerCamel("dog-cat")     == "dogCat"
-     * >>> Strings.toLowerCamel("dog_cat")     == "dogCat"
-     * >>> Strings.toLowerCamel("dog cat")     == "dogCat"
-     * >>> Strings.toLowerCamel("AnXMLParser") == "anXMLParser"
+     * >>> Strings.toLowerCamel(null)                 == null
+     * >>> Strings.toLowerCamel("")                   == ""
+     * >>> Strings.toLowerCamel("dog-cat")            == "dogCat"
+     * >>> Strings.toLowerCamel("dog_cat")            == "dogCat"
+     * >>> Strings.toLowerCamel("dog cat")            == "dogCat"
+     * >>> Strings.toLowerCamel("1dog2cat3")          == "1Dog2Cat3"
+     * >>> Strings.toLowerCamel("AnXMLParser")        == "anXMLParser"
+     * >>> Strings.toLowerCamel("AnXMLParser", false) == "anXmlParser"
      * </code></pre>
      */
-    public static function toLowerCamel(str:String) {
+    public static function toLowerCamel(str:String, keepUppercasedWords = true) {
         if (str.isEmpty())
             return str;
         
         var sb = new StringBuilder();
-        for (word in _splitWordsUnsafe(str))
-            sb.add(word.toUpperCaseFirstChar());
+        if(keepUppercasedWords)
+            for (word in _splitAsciiWordsUnsafe(str))
+                sb.add(word.toUpperCaseFirstChar());
+        else
+            for (word in _splitAsciiWordsUnsafe(str))
+                sb.add(word.toLowerCase8().toUpperCaseFirstChar());
         return sb.toString().toLowerCaseFirstChar();
     }
     
@@ -2778,8 +2964,9 @@ class Strings {
      * >>> Strings.toLowerHyphen(null)          == null
      * >>> Strings.toLowerHyphen("")            == ""
      * >>> Strings.toLowerHyphen("dog-cat")     == "dog-cat"
-     * >>> Strings.toLowerHyphen("dog_cat")     == "dog-cat"
-     * >>> Strings.toLowerHyphen("dog cat")     == "dog-cat"
+     * >>> Strings.toLowerHyphen("Dog_cat")     == "dog-cat"
+     * >>> Strings.toLowerHyphen("Dog Cat")     == "dog-cat"
+     * >>> Strings.toLowerHyphen("1Dog2Cat3")   == "1-dog-2-cat-3"
      * >>> Strings.toLowerHyphen("AnXMLParser") == "an-xml-parser"
      * </code></pre>
      */
@@ -2787,7 +2974,7 @@ class Strings {
         if (str.isEmpty())
             return str;
 
-        return _splitWordsUnsafe(str).map(function(s) return s.toLowerCase8()).join("-");
+        return _splitAsciiWordsUnsafe(str).map(function(s) return s.toLowerCase8()).join("-");
     }
     
     /**
@@ -2799,8 +2986,9 @@ class Strings {
      * >>> Strings.toLowerUnderscore(null)          == null
      * >>> Strings.toLowerUnderscore("")            == ""
      * >>> Strings.toLowerUnderscore("dog-cat")     == "dog_cat"
-     * >>> Strings.toLowerUnderscore("dog_cat")     == "dog_cat"
-     * >>> Strings.toLowerUnderscore("dog cat")     == "dog_cat"
+     * >>> Strings.toLowerUnderscore("Dog_cat")     == "dog_cat"
+     * >>> Strings.toLowerUnderscore("Dog Cat")     == "dog_cat"
+     * >>> Strings.toLowerUnderscore("1Dog2Cat3")   == "1_dog_2_cat_3"
      * >>> Strings.toLowerUnderscore("AnXMLParser") == "an_xml_parser"
      * </code></pre>
      */
@@ -2808,7 +2996,35 @@ class Strings {
         if (str.isEmpty())
             return str;
 
-        return _splitWordsUnsafe(str).map(function(s) return s.toLowerCase8()).join("_");
+        return _splitAsciiWordsUnsafe(str).map(function(s) return s.toLowerCase8()).join("_");
+    }
+    
+    /**
+     * Decamels (=first-char uppercase words separated by space) the given input string.
+     * 
+     * <pre><code>
+     * >>> Strings.toTitle(null)                 == null
+     * >>> Strings.toTitle("")                   == ""
+     * >>> Strings.toTitle("dog-cat")            == "Dog Cat"
+     * >>> Strings.toTitle("dog_Cat")            == "Dog Cat"
+     * >>> Strings.toTitle("Dog cat")            == "Dog Cat"
+     * >>> Strings.toTitle("1Dog2Cat3")          == "1 Dog 2 Cat 3"
+     * >>> Strings.toTitle("anXMLParser")        == "An XML Parser"
+     * >>> Strings.toTitle("anXMLParser", false) == "An Xml Parser"
+     * </code></pre>
+     */
+    public static function toTitle(str:String, keepUppercasedWords = true) {
+        if (str.isEmpty())
+            return str;
+
+        if(keepUppercasedWords)
+            return _splitAsciiWordsUnsafe(str).map(function(s) {
+                return s.toUpperCase8() == s ? s : s.toLowerCase8().toUpperCaseFirstChar();
+            }).join(" ");
+            
+        return _splitAsciiWordsUnsafe(str).map(function(s) {
+            return s.toLowerCase8().toUpperCaseFirstChar();
+        }).join(" ");
     }
     
     /**
@@ -2817,21 +3033,26 @@ class Strings {
      * First character upper case, e.g., "StringBuilder".
      * 
      * <pre><code>
-     * >>> Strings.toUpperCamel(null)          == null
-     * >>> Strings.toUpperCamel("")            == ""
-     * >>> Strings.toUpperCamel("dog-cat")     == "DogCat"
-     * >>> Strings.toUpperCamel("dog_cat")     == "DogCat"
-     * >>> Strings.toUpperCamel("dog cat")     == "DogCat"
-     * >>> Strings.toUpperCamel("AnXMLParser") == "AnXMLParser"
+     * >>> Strings.toUpperCamel(null)                 == null
+     * >>> Strings.toUpperCamel("")                   == ""
+     * >>> Strings.toUpperCamel("dog-cat")            == "DogCat"
+     * >>> Strings.toUpperCamel("dog_cat")            == "DogCat"
+     * >>> Strings.toUpperCamel("dog cat")            == "DogCat"
+     * >>> Strings.toUpperCamel("anXMLParser")        == "AnXMLParser"
+     * >>> Strings.toUpperCamel("anXMLParser", false) == "AnXmlParser"
      * </code></pre>
      */
-    public static function toUpperCamel(str:String) {
+    public static function toUpperCamel(str:String, keepUppercasedWords = true) {
         if (str.isEmpty())
             return str;
         
         var sb = new StringBuilder();
-        for (word in _splitWordsUnsafe(str))
-            sb.add(word.toUpperCaseFirstChar());
+        if(keepUppercasedWords)
+            for (word in _splitAsciiWordsUnsafe(str))
+                sb.add(word.toUpperCaseFirstChar());
+        else
+            for (word in _splitAsciiWordsUnsafe(str))
+                sb.add(word.toLowerCase8().toUpperCaseFirstChar());        
         return sb.toString();
     }
     
@@ -2846,14 +3067,14 @@ class Strings {
      * >>> Strings.toUpperUnderscore("dog-cat")     == "DOG_CAT"
      * >>> Strings.toUpperUnderscore("dog_cat")     == "DOG_CAT"
      * >>> Strings.toUpperUnderscore("dog cat")     == "DOG_CAT"
-     * >>> Strings.toUpperUnderscore("AnXMLParser") == "AN_XML_PARSER"
+     * >>> Strings.toUpperUnderscore("anXMLParser") == "AN_XML_PARSER"
      * </code></pre>
      */
     public static function toUpperUnderscore(str:String) {
         if (str.isEmpty())
             return str;
 
-        return _splitWordsUnsafe(str).map(function(s) return s.toUpperCase8()).join("_");
+        return _splitAsciiWordsUnsafe(str).map(function(s) return s.toUpperCase8()).join("_");
     }
     
     /**
