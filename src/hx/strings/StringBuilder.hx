@@ -21,6 +21,7 @@ using hx.strings.Strings;
  * >>> new StringBuilder("hi").prepend(1).toString()        == "1hi"
  * >>> new StringBuilder("hi").prepend(1).toString()        == "1hi"
  * >>> new StringBuilder("hi").prependAll([1,2]).toString() == "12hi"
+ * >>> new StringBuilder("").addChar(223).toString()        == "ß"
  * >>> new StringBuilder("hi").addChar(12399).toString()    == "hiは"
  * >>> new StringBuilder("hi").prependChar(32).toString()   == " hi"
  * </code></pre>
@@ -79,9 +80,9 @@ class StringBuilder {
 	
 	/**
      * <pre><code>
-     * >>> new StringBuilder(null).add(null).toString()         == "null"
-     * >>> new StringBuilder("hi").add(null).toString()         == "hinull"
-     * >>> new StringBuilder("hi").add(1).toString()            == "hi1"
+     * >>> new StringBuilder(null).add(null).toString() == "null"
+     * >>> new StringBuilder("hi").add(null).toString() == "hinull"
+     * >>> new StringBuilder("hi").add(1).toString()    == "hi1"
      * </code></pre>
      * 
 	 * @return <code>this</code> for chained operations
@@ -102,12 +103,12 @@ class StringBuilder {
         #if (java || flash)
             sb.addChar(ch);
         #else
-            if (ch > 255) {
+            if (ch.isAscii()) {
+                sb.addChar(ch);
+            } else {
                 var ch8 = new Utf8();
                 ch8.addChar(ch);
                 sb.add(ch8.toString());
-            } else {
-                sb.addChar(ch);
             }
         #end
         
@@ -152,8 +153,8 @@ class StringBuilder {
     
 	/**
      * <pre><code>
-     * >>> new StringBuilder("").isEmpty()      == true
-     * >>> new StringBuilder("cat").isEmpty()   == false
+     * >>> new StringBuilder("").isEmpty()    == true
+     * >>> new StringBuilder("cat").isEmpty() == false
      * </code></pre>
      * 
      * @return <code>true</code> if no chars/strings have been added to the string builder yet
@@ -242,5 +243,7 @@ class StringBuilder {
         
         len = str.length8();
         return str;
+        
 	}
+    
 }
