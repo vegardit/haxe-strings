@@ -17,15 +17,15 @@ using hx.strings.Strings;
  * Represents a single character
  * 
  * <pre><code>
- * >>> Char.of(32)                  == 32
- * >>> Char.of(32) == Char.of(32)   == true
- * >>> Char.of(32) == " "           == true
- * >>> " " == Char.of(32)           == true
- * >>> Char.of(32) < 255            == true
- * >>> Char.of(32) < Char.of(50)    == true
- * >>> Char.of(" ")                 == 32
- * >>> Char.of(32) + " "            == "  "
- * >>> " " + Char.of(32)            == "  "
+ * >>> Char.of(32)        == 32
+ * >>> Char.of(32)        == Char.of(32)
+ * >>> Char.of(32)        == " "
+ * >>> " " == Char.of(32) == true
+ * >>> Char.of(32)        < 128
+ * >>> Char.of(32)        < Char.of(50)
+ * >>> Char.of(" ")       == 32
+ * >>> Char.of(32) + " "  == "  "
+ * >>> " " + Char.of(32)  == "  "
  * </code></pre>
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
@@ -315,17 +315,18 @@ abstract Char(Int) from Int to Int {
      * @return <code>true</code> if between 32 and 126 inclusive
      * 
      * <pre><code>
-     * >>> Char.of(" ").isAsciiPrintable()  == true
-     * >>> Char.of("1").isAsciiPrintable()  == true
-     * >>> Char.of("\t").isAsciiPrintable() == false
-     * >>> Char.of("は").isAsciiPrintable()  == false
-     * >>> Char.of(-1).isAsciiPrintable()   == false
-     * >>> Char.of(0).isAsciiPrintable()    == false
-     * >>> Char.of(31).isAsciiPrintable()   == false
-     * >>> Char.of(32).isAsciiPrintable()   == true
-     * >>> Char.of(126).isAsciiPrintable()  == true
-     * >>> Char.of(127).isAsciiPrintable()  == false
-     * >>> Char.of(128).isAsciiPrintable()  == false
+     * >>> Char.of(" ").isAsciiPrintable()   == true
+     * >>> Char.of("1").isAsciiPrintable()   == true
+     * >>> Char.of("\t").isAsciiPrintable()  == false
+     * >>> Char.of("は").isAsciiPrintable()   == false
+     * >>> Char.of(-1).isAsciiPrintable()    == false
+     * >>> Char.of(0).isAsciiPrintable()     == false
+     * >>> Char.of(31).isAsciiPrintable()    == false
+     * >>> Char.of(32).isAsciiPrintable()    == true
+     * >>> Char.of(126).isAsciiPrintable()   == true
+     * >>> Char.of(127).isAsciiPrintable()   == false
+     * >>> Char.of(128).isAsciiPrintable()   == false
+     * >>> Char.of(12399).isAsciiPrintable() == false
      * </code></pre>
      */
     inline
