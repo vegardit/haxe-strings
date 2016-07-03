@@ -140,7 +140,7 @@ class Test {
         var trainingText = haxe.Http.requestUrl("http://www.norvig.com/big.txt");
         // populating the dictionary might take a while:
         EnglishDictionaryTrainer.INSTANCE.trainWithString(myDict, trainingText);
-        // let's use the dictionary with a spell checker
+        // let's use the trained dictionary with a spell checker
         var mySpellChecker = new EnglishSpellChecker(myDict);
         mySpellChecker.INSTANCE.correctWord("speling");  // returns "spelling"
         
