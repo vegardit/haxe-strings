@@ -125,7 +125,7 @@ class Test {
          * let's check the pre-trained German spell checker
          */
         GermanSpellChecker.INSTANCE.correctWord("schreibweise");  // returns "Schreibweise"
-        GermanSpellChecker.INSTANCE.correctWord("Schreibwiese");  // returns returns  "Schreibweise"
+        GermanSpellChecker.INSTANCE.correctWord("Schreibwiese");  // returns "Schreibweise"
         GermanSpellChecker.INSTANCE.correctWord("SCHREIBWEISE");  // returns "Schreibweise"
         GermanSpellChecker.INSTANCE.correctWord("SCHRIBWEISE");   // returns "Schreibweise"
         GermanSpellChecker.INSTANCE.correctWord("Schre1bweise");  // returns "Schreibweise"
