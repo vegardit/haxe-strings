@@ -161,7 +161,7 @@ The package `hx.strings.collection` contains some useful collection classes for 
 
 1. `StringSet` is a collection of unique strings. Each string is guaranteed to only exists once within the collection.
 
-   ```
+   ```haxe
    var set = new hx.strings.collection.StringSet();
    set.add("a");
    set.add("a");
