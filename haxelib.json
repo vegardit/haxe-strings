@@ -1,14 +1,14 @@
 {
     "name": "haxe-strings",
     "url": "https://github.com/vegardit/haxe-strings",
-	"license": "MIT",
+	"license": "Apache",
 	"classPath": "src/",
     "tags": [ "strings","cross","general","utils","helpers","vegardit" ],
     "description": "A haxelib for consistent cross-platform UTF-8 string manipulation.",
     "contributors": [
         "vegardit"
     ],
-    "releasenote": "added methods to Strings class. fixed StringBuilder.addChar(). improved Strings.hashCode()",
-    "version": "1.2.0",
+    "releasenote": "changed to Apache License 2.0, added spell checker, added collection classes, see CHANGELOG.md for all details",
+    "version": "2.0.0",
     "dependencies": { }
 }

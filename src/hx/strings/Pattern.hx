@@ -1,8 +1,17 @@
 /*
  * Copyright (c) 2016 Vegard IT GmbH, http://vegardit.com
  * 
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE.txt file for details.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package hx.strings;
 
@@ -11,10 +20,103 @@ import hx.strings.internal.Either3;
 using hx.strings.Strings;
 
 /**
+ * Thread safe API for regex pattern matching backed by Haxe's EReg class.
+ * 
+ * UTF8 matching (EReg's 'u' flag) is enabled by default.
+ * 
+ * @see http://haxe.org/manual/std-regex.html
+ * 
+ * @author Sebastian Thomschke, Vegard IT GmbH
+ */
+@immutable
+@threadSafe
+class Pattern {
+    
+    public var pattern(default, null):String;
+    public var options(default, null):String;
+    var ereg:EReg;
+    
+    /**
+     * @param pattern regular expression
+     * @param options matching options
+     */
+    public static function compile(pattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
+        if(options == null)
+            return new Pattern(pattern, "");
+
+        return new Pattern(pattern, switch(options.value) {
+            case a(str): str.toLowerCase8().filterChars(function(ch) {
+                    // remove unsupported flags
+                    return 
+                        ch == 'i' || ch == 'm' || ch == 'g'
+                        #if (cpp || flash || java || neko || php)
+                        || ch == 's'
+                        #end
+                        ;
+                });
+            case b(opt): opt.toString();
+            case c(arr): arr.join("");
+        });
+    }
+    
+    function new(pattern:String, options:String) {
+        this.pattern = pattern;
+        this.options = options;
+        this.ereg = new EReg(pattern, options);
+        
+        // explicitly enable UTF8
+        this.options += "u";
+    }
+
+    /**
+     * <pre><code>
+     * >>> Pattern.compile(".*").matcher("a").matches() == true
+     * </code></pre>
+     * 
+     * @return a matcher (not thread-safe) that works on the given input string
+     */
+    inline
+    public function matcher(str:String):Matcher {
+        return new MatcherImpl(ereg, pattern, options, str);
+    }
+
+    /**
+     * Replaces all matches with <b>replaceWith</b>.
+     * 
+     * <pre><code>
+     * >>> Pattern.compile("[.]"     ).replace("a.b.c", ":") == "a:b.c"
+     * >>> Pattern.compile("[.]", "g").replace("a.b.c", ":") == "a:b:c"
+     * </code></pre>
+     */
+    inline
+    public function replace(str:String, replaceWith:String):String {
+        return ereg.replace(str, replaceWith);
+    }
+
+    /**
+     * Uses matches as separator to split the string.
+     * 
+     * <pre><code>
+     * >>> Pattern.compile("[.]"     ).split("a.b.c") == [ "a", "b.c" ]
+     * >>> Pattern.compile("[.]", "g").split("a.b.c") == [ "a", "b", "c" ]
+     * </code></pre>
+     */
+    inline
+    public function split(str:String):Array<String> {
+        return ereg.split(str);
+    }
+}
+
+/**
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @notThreadSafe
 interface Matcher {
+        
+    /**
+     * Iterates over all matches and invokes the onMatch function for each match.
+     */
+    public function iterate(onMatch:Matcher -> Void):Void;
     
     /**
      * Iterates over all matches and invokes the mapper function for each match.
@@ -22,7 +124,7 @@ interface Matcher {
      * @return a string with all matches replaced by the mapper
      */
     public function map(mapper:Matcher -> String):String;
-    
+
     /**
      * If no match attempt was made before Matcher#matches() will be excuted implicitly.
      * 
@@ -128,94 +230,6 @@ abstract MatchingOption(String) {
     var MATCH_ALL = "g";
 }
 
-/**
- * Thread safe API for regex pattern matching backed by Haxe's EReg class.
- * 
- * UTF8 matching is enabled by default.
- * 
- * @see http://haxe.org/manual/std-regex.html
- * 
- * @author Sebastian Thomschke, Vegard IT GmbH
- */
-@immutable
-@threadSafe
-class Pattern {
-    
-    public var pattern(default, null):String;
-    public var options(default, null):String;
-    var ereg:EReg;
-    
-    /**
-     * @param pattern regular expression
-     * @param options matching options
-     */
-    public static function compile(pattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
-        if(options == null)
-            return new Pattern(pattern, "");
-
-        return new Pattern(pattern, switch(options.value) {
-            case a(str): str.toLowerCase8().filterChars(function(ch) {
-                    // remove unsupported flags
-                    return 
-                        ch == 'i' || ch == 'm' || ch == 'g'
-                        #if (cpp || flash || java || neko || php)
-                        || ch == 's'
-                        #end
-                        ;
-                });
-            case b(opt): opt.toString();
-            case c(arr): arr.join("");
-        });
-    }
-    
-    function new(pattern:String, options:String) {
-        this.pattern = pattern;
-        this.options = options;
-        this.ereg = new EReg(pattern, options);
-        
-        // explicitly enable UTF8
-        this.options += "u";
-    }
-
-    /**
-     * <pre><code>
-     * >>> Pattern.compile(".*").matcher("a").matches() == true
-     * </code></pre>
-     * 
-     * @return a matcher (not thread-safe) that works on the given input string
-     */
-    inline
-    public function matcher(str:String):Matcher {
-        return new MatcherImpl(ereg, pattern, options, str);
-    }
-
-    /**
-     * Replaces all matches with <b>replaceWith</b>.
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).replace("a.b.c", ":") == "a:b.c"
-     * >>> Pattern.compile("[.]", "g").replace("a.b.c", ":") == "a:b:c"
-     * </code></pre>
-     */
-    inline
-    public function replace(str:String, replaceWith:String):String {
-        return ereg.replace(str, replaceWith);
-    }
-
-    /**
-     * Uses matches as separator to split the string.
-     * 
-     * <pre><code>
-     * >>> Pattern.compile("[.]"     ).split("a.b.c") == [ "a", "b.c" ]
-     * >>> Pattern.compile("[.]", "g").split("a.b.c") == [ "a", "b", "c" ]
-     * </code></pre>
-     */
-    inline
-    public function split(str:String):Array<String> {
-        return ereg.split(str);
-    }
-}
-
 private class MatcherImpl implements Matcher {
     
     var pattern:String;
@@ -232,6 +246,18 @@ private class MatcherImpl implements Matcher {
         this.str = str;
     }
     
+    public function iterate(onMatch:Matcher -> Void):Void {
+        var startAt = 0;
+        while(ereg.matchSub(str, startAt)) {
+            isMatch = true;
+            var matchedPos = ereg.matchedPos();
+            onMatch(this);
+            startAt = matchedPos.pos + matchedPos.len;
+            
+        }
+        isMatch = false;
+    }
+    
     public function map(mapper:Matcher -> String):String {
         return ereg.map(str, function(ereg) {
             isMatch = true;
@@ -240,13 +266,15 @@ private class MatcherImpl implements Matcher {
     }
 
     public function matched(n:Int = 0):String {
-        if (isMatch == null) matches();
-        if (isMatch == false) throw "No string matched";
+        if(isMatch == null) matches();
+        if(!isMatch) throw "No string matched";
         
         var result = ereg.matched(n);
+        
         #if (cs || php) // workaround for targets with non-compliant implementation
-        if (result == null) throw 'Group $n not found.';
+            if(result == null) throw 'Group $n not found.';
         #end
+        
         return result;
     }
     
@@ -261,21 +289,21 @@ private class MatcherImpl implements Matcher {
     }
     
     public function matchedPos(): { pos:Int, len:Int } {
-        if (isMatch == null) matches();
-        if (isMatch == false) throw "No string matched";
+        if(isMatch == null) matches();
+        if(!isMatch) throw "No string matched";
 
         return ereg.matchedPos();
     }
     
     public function substringAfterMatch():String {
-        if (isMatch == null) matches();
-        if (!isMatch) return "";
+        if(isMatch == null) matches();
+        if(!isMatch) return "";
         return ereg.matchedRight();
     }
     
     public function substringBeforeMatch():String {
-        if (isMatch == null) matches();
-        if (!isMatch) return "";
+        if(isMatch == null) matches();
+        if(!isMatch) return "";
         return ereg.matchedLeft();
     }
 

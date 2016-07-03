@@ -1,8 +1,17 @@
 /*
  * Copyright (c) 2016 Vegard IT GmbH, http://vegardit.com
  * 
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE.txt file for details.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package hx.strings;
 
@@ -66,7 +75,7 @@ class Strings {
     static var REGEX_SPLIT_LINES = Pattern.compile("\\r?\\n", MATCH_ALL);
     
     #if !php
-    static var REGEX_STRIP_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
+    static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
     #end
     
     static var REGEX_IS_WINDOWS = Pattern.compile("windows", IGNORE_CASE);
@@ -356,6 +365,58 @@ class Strings {
         #end
     }
     
+    /**
+     * Determines the Fuzzy Distance between the given strings. A higher value indicates a higher similarity.
+     * 
+     * This string matching algorithm is case-insensitive and similar to the algorithms of editors such as
+     * Sublime Text, TextMate, and Atom. One point is given for every matched character. Subsequent
+     * matches receive two additional points.
+     *
+     * <pre>
+     * >>> Strings.calculateFuzzyDistance(null, null)                          == 0
+     * >>> Strings.calculateFuzzyDistance("", "")                              == 0
+     * >>> Strings.calculateFuzzyDistance("dogcat", "z")                       == 0
+     * >>> Strings.calculateFuzzyDistance("dogcat", "d")                       == 1
+     * >>> Strings.calculateFuzzyDistance("dogcat", "o")                       == 1
+     * >>> Strings.calculateFuzzyDistance("dogcat", "dc")                      == 2
+     * >>> Strings.calculateFuzzyDistance("dc", "dogcat")                      == 2
+     * >>> Strings.calculateFuzzyDistance("dogcat", "do")                      == 4
+     * >>> Strings.calculateFuzzyDistance("Laughing Out Loud", "lol")          == 3
+     * </pre>
+     */
+    public static function calculateFuzzyDistance(left:String, right:String) {
+        if (left.isEmpty() || right.isEmpty())
+            return 0;
+
+        left = left.toLowerCase8();
+        right = right.toLowerCase8();
+            
+        var leftChars = left.toChars();
+        var rightChars = right.toChars();
+        var leftLastMatchAt = -100;
+        var rightLastMatchAt = -100;
+        
+        var score = 0;
+        
+        for (leftIdx in 0...leftChars.length) {
+            var leftChar = leftChars[leftIdx];
+            for (rightIdx in (rightLastMatchAt > -1 ? rightLastMatchAt + 1 : 0)...rightChars.length) {
+                var rightChar = rightChars[rightIdx];
+                if (leftChar == rightChar) {
+                    score++;
+                    if ((leftLastMatchAt == leftIdx - 1) && (rightLastMatchAt == rightIdx - 1)) {
+                        score += 2;
+                    }
+                    leftLastMatchAt = leftIdx;
+                    rightLastMatchAt = rightIdx;
+                    break;
+                }
+            }
+        }
+        
+        return score;
+    }
+
     /**
      * String#charAt() variant with cross-platform UTF-8 support.
      * 
@@ -777,16 +838,17 @@ class Strings {
      * @return the UTF8 character position where the strings begin to differ or -1 if they are equal
      * 
      * <pre><code>
-     * >>> Strings.diffAt(null, null)       == -1
-     * >>> Strings.diffAt(null, "")         == 0
-     * >>> Strings.diffAt("", null)         == 0
-     * >>> Strings.diffAt("", "")           == -1
-     * >>> Strings.diffAt("", "cat")        == 0
-     * >>> Strings.diffAt("cat", "")        == 0
-     * >>> Strings.diffAt("cat", "dog")     == 0
-     * >>> Strings.diffAt("cat", "cat")     == -1
-     * >>> Strings.diffAt("cat", "catdog")  == 3
-     * >>> Strings.diffAt("catdog", "cat")  == 3
+     * >>> Strings.diffAt(null, null)               == -1
+     * >>> Strings.diffAt(null, "")                 == 0
+     * >>> Strings.diffAt("", null)                 == 0
+     * >>> Strings.diffAt("", "")                   == -1
+     * >>> Strings.diffAt("", "cat")                == 0
+     * >>> Strings.diffAt("cat", "")                == 0
+     * >>> Strings.diffAt("cat", "dog")             == 0
+     * >>> Strings.diffAt("cat", "cat")             == -1
+     * >>> Strings.diffAt("cat", "catdog")          == 3
+     * >>> Strings.diffAt("It's green", "It's red") == 5
+     * >>> Strings.diffAt("catdog", "cat")          == 3
      * </code></pre>
      */
     public static function diffAt(str:String, other:String):CharPos {
@@ -1018,10 +1080,10 @@ class Strings {
      * <pre><code>
      * >>> Strings.globToRegEx(null)          == null
      * >>> Strings.globToRegEx("")            == ""
-     * >>> Strings.globToRegEx("file")        == "file$"
-     * >>> Strings.globToRegEx("*.txt")       == "[^\\\\^\\/]*\\.txt$"
-     * >>> Strings.globToRegEx("*file*")      == "[^\\\\^\\/]*file[^\\\\^\\/]*$"
-     * >>> Strings.globToRegEx("file?.txt")   == "file[^\\\\^\\/]\\.txt$"
+     * >>> Strings.globToRegEx("file")        == "^file$"
+     * >>> Strings.globToRegEx("*.txt")       == "^[^\\\\^\\/]*\\.txt$"
+     * >>> Strings.globToRegEx("*file*")      == "^[^\\\\^\\/]*file[^\\\\^\\/]*$"
+     * >>> Strings.globToRegEx("file?.txt")   == "^file[^\\\\^\\/]\\.txt$"
      * >>> Strings.globToRegEx("**" + "/file?.txt").toEReg().match("aa/bb/file1.txt") == true
      * >>> Strings.globToRegEx("*.txt").toEReg().match("file.txt")       == true
      * >>> Strings.globToRegEx("*.txt").toEReg().match("file.pdf")       == false
@@ -1035,6 +1097,7 @@ class Strings {
             return globPattern;
 
         var sb = new StringBuilder();
+        sb.addChar(Char.CARET);
         var chars = globPattern.toChars();
         var chPrev:Char = -1;
         var groupDepth = 0;
@@ -1567,6 +1630,38 @@ class Strings {
     }
     
     /**
+     * <pre><code>
+     * >>> Strings.isLowerCase(null)   == false
+     * >>> Strings.isLowerCase("")     == false
+     * >>> Strings.isLowerCase("cat")  == true
+     * >>> Strings.isLowerCase("CAT")  == false
+     * >>> Strings.isLowerCase("cAt")  == false
+     * >>> Strings.isLowerCase("cat2") == true
+     * </code></pre>
+     */
+    public static function isLowerCase(str:String):Bool {
+        if (str.isEmpty()) 
+            return false;
+        return str == str.toLowerCase8();
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Strings.isUpperCase(null)   == false
+     * >>> Strings.isUpperCase("")     == false
+     * >>> Strings.isUpperCase("CAT")  == true
+     * >>> Strings.isUpperCase("cat")  == false
+     * >>> Strings.isUpperCase("cAt")  == false
+     * >>> Strings.isUpperCase("CAT2") == true
+     * </code></pre>
+     */
+    public static function isUpperCase(str:String):Bool {
+        if (str.isEmpty()) 
+            return false;
+        return str == str.toUpperCase8();
+    }
+    
+    /**
      * Invokes the callback function separately on each character/substring of the given string.
      */
     public static function iterate(str:String, callback:String -> Void, separator = ""):Void {
@@ -1730,6 +1825,28 @@ class Strings {
     }
     
     /**
+     * <pre><code>
+     * >>> Strings.left(null, 1)     == null
+     * >>> Strings.left("", 0)       == ""
+     * >>> Strings.left("", 1)       == ""
+     * >>> Strings.left("abc", 0)    == ""
+     * >>> Strings.left("abc", 2)    == "ab"
+     * >>> Strings.left("abc", 4)    == "abc"
+     * >>> Strings.left("abc", -1)   == ""
+     * >>> Strings.left("はいはい", 2) == "はい"
+     * </code></pre>
+     * 
+     * @return the leftmost <b>len</b> characters of the given string
+     */
+    inline
+    public static function left(str:String, len:Int) {
+        if (str.length8() <= len)
+            return str;
+
+        return str.substring8(0, len);
+    }
+    
+    /**
      * Left pads <b>str</b> with <b>padStr</b> until <b>targetLength</b> is reached.
      * 
      * <pre><code>
@@ -1766,27 +1883,7 @@ class Strings {
         if (canOverflow)
             return sb.join("");
 
-        return sb.join("").substr(strLen - targetLength);
-    }
-    
-    /**
-     * Removes leading whitespace characters of <b>str</b>.
-     * 
-     * <pre><code>
-     * >>> Strings.ltrim(null)      == null
-     * >>> Strings.ltrim("")        == ""
-     * >>> Strings.ltrim("   ")     == ""
-     * >>> Strings.ltrim("\n\t\r")  == ""
-     * >>> Strings.ltrim("  abc  ") == "abc  "
-     * >>> Strings.ltrim("  はい  ") == "はい  "
-     * </code></pre>
-     */
-    inline
-    public static function ltrim(str:String):String {
-        if (str.isEmpty()) 
-            return str;
-
-        return StringTools.ltrim(str);
+        return sb.join("").right(targetLength);
     }
     
     /**
@@ -1901,7 +1998,101 @@ class Strings {
 
         return StringTools.replace(searchIn, searchFor, "");
     }
+   
+    /**
+     * Removes all ANSI escape sequences from the given string.
+     * 
+     * <pre><code>
+     * >>> Strings.removeAnsi(null)                         == null
+     * >>> Strings.removeAnsi("")                           == ""
+     * >>> Strings.removeAnsi("\x1B[1mHello World!\x1B[0m") == "Hello World!"
+     * </code></pre>
+     */
+    public static function removeAnsi(str:String):String {
+        if (str.isEmpty())
+            return str;
+
+        return REGEX_ANSI_ESC.replace(str, "");
+    }
     
+    /**
+     * Removes the substring <b>searchFor</b> from the start of the given string.
+     * 
+     * <pre><code>
+     * >>> Strings.removeLeading(null, null)   == null
+     * >>> Strings.removeLeading(null, "")     == null
+     * >>> Strings.removeLeading("", null)     == ""
+     * >>> Strings.removeLeading("", "")       == ""
+     * >>> Strings.removeLeading("abab", "a")  == "bab"
+     * >>> Strings.removeLeading("aba",  "b")  == "aba"
+     * >>> Strings.removeLeading("/aba", "/")  == "aba"
+     * >>> Strings.removeLeading("//aba", "/") == "aba"
+     * >>> Strings.removeLeading("はい", "は")   == "い"
+     * >>> Strings.removeLeading("いはい", "は") == "いはい"
+     * </code></pre>
+     */
+    public static function removeLeading(searchIn:String, searchFor:String):String {
+        if (searchIn.isEmpty() || searchFor.isEmpty())
+            return searchIn;
+
+        while (searchIn.startsWith(searchFor)) {
+            searchIn = searchIn.substring(searchFor.length, searchIn.length);
+        }
+        return searchIn;
+    }
+       
+    /**
+     * Removes all XML tags from the given string.
+     * 
+     * <pre><code>
+     * >>> Strings.removeTags(null)                   == null
+     * >>> Strings.removeTags("")                     == ""
+     * >>> Strings.removeTags("dog")                  == "dog"
+     * >>> Strings.removeTags("<b>dog</b>")           == "dog"
+     * >>> Strings.removeTags("<!-- cat -->dog")      == "dog"
+     * >>> Strings.removeTags("<ol><li>dog</ol>")     == "dog"
+     * >>> Strings.removeTags("<b\n>dog\n</b\n>")     == "dog\n"
+     * >>> Strings.removeTags("<b>はい</b>")           == "はい"
+     * </code></pre>
+     */
+    inline
+    public static function removeTags(xml:String):String {
+        if (xml.isEmpty())
+            return xml;
+
+        #if php
+            return untyped __call__("strip_tags", xml);
+        #else
+            return REGEX_REMOVE_XML_TAGS.replace(xml, "");
+        #end
+    }
+    
+    /**
+     * Removes the substring <b>searchFor</b> from the end of the given string.
+     * 
+     * <pre><code>
+     * >>> Strings.removeTrailing(null, null)   == null
+     * >>> Strings.removeTrailing(null, "")     == null
+     * >>> Strings.removeTrailing("", null)     == ""
+     * >>> Strings.removeTrailing("", "")       == ""
+     * >>> Strings.removeTrailing("abab", "b")  == "aba"
+     * >>> Strings.removeTrailing("aba",  "b")  == "aba"
+     * >>> Strings.removeTrailing("aba/", "/")  == "aba"
+     * >>> Strings.removeTrailing("aba//", "/") == "aba"
+     * >>> Strings.removeTrailing("いは", "は")  == "い"
+     * >>> Strings.removeTrailing("いはい", "は") == "いはい"
+     * </code></pre>
+     */
+    public static function removeTrailing(searchIn:String, searchFor:String):String {
+        if (searchIn.isEmpty() || searchFor.isEmpty())
+            return searchIn;
+
+        while(searchIn.endsWith(searchFor)) {
+            searchIn = searchIn.substring(0, searchIn.length - searchFor.length);
+        }
+        return searchIn;
+    }
+
     /**
      * <pre><code>
      * >>> Strings.repeat(null, 3)      == null
@@ -2044,6 +2235,26 @@ class Strings {
     }
     
     /**
+     * <pre><code>
+     * >>> Strings.right(null, 1)    == null
+     * >>> Strings.right("", 0)      == ""
+     * >>> Strings.right("", 1)      == ""
+     * >>> Strings.right("abc", 0)   == ""
+     * >>> Strings.right("abc", 2)   == "bc"
+     * >>> Strings.right("abc", 4)   == "abc"
+     * >>> Strings.right("abc", -1)  == ""
+     * </code></pre>
+     * 
+     * @return the rightmost <b>len</b> characters of the given string
+     */
+    public static function right(str:String, len:Int) {
+        if (str.isEmpty()) 
+            return str;
+            
+        return str.substring8(str.length8() - len);
+    }
+    
+    /**
      * Right pads <b>str</b> with <b>padStr</b> until <b>targetLength</b> is reached.
      * 
      * <pre><code>
@@ -2080,27 +2291,7 @@ class Strings {
         if (canOverflow)
             return sb.toString();
 
-        return sb.toString().truncate(targetLength);
-    }
-
-    /**
-     * Removes trailing whitespace characters.
-     * 
-     * <pre><code>
-     * >>> Strings.rstrip(null)      == null
-     * >>> Strings.rstrip("")        == ""
-     * >>> Strings.rstrip("   ")     == ""
-     * >>> Strings.rstrip("\n\t\r")  == ""
-     * >>> Strings.rstrip("  abc  ") == "  abc"
-     * >>> Strings.rstrip("  はい  ") == "  はい"
-     * </code></pre>
-     */
-    inline
-    public static function rstrip(str:String):String {
-        if (str.isEmpty()) 
-            return str;
-
-        return StringTools.rtrim(str);
+        return sb.toString().left(targetLength);
     }
 
     /**
@@ -2276,49 +2467,6 @@ class Strings {
             
         return StringTools.startsWith(searchIn.toLowerCase(), searchFor.toLowerCase());
     }
-    
-
-    /**
-     * Removes all ANSI escape sequences from the given string.
-     * 
-     * <pre><code>
-     * >>> Strings.stripAnsi(null)                         == null
-     * >>> Strings.stripAnsi("")                           == ""
-     * >>> Strings.stripAnsi("\x1B[1mHello World!\x1B[0m") == "Hello World!"
-     * </code></pre>
-     */
-    public static function stripAnsi(str:String):String {
-        if (str.isEmpty())
-            return str;
-
-        return REGEX_ANSI_ESC.replace(str, "");
-    }
-
-    /**
-     * Removes all XML tags from the given string.
-     * 
-     * <pre><code>
-     * >>> Strings.stripTags(null)                   == null
-     * >>> Strings.stripTags("")                     == ""
-     * >>> Strings.stripTags("dog")                  == "dog"
-     * >>> Strings.stripTags("<b>dog</b>")           == "dog"
-     * >>> Strings.stripTags("<!-- cat -->dog")      == "dog"
-     * >>> Strings.stripTags("<ol><li>dog</ol>")     == "dog"
-     * >>> Strings.stripTags("<b\n>dog\n</b\n>")     == "dog\n"
-     * >>> Strings.stripTags("<b>はい</b>")           == "はい"
-     * </code></pre>
-     */
-    inline
-    public static function stripTags(xml:String):String {
-        if (xml.isEmpty())
-            return xml;
-
-        #if php
-            return untyped __call__("strip_tags", xml);
-        #else
-            return REGEX_STRIP_XML_TAGS.replace(xml, "");
-        #end
-    }
 
     /**
      * @return <b>len</b> characters of <b>str</b>, starting from <b>startAt</b>.
@@ -2440,7 +2588,7 @@ class Strings {
     public static function substringAfter(str:String, separator:String):String {
         if (str.isEmpty())
             return str;
-        
+
         if (separator.isEmpty()) 
             return "";
         
@@ -3165,6 +3313,46 @@ class Strings {
     }
     
     /**
+     * Removes trailing whitespace characters.
+     * 
+     * <pre><code>
+     * >>> Strings.trimRight(null)      == null
+     * >>> Strings.trimRight("")        == ""
+     * >>> Strings.trimRight("   ")     == ""
+     * >>> Strings.trimRight("\n\t\r")  == ""
+     * >>> Strings.trimRight("  abc  ") == "  abc"
+     * >>> Strings.trimRight("  はい  ") == "  はい"
+     * </code></pre>
+     */
+    inline
+    public static function trimRight(str:String):String {
+        if (str.isEmpty()) 
+            return str;
+
+        return StringTools.rtrim(str);
+    }
+    
+    /**
+     * Removes leading whitespace characters of <b>str</b>.
+     * 
+     * <pre><code>
+     * >>> Strings.trimLeft(null)      == null
+     * >>> Strings.trimLeft("")        == ""
+     * >>> Strings.trimLeft("   ")     == ""
+     * >>> Strings.trimLeft("\n\t\r")  == ""
+     * >>> Strings.trimLeft("  abc  ") == "abc  "
+     * >>> Strings.trimLeft("  はい  ") == "はい  "
+     * </code></pre>
+     */
+    inline
+    public static function trimLeft(str:String):String {
+        if (str.isEmpty()) 
+            return str;
+
+        return StringTools.ltrim(str);
+    }
+    
+    /**
      * Trims all lines and changes new line character to linux style "\n".
      * 
      * <pre><code>
@@ -3196,12 +3384,12 @@ class Strings {
         if (str == null)
             return null;
             
-        var stripped = str.trim();
+        var trimmed = str.trim();
         
-        if (stripped.isEmpty()) 
+        if (trimmed.isEmpty()) 
             return null;
             
-        return stripped;
+        return trimmed;
     }
     
     /**
@@ -3215,12 +3403,12 @@ class Strings {
      */
     inline
     public static function trimToEmpty(str:String):String {
-        var stripped = str.trim();
+        var trimmed = str.trim();
         
-        if (stripped.isEmpty()) 
+        if (trimmed.isEmpty()) 
             return "";
 
-        return stripped;
+        return trimmed;
     }
 
     /**
@@ -3234,12 +3422,10 @@ class Strings {
      * >>> Strings.truncate("はいはい", 2)  == "はい"
      * </code></pre>
      */
+    inline
     public static function truncate(str:String, maxLength:Int):String {
-        if (str.length8() <= maxLength)
-            return str;
-
-        return str.substring8(0, maxLength);
-    }
+        return left(str, maxLength);
+    }  
     
     /**
      * <pre><code>

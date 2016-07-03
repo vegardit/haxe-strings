@@ -1,8 +1,9 @@
 # haxe-strings - [StringTools](http://api.haxe.org/StringTools.html) on steroids.
 
 1. [What is it?](#what-is-it)
-1. [The Strings class](#strings-class)
-1. [Some examples](#examples)
+1. [The Strings utility class](#strings-class)
+1. [The Spell Checker](#spell-checker)
+1. [The String collection classes](#string-collections)
 1. [Installation](#installation)
 1. [Using the latest code](#latest)
 1. [License](#license)
@@ -16,7 +17,7 @@ It has been extensively unit tested (over 1,100 individual test cases) on the ta
 The classes are under the package `hx.strings`.
 
 
-## <a name="strings-class"></a>The `Strings` class
+## <a name="strings-class"></a>The `Strings` utility class
 
 The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class provides handy utility methods for string manipulations.
 
@@ -28,14 +29,12 @@ provided by Haxe's [String](http://api.haxe.org/String.html) class, offering UTF
 The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class can also be used as a [static extension](http://haxe.org/manual/lf-static-extension.html).
 
     
-## <a name="examples"></a>Some examples
+### <a name="strings-examples"></a>Some examples
 
 ```haxe
-package com.example;
-
 using hx.strings.Strings; // augment all Strings with new functions
 
-class MyClass {
+class Test {
 
     static function main() {
         // Strings are extended:
@@ -64,8 +63,8 @@ class MyClass {
         "はいはい".length8();          // returns 4
 
         // ANSI escape sequence processing:
-        "\x1B[1;33mHello World!\x1B[0m".ansiToHtml(); // returns '<span style="color:yellow;font-weight:bold;">Hello World!</span>'
-        "\x1B[1mHello World!\x1B[0m".stripAnsi();     // returns "Hello World!"
+        "\x1B[1;33mHello World!\x1B[0m".ansiToHtml();  // returns '<span style="color:yellow;font-weight:bold;">Hello World!</span>'
+        "\x1B[1mHello World!\x1B[0m".removeAnsi();     // returns "Hello World!"
 
         // use glob pattern matching:
         "src/**/*.hx".globToEReg().match("src/haxe/strings/Char.hx");            // returns true
@@ -77,10 +76,99 @@ class MyClass {
         "MyCSSClass".toLowerHyphen();      // returns "my-css-class"
         "MyCSSClass".toLowerUnderscore();  // returns "my_css_class"
         "myCSSClass".toUpperUnderscore();  // returns "MY_CSS_CLASS"
+        
+        // string differences:
+        "It's green".diffAt("It's red"); // returns 5
+        "It's green".diff("It's red");   // returns { left: 'green', right: 'red', pos: 5 }
+        
+        // hash codes:
+        "Cool String".hashCode();       // generate a platform specific hash code
+        "Cool String".hashCode(CRC32);  // generate a hash code using CRC32
+        "Cool String".hashCode(JAVA);   // generate a hash code using the Java algorithm
+        
+        // cleanup:
+        "/my/path/".removeLeading("/");       // returns "my/path/"
+        "/my/path/".removeTrailing("/");      // returns "/my/path"
+        "<i>So</i> <b>nice</b>".removeTags(); // returns "So nice"
     }
 }
 ```
 
+## <a name="spell-checker"></a>The Spell Checker
+
+The package `hx.strings.spelling` contains an extensible spell checker implementation that is based on ideas outlined by Peter Norvig in his article [How to write a Spell Checker](http://www.norvig.com/spell-correct.html).
+
+The SpellChecker#correctWord method can for example be used to implement a Google-like "did you mean 'xyz'?" feature for a custom search engine.
+
+Now let's do some spelling checking...
+
+```haxe
+import hx.strings.spelling.checker.*;
+import hx.strings.spelling.dictionary.*;
+import hx.strings.spelling.trainer.*;
+
+class Test {
+
+    static function main() {
+        /* 
+         * first we use the English spell checker with a pre-trained dictionary 
+         * that is bundled with the library:
+         */
+        EnglishSpellChecker.INSTANCE.correctWord("speling");  // returns "spelling"
+        EnglishSpellChecker.INSTANCE.correctWord("SPELING");  // returns "spelling"
+        EnglishSpellChecker.INSTANCE.correctWord("SPELLING"); // returns "spelling"
+        EnglishSpellChecker.INSTANCE.correctWord("spell1ng"); // returns "spelling"
+        EnglishSpellChecker.INSTANCE.correctText("sometinG zEems realy vrong!") // returns "something seems really wrong!"
+        EnglishSpellChecker.INSTANCE.suggestWords("absance"); // returns [ "absence", "advance", "balance" ]
+        
+        /* 
+         * let's check the pre-trained German spell checker
+         */
+        GermanSpellChecker.INSTANCE.correctWord("schreibweise");  // returns "Schreibweise"
+        GermanSpellChecker.INSTANCE.correctWord("Schreibwiese");  // returns returns  "Schreibweise"
+        GermanSpellChecker.INSTANCE.correctWord("SCHREIBWEISE");  // returns "Schreibweise"
+        GermanSpellChecker.INSTANCE.correctWord("SCHRIBWEISE");   // returns "Schreibweise"
+        GermanSpellChecker.INSTANCE.correctWord("Schre1bweise");  // returns "Schreibweise"
+        GermanSpellChecker.INSTANCE.correctText("etwaz kohmische Aepfel ligen vör der Thür"); // returns "etwas komische Äpfel liegen vor der Tür"
+        GermanSpellChecker.INSTANCE.suggestWords("Sistem");       // returns[ "System", "Sitte", "Sitten" ]
+
+        /*
+         * now we train our own dictionary from scratch
+         */
+        var myDict = new InMemoryDictionary("English");
+        // download some training text with good vocabular
+        var trainingText = haxe.Http.requestUrl("http://www.norvig.com/big.txt");
+        // populating the dictionary might take a while:
+        EnglishDictionaryTrainer.INSTANCE.trainWithString(myDict, trainingText);
+        // let's use the dictionary with a spell checker
+        var mySpellChecker = new EnglishSpellChecker(myDict);
+        mySpellChecker.INSTANCE.correctWord("speling");  // returns "spelling"
+        
+        // since training a dictionary can be quite time consuming, we save
+        // the analyzed words and their popularity/frequency to a file
+        myDict.exportWordsToFile("myDict.txt");
+        
+        // the word list can later be loaded using
+        myDict.loadWordsFromFile("myDict.txt");
+    }
+}
+```
+
+
+## <a name="string-collections"></a>The String collection classes
+
+The package `hx.strings.collection` contains some useful collection classes for Strings.
+
+1. `StringSet` is a collection where each string is guaranteed to only be contained once.
+   ```
+   var set = new hx.strings.collection.StringSet();
+   set.add("a");
+   set.add("a");
+   set.add("b");
+   // at this point set only contains one 'a' and one 'b'
+   ```
+1. `SortedStringSet` is a collection of strings sorted. A custom comparator can be provided for using different sorting algorithm.
+1. `StringTreeMap` is a map that is sorted by there keys (which are of type String).
 
 ## <a name="installation"></a>Installation
 
@@ -118,4 +206,4 @@ haxelib git haxe-strings https://github.com/vegardit/haxe-strings.git master
     
 ## <a name="license"></a>License
 
-All files are released under the [MIT license](https://github.com/vegardit/haxe-strings/blob/master/LICENSE.txt).
+All files are released under the [Apache License 2.0](https://github.com/vegardit/haxe-strings/blob/master/LICENSE.txt).

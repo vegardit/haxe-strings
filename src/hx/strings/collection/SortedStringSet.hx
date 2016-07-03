@@ -13,42 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hx.strings.internal;
+package hx.strings.collection;
 
 /**
- * <b>IMPORTANT:</b> This class it not part of the API. Direct usage is discouraged.
+ * hx.strings.collection.StringTree backed sorted set implementation.
+ * 
+ * <pre><code>
+ * >>> new SortedStringSet(["", "c", "a", "b", "a"]).toArray()  ==  [ "", "a", "b", "c" ]
+ * >>> new SortedStringSet(["", "c", "a", "b", "a"]).toString() == '[ "", "a", "b", "c" ]'
+ * </code></pre>
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-@:dox(hide)
-abstract Either2<A,B>(_Either2<A,B>) {
-	
-    inline
-	public function new(value:_Either2<A,B>) {
-        this = value;
-    }
-	
-	public var value(get,never):_Either2<A,B>;
-    inline
-    function get_value():_Either2<A,B> {
-        return this;
-    }
+class SortedStringSet extends StringSet {
 
-	@:from
-    inline
-    static function fromA<A,B>(value:A):Either2<A,B> {
-        return new Either2(a(value));
+    var cmp:String -> String -> Int;
+    
+    public function new(?initialItems:Array<String>, ?comparator:String -> String -> Int) {
+        cmp = comparator;
+        super(initialItems);
     }
     
-	@:from
-    inline
-    static function fromB<A,B>(value:B):Either2<A,B> {
-        return new Either2(b(value));
+    override
+    public function clear():Void {
+        map = new StringTreeMap<Bool>(cmp);
     }
-}
-
-@:dox(hide)
-private enum _Either2<A, B> {
-	a(v:A);
-	b(v:B);
 }

@@ -13,30 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hx.strings;
+package hx.strings.spelling.dictionary;
 
 /**
- * Return value of hx.strings.Strings#diff(String, String)
- * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-class StringDiff {
-    
-    public function new() {
-    }
+interface TrainableDictionary extends Dictionary {
+
+    /**
+     * removes all trained words
+     */
+    public function clear():Void;
     
     /**
-     * position where the strings start to differ
+     * removes the given word from the dictionary
+     * 
+     * @return true if the word was removed, false if the word didn't exist
      */
-    public var pos:CharPos;
-    
+    public function remove(word:String):Bool;
+
     /**
-     * diff of the left string
+     * adds the word to the dictionary or if it exists already increases it's popularity score
+     * 
+     * @return the new popularity score
      */
-    public var left:String;
-    
+    public function train(word:String):Int;
+
     /**
-     * diff of the right string
+     * Only leaves the n-most popular words in the dictionary
+     * 
+     * @return number of removed words
      */
-    public var right:String;
+    public function trimTo(n:Int):Int;
 }

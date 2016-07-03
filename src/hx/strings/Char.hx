@@ -1,8 +1,17 @@
 /*
  * Copyright (c) 2016 Vegard IT GmbH, http://vegardit.com
  * 
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE.txt file for details.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package hx.strings;
 
@@ -45,12 +54,12 @@ abstract Char(Int) from Int to Int {
     public static inline var TAB:Char = 9;
     
     /**
-     * character code for line feed
+     * character code for line feed \n
      */
     public static inline var LF:Char = 10;
     
     /**
-     * character code for carriage return
+     * character code for carriage return \r
      */
     public static inline var CR:Char = 13;
     
@@ -128,7 +137,62 @@ abstract Char(Int) from Int to Int {
      * character code for /
      */
     public static inline var SLASH:Char = 47;
+    
+    /**
+     * character code for 0
+     */
+    public static inline var ZERO:Char = 48;
+    
+    /**
+     * character code for 1
+     */
+    public static inline var ONE:Char = 49;
+    
+    /**
+     * character code for 2
+     */
+    public static inline var TWO:Char = 50;
+    
+    /**
+     * character code for 3
+     */
+    public static inline var TRHEE:Char = 51;
+    
+    /**
+     * character code for 4
+     */
+    public static inline var FOUR:Char = 52;
         
+    /**
+     * character code for 5
+     */
+    public static inline var FIVE:Char = 53;
+    
+    /**
+     * character code for 6
+     */
+    public static inline var SIX:Char = 54;
+    
+    /**
+     * character code for 7
+     */
+    public static inline var SEVEN:Char = 55;
+    
+    /**
+     * character code for 8
+     */
+    public static inline var EIGHT:Char = 56;
+        
+    /**
+     * character code for 9
+     */
+    public static inline var NINE:Char = 57;
+
+    /**
+     * character code for :
+     */
+    public static inline var COLON:Char = 58;
+    
     /**
      * character code for ;
      */
@@ -168,7 +232,12 @@ abstract Char(Int) from Int to Int {
      * character code for ]
      */
     public static inline var BRACKET_SQUARE_RIGHT:Char = 93;
-    
+
+    /**
+     * character code for ^
+     */
+    public static inline var CARET:Char = 94;
+
     /**
      * character code for _
      */
@@ -549,8 +618,11 @@ private class CharCaseMapper {
     var mapL2U = new IntMap<Char>();
     
     function _addCaseMapping(lowerChar:Char, upperChar:Char) {
-        mapU2L.set(upperChar, lowerChar);
-        mapL2U.set(lowerChar, upperChar);
+        // when multiple mappings exist we only use the first
+        // upper for 0x69  (i) = 0x49 (I)
+        // upper for 0x131 (ı) = 0x49 (I)
+        if(!mapU2L.exists(upperChar)) mapU2L.set(upperChar, lowerChar);
+        if(!mapL2U.exists(lowerChar)) mapL2U.set(lowerChar, upperChar);
     }
     
     inline
