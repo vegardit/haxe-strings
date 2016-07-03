@@ -166,7 +166,8 @@ The package `hx.strings.collection` contains some useful collection classes for 
    set.add("a");
    set.add("a");
    set.add("b");
-   // at this point set only contains one 'a' and one 'b'
+   set.add("b");
+   // at this point the set only contains two elements: one 'a' and one 'b'
    ```
    
 1. `SortedStringSet` is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
