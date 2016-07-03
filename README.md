@@ -160,6 +160,7 @@ class Test {
 The package `hx.strings.collection` contains some useful collection classes for Strings.
 
 1. `StringSet` is a collection of unique strings. Each string is guaranteed to only exists once within the collection.
+
    ```
    var set = new hx.strings.collection.StringSet();
    set.add("a");
@@ -167,15 +168,17 @@ The package `hx.strings.collection` contains some useful collection classes for 
    set.add("b");
    // at this point set only contains one 'a' and one 'b'
    ```
+   
 1. `SortedStringSet` is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
+
 1. `StringTreeMap` is a map that is sorted by there keys (which are of type String).
 
 ## <a name="installation"></a>Installation
 
 1. install the library via haxelib using the command:
-    ```
-    haxelib install haxe-strings
-    ```
+   ```
+   haxelib install haxe-strings
+   ```
 
 2. use in your Haxe project
 
