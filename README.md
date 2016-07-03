@@ -98,9 +98,9 @@ class Test {
 
 The package `hx.strings.spelling` contains an extensible spell checker implementation that is based on ideas outlined by Peter Norvig in his article [How to write a Spell Checker](http://www.norvig.com/spell-correct.html).
 
-The SpellChecker#correctWord method can for example be used to implement a Google-like "did you mean 'xyz'?" feature for a custom search engine.
+The `SpellChecker#correctWord()` method can for example be used to implement a Google-like "did you mean 'xyz'?" feature for a custom search engine.
 
-Now let's do some spelling checking...
+Now let's do some spell checking...
 
 ```haxe
 import hx.strings.spelling.checker.*;
