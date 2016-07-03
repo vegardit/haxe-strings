@@ -364,58 +364,6 @@ class Strings {
             return Base64.decode(encoded).toString();
         #end
     }
-    
-    /**
-     * Determines the Fuzzy Distance between the given strings. A higher value indicates a higher similarity.
-     * 
-     * This string matching algorithm is case-insensitive and similar to the algorithms of editors such as
-     * Sublime Text, TextMate, and Atom. One point is given for every matched character. Subsequent
-     * matches receive two additional points.
-     *
-     * <pre>
-     * >>> Strings.calculateFuzzyDistance(null, null)                          == 0
-     * >>> Strings.calculateFuzzyDistance("", "")                              == 0
-     * >>> Strings.calculateFuzzyDistance("dogcat", "z")                       == 0
-     * >>> Strings.calculateFuzzyDistance("dogcat", "d")                       == 1
-     * >>> Strings.calculateFuzzyDistance("dogcat", "o")                       == 1
-     * >>> Strings.calculateFuzzyDistance("dogcat", "dc")                      == 2
-     * >>> Strings.calculateFuzzyDistance("dc", "dogcat")                      == 2
-     * >>> Strings.calculateFuzzyDistance("dogcat", "do")                      == 4
-     * >>> Strings.calculateFuzzyDistance("Laughing Out Loud", "lol")          == 3
-     * </pre>
-     */
-    public static function calculateFuzzyDistance(left:String, right:String) {
-        if (left.isEmpty() || right.isEmpty())
-            return 0;
-
-        left = left.toLowerCase8();
-        right = right.toLowerCase8();
-            
-        var leftChars = left.toChars();
-        var rightChars = right.toChars();
-        var leftLastMatchAt = -100;
-        var rightLastMatchAt = -100;
-        
-        var score = 0;
-        
-        for (leftIdx in 0...leftChars.length) {
-            var leftChar = leftChars[leftIdx];
-            for (rightIdx in (rightLastMatchAt > -1 ? rightLastMatchAt + 1 : 0)...rightChars.length) {
-                var rightChar = rightChars[rightIdx];
-                if (leftChar == rightChar) {
-                    score++;
-                    if ((leftLastMatchAt == leftIdx - 1) && (rightLastMatchAt == rightIdx - 1)) {
-                        score += 2;
-                    }
-                    leftLastMatchAt = leftIdx;
-                    rightLastMatchAt = rightIdx;
-                    break;
-                }
-            }
-        }
-        
-        return score;
-    }
 
     /**
      * String#charAt() variant with cross-platform UTF-8 support.
@@ -1038,6 +986,177 @@ class Strings {
         return str.toChars().filter(filter).map(function (ch) return ch.toString() ).join("");
 	}
     
+    /**
+     * Calculates the Fuzzy distance between the given strings. A higher value indicates a higher similarity.
+     * 
+     * This string matching algorithm is case-insensitive and similar to the algorithms of editors such as
+     * Sublime Text, TextMate, and Atom. One point is given for every matched character. Subsequent
+     * matches receive two additional points.
+     *
+     * <pre><code>
+     * >>> Strings.getFuzzyDistance(null, null)                 == 0
+     * >>> Strings.getFuzzyDistance("", "")                     == 0
+     * >>> Strings.getFuzzyDistance("dogcat", "z")              == 0
+     * >>> Strings.getFuzzyDistance("dogcat", "d")              == 1
+     * >>> Strings.getFuzzyDistance("dogcat", "o")              == 1
+     * >>> Strings.getFuzzyDistance("dogcat", "dc")             == 2
+     * >>> Strings.getFuzzyDistance("dc", "dogcat")             == 2
+     * >>> Strings.getFuzzyDistance("dogcat", "do")             == 4
+     * >>> Strings.getFuzzyDistance("Laughing Out Loud", "lol") == 3
+     * </code></pre>
+     * 
+     * Based on https://commons.apache.org/proper/commons-lang/javadocs/api-3.4/org/apache/commons/lang3/StringUtils.html#getFuzzyDistance(java.lang.CharSequence,%20java.lang.CharSequence,%20java.util.Locale)
+     */
+    public static function getFuzzyDistance(left:String, right:String) {
+        if (left.isEmpty() || right.isEmpty())
+            return 0;
+
+        left = left.toLowerCase8();
+        right = right.toLowerCase8();
+            
+        var leftChars = left.toChars();
+        var rightChars = right.toChars();
+        var leftLastMatchAt = -100;
+        var rightLastMatchAt = -100;
+        
+        var score = 0;
+        
+        for (leftIdx in 0...leftChars.length) {
+            var leftChar = leftChars[leftIdx];
+            for (rightIdx in (rightLastMatchAt > -1 ? rightLastMatchAt + 1 : 0)...rightChars.length) {
+                var rightChar = rightChars[rightIdx];
+                if (leftChar == rightChar) {
+                    score++;
+                    if ((leftLastMatchAt == leftIdx - 1) && (rightLastMatchAt == rightIdx - 1)) {
+                        score += 2;
+                    }
+                    leftLastMatchAt = leftIdx;
+                    rightLastMatchAt = rightIdx;
+                    break;
+                }
+            }
+        }
+        
+        return score;
+    }
+    
+    /**
+     * Calculates the Levenshtein distance between the given strings.
+     * 
+     * This is the number of single character modification (deletion, insertion, or 
+     * substitution) needed to change one string into another.
+     * 
+     * See https://en.wikipedia.org/wiki/Levenshtein_distance
+     *
+     * <pre><code>
+     * >>> Strings.getLevenshteinDistance(null, null)                 == 0
+     * >>> Strings.getLevenshteinDistance("", "")                     == 0
+     * >>> Strings.getLevenshteinDistance("dogcat", "z")              == 6
+     * >>> Strings.getLevenshteinDistance("dogcat", "d")              == 5
+     * >>> Strings.getLevenshteinDistance("dogcat", "o")              == 5
+     * >>> Strings.getLevenshteinDistance("dogcat", "dc")             == 4
+     * >>> Strings.getLevenshteinDistance("dc", "dogcat")             == 4
+     * >>> Strings.getLevenshteinDistance("dogcat", "do")             == 4
+     * >>> Strings.getLevenshteinDistance("laughing out loud", "lol") == 14
+     * </code></pre>
+     *
+     * Based on https://commons.apache.org/proper/commons-lang/javadocs/api-3.4/org/apache/commons/lang3/StringUtils.html#getLevenshteinDistance(java.lang.CharSequence,%20java.lang.CharSequence)
+     */
+    public static function getLevenshteinDistance(left:String, right:String):Int {
+        var leftLen = left.length8();
+        var rightLen = right.length8();
+        
+        if (leftLen == 0) return rightLen;
+        if (rightLen == 0) return leftLen;
+
+        if (leftLen > rightLen) {
+            // swap the input strings to consume less memory
+            var tmp = left;
+            left = right;
+            right = tmp;
+            var tmpLen = leftLen;
+            leftLen = rightLen;
+            rightLen = tmpLen;
+        }
+
+        var prevCosts = new Array<Int>();
+        var costs = new Array<Int>();
+
+        for (leftIdx in 0...leftLen + 1) {
+            prevCosts.push(leftIdx);
+            costs.push(0);
+        }
+
+        var leftChars = left.toChars();
+        var rightChars = right.toChars();
+
+        var min = function(a:Int, b:Int) return a > b ? b : a;
+        
+        for (rightIdx in 1...rightLen + 1) {
+            var rightChar = rightChars[rightIdx - 1];
+            costs[0] = rightIdx;
+
+            for (leftIdx in 1...leftLen + 1) {
+                var cost = leftChars[leftIdx - 1] == rightChar ? 0 : 1;
+                costs[leftIdx] = min(min(costs[leftIdx - 1] + 1, prevCosts[leftIdx] + 1), prevCosts[leftIdx - 1] + cost);
+            }
+
+            var tmp = prevCosts;
+            prevCosts = costs;
+            costs = tmp;
+        }
+
+        return prevCosts[leftLen];
+    }
+    
+    /**
+     * Determines the longest common substring between the given strings.
+     * 
+     * See https://en.wikipedia.org/wiki/Longest_common_substring_problem
+     * 
+     * <pre><code>
+     * >>> Strings.getLongestCommonSubstring(null, null)                   == null
+     * >>> Strings.getLongestCommonSubstring(null, "")                     == null
+     * >>> Strings.getLongestCommonSubstring("", null)                     == null
+     * >>> Strings.getLongestCommonSubstring("", "")                       == ""
+     * >>> Strings.getLongestCommonSubstring("dog", "")                    == ""
+     * >>> Strings.getLongestCommonSubstring("dogcatcow", "cat")           == "cat"
+     * >>> Strings.getLongestCommonSubstring("1234123456", "123421234516") == "12345"
+     * </code></pre>
+     */
+    public static function getLongestCommonSubstring(left:String, right:String):String {
+        if (left == null || right == null) 
+            return null;
+            
+        var leftLen = left.length8();
+        var rightLen = right.length8();        
+        
+        if (leftLen == 0 || rightLen == 0)
+            return "";
+
+
+        var leftChars = left.toChars();
+        var rightChars = right.toChars();
+        
+        var leftSubStartAt = 0;
+        var leftSubLen = 0;
+        
+        for (leftIdx in 0...leftLen) {
+            for (rightIdx in 0...rightLen) {
+                var currLen = 0;
+                while (leftChars[leftIdx + currLen] == rightChars[rightIdx + currLen]) {
+                    currLen++;
+                    if (((leftIdx + currLen) >= leftLen) || ((rightIdx + currLen) >= rightLen)) break;
+                }
+                if (currLen > leftSubLen) {
+                    leftSubLen = currLen;
+                    leftSubStartAt = leftIdx;
+                }
+            }
+        }
+        return left.substr8(leftSubStartAt, leftSubLen);
+    }
+
     /**
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
      * @return a EReg object

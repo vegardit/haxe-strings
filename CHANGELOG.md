@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ## [2.0.0] - 2016-07-02
 ### Added
 - hx.strings.Pattern.Matcher#iterate()
+- hx.strings.Strings#getLevenshteinDistance()
+- hx.strings.Strings#getFuzzyDistance()
+- hx.strings.Strings#getLongestCommonSubstring()
 - hx.strings.Strings#isLowerCase()
 - hx.strings.Strings#isUpperCase()
 - hx.strings.Strings#left()
