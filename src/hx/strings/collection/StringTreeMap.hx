@@ -32,7 +32,6 @@ class StringTreeMap<V> extends BalancedTree<String, V> implements haxe.Constrain
      */
     public function new(?comparator:String -> String -> Int) {
         super();
-        trace(comparator == null);
         this.cmp = comparator == null ? Strings.compare : comparator;
     }
 
