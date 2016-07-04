@@ -301,6 +301,7 @@ class Paths {
      * <pre><code>
      * >>> Paths.normalize("C:\\dir1\\..\\dir2\\") == "C:/dir2"
      * >>> Paths.normalize("C:\\..\\foo\\")        == "foo"
+     * >>> Paths.normalize("/a/b/../c/")           == "/a/c"
      * >>> Paths.normalize("a/b/../../../")        == ".."
      * >>> Paths.normalize("")                     == ""
      * >>> Paths.normalize(null)                   == null
