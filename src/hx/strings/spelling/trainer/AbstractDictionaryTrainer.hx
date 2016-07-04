@@ -48,10 +48,10 @@ class AbstractDictionaryTrainer implements DictionaryTrainer {
                 line = input.readLine();
                 count += trainWithString(dictionary, line, ignoreUnknownWords);
             }
-        } catch(e:haxe.io.Eof) {
+        } catch(ex:haxe.io.Eof) {
             // expected --> https://github.com/HaxeFoundation/haxe/issues/5418
             if(autoClose) input.close();
-        } catch (e:Dynamic) {
+        } catch (ex:Dynamic) {
             trace('Exception while parsing line #$lineNo [$line]');
             #if neko neko.Lib.rethrow #else throw #end (ex);
             if(autoClose) input.close();
@@ -61,7 +61,7 @@ class AbstractDictionaryTrainer implements DictionaryTrainer {
     
     public function trainWithResource(dictionary:TrainableDictionary, resourceName:String, ignoreUnknownWords:Bool = false):Int {
         trace('Training with resource [$resourceName]...');
-        return trainWithString(dictionary, new BytesInput(Resource.getBytes(resourceName)), ignoreUnknownWords);
+        return trainWithInput(dictionary, new BytesInput(Resource.getBytes(resourceName)), ignoreUnknownWords);
     }
     
     public function trainWithString(dictionary:TrainableDictionary, content:String, ignoreUnknownWords:Bool = false):Int throw "Not implemented";
