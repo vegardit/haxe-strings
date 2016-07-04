@@ -71,16 +71,16 @@ class Paths {
      * >>> Paths.addTrailingSlash("")          == "/"
      * >>> Paths.addTrailingSlash(null)        == null
      * </code></pre>
-	 */
+     */
     public static function addTrailingSlash(path:String):String {
         if (path == null)
             return null;
             
-		if (path.length == 0)
-			return DIRECTORY_SEPARATOR_NIX;
+        if (path.length == 0)
+            return DIRECTORY_SEPARATOR_NIX;
             
-		var nixSepPos = path.lastIndexOf(DIRECTORY_SEPARATOR_NIX);
-		var winSepPos = path.lastIndexOf(DIRECTORY_SEPARATOR_WIN);
+        var nixSepPos = path.lastIndexOf(DIRECTORY_SEPARATOR_NIX);
+        var winSepPos = path.lastIndexOf(DIRECTORY_SEPARATOR_WIN);
 
         if (nixSepPos == -1 && winSepPos == -1) {
             if (path.charCodeAt8(0).isAsciiAlpha() &&  path.charCodeAt8(1) == Char.COLON)
@@ -88,11 +88,11 @@ class Paths {
             return path + DIRECTORY_SEPARATOR_NIX;
         }
         
-		if(nixSepPos < winSepPos) {
-			if (winSepPos != path.length - 1)
+        if(nixSepPos < winSepPos) {
+            if (winSepPos != path.length - 1)
                 return path + DIRECTORY_SEPARATOR_WIN;
             return path;
-		}
+        }
         
         if (nixSepPos != path.length - 1)
             return path + DIRECTORY_SEPARATOR_NIX;
@@ -270,7 +270,7 @@ class Paths {
         return sb.toString();
     }
 
-	/**
+    /**
      * <pre><code>
      * >>> Paths.isAbsolute("/")                == true
      * >>> Paths.isAbsolute("C:\\")             == true
@@ -282,9 +282,9 @@ class Paths {
      * >>> Paths.isAbsolute(null)               == false
      * </code></pre>
      * 
-	 * @return true if the given path is a absolute, otherwise false
-	 */
-	public static function isAbsolute(path:String):Bool {
+     * @return true if the given path is a absolute, otherwise false
+     */
+    public static function isAbsolute(path:String):Bool {
         if (path.isEmpty()) 
             return false;
 
@@ -294,10 +294,10 @@ class Paths {
         if (path.charCodeAt8(0).isAsciiAlpha() && path.charCodeAt8(1) == Char.COLON)
             return true;
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
+    /**
      * <pre><code>
      * >>> Paths.normalize("C:\\dir1\\..\\dir2\\") == "C:/dir2"
      * >>> Paths.normalize("C:\\..\\foo\\")        == "foo"
@@ -305,10 +305,10 @@ class Paths {
      * >>> Paths.normalize("")                     == ""
      * >>> Paths.normalize(null)                   == null
      * </code></pre>
-	 * 
+     * 
      * @return normalized version of the given path with trailing slashes are removed and separators turned into slashes
-	 */
-	public static function normalize(path:String):String {
+     */
+    public static function normalize(path:String):String {
         if (path.isEmpty()) 
             return path;
 
