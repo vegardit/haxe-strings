@@ -45,16 +45,16 @@ class AbstractDictionaryTrainer implements DictionaryTrainer {
         try {
             while (true) {
                 lineNo++;
-                line = is.readLine();
+                line = input.readLine();
                 count += trainWithString(dictionary, line, ignoreUnknownWords);
             }
         } catch(e:haxe.io.Eof) {
             // expected --> https://github.com/HaxeFoundation/haxe/issues/5418
-            if(autoClose) is.close();
+            if(autoClose) input.close();
         } catch (e:Dynamic) {
             trace('Exception while parsing line #$lineNo [$line]');
             #if neko neko.Lib.rethrow #else throw #end (ex);
-            if(autoClose) is.close();
+            if(autoClose) input.close();
         }
         return count;
     }
