@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - hx.strings.collection.StringSet
 - hx.strings.collection.StringTreeMap
 - Spell Checker in package hx.strings.spelling
+- hx.strings.Paths class for path related string manipulations
 ### Changed
 - changed license from MIT to Apache License 2.0
 - renamed hx.strings.Strings#stripAnsi() to hx.strings.Strings#removeAnsi()
@@ -27,7 +28,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - renamed hx.strings.Strings#ltrim() to hx.strings.Strings#trimLeft()
 - renamed hx.strings.Strings#rstrip() to hx.strings.Strings#trimRight()
 - renamed hx.strings.Strings#abbreviate() to hx.strings.Strings#ellipsizeRight()
-- renamed hx.strings.Strings#PATH_SEPARATOR to hx.strings.Strings#DIRECTORY_SEPARATOR
+- renamed hx.strings.Strings#hex() to hx.strings.Strings#toHex()
+- moved hx.strings.Strings#PATH_SEPARATOR to hx.strings.Paths#DIRECTORY_SEPARATOR
+- moved hx.strings.Strings#globToEReg() to hx.strings.Paths#globToEReg()
+- moved hx.strings.Strings#globToPattern() to hx.strings.Paths#globToPattern()
+- moved hx.strings.Strings#globToRegEx() to hx.strings.Paths#globToRegEx()
 - slight performance improvement in hx.strings.StringBuilder
 ### Fixed
 - hx.strings.Char.toLowerCase() was broken for character I

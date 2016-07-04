@@ -330,7 +330,7 @@ abstract Char(Int) from Int to Int {
     }
     
     /**
-     * Tests if the character is ASCII 7 bit alphabetic.
+     * Tests if the character is ASCII 7 bit alphabetic (A-Z, a-z).
      * 
      * @return <code>true</code> if between 65 and 90 or 97 and 122 inclusive
      * 

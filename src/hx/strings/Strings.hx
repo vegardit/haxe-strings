@@ -22,8 +22,10 @@ import haxe.crypto.Base64;
 import haxe.crypto.Crc32;
 import haxe.crypto.Md5;
 import haxe.io.Bytes;
+import haxe.io.Path;
 import hx.strings.Pattern;
 import hx.strings.internal.Either3;
+import hx.strings.internal.OS;
 
 using hx.strings.Strings;
 
@@ -79,38 +81,7 @@ class Strings {
     static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
     #end
     
-    static var REGEX_IS_WINDOWS = Pattern.compile("windows", IGNORE_CASE);
-    
     public static inline var POS_NOT_FOUND:CharPos = -1;
-
-    private static function _isWindows():Bool {
-        #if flash
-        var os = flash.system.Capabilities.os;
-        #elseif hl
-        // TODO https://github.com/HaxeFoundation/haxe/issues/5314
-        var os = "Windows";
-        #elseif js
-        var os = js.Browser.navigator.oscpu;
-        #else
-        var os = Sys.systemName();
-        #end
-        return REGEX_IS_WINDOWS.matcher(os).matches();
-    }
-    
-    /**
-     * Unix-flavor directory separator (slash)
-     */
-    public static inline var DIRECTORY_SEPARATOR_NIX = "/";
-    
-    /**
-     * Windows directory separator (backslash)
-     */
-    public static inline var DIRECTORY_SEPARATOR_WIN = "\\";
-
-    /**
-     * operating system specific directory separator (slash or backslash)
-     */
-    public static var DIRECTORY_SEPARATOR(default, null):String = _isWindows() ? DIRECTORY_SEPARATOR_WIN : DIRECTORY_SEPARATOR_NIX;
     
     /**
      * Unix line separator (LF)
@@ -125,22 +96,7 @@ class Strings {
     /**
      * operating system specific line separator
      */
-    public static var NEW_LINE(default, null):String = _isWindows() ? NEW_LINE_WIN : NEW_LINE_NIX;
-    
-    /**
-     * Unix-flavor path separator (:) used to separate paths in the PATH environment variable
-     */
-    public static inline var PATH_SEPARATOR_NIX = ":";
-    
-    /**
-     * Windows path separator (;) used to separate paths in the PATH environment variable
-     */
-    public static inline var PATH_SEPARATOR_WIN = ";";
-
-    /**
-     * operating system specific path separator (colon or semicolon) used to separate paths in the PATH environment variable
-     */
-    public static var PATH_SEPARATOR(default, null):String = _isWindows() ? PATH_SEPARATOR_WIN : PATH_SEPARATOR_NIX;
+    public static var NEW_LINE(default, null):String = OS.isWindows() ? NEW_LINE_WIN : NEW_LINE_NIX;
 
     /**
      * no bounds checking
@@ -355,21 +311,22 @@ class Strings {
     /**
      * String#charAt() variant with cross-platform UTF-8 support.
      * 
-     * @param pos character position
-     *
      * <pre><code>
-     * >>> Strings.charAt8(null, 0)       == ""
-     * >>> Strings.charAt8("", 0)         == ""
-     * >>> Strings.charAt8("", 0, "x")    == "x"
+     * >>> Strings.charAt8(" dog", 0)     == " "
+     * >>> Strings.charAt8(" dog", 1 )    == "d"
      * >>> Strings.charAt8(" ", -1)       == ""
      * >>> Strings.charAt8(" ", -1, "x")  == "x"
      * >>> Strings.charAt8(" ", 0)        == " "
      * >>> Strings.charAt8(" ", 1)        == ""
      * >>> Strings.charAt8(" ", 10)       == ""
-     * >>> Strings.charAt8(" A", 1 )      == "A"
+     * >>> Strings.charAt8("", 0)         == ""
+     * >>> Strings.charAt8("", 0, "x")    == "x"
+     * >>> Strings.charAt8(null, 0)       == ""
      * >>> Strings.charAt8(" はい", 1)     == "は"
      * >>> Strings.charAt8(" はい", 2)     == "い"
      * </code></pre>
+     * 
+     * @param pos character position
      */
     public static function charAt8(str:String, pos:CharPos, resultIfOutOfBound = ""):String {
         if (str.isEmpty() || pos < 0 || pos >= str.length8())
@@ -385,13 +342,11 @@ class Strings {
     /**
      * String#charCodeAt() variant with cross-platform UTF-8 support.
      * 
-     * @param pos character position
-     * 
      * <pre><code>
-     * >>> Strings.charCodeAt8(null, 0)           == -1
-     * >>> Strings.charCodeAt8(null, 0).isSpace() == false
-     * >>> Strings.charCodeAt8("", 0)             == -1
-     * >>> Strings.charCodeAt8("", 0, -4)         == -4
+     * >>> Strings.charCodeAt8(" dog", 0)           == 32
+     * >>> Strings.charCodeAt8(" dog", 0).isSpace() == true
+     * >>> Strings.charCodeAt8(" dog", 1)           == 100
+     * >>> Strings.charCodeAt8(" dog", 1).isSpace() == false
      * >>> Strings.charCodeAt8(" ", -1)           == -1
      * >>> Strings.charCodeAt8(" ", -1, -4)       == -4
      * >>> Strings.charCodeAt8(" ", 0)            == 32
@@ -399,10 +354,15 @@ class Strings {
      * >>> Strings.charCodeAt8(" ", 1)            == -1
      * >>> Strings.charCodeAt8(" ", 1).isSpace()  == false
      * >>> Strings.charCodeAt8(" ", 10)           == -1
-     * >>> Strings.charCodeAt8(" A", 1)           == 65
+     * >>> Strings.charCodeAt8("", 0)             == -1
+     * >>> Strings.charCodeAt8("", 0, -4)         == -4
+     * >>> Strings.charCodeAt8(null, 0)           == -1
+     * >>> Strings.charCodeAt8(null, 0).isSpace() == false
      * >>> Strings.charCodeAt8(" はい", 1)         == 12399
      * >>> Strings.charCodeAt8(" はい", 2)         == 12356
      * </code></pre>
+     * 
+     * @param pos character position
      */
     inline
     public static function charCodeAt8(str:String, pos:CharPos, resultIfOutOfBound:Char = -1):Char {
@@ -417,13 +377,13 @@ class Strings {
      * Tests if <b>searchIn</b> contains <b>searchFor</b> as a substring
      * 
      * <pre><code>
-     * >>> Strings.contains(null, null) == false
-     * >>> Strings.contains(null, "")   == false
-     * >>> Strings.contains("", null)   == false
-     * >>> Strings.contains("", "")     == true
      * >>> Strings.contains("dog", "")  == true
      * >>> Strings.contains("dog", "g") == true
      * >>> Strings.contains("dog", "t") == false
+     * >>> Strings.contains("", null)   == false
+     * >>> Strings.contains("", "")     == true
+     * >>> Strings.contains(null, null) == false
+     * >>> Strings.contains(null, "")   == false
      * >>> Strings.contains("はい", "い") == true
      * >>> Strings.contains("はは", "い") == false
      * </code></pre>
@@ -443,15 +403,15 @@ class Strings {
      * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
      * 
      * <pre><code>
-     * >>> Strings.containsAll(null, null)        == false
-     * >>> Strings.containsAll(null, [""])        == false
-     * >>> Strings.containsAll("", null)          == false
-     * >>> Strings.containsAll("", [""])          == true
-     * >>> Strings.containsAll("dog", [""])       == true
      * >>> Strings.containsAll("dog", ["c", ""])  == false
      * >>> Strings.containsAll("dog", ["c", "g"]) == false
      * >>> Strings.containsAll("dog", ["c", "a"]) == false
      * >>> Strings.containsAll("dog", ["d", "g"]) == true
+     * >>> Strings.containsAll("dog", [""])       == true
+     * >>> Strings.containsAll("", null)          == false
+     * >>> Strings.containsAll("", [""])          == true
+     * >>> Strings.containsAll(null, null)        == false
+     * >>> Strings.containsAll(null, [""])        == false
      * >>> Strings.containsAll("はい", ["い"])     == true
      * >>> Strings.containsAll("はは", ["い"])     == false
      * </code></pre>
@@ -471,15 +431,15 @@ class Strings {
      * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
      * 
      * <pre><code>
-     * >>> Strings.containsAllIgnoreCase(null, null)        == false
-     * >>> Strings.containsAllIgnoreCase(null, [""])        == false
-     * >>> Strings.containsAllIgnoreCase("", null)          == false
-     * >>> Strings.containsAllIgnoreCase("", [""])          == true
-     * >>> Strings.containsAllIgnoreCase("dog", [""])       == true
      * >>> Strings.containsAllIgnoreCase("dog", ["c", ""])  == false
      * >>> Strings.containsAllIgnoreCase("dog", ["c", "G"]) == false
      * >>> Strings.containsAllIgnoreCase("dog", ["c", "a"]) == false
      * >>> Strings.containsAllIgnoreCase("dog", ["d", "G"]) == true
+     * >>> Strings.containsAllIgnoreCase("dog", [""])       == true
+     * >>> Strings.containsAllIgnoreCase("", null)          == false
+     * >>> Strings.containsAllIgnoreCase("", [""])          == true
+     * >>> Strings.containsAllIgnoreCase(null, null)        == false
+     * >>> Strings.containsAllIgnoreCase(null, [""])        == false
      * >>> Strings.containsAllIgnoreCase("はい", ["い"])     == true
      * >>> Strings.containsAllIgnoreCase("はは", ["い"])     == false
      * </code></pre>
@@ -501,16 +461,16 @@ class Strings {
      * Tests if <b>searchIn</b> contains any of <b>searchFor</b> as a substring
      * 
      * <pre><code>
-     * >>> Strings.containsAny(null, null)        == false
-     * >>> Strings.containsAny(null, [""])        == false
-     * >>> Strings.containsAny("", null)          == false
-     * >>> Strings.containsAny("", [""])          == true
-     * >>> Strings.containsAny("dog", [""])       == true
      * >>> Strings.containsAny("dog", ["c", ""])  == true
      * >>> Strings.containsAny("dog", ["c", "g"]) == true
-     * >>> Strings.containsAny("dog", ["", "g"]) == true
+     * >>> Strings.containsAny("dog", ["", "g"])  == true
      * >>> Strings.containsAny("dog", ["c", "a"]) == false
      * >>> Strings.containsAny("dog", ["d", "g"]) == true
+     * >>> Strings.containsAny("dog", [""])       == true
+     * >>> Strings.containsAny("", null)          == false
+     * >>> Strings.containsAny("", [""])          == true
+     * >>> Strings.containsAny(null, null)        == false
+     * >>> Strings.containsAny(null, [""])        == false
      * >>> Strings.containsAny("はい", ["い"])     == true
      * >>> Strings.containsAny("はは", ["い"])     == false
      * </code></pre>
@@ -530,15 +490,15 @@ class Strings {
      * Tests if <b>searchIn</b> contains any of <b>searchFor</b> as a substring
      * 
      * <pre><code>
-     * >>> Strings.containsAnyIgnoreCase(null, null)        == false
-     * >>> Strings.containsAnyIgnoreCase(null, [""])        == false
-     * >>> Strings.containsAnyIgnoreCase("", null)          == false
-     * >>> Strings.containsAnyIgnoreCase("", [""])          == true
-     * >>> Strings.containsAnyIgnoreCase("dog", [""])       == true
      * >>> Strings.containsAnyIgnoreCase("dog", ["c", ""])  == true
      * >>> Strings.containsAnyIgnoreCase("dog", ["c", "G"]) == true
      * >>> Strings.containsAnyIgnoreCase("dog", ["c", "a"]) == false
      * >>> Strings.containsAnyIgnoreCase("dog", ["d", "G"]) == true
+     * >>> Strings.containsAnyIgnoreCase("dog", [""])       == true
+     * >>> Strings.containsAnyIgnoreCase("", null)          == false
+     * >>> Strings.containsAnyIgnoreCase("", [""])          == true
+     * >>> Strings.containsAnyIgnoreCase(null, null)        == false
+     * >>> Strings.containsAnyIgnoreCase(null, [""])        == false
      * >>> Strings.containsAnyIgnoreCase("はい", ["い"])     == true
      * >>> Strings.containsAnyIgnoreCase("はは", ["い"])     == false
      * </code></pre>
@@ -560,15 +520,15 @@ class Strings {
      * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
      * 
      * <pre><code>
-     * >>> Strings.containsNone(null, null)        == true
-     * >>> Strings.containsNone(null, [""])        == true
-     * >>> Strings.containsNone("", null)          == true
-     * >>> Strings.containsNone("", [""])          == false
-     * >>> Strings.containsNone("dog", [""])       == false
      * >>> Strings.containsNone("dog", ["c", ""])  == false
      * >>> Strings.containsNone("dog", ["c", "g"]) == false
      * >>> Strings.containsNone("dog", ["c", "a"]) == true
      * >>> Strings.containsNone("dog", ["d", "g"]) == false
+     * >>> Strings.containsNone("dog", [""])       == false
+     * >>> Strings.containsNone("", null)          == true
+     * >>> Strings.containsNone("", [""])          == false
+     * >>> Strings.containsNone(null, null)        == true
+     * >>> Strings.containsNone(null, [""])        == true
      * >>> Strings.containsNone("はい", ["い"])     == false
      * >>> Strings.containsNone("はは", ["い"])     == true
      * </code></pre>
@@ -588,15 +548,15 @@ class Strings {
      * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
      * 
      * <pre><code>
-     * >>> Strings.containsNoneIgnoreCase(null, null)        == true
-     * >>> Strings.containsNoneIgnoreCase(null, [""])        == true
-     * >>> Strings.containsNoneIgnoreCase("", null)          == true
-     * >>> Strings.containsNoneIgnoreCase("", [""])          == false
-     * >>> Strings.containsNoneIgnoreCase("dog", [""])       == false
      * >>> Strings.containsNoneIgnoreCase("dog", ["c", ""])  == false
      * >>> Strings.containsNoneIgnoreCase("dog", ["c", "G"]) == false
      * >>> Strings.containsNoneIgnoreCase("dog", ["c", "a"]) == true
      * >>> Strings.containsNoneIgnoreCase("dog", ["d", "G"]) == false
+     * >>> Strings.containsNoneIgnoreCase("dog", [""])       == false
+     * >>> Strings.containsNoneIgnoreCase("", null)          == true
+     * >>> Strings.containsNoneIgnoreCase("", [""])          == false
+     * >>> Strings.containsNoneIgnoreCase(null, null)        == true
+     * >>> Strings.containsNoneIgnoreCase(null, [""])        == true
      * >>> Strings.containsNoneIgnoreCase("はい", ["い"])     == false
      * >>> Strings.containsNoneIgnoreCase("はは", ["い"])     == true
      * </code></pre>
@@ -615,20 +575,20 @@ class Strings {
     }
     
     /**
-     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting from the 
-     *         given character position.
-     * 
      * <pre><code>
-     * >>> Strings.countMatches(null, null)         == 0
-     * >>> Strings.countMatches(null, "")           == 0
-     * >>> Strings.countMatches("", null)           == 0
-     * >>> Strings.countMatches("", "a")            == 0
      * >>> Strings.countMatches("dogdog", "g")      == 2
      * >>> Strings.countMatches("dogdog", "og", 1)  == 2
      * >>> Strings.countMatches("dogdog", "og", 3)  == 1
      * >>> Strings.countMatches("dogdog", "og", 9)  == 0
      * >>> Strings.countMatches("dogdog", "og", -1) == 2
+     * >>> Strings.countMatches("", null)           == 0
+     * >>> Strings.countMatches("", "a")            == 0
+     * >>> Strings.countMatches(null, null)         == 0
+     * >>> Strings.countMatches(null, "")           == 0
      * </code></pre>
+     * 
+     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting 
+     *         from the given character position.
      */
     public static function countMatches(searchIn:String, searchFor:String, startAt:CharPos = 0):Int {
         if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length)
@@ -646,20 +606,20 @@ class Strings {
     }
 
     /**
-     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting from the
-     *         given character position ignoring case.
-     * 
      * <pre><code>
-     * >>> Strings.countMatchesIgnoreCase(null, null)         == 0
-     * >>> Strings.countMatchesIgnoreCase(null, "")           == 0
-     * >>> Strings.countMatchesIgnoreCase("", null)           == 0
-     * >>> Strings.countMatchesIgnoreCase("", "a")            == 0
      * >>> Strings.countMatchesIgnoreCase("dogdog", "G")      == 2
      * >>> Strings.countMatchesIgnoreCase("dogdog", "OG", 1)  == 2
      * >>> Strings.countMatchesIgnoreCase("dogdog", "OG", 3)  == 1
      * >>> Strings.countMatchesIgnoreCase("dogdog", "OG", 9)  == 0
      * >>> Strings.countMatchesIgnoreCase("dogdog", "OG", -1) == 2
+     * >>> Strings.countMatchesIgnoreCase(null, null)         == 0
+     * >>> Strings.countMatchesIgnoreCase(null, "")           == 0
+     * >>> Strings.countMatchesIgnoreCase("", null)           == 0
+     * >>> Strings.countMatchesIgnoreCase("", "a")            == 0
      * </code></pre>
+     * 
+     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting 
+     *         from the given character position ignoring case.
      */
     public static function countMatchesIgnoreCase(searchIn:String, searchFor:String, startAt:CharPos = 0):Int {
         if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length)
@@ -680,23 +640,23 @@ class Strings {
     }
     
     /**
-     * @return 1 if <code>str > other</code>, -1 if <code>str < other</code>, 0 if <code>str == other</code>
-     * 
      * <pre><code>
-     * >>> Strings.compare(null, null)   == 0
-     * >>> Strings.compare(null, "")     == -1
-     * >>> Strings.compare("", null)     == 1
-     * >>> Strings.compare("", "")       == 0
      * >>> Strings.compare("a", "b")     == -1
      * >>> Strings.compare("b", "a")     == 1
      * >>> Strings.compare("a", "A")     == 1
-     * TODO https://github.com/HaxeFoundation/hxcs/issues/25
+     * TODO C# https://github.com/HaxeFoundation/hxcs/issues/25
      * >>> Strings.compare("A", "a")     == -1
      * >>> Strings.compare("a", "B")     == 1
+     * >>> Strings.compare("", null)     == 1
+     * >>> Strings.compare("", "")       == 0
+     * >>> Strings.compare(null, null)   == 0
+     * >>> Strings.compare(null, "")     == -1
      * >>> Strings.compare("к--", "К--") == 1
      * >>> Strings.compare("к--", "т--") == -1
      * >>> Strings.compare("кот", "КОТ") == 1
      * </core></pre>
+     * 
+     * @return 1 if <code>str > other</code>, -1 if <code>str < other</code>, 0 if <code>str == other</code>
      */
     public static function compare(str:String, other:String):Int {
         if (str == null) 
@@ -714,22 +674,22 @@ class Strings {
     }
     
     /**
-     * @return 1 if <code>str > other</code>, -1 if <code>str < other</code>, 0 if <code>str == other</code>
-     * 
      * <pre><code>
-     * >>> Strings.compareIgnoreCase(null, null)   == 0
-     * >>> Strings.compareIgnoreCase(null, "")     == -1
-     * >>> Strings.compareIgnoreCase("", null)     == 1
-     * >>> Strings.compareIgnoreCase("", "")       == 0
      * >>> Strings.compareIgnoreCase("a", "b")     == -1
      * >>> Strings.compareIgnoreCase("b", "a")     == 1
      * >>> Strings.compareIgnoreCase("a", "A")     == 0
      * >>> Strings.compareIgnoreCase("A", "a")     == 0
      * >>> Strings.compareIgnoreCase("a", "B")     == -1
+     * >>> Strings.compareIgnoreCase("", null)     == 1
+     * >>> Strings.compareIgnoreCase("", "")       == 0
+     * >>> Strings.compareIgnoreCase(null, null)   == 0
+     * >>> Strings.compareIgnoreCase(null, "")     == -1
      * >>> Strings.compareIgnoreCase("к--", "К--") == 0
      * >>> Strings.compareIgnoreCase("к--", "т--") == -1
      * >>> Strings.compareIgnoreCase("кот", "КОТ") == 0
      * </core></pre>
+     * 
+     * @return 1 if <code>str > other</code>, -1 if <code>str < other</code>, 0 if <code>str == other</code>
      */
     public static function compareIgnoreCase(str:String, other:String):Int {
         if (str == null) 
@@ -751,14 +711,14 @@ class Strings {
 
     /**
      * <pre><code>
-     * >>> Strings.diff(null, null).pos     == -1
-     * >>> Strings.diff(null, "").pos       == 0
-     * >>> Strings.diff(null, "").left      == null
-     * >>> Strings.diff(null, "").right     == ""
      * >>> Strings.diff("abc", "abC").left  == "c"
      * >>> Strings.diff("abc", "abC").right == "C"
      * >>> Strings.diff("ab", "abC").left   == ""
      * >>> Strings.diff("ab", "abC").right  == "C"
+     * >>> Strings.diff(null, null).pos     == -1
+     * >>> Strings.diff(null, "").pos       == 0
+     * >>> Strings.diff(null, "").left      == null
+     * >>> Strings.diff(null, "").right     == ""
      * </code></pre>
      */
     public static function diff(left:String, right:String):StringDiff {
@@ -770,21 +730,21 @@ class Strings {
     }
 
     /**
-     * @return the UTF8 character position where the strings begin to differ or -1 if they are equal
-     * 
      * <pre><code>
+     * >>> Strings.diffAt("cat", "catdog")          == 3
+     * >>> Strings.diffAt("cat", "cat")             == -1
+     * >>> Strings.diffAt("cat", "")                == 0
+     * >>> Strings.diffAt("cat", "dog")             == 0
+     * >>> Strings.diffAt("It's green", "It's red") == 5
+     * >>> Strings.diffAt("catdog", "cat")          == 3
      * >>> Strings.diffAt(null, null)               == -1
      * >>> Strings.diffAt(null, "")                 == 0
      * >>> Strings.diffAt("", null)                 == 0
      * >>> Strings.diffAt("", "")                   == -1
      * >>> Strings.diffAt("", "cat")                == 0
-     * >>> Strings.diffAt("cat", "")                == 0
-     * >>> Strings.diffAt("cat", "dog")             == 0
-     * >>> Strings.diffAt("cat", "cat")             == -1
-     * >>> Strings.diffAt("cat", "catdog")          == 3
-     * >>> Strings.diffAt("It's green", "It's red") == 5
-     * >>> Strings.diffAt("catdog", "cat")          == 3
      * </code></pre>
+     * 
+     * @return the UTF8 character position where the strings begin to differ or -1 if they are equal
      */
     public static function diffAt(str:String, other:String):CharPos {
         if (str.equals(other)) 
@@ -807,65 +767,60 @@ class Strings {
     
     /**
      * <pre><code>
-     * >>> Strings.ellipsizeLeft(null, 0)         == null
-     * >>> Strings.ellipsizeLeft(null, 3)         == null
+     * >>> Strings.ellipsizeLeft("12345678", 5)   == "...78"
+     * >>> Strings.ellipsizeLeft("12345", 4)      == "...5"
+     * >>> Strings.ellipsizeLeft("1234", 4)       == "1234"
      * >>> Strings.ellipsizeLeft("", 0)           == ""
      * >>> Strings.ellipsizeLeft("", 3)           == ""
-     * >>> Strings.ellipsizeLeft("1234", 4)       == "1234"
-     * >>> Strings.ellipsizeLeft("12345", 4)      == "...5"
-     * >>> Strings.ellipsizeLeft("12345678", 5)   == "...78"
+     * >>> Strings.ellipsizeLeft(null, 0)         == null
+     * >>> Strings.ellipsizeLeft(null, 3)         == null
      * >>> Strings.ellipsizeLeft("はいはいはい", 5)  == "...はい"
      * </code></pre>
      * 
-     * @throws exception if maxLength < 4 and str > maxLength
+     * @throws exception if maxLength < ellipsis.length
      */
-    public static function ellipsizeLeft(str:String, maxLength:Int):String {
-        var strLen = str.length8();
-        if (strLen <= maxLength)
+    public static function ellipsizeLeft(str:String, maxLength:Int, ellipsis:String = "..."):String {
+        if (str.length8() <= maxLength)
             return str;
-            
-        if (maxLength < 4) throw "[maxLength] must not be smaller than 4";
 
-        return "..." + str.right(maxLength - 3);
+        var ellipsisLen = ellipsis.length8();
+        if (maxLength < ellipsisLen) throw '[maxLength] must not be smaller than ${ellipsisLen}';
+
+        return ellipsis + str.right(maxLength - ellipsisLen);
     }
 
     /**
      * <pre><code>
-     * >>> Strings.ellipsizeRight(null, 0)         == null
-     * >>> Strings.ellipsizeRight(null, 3)         == null
+     * >>> Strings.ellipsizeRight("12345678", 5)   == "12..."
+     * >>> Strings.ellipsizeRight("12345", 4)      == "1..."
+     * >>> Strings.ellipsizeRight("1234", 4)       == "1234"
      * >>> Strings.ellipsizeRight("", 0)           == ""
      * >>> Strings.ellipsizeRight("", 3)           == ""
-     * >>> Strings.ellipsizeRight("1234", 4)       == "1234"
-     * >>> Strings.ellipsizeRight("12345", 4)      == "1..."
-     * >>> Strings.ellipsizeRight("12345678", 5)   == "12..."
+     * >>> Strings.ellipsizeRight(null, 0)         == null
+     * >>> Strings.ellipsizeRight(null, 3)         == null
      * >>> Strings.ellipsizeRight("はいはいはい", 5)  == "はい..."
      * </code></pre>
      * 
-     * @throws exception if maxLength < 4 and str > maxLength
+     * @throws exception if maxLength < ellipsis.length
      */
-    public static function ellipsizeRight(str:String, maxLength:Int):String {
+    public static function ellipsizeRight(str:String, maxLength:Int, ellipsis:String = "..."):String {
         if (str.length8() <= maxLength)
             return str;
-            
-        if (maxLength < 4) throw "[maxLength] must not be smaller than 4";
 
-        return str.left(maxLength - 3) + "...";
+        var ellipsisLen = ellipsis.length8();
+        if (maxLength < ellipsisLen) throw '[maxLength] must not be smaller than ${ellipsisLen}';
+
+        return str.left(maxLength - ellipsisLen) + ellipsis;
     }
 
-    /* TODO
-    public static function ellipsizePath(path:String, maxLength:Int):String {
-        return "";
-    }
-    */
-    
     /**
      * <pre><code>
-     * >>> Strings.endsWith(null, "cat")     == false
-     * >>> Strings.endsWith("", "")          == true
-     * >>> Strings.endsWith("dogcat", null)  == false
-     * >>> Strings.endsWith("dogcat", "")    == true
      * >>> Strings.endsWith("dogcat", "cat") == true
      * >>> Strings.endsWith("dogcat", "dog") == false
+     * >>> Strings.endsWith("dogcat", "")    == true
+     * >>> Strings.endsWith("dogcat", null)  == false
+     * >>> Strings.endsWith("", "")          == true
+     * >>> Strings.endsWith(null, "cat")     == false
      * >>> Strings.endsWith("はい", "い")     == true
      * >>> Strings.endsWith("はい", "は")     == false
      * </code></pre>
@@ -990,8 +945,6 @@ class Strings {
     }
     
     /**
-     * @return a string containing only those characters/substrings for which <b>filter</b> returned <code>true</code>.
-     * 
      * <pre><code>
      * >>> Strings.filter(null,       function(s) return s == " ")       == null
      * >>> Strings.filter("",         function(s) return s == " ")       == ""
@@ -999,6 +952,8 @@ class Strings {
      * >>> Strings.filter("はいはい",   function(s) return s == "は")      == "はは"
      * >>> Strings.filter("ab:cd:ab", function(s) return s == "ab", ":") == "ab:ab"
      * </code></pre>
+     * 
+     * @return a string containing only those characters/substrings for which <b>filter</b> returned <code>true</code>.
      */
     inline
     public static function filter(str:String, filter:String -> Bool, separator = ""):String {
@@ -1009,14 +964,14 @@ class Strings {
 	}
     
     /**
-     * @return a string containing only those characters for which <b>filter</b> returned <code>true</code>.
-     * 
      * <pre><code>
      * >>> Strings.filterChars(null,       function(ch) return ch == 32)            == null
      * >>> Strings.filterChars("",         function(ch) return ch == 32)            == ""
      * >>> Strings.filterChars(" b b b",   function(ch) return ch == 32)            == "   "
      * >>> Strings.filterChars("はいはい",   function(ch) return ch == Char.of("は")) == "はは"
      * </code></pre>
+     * 
+     * @return a string containing only those characters for which <b>filter</b> returned <code>true</code>.
      */
     inline
     public static function filterChars(str:String, filter:Char -> Bool):String {
@@ -1196,156 +1151,8 @@ class Strings {
         }
         return left.substr8(leftSubStartAt, leftSubLen);
     }
-
-    /**
-     * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
-     * @return a EReg object
-     * 
-     * <pre><code>
-     * >>> Strings.globToEReg("**"+"/file?.txt").match("aa/bb/file1.txt") == true
-     * >>> Strings.globToEReg("*.txt").match("file.txt")       == true
-     * >>> Strings.globToEReg("*.txt").match("file.pdf")       == false
-     * >>> Strings.globToEReg("*.{pdf,txt}").match("file.txt") == true
-     * >>> Strings.globToEReg("*.{pdf,txt}").match("file.pdf") == true
-     * >>> Strings.globToEReg("*.{pdf,txt}").match("file.xml") == false
-     * </code></pre>
-     */
-    inline
-    public static function globToEReg(globPattern:String, regexOptions:String = ""):EReg {
-        return globPattern.globToRegEx().toEReg(regexOptions);
-    }
     
     /**
-     * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
-     * @return a hx.strings.Pattern object
-     * 
-     * <pre><code>
-     * >>> Strings.globToPattern("**"+"/file?.txt").matcher("aa/bb/file1.txt").matches() == true
-     * >>> Strings.globToPattern("*.txt").matcher("file.txt").matches()       == true
-     * >>> Strings.globToPattern("*.txt").matcher("file.pdf").matches()       == false
-     * >>> Strings.globToPattern("*.{pdf,txt}").matcher("file.txt").matches() == true
-     * >>> Strings.globToPattern("*.{pdf,txt}").matcher("file.pdf").matches() == true
-     * >>> Strings.globToPattern("*.{pdf,txt}").matcher("file.xml").matches() == false
-     * </code></pre>
-     */
-    inline
-    public static function globToPattern(globPattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
-        return globPattern.globToRegEx().toPattern(options);
-    }
-    
-    /**
-     * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
-     * 
-     * <pre><code>
-     * >>> Strings.globToRegEx(null)          == null
-     * >>> Strings.globToRegEx("")            == ""
-     * >>> Strings.globToRegEx("file")        == "^file$"
-     * >>> Strings.globToRegEx("*.txt")       == "^[^\\\\^\\/]*\\.txt$"
-     * >>> Strings.globToRegEx("*file*")      == "^[^\\\\^\\/]*file[^\\\\^\\/]*$"
-     * >>> Strings.globToRegEx("file?.txt")   == "^file[^\\\\^\\/]\\.txt$"
-     * >>> Strings.globToRegEx("**" + "/file?.txt").toEReg().match("aa/bb/file1.txt") == true
-     * >>> Strings.globToRegEx("*.txt").toEReg().match("file.txt")       == true
-     * >>> Strings.globToRegEx("*.txt").toEReg().match("file.pdf")       == false
-     * >>> Strings.globToRegEx("*.{pdf,txt}").toEReg().match("file.txt") == true
-     * >>> Strings.globToRegEx("*.{pdf,txt}").toEReg().match("file.pdf") == true
-     * >>> Strings.globToRegEx("*.{pdf,txt}").toEReg().match("file.xml") == false
-     * </code></pre>
-     */
-    public static function globToRegEx(globPattern:String):String {
-        if (globPattern.isEmpty())
-            return globPattern;
-
-        var sb = new StringBuilder();
-        sb.addChar(Char.CARET);
-        var chars = globPattern.toChars();
-        var chPrev:Char = -1;
-        var groupDepth = 0;
-        var idx = -1;
-        while(idx < chars.length - 1) {
-            idx++;
-            var ch = chars[idx];
-
-            switch (ch) {
-                case Char.BACKSLASH:
-                    if (chPrev == Char.BACKSLASH)
-                        sb.add("\\\\"); // "\\" => "\\"
-                case Char.SLASH:
-                     // "/" => "\/"
-                    sb.add("\\/");
-                case Char.DOLLAR:
-                    // "$" => "\$"
-                    sb.add("\\$");
-                case Char.QUESTION_MARK:
-                    if (chPrev == Char.BACKSLASH)
-                        sb.add("\\?"); // "\?" => "\?"
-                    else
-                        sb.add("[^\\\\^\\/]"); // "?" => "[^\\^\/]"
-                case Char.DOT:
-                    // "." => "\."
-                    sb.add("\\.");
-                case Char.BRACKET_ROUND_LEFT:
-                    // "(" => "\("
-                    sb.add("\\(");
-                case Char.BRACKET_ROUND_RIGHT:
-                    // ")" => "\)"
-                    sb.add("\\)");
-                case Char.BRACKET_CURLY_LEFT:
-                    if (chPrev == Char.BACKSLASH)
-                        sb.add("\\{"); // "\{" => "\{"
-                    else {
-                        groupDepth++;
-                        sb.addChar(Char.BRACKET_ROUND_LEFT);
-                    }
-                case Char.BRACKET_CURLY_RIGHT:
-                    if (chPrev == Char.BACKSLASH)
-                        sb.add("\\}"); // "\}" => "\}"
-                    else {
-                        groupDepth--;
-                        sb.addChar(Char.BRACKET_ROUND_RIGHT);
-                    }
-                case Char.COMMA:
-                    if (chPrev == Char.BACKSLASH)
-                        sb.add("\\,"); // "\," => "\,"
-                    else {
-                        // "," => "|" if in group or => "," if not in group
-                        sb.addChar(groupDepth > 0 ? Char.PIPE : Char.COMMA);
-                    }
-                case Char.ASTERISK:
-                    if (chars[idx + 1] == Char.ASTERISK) { // **
-                        if (chars[idx + 2] == Char.SLASH) { // **/
-                            if (chars[idx + 3] == Char.ASTERISK) { 
-                                // "**/*" => ".*"
-                                sb.add(".*");
-                                idx += 3;
-                            } else {
-                                // "**/" => "(.*/)?"
-                                sb.add("(.*/)?");
-                                idx += 2;
-                                ch = Char.SLASH;
-                            }
-                        } else {
-                            sb.add(".*"); // "**" => ".*"
-                            idx++;
-                        }
-                    } else {
-                        sb.add("[^\\\\^\\/]*"); // "*" => "[^\\^\/]*"
-                    }
-                default:
-                    if (chPrev == Char.BACKSLASH) {
-                        sb.addChar(Char.BACKSLASH);
-                    }
-                    sb.addChar(ch);
-            }
-
-            chPrev = ch;
-        }
-        sb.addChar(Char.DOLLAR);
-        return sb.toString();
-    }
-    
-    /**
-     * @return a (by default platform dependent) hashcode for the given string
-     * 
      * <pre><code>
      * >>> Strings.hashCode(null)                 == 0
      * >>> Strings.hashCode("")                   == 0
@@ -1356,6 +1163,8 @@ class Strings {
      * >>> Strings.hashCode("dog & cat", JAVA)    == 0x76C244F8
      * >>> Strings.hashCode("dog & cat", SDBM)    == 0x329DB138
      * </code></pre>
+     * 
+     * @return a (by default platform dependent) hashcode for the given string
      */
     public static function hashCode(str:String, ?algo:HashCodeAlgorithm):Int {
         if (str.isEmpty())
@@ -1399,27 +1208,6 @@ class Strings {
                     Crc32.make(str.toBytes());
                 #end
         }
-    }
-    
-    /**
-     * @param minDigits the resulting string is left padded with <code>0</code> until it length equals <code>minDigits</code>
-     * @return the hexadecimal representation of <b>num</b>
-     *
-     * <pre><code>
-     * >>> Strings.hex(1)       == "1"
-     * >>> Strings.hex(10)      == "A"
-     * >>> Strings.hex(100)     == "64"
-     * >>> Strings.hex(100, 4)  == "0064"
-     * >>> Strings.hex(1000, 2) == "3E8"
-     * >>> Strings.hex(-1)      == "FFFFFFFF"
-     * >>> Strings.hex(-10)     == "FFFFFFF6"
-     * >>> Strings.hex(-10, 10) == "00FFFFFFF6"
-     * </code></pre>
-     */
-    inline
-    public static function hex(num:Int, minDigits:Int = 0):String {
-        var hexed = StringTools.hex(num, 0);        
-        return hexed.lpad(minDigits, "0");
     }
     
     /**
@@ -1690,8 +1478,6 @@ class Strings {
     }
     
     /**
-     * @return <code>true</code> if <code>null</code> or empty ("") or only contains whitespace characters
-     * 
      * <pre><code>
      * >>> Strings.isBlank(null)   == true
      * >>> Strings.isBlank("")     == true
@@ -1702,6 +1488,8 @@ class Strings {
      * >>> Strings.isBlank("\t")   == true
      * >>> Strings.isBlank("は")   == false
      * </code></pre>
+     * 
+     * @return <code>true</code> if <code>null</code> or empty ("") or only contains whitespace characters
      */
     inline
     public static function isBlank(str:String):Bool {
@@ -1709,17 +1497,17 @@ class Strings {
     }
         
     /**
-     * @return true if the string only contains digits (0-9).
-     * 
      * <pre><code>
-     * >>> Strings.isDigits(null)  == false
-     * >>> Strings.isDigits("")    == false
      * >>> Strings.isDigits("1")   == true
      * >>> Strings.isDigits("1,1") == false
      * >>> Strings.isDigits("1.1") == false
      * >>> Strings.isDigits("1a")  == false
+     * >>> Strings.isDigits("")    == false
+     * >>> Strings.isDigits(null)  == false
      * >>> Strings.isDigits("は")  == false
      * </code></pre>
+     * 
+     * @return true if the string only contains digits (0-9).
      */
     #if php inline #end
     public static function isDigits(str:String):Bool {
@@ -2046,8 +1834,6 @@ class Strings {
     }
     
     /**
-     * @return a string with each character/substring mapped by <b>mapper</b>.
-     * 
      * <pre><code>
      * >>> Strings.map(null,     function(s) return s.equals("a") ? "xy" : s)      == null
      * >>> Strings.map("",       function(s) return s.equals("a") ? "xy" : s)      == []
@@ -2055,6 +1841,8 @@ class Strings {
      * >>> Strings.map("はいはい", function(s) return s.equals("は") ? "い" : s)      == ["い", "い", "い", "い"]
      * >>> Strings.map("ab:cd",  function(s) return s.equals("ab")? "xy" : s, ":") == ["xy", "cd"]
      * </code></pre>
+     * 
+     * @return a string with each character/substring mapped by <b>mapper</b>.
      */
     inline
     public static function map<T>(str:String, mapper:String -> T, separator = ""):Array<T> {
@@ -2456,8 +2244,6 @@ class Strings {
     /**
      * String#split() variant with cross-platform UTF-8 support and consistent behavior.
      * 
-     * @param max split limit, the maximum number of elements in the resulting array
-     * 
      * <pre><code>
      * >>> Strings.split8(null, null)         == null
      * >>> Strings.split8(null, "")           == null
@@ -2474,8 +2260,10 @@ class Strings {
      * >>> Strings.split8(".a.b.c.", ".", -1) == [ "", "a", "b", "c", "" ]
      * >>> Strings.split8("はい", "")          == [ "は", "い" ]
      * </code></pre>
+     * 
+     * @param maxParts the split limit, the maximum number of elements in the resulting array
      */
-    public static function split8(str:String, separator:String, ?max:Int = 0):Array<String> {
+    public static function split8(str:String, separator:String, ?maxParts:Int = 0):Array<String> {
         if (str == null || separator == null)
             return null;
             
@@ -2490,14 +2278,14 @@ class Strings {
         #end
 
         if (separator.isEmpty()) {
-            if(max <= 0)
+            if(maxParts <= 0)
                 return [ for (i in 0...strLen) Utf8.sub(str, i, 1) ];
             
-            if (max > strLen) 
-                max = strLen;
-            max--;
-            var result = [ for (i in 0...max) Utf8.sub(str, i, 1) ];
-            result.push(Utf8.sub(str, max, strLen - max));
+            if (maxParts > strLen) 
+                maxParts = strLen;
+            maxParts--;
+            var result = [ for (i in 0...maxParts) Utf8.sub(str, i, 1) ];
+            result.push(Utf8.sub(str, maxParts, strLen - maxParts));
             return result;
         }
         
@@ -2508,7 +2296,7 @@ class Strings {
         while (true) {
             var foundAt = str.indexOf8(separator, lastFoundAt);
             resultCount++;
-            if (foundAt == POS_NOT_FOUND || resultCount == max) {
+            if (foundAt == POS_NOT_FOUND || resultCount == maxParts) {
                 result.push(Utf8.sub(str, lastFoundAt, strLen - lastFoundAt));
                 break;
             }
@@ -2628,8 +2416,6 @@ class Strings {
     }
 
     /**
-     * @return <b>len</b> characters of <b>str</b>, starting from <b>startAt</b>.
-     * 
      * <pre><code>
      * >>> Strings.substr8(null, 0)        == null
      * >>> Strings.substr8("", 0)          == ""
@@ -2647,6 +2433,8 @@ class Strings {
      * >>> Strings.substr8("はいはい", 2)    == "はい"
      * >>> Strings.substr8("はいはい", 1, 2) == "いは"
      * </code></pre>
+     * 
+     * @return <b>len</b> characters of <b>str</b>, starting from <b>startAt</b>.
      */
     public static function substr8(str:String, startAt:CharPos, ?len:Int):String {
         if (str.isEmpty())
@@ -2684,8 +2472,6 @@ class Strings {
     /**
      * String#substring() variant with cross-platform UTF-8 support.
      * 
-     * @return the part of <b>str</b> from <b>startAt</b> to but not including <b>endAt</b>.
-     * 
      * <pre><code>
      * >>> Strings.substring8(null, 0)         == null
      * >>> Strings.substring8("", 0)           == ""
@@ -2706,6 +2492,8 @@ class Strings {
      * >>> Strings.substring8("はいはい", 1, 2)  == "い"
      * >>> Strings.substring8("はいはい", 2)     == "はい"
      * </code></pre>
+     * 
+     * @return the part of <b>str</b> from <b>startAt</b> to but not including <b>endAt</b>.
      */
     public static function substring8(str:String, startAt:CharPos, ?endAt:CharPos):String {
         if (str.isEmpty())
@@ -3024,8 +2812,6 @@ class Strings {
     }
     
     /**
-     * @return false if value is null, "", "false" or "0". otherwise returns true.
-     * 
      * <pre><code>
      * >>> Strings.toBool(null)    == false
      * >>> Strings.toBool("")      == false
@@ -3036,6 +2822,8 @@ class Strings {
      * >>> Strings.toBool("2")     == true
      * >>> Strings.toBool("dog")   == true
      * </code></pre>
+     * 
+     * @return false if value is null, "", "false" or "0". otherwise returns true.
      */
     inline
     public static function toBool(str:String):Bool {
@@ -3048,13 +2836,13 @@ class Strings {
     }
     
     /**
-     * @return the strings internal byte array
-     * 
      * <pre><code>
      * >>> Strings.toBytes(null)                 == null
      * >>> Strings.toBytes("abc").getString(1,2) == "bc"
      * >>> Strings.toBytes("はい").getString(3,3) == "い"
      * </code></pre>
+     * 
+     * @return the strings internal byte array
      */
     inline
     public static function toBytes(str:String):Bytes {
@@ -3082,14 +2870,14 @@ class Strings {
     }
     
     /**
-     * @return array containing the codes of all characters
-     * 
      * <pre><code>
      * >>> Strings.toChars(null)  == null
      * >>> Strings.toChars("")    == []
      * >>> Strings.toChars("  ")  == [ 32, 32 ]
      * >>> Strings.toChars(" は") == [ 32, 12399 ]
      * </code></pre>
+     * 
+     * @return array containing the codes of all characters
      */
     public static function toChars(str:String):Array<Char> {
         if (str == null)
@@ -3104,12 +2892,12 @@ class Strings {
     }
 
     /**
-     * @return an hx.strings.Pattern object using the given string as regular expression pattern.
-     * 
      * <pre><code>
      * >>> Strings.toPattern(null) == null
      * >>> Strings.toPattern(".*").matcher("foo").matches() == true
      * </code></pre>
+     * 
+     * @return an hx.strings.Pattern object using the given string as regular expression pattern.
      */
     inline
     public static function toPattern(str:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
@@ -3154,6 +2942,29 @@ class Strings {
         if (Math.isNaN(result))
             return ifUnparseable;
         return result;
+    }
+    
+    /**
+     * Static extension for <code>Int</code>.
+     * 
+     * <pre><code>
+     * >>> Strings.toHex(1)       == "1"
+     * >>> Strings.toHex(10)      == "A"
+     * >>> Strings.toHex(100)     == "64"
+     * >>> Strings.toHex(100, 4)  == "0064"
+     * >>> Strings.toHex(1000, 2) == "3E8"
+     * >>> Strings.toHex(-1)      == "FFFFFFFF"
+     * >>> Strings.toHex(-10)     == "FFFFFFF6"
+     * >>> Strings.toHex(-10, 10) == "00FFFFFFF6"
+     * </code></pre>
+     * 
+     * @param minDigits the resulting string is left padded with <code>0</code> until it length equals <code>minDigits</code>
+     * @return the hexadecimal representation of <b>num</b>
+     */
+    inline
+    public static function toHex(num:Int, minDigits:Int = 0):String {
+        var hexed = StringTools.hex(num, 0);        
+        return hexed.lpad(minDigits, "0");
     }
     
     /**

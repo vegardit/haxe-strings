@@ -50,6 +50,7 @@ class Test {
         32.toChar().isAscii();       // returns true
         6000.toChar().isAscii();     // returns false
         6000.toChar().isUTF8();      // returns true
+        74.toHex();                  // returns "4A"
         
         // all functions are null-safe:
         var nullString:String = null;

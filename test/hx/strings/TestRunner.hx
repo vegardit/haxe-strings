@@ -41,7 +41,7 @@ class TestRunner extends DocTestRunner {
     }
     
     public function testPattern():Void {
-        
+
         {
             var p:Pattern = Pattern.compile("DOG", [IGNORE_CASE, MATCH_ALL]);
             var m:Matcher = p.matcher("dogcatdog");
