@@ -26,6 +26,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - renamed hx.strings.Strings#stripTags() to hx.strings.Strings#removeTags()
 - renamed hx.strings.Strings#ltrim() to hx.strings.Strings#trimLeft()
 - renamed hx.strings.Strings#rstrip() to hx.strings.Strings#trimRight()
+- renamed hx.strings.Strings#abbreviate() to hx.strings.Strings#ellipsizeRight()
+- renamed hx.strings.Strings#PATH_SEPARATOR to hx.strings.Strings#DIRECTORY_SEPARATOR
 - slight performance improvement in hx.strings.StringBuilder
 ### Fixed
 - hx.strings.Char.toLowerCase() was broken for character I

@@ -205,6 +205,7 @@ interface Matcher {
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:enum
+@:dox(hide)
 abstract MatchingOption(String) {
     
     /**

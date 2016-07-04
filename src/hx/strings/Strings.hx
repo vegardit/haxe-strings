@@ -34,6 +34,7 @@ using hx.strings.Strings;
  * http://programmers.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
  * https://github.com/rurban/smhasher
  */
+@:dox(hide)
 enum HashCodeAlgorithm {
     
     PLATFORM_SPECIFIC;
@@ -82,56 +83,65 @@ class Strings {
     
     public static inline var POS_NOT_FOUND:CharPos = -1;
 
+    private static function _isWindows():Bool {
+        #if flash
+        var os = flash.system.Capabilities.os;
+        #elseif hl
+        // TODO https://github.com/HaxeFoundation/haxe/issues/5314
+        var os = "Windows";
+        #elseif js
+        var os = js.Browser.navigator.oscpu;
+        #else
+        var os = Sys.systemName();
+        #end
+        return REGEX_IS_WINDOWS.matcher(os).matches();
+    }
+    
+    /**
+     * Unix-flavor directory separator (slash)
+     */
+    public static inline var DIRECTORY_SEPARATOR_NIX = "/";
+    
+    /**
+     * Windows directory separator (backslash)
+     */
+    public static inline var DIRECTORY_SEPARATOR_WIN = "\\";
+
+    /**
+     * operating system specific directory separator (slash or backslash)
+     */
+    public static var DIRECTORY_SEPARATOR(default, null):String = _isWindows() ? DIRECTORY_SEPARATOR_WIN : DIRECTORY_SEPARATOR_NIX;
+    
+    /**
+     * Unix line separator (LF)
+     */
     public static inline var NEW_LINE_NIX = "\n";
+
+    /**
+     * Windows line separator (CR + LF)
+     */
     public static inline var NEW_LINE_WIN = "\r\n";
 
     /**
-     * new line character of the current operating system
+     * operating system specific line separator
      */
-    public static var NEW_LINE(get, null):String;
-    private static function get_NEW_LINE() {
-        #if flash
-        var os = flash.system.Capabilities.os;
-        #elseif hl
-        // TODO https://github.com/HaxeFoundation/haxe/issues/5314
-        var os = "Windows";
-        #elseif js
-        var os = js.Browser.navigator.oscpu;
-        #else
-        var os = Sys.systemName();
-        #end
-        if (REGEX_IS_WINDOWS.matcher(os).matches()) {
-            return NEW_LINE_WIN;
-        } else {
-            return NEW_LINE_NIX;
-        }
-    }
+    public static var NEW_LINE(default, null):String = _isWindows() ? NEW_LINE_WIN : NEW_LINE_NIX;
     
-    public static inline var PATH_SEPARATOR_NIX = "/";
-    public static inline var PATH_SEPARATOR_WIN = "\\";
+    /**
+     * Unix-flavor path separator (:) used to separate paths in the PATH environment variable
+     */
+    public static inline var PATH_SEPARATOR_NIX = ":";
+    
+    /**
+     * Windows path separator (;) used to separate paths in the PATH environment variable
+     */
+    public static inline var PATH_SEPARATOR_WIN = ";";
 
     /**
-     * path separator of the current operating system
+     * operating system specific path separator (colon or semicolon) used to separate paths in the PATH environment variable
      */
-    public static var PATH_SEPARATOR(get, null):String;
-    private static function get_PATH_SEPARATOR() {
-        #if flash
-        var os = flash.system.Capabilities.os;
-        #elseif hl
-        // TODO https://github.com/HaxeFoundation/haxe/issues/5314
-        var os = "Windows";
-        #elseif js
-        var os = js.Browser.navigator.oscpu;
-        #else
-        var os = Sys.systemName();
-        #end
-        if (REGEX_IS_WINDOWS.matcher(os).matches()) {
-            return PATH_SEPARATOR_WIN;
-        } else {
-            return PATH_SEPARATOR_NIX;
-        }
-    }
-    
+    public static var PATH_SEPARATOR(default, null):String = _isWindows() ? PATH_SEPARATOR_WIN : PATH_SEPARATOR_NIX;
+
     /**
      * no bounds checking
      */
@@ -193,29 +203,6 @@ class Strings {
             words.push(currentWord.toString());
         }
         return words;
-    }
-
-    /**
-     * <pre><code>
-     * >>> Strings.abbreviate(null, 0)         == null
-     * >>> Strings.abbreviate(null, 3)         == null
-     * >>> Strings.abbreviate("", 0)           == ""
-     * >>> Strings.abbreviate("", 3)           == ""
-     * >>> Strings.abbreviate("1234", 4)       == "1234"
-     * >>> Strings.abbreviate("12345", 4)      == "1..."
-     * >>> Strings.abbreviate("12345678", 5)   == "12..."
-     * >>> Strings.abbreviate("はいはいはい", 5)  == "はい..."
-     * </code></pre>
-     * 
-     * @throws exception if str > maxLength and maxLength < 4
-     */
-    public static function abbreviate(str:String, maxLength:Int):String {
-        if (str.length8() <= maxLength)
-            return str;
-            
-        if (maxLength < 4) throw "[maxLength] must not be smaller than 4";
-
-        return str.substring8(0, maxLength - 3) + "...";
     }
     
     /**
@@ -369,7 +356,7 @@ class Strings {
      * String#charAt() variant with cross-platform UTF-8 support.
      * 
      * @param pos character position
-     * 
+     *
      * <pre><code>
      * >>> Strings.charAt8(null, 0)       == ""
      * >>> Strings.charAt8("", 0)         == ""
@@ -817,6 +804,59 @@ class Strings {
         }
         return checkLen;
     }
+    
+    /**
+     * <pre><code>
+     * >>> Strings.ellipsizeLeft(null, 0)         == null
+     * >>> Strings.ellipsizeLeft(null, 3)         == null
+     * >>> Strings.ellipsizeLeft("", 0)           == ""
+     * >>> Strings.ellipsizeLeft("", 3)           == ""
+     * >>> Strings.ellipsizeLeft("1234", 4)       == "1234"
+     * >>> Strings.ellipsizeLeft("12345", 4)      == "...5"
+     * >>> Strings.ellipsizeLeft("12345678", 5)   == "...78"
+     * >>> Strings.ellipsizeLeft("はいはいはい", 5)  == "...はい"
+     * </code></pre>
+     * 
+     * @throws exception if maxLength < 4 and str > maxLength
+     */
+    public static function ellipsizeLeft(str:String, maxLength:Int):String {
+        var strLen = str.length8();
+        if (strLen <= maxLength)
+            return str;
+            
+        if (maxLength < 4) throw "[maxLength] must not be smaller than 4";
+
+        return "..." + str.right(maxLength - 3);
+    }
+
+    /**
+     * <pre><code>
+     * >>> Strings.ellipsizeRight(null, 0)         == null
+     * >>> Strings.ellipsizeRight(null, 3)         == null
+     * >>> Strings.ellipsizeRight("", 0)           == ""
+     * >>> Strings.ellipsizeRight("", 3)           == ""
+     * >>> Strings.ellipsizeRight("1234", 4)       == "1234"
+     * >>> Strings.ellipsizeRight("12345", 4)      == "1..."
+     * >>> Strings.ellipsizeRight("12345678", 5)   == "12..."
+     * >>> Strings.ellipsizeRight("はいはいはい", 5)  == "はい..."
+     * </code></pre>
+     * 
+     * @throws exception if maxLength < 4 and str > maxLength
+     */
+    public static function ellipsizeRight(str:String, maxLength:Int):String {
+        if (str.length8() <= maxLength)
+            return str;
+            
+        if (maxLength < 4) throw "[maxLength] must not be smaller than 4";
+
+        return str.left(maxLength - 3) + "...";
+    }
+
+    /* TODO
+    public static function ellipsizePath(path:String, maxLength:Int):String {
+        return "";
+    }
+    */
     
     /**
      * <pre><code>
@@ -3643,6 +3683,7 @@ class Strings {
     }
 }
 
+@:dox(hide)
 class ANSIState {
 
     public var bgcolor:String;
