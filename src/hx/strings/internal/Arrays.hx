@@ -36,4 +36,14 @@ class Arrays {
         }
         return result;
     }
+    
+    inline
+    public static function first<T>(items:Array<T>):T {
+        return (items == null || items.length == 0) ? null :items[0];
+    }
+    
+    inline
+    public static function last<T>(items:Array<T>):T {
+        return (items == null || items.length == 0) ? null :items[items.length - 1];
+    }
 }

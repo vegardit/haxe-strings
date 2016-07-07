@@ -20,6 +20,7 @@ import hx.strings.internal.Either2;
 import hx.strings.internal.Either3;
 
 using hx.strings.Strings;
+using hx.strings.internal.Arrays;
 
 /**
  * Local filesystem path related string manipulation operations.
@@ -44,6 +45,11 @@ class Paths {
      * operating system specific directory separator (slash or backslash)
      */
     public static var DIRECTORY_SEPARATOR(default, null):String = hx.strings.internal.OS.isWindows() ? DIRECTORY_SEPARATOR_WIN : DIRECTORY_SEPARATOR_NIX;
+
+    /**
+     * if the DIRECTORY_SEPARATOR is slash, this contains backslash and vice versa
+     */
+    public static var OTHER_DIRECTORY_SEPARATOR(default, null):String = hx.strings.internal.OS.isWindows() ? DIRECTORY_SEPARATOR_NIX : DIRECTORY_SEPARATOR_WIN;
 
     /**
      * file name extension separator (.)
@@ -99,16 +105,16 @@ class Paths {
                             else
                                 DIRECTORY_SEPARATOR_NIX;
                         case b(arr):
-                            if(arr.length > 0) {
-                                var str = arr[0];
-                                if (str.length8() == 2 && str.charCodeAt8(0).isAsciiAlpha() && str.charCodeAt8(1) == Char.COLON)
-                                    DIRECTORY_SEPARATOR_WIN;                            
-                                else
-                                    DIRECTORY_SEPARATOR_NIX;
-                            } else
+                            var str = arr.first();
+                            
+                            if (str == null) 
+                                return DIRECTORY_SEPARATOR_NIX;
+                                
+                            if (str.length8() == 2 && str.charCodeAt8(0).isAsciiAlpha() && str.charCodeAt8(1) == Char.COLON)
+                                DIRECTORY_SEPARATOR_WIN;                            
+                            else
                                 DIRECTORY_SEPARATOR_NIX;
                     }
-
                 }
 
                 return DIRECTORY_SEPARATOR_NIX;
@@ -126,12 +132,15 @@ class Paths {
 
     /**
      * <pre><code>
-     * >>> Paths.addDirectorySeparator("/dir")      == "/dir/"
-     * >>> Paths.addDirectorySeparator("C:\\dir")   == "C:\\dir\\"
-     * >>> Paths.addDirectorySeparator("dir")       == "dir/"
-     * >>> Paths.addDirectorySeparator("C:")        == "C:\\"
-     * >>> Paths.addDirectorySeparator("")          == "/"
-     * >>> Paths.addDirectorySeparator(null)        == null
+     * >>> Paths.addDirectorySeparator("/dir")        ==  "/dir/"
+     * >>> Paths.addDirectorySeparator("C:\\dir")     == "C:\\dir\\"
+     * >>> Paths.addDirectorySeparator("/dir/..")     ==  "/dir/../"
+     * >>> Paths.addDirectorySeparator("C:\\dir\\..") == "C:\\dir\\..\\"
+     * >>> Paths.addDirectorySeparator("dir")         == "dir/"
+     * >>> Paths.addDirectorySeparator("C:")          == "C:\\"
+     * >>> Paths.addDirectorySeparator(".")           == "./"
+     * >>> Paths.addDirectorySeparator("")            == "/"
+     * >>> Paths.addDirectorySeparator(null)          == null
      * </code></pre>
      */
     public static function addDirectorySeparator(path:String, sep:DirectorySeparatorType = AUTO):String {
@@ -191,7 +200,7 @@ class Paths {
      * >>> Paths.basenameWithoutExtension(null)                == null
      * </code></pre>
      * 
-     * @return the last part of the given path
+     * @return the last part of the given path without it's name extension
      */
     public static function basenameWithoutExtension(path:String):String {
         if (path.isEmpty())
@@ -532,15 +541,21 @@ class Paths {
     }
     
     /**
+     * Normalizes the given path as far as possible.
+     * 
      * <pre><code>
      * >>> Paths.normalize("C:\\dir1\\..\\dir2\\")              == "C:\\dir2"
-     * >>> Paths.normalize("C:\\..\\foo\\")                     == "foo"
+     * >>> Paths.normalize("C:\\..\\foo\\")                     == "C:\\..\\foo"
+     * >>> Paths.normalize("a\\..\\b/c", WIN)                   == "b\\c"
      * >>> Paths.normalize("a\\..\\b/c", NIX)                   == "b/c"
      * >>> Paths.normalize("/a/b/../c/")                        == "/a/c"
      * >>> Paths.normalize("//a/b/../c/")                       == "/a/c"
-     * >>> Paths.normalize("a/b/../../../")                     == ".."
+     * >>> Paths.normalize("a/b/../../../../")                  == "../.."
+     * >>> Paths.normalize("../../a/b/../c/")                   == "../../a/c"
      * >>> Paths.normalize("\\\\server.local\\a\\b\\..\\c\\")   == "\\\\server.local\\a\\c"
      * >>> Paths.normalize("\\\\\\server.local\\a\\b\\..\\c\\") == "\\\\server.local\\a\\c"
+     * >>> Paths.normalize("..")                                == ".."
+     * >>> Paths.normalize(".")                                 == "."
      * >>> Paths.normalize("")                                  == ""
      * >>> Paths.normalize(null)                                == null
      * </code></pre>
@@ -551,6 +566,7 @@ class Paths {
         if (path.isEmpty()) 
             return path;
 
+        var absolute = isAbsolute(path);
         var dirSep = _getSeparator(path, sep);
         var parts = path.split8([DIRECTORY_SEPARATOR_NIX, DIRECTORY_SEPARATOR_WIN]);
         var resultParts = new Array<String>();
@@ -562,9 +578,19 @@ class Paths {
                 }
                 continue;
             }
-            if (part == ".." && resultParts.length > 0) {
-                resultParts.pop();
-                continue;
+            if (part == "..") {
+                var len = resultParts.length;
+                var canGoUp:Bool = len > 0;
+                if (canGoUp && len == 1 && absolute) {
+                    canGoUp = false;
+                }
+                if (canGoUp && resultParts.last() == "..") {
+                    canGoUp = false; 
+                }
+                if(canGoUp) {
+                    resultParts.pop();
+                    continue;
+                }
             }
             
             resultParts.push(part);
