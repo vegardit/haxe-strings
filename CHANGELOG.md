@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - Spell Checker in package hx.strings.spelling
 - hx.strings.Paths class for path related string manipulations
 ### Changed
+- hx.strings.Strings#split8() now allows multiple separators
 - changed license from MIT to Apache License 2.0
 - renamed hx.strings.Strings#stripAnsi() to hx.strings.Strings#removeAnsi()
 - renamed hx.strings.Strings#stripTags() to hx.strings.Strings#removeTags()

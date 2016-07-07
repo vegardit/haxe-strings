@@ -24,6 +24,7 @@ import haxe.crypto.Md5;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import hx.strings.Pattern;
+import hx.strings.internal.Either2;
 import hx.strings.internal.Either3;
 import hx.strings.internal.OS;
 
@@ -2245,39 +2246,48 @@ class Strings {
      * String#split() variant with cross-platform UTF-8 support and consistent behavior.
      * 
      * <pre><code>
-     * >>> Strings.split8(null, null)         == null
-     * >>> Strings.split8(null, "")           == null
-     * >>> Strings.split8("", "")             == []
-     * >>> Strings.split8("a.b.c", null)      == null
-     * >>> Strings.split8("a.b.c", "")        == [ "a", ".", "b", ".", "c" ]
-     * >>> Strings.split8("a.b.c", "", 3)     == [ "a", ".", "b.c" ]
-     * >>> Strings.split8("a.b.c", "", 9)     == [ "a", ".", "b", ".", "c" ]
-     * >>> Strings.split8("a.b.c", ".")       == [ "a", "b", "c" ]
-     * >>> Strings.split8("a.b.c", ".", 2)    == [ "a", "b.c" ]
-     * >>> Strings.split8(".a.b.c.", ".")     == [ "", "a", "b", "c", "" ]
-     * >>> Strings.split8(".a.b.c.", ".", 3)  == [ "", "a", "b.c." ]
-     * >>> Strings.split8(".a.b.c.", ".", 9)  == [ "", "a", "b", "c", "" ]
-     * >>> Strings.split8(".a.b.c.", ".", -1) == [ "", "a", "b", "c", "" ]
-     * >>> Strings.split8("はい", "")          == [ "は", "い" ]
+     * >>> Strings.split8(null, null)          == null
+     * >>> Strings.split8(null, "")            == null
+     * >>> Strings.split8("", "")              == []
+     * >>> Strings.split8("a.b.c", null)       == null
+     * >>> Strings.split8("a.b.c", "")         == [ "a", ".", "b", ".", "c" ]
+     * >>> Strings.split8("a.b.c", "", 3)      == [ "a", ".", "b.c" ]
+     * >>> Strings.split8("a.b.c", "", 9)      == [ "a", ".", "b", ".", "c" ]
+     * >>> Strings.split8("a.b.c", ".")        == [ "a", "b", "c" ]
+     * >>> Strings.split8("a.b,c", [".", ","]) == [ "a", "b", "c" ]
+     * >>> Strings.split8("a.b.c", ".", 2)     == [ "a", "b.c" ]
+     * >>> Strings.split8(".a.b.c.", ".")      == [ "", "a", "b", "c", "" ]
+     * >>> Strings.split8(".a.b.c.", ".", 3)   == [ "", "a", "b.c." ]
+     * >>> Strings.split8(".a.b.c.", ".", 9)   == [ "", "a", "b", "c", "" ]
+     * >>> Strings.split8(".a.b.c.", ".", -1)  == [ "", "a", "b", "c", "" ]
+     * >>> Strings.split8("はい", "")           == [ "は", "い" ]
      * </code></pre>
      * 
+     * @param separator one or multiple separators to use for splitting
      * @param maxParts the split limit, the maximum number of elements in the resulting array
      */
-    public static function split8(str:String, separator:String, ?maxParts:Int = 0):Array<String> {
+    public static function split8(str:String, separator:Either2<String, Array<String>>, ?maxParts:Int = 0):Array<String> {
         if (str == null || separator == null)
             return null;
-            
+
         var strLen = str.length8();
         
         if (strLen == 0)
             return [];
 
+        var separators = switch(separator.value) {
+            case a(str): [str];
+            case b(arr): arr.filter(function(s) return s != null);
+        }
+        if (separators.length == 0) 
+            return null;
+
         #if (flash || java || cs || python)
-            if(max <= 0)
-                return str.split(separator);
+            if(max <= 0 && separators.length == 1)
+                return str.split(separators[0]);
         #end
 
-        if (separator.isEmpty()) {
+        if (separators.indexOf("") > -1) {
             if(maxParts <= 0)
                 return [ for (i in 0...strLen) Utf8.sub(str, i, 1) ];
             
@@ -2289,12 +2299,22 @@ class Strings {
             return result;
         }
         
-        var separatorLen = separator.length8();
+        var separatorsLengths = [ for (sep in separators) sep.length8() ];
         var lastFoundAt = 0;
         var result = [];
         var resultCount = 0;
         while (true) {
-            var foundAt = str.indexOf8(separator, lastFoundAt);
+            var separatorLen:Int = 0;
+            var foundAt = POS_NOT_FOUND;
+            for (i in 0...separators.length) {
+                var sepFoundAt = str.indexOf8(separators[i], lastFoundAt);
+                if(sepFoundAt != POS_NOT_FOUND) {
+                    if (foundAt == POS_NOT_FOUND || sepFoundAt < foundAt) {                        
+                        foundAt = sepFoundAt;
+                        separatorLen = separatorsLengths[i];
+                    }
+                }
+            }
             resultCount++;
             if (foundAt == POS_NOT_FOUND || resultCount == maxParts) {
                 result.push(Utf8.sub(str, lastFoundAt, strLen - lastFoundAt));
