@@ -225,9 +225,9 @@ class Test {
 
         // very convenient path joining:
         Paths.join("dir", "test.txt");               // returns "dir/test.txt"
-        Paths.join("dir1\\..\\dir2", "dir3");        // returns "dir2\\dir3"
+        Paths.join("dir1\\..\\dir2", "dir3");        // returns "dir2\dir3"
         Paths.join("dir1\\..\\dir2", "dir3", NIX);   // returns "dir2/dir3"
-        Paths.join(["dir1\\dir2", "dir3", "dir4"]);  // returns "dir1\\dir2\\dir3\\dir4"
+        Paths.join(["dir1\\dir2", "dir3", "dir4"]);  // returns "dir1\dir2\dir3\dir4"
         Paths.join(["dir1/dir2", "dir3", "dir4"]);   // returns "dir1/dir2/dir3/dir4"
         
         Paths.normalize("C:\\dir1\\..\\dir2\\");               // returns "C:\dir2"
