@@ -16,6 +16,8 @@
 package hx.strings.spelling.dictionary;
 
 /**
+ * A modifiable/trainable dictionary.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 interface TrainableDictionary extends Dictionary {

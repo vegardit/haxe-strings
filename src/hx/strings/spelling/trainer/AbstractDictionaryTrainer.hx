@@ -23,6 +23,8 @@ import hx.strings.spelling.dictionary.TrainableDictionary;
 using hx.strings.Strings;
 
 /**
+ * Partially implemented dictionary trainer class that provides shared functionality to subclasses.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:abstract

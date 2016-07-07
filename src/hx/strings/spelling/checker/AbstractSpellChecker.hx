@@ -26,6 +26,8 @@ using hx.strings.Strings;
 using hx.strings.internal.Arrays;
 
 /**
+ * Partially implemented spell checker class that provides shared functionality to subclasses.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:abstract

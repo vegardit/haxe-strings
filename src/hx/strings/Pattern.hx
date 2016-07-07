@@ -108,6 +108,10 @@ class Pattern {
 }
 
 /**
+ * Performs match operations on a string by interpreting a regular expression pattern.
+ * 
+ * Instances are created via the hx.strings.Pattern#matcher() function.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @notThreadSafe
@@ -202,10 +206,11 @@ interface Matcher {
 }
 
 /**
+ * Options for compilation of regular expression patterns.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:enum
-@:dox(hide)
 abstract MatchingOption(String) {
     
     /**

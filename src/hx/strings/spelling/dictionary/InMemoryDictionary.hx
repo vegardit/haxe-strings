@@ -29,7 +29,7 @@ import hx.strings.internal.Arrays;
 using hx.strings.Strings;
 
 /**
- * Hash map based dictionary
+ * Hash map based dictionary.
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */

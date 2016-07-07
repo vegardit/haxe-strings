@@ -20,6 +20,8 @@ import hx.strings.spelling.dictionary.TrainableDictionary;
 using hx.strings.Strings;
 
 /**
+ * A dictionary trainer with German language specific parsing behaviour.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @threadSafe

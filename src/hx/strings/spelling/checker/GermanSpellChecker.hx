@@ -22,6 +22,8 @@ import hx.strings.spelling.dictionary.GermanDictionary;
 using hx.strings.Strings;
 
 /**
+ * Spell checker implementation with German language specific parsing behaviour.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class GermanSpellChecker extends AbstractSpellChecker{

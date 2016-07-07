@@ -16,6 +16,8 @@
 package hx.strings.spelling.dictionary;
 
 /**
+ * Dictionary holding words and their popularity/frequency.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 interface Dictionary {

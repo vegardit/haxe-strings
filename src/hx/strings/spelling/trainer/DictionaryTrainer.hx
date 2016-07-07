@@ -18,6 +18,8 @@ package hx.strings.spelling.trainer;
 import hx.strings.spelling.dictionary.TrainableDictionary;
 
 /**
+ * A dictionary trainer can train/populate a dictionary by analyzing provided reference texts.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 interface DictionaryTrainer {

@@ -21,6 +21,8 @@ import hx.strings.spelling.dictionary.EnglishDictionary;
 using hx.strings.Strings;
 
 /**
+ * Spell checker implementation with English language specific parsing behaviour.
+ * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class EnglishSpellChecker extends AbstractSpellChecker{
