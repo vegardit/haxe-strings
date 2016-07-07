@@ -460,14 +460,14 @@ class Paths {
 
     /**
      * <pre><code>
-     * >>> Paths.isAbsolute("/")                 == true
-     * >>> Paths.isAbsolute("C:")                == true
-     * >>> Paths.isAbsolute("\\\\winserver\dir") == true
-     * >>> Paths.isAbsolute("dir/file")          == false
-     * >>> Paths.isAbsolute("../dir")            == false
-     * >>> Paths.isAbsolute("1:\\")              == false
-     * >>> Paths.isAbsolute("")                  == false
-     * >>> Paths.isAbsolute(null)                == false
+     * >>> Paths.isAbsolute("/")                  == true
+     * >>> Paths.isAbsolute("C:")                 == true
+     * >>> Paths.isAbsolute("\\\\winserver\\dir") == true
+     * >>> Paths.isAbsolute("dir/file")           == false
+     * >>> Paths.isAbsolute("../dir")             == false
+     * >>> Paths.isAbsolute("1:\\")               == false
+     * >>> Paths.isAbsolute("")                   == false
+     * >>> Paths.isAbsolute(null)                 == false
      * </code></pre>
      * 
      * @return true if the given path is a absolute, otherwise false
