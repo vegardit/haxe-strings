@@ -48,7 +48,7 @@ class Paths {
     /**
      * file name extension separator (.)
      */
-    public static var EXTENSION_SEPARATOR = ".";
+    public static inline var EXTENSION_SEPARATOR = ".";
 
     /**
      * Unix-flavor path separator (:) used to separate paths in the PATH environment variable
@@ -317,7 +317,7 @@ class Paths {
             return null;
             
         var fileName = basename(path);
-        var dotPos = fileName.lastIndexOf8(".");
+        var dotPos = fileName.lastIndexOf8(EXTENSION_SEPARATOR);
         if (dotPos == Strings.POS_NOT_FOUND)
             return "";
         return fileName.substr8(dotPos + 1);
