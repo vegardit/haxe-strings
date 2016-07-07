@@ -239,6 +239,7 @@ class Paths {
      * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 7)              == "C:\\..."
      * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 7, false)       == "..."
      * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 12, false)      == "...\\Desktop"
+     * >>> Paths.ellipsize("\\\\winserver\\documents\\text.doc", 25)        == "\\\\winserver\\...\\text.doc"
      * >>> Paths.ellipsize("", 0) == ""
      * >>> Paths.ellipsize("", 3) == ""
      * >>> Paths.ellipsize(null, 0) == null
@@ -255,6 +256,7 @@ class Paths {
 
         // check if path fits by normalizing it
         path = normalize(path);
+        trace(path);
         if (path.length8() <= maxLength)
             return path;
         
@@ -279,6 +281,10 @@ class Paths {
                 leftPart.add(partToAdd);
                 leftPart.add(dirSep);
                 leftPartsCount++;
+                
+                // handle special case of Windows network share \\server\folder
+                if ((i == 0 || i == 1) && partToAdd.isEmpty()) 
+                    continue;
             } else {
                 rightPart.prepend(partToAdd);
                 rightPart.prepend(dirSep);
@@ -454,14 +460,14 @@ class Paths {
 
     /**
      * <pre><code>
-     * >>> Paths.isAbsolute("/")                == true
-     * >>> Paths.isAbsolute("C:")               == true
-     * >>> Paths.isAbsolute("\\\\server.local") == true
-     * >>> Paths.isAbsolute("dir/file")         == false
-     * >>> Paths.isAbsolute("../dir")           == false
-     * >>> Paths.isAbsolute("1:\\")             == false
-     * >>> Paths.isAbsolute("")                 == false
-     * >>> Paths.isAbsolute(null)               == false
+     * >>> Paths.isAbsolute("/")                 == true
+     * >>> Paths.isAbsolute("C:")                == true
+     * >>> Paths.isAbsolute("\\\\winserver\dir") == true
+     * >>> Paths.isAbsolute("dir/file")          == false
+     * >>> Paths.isAbsolute("../dir")            == false
+     * >>> Paths.isAbsolute("1:\\")              == false
+     * >>> Paths.isAbsolute("")                  == false
+     * >>> Paths.isAbsolute(null)                == false
      * </code></pre>
      * 
      * @return true if the given path is a absolute, otherwise false
@@ -522,13 +528,16 @@ class Paths {
     
     /**
      * <pre><code>
-     * >>> Paths.normalize("C:\\dir1\\..\\dir2\\") == "C:\\dir2"
-     * >>> Paths.normalize("C:\\..\\foo\\")        == "foo"
-     * >>> Paths.normalize("a\\..\\b/c", NIX)      == "b/c"
-     * >>> Paths.normalize("/a/b/../c/")           == "/a/c"
-     * >>> Paths.normalize("a/b/../../../")        == ".."
-     * >>> Paths.normalize("")                     == ""
-     * >>> Paths.normalize(null)                   == null
+     * >>> Paths.normalize("C:\\dir1\\..\\dir2\\")              == "C:\\dir2"
+     * >>> Paths.normalize("C:\\..\\foo\\")                     == "foo"
+     * >>> Paths.normalize("a\\..\\b/c", NIX)                   == "b/c"
+     * >>> Paths.normalize("/a/b/../c/")                        == "/a/c"
+     * >>> Paths.normalize("//a/b/../c/")                       == "/a/c"
+     * >>> Paths.normalize("a/b/../../../")                     == ".."
+     * >>> Paths.normalize("\\\\server.local\\a\\b\\..\\c\\")   == "\\\\server.local\\a\\c"
+     * >>> Paths.normalize("\\\\\\server.local\\a\\b\\..\\c\\") == "\\\\server.local\\a\\c"
+     * >>> Paths.normalize("")                                  == ""
+     * >>> Paths.normalize(null)                                == null
      * </code></pre>
      * 
      * @return normalized version of the given path with trailing slashes are removed
@@ -544,7 +553,7 @@ class Paths {
             var part = parts[i];
             if (part.isEmpty()) {
                 if (i == 0) {
-                    resultParts.push("");
+                    resultParts.push(dirSep == DIRECTORY_SEPARATOR_WIN ? DIRECTORY_SEPARATOR_WIN : "");
                 }
                 continue;
             }
