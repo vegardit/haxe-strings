@@ -177,11 +177,11 @@ class Paths {
      * <pre><code>
      * >>> Paths.basenameWithoutExtension("/dir/file.txt")     == "file"
      * >>> Paths.basenameWithoutExtension("C:\\dir\\file.txt") == "file"
-     * >>> Paths.basenameWithoutExtension("/dir/")             == ""
-     * >>> Paths.basenameWithoutExtension("/dir//")            == ""
-     * >>> Paths.basenameWithoutExtension("/dir/..")           == ""
-     * >>> Paths.basenameWithoutExtension("..")                == ""
-     * >>> Paths.basenameWithoutExtension(".")                 == ""
+     * >>> Paths.basenameWithoutExtension("/dir/")             == "dir"
+     * >>> Paths.basenameWithoutExtension("/dir//")            == "dir"
+     * >>> Paths.basenameWithoutExtension("/dir/..")           == ".."
+     * >>> Paths.basenameWithoutExtension("..")                == ".."
+     * >>> Paths.basenameWithoutExtension(".")                 == "."
      * >>> Paths.basenameWithoutExtension("")                  == ""
      * >>> Paths.basenameWithoutExtension(null)                == null
      * </code></pre>
@@ -193,9 +193,9 @@ class Paths {
             return path;
 
         var basename = basename(path);
-        if (basename == "." || basename == "..") return "";
+        if (basename == "." || basename == "..") return basename;
         var dotPos = basename.lastIndexOf8(".");
-        return basename.substring8(0, dotPos);
+        return dotPos == Strings.POS_NOT_FOUND ? basename : basename.substring8(0, dotPos);
     }
     
     /**
