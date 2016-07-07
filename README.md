@@ -215,13 +215,15 @@ class Test {
         // use glob pattern matching:
         Paths.globToEreg("src/**/*.hx").match("src/haxe/strings/Char.hx");            // returns true
         Paths.globToEreg("assets/**/*.{js,css}").match("assets/theme/dark/dark.css"); // returns true
-        
+        Paths.globToEreg("SystemOut[0-9].log").match("SystemOut1.log");               // returns true
+        Paths.globToEreg("SystemOut[!0-9].log").match("SystemOut1.log");              // returns false
+
         Paths.isAbsolute("/");                       // returns true
         Paths.isAbsolute("C:");                      // returns true
         Paths.isAbsolute("\\\\winserver\\dir");      // returns true
         Paths.isAbsolute("../dir");                  // returns false
 
-        // very convenient path joining
+        // very convenient path joining:
         Paths.join("dir", "test.txt");               // returns "dir/test.txt"
         Paths.join("dir1\\..\\dir2", "dir3");        // returns "dir2\\dir3"
         Paths.join("dir1\\..\\dir2", "dir3", NIX);   // returns "dir2/dir3"

@@ -333,13 +333,18 @@ class Paths {
     }
     
     /**
+     * Creates a regular expression EReg object from the given globbing/wildcard pattern.
+     * 
      * <pre><code>
      * >>> Paths.globToEReg("**"+"/file?.txt").match("aa/bb/file1.txt") == true
-     * >>> Paths.globToEReg("*.txt").match("file.txt")       == true
-     * >>> Paths.globToEReg("*.txt").match("file.pdf")       == false
-     * >>> Paths.globToEReg("*.{pdf,txt}").match("file.txt") == true
-     * >>> Paths.globToEReg("*.{pdf,txt}").match("file.pdf") == true
-     * >>> Paths.globToEReg("*.{pdf,txt}").match("file.xml") == false
+     * >>> Paths.globToEReg("*.txt").match("file.txt")           == true
+     * >>> Paths.globToEReg("*.txt").match("file.pdf")           == false
+     * >>> Paths.globToEReg("*.{pdf,txt}").match("file.txt")     == true
+     * >>> Paths.globToEReg("*.{pdf,txt}").match("file.pdf")     == true
+     * >>> Paths.globToEReg("*.{pdf,txt}").match("file.xml")     == false
+     * >>> Paths.globToEReg("file[0-9].txt").match("file1.txt")  == true
+     * >>> Paths.globToEReg("file[!0-9].txt").match("file1.txt") == false
+     * >>> Paths.globToEReg("file[!0-9].txt").match("fileA.txt") == true
      * </code></pre>
      * 
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
@@ -351,13 +356,18 @@ class Paths {
     }
     
     /**
+     * Creates a regular expression Pattern object from the given globbing/wildcard pattern.
+     * 
      * <pre><code>
      * >>> Paths.globToPattern("**"+"/file?.txt").matcher("aa/bb/file1.txt").matches() == true
-     * >>> Paths.globToPattern("*.txt").matcher("file.txt").matches()       == true
-     * >>> Paths.globToPattern("*.txt").matcher("file.pdf").matches()       == false
-     * >>> Paths.globToPattern("*.{pdf,txt}").matcher("file.txt").matches() == true
-     * >>> Paths.globToPattern("*.{pdf,txt}").matcher("file.pdf").matches() == true
-     * >>> Paths.globToPattern("*.{pdf,txt}").matcher("file.xml").matches() == false
+     * >>> Paths.globToPattern("*.txt").matcher("file.txt").matches()           == true
+     * >>> Paths.globToPattern("*.txt").matcher("file.pdf").matches()           == false
+     * >>> Paths.globToPattern("*.{pdf,txt}").matcher("file.txt").matches()     == true
+     * >>> Paths.globToPattern("*.{pdf,txt}").matcher("file.pdf").matches()     == true
+     * >>> Paths.globToPattern("*.{pdf,txt}").matcher("file.xml").matches()     == false
+     * >>> Paths.globToPattern("file[0-9].txt").matcher("file1.txt").matches()  == true
+     * >>> Paths.globToPattern("file[!0-9].txt").matcher("file1.txt").matches() == false
+     * >>> Paths.globToPattern("file[!0-9].txt").matcher("fileA.txt").matches() == true
      * </code></pre>
      * 
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
@@ -369,11 +379,15 @@ class Paths {
     }
     
     /**
+     * Creates a regular expression pattern from the given globbing/wildcard pattern.
+     * 
      * <pre><code>
      * >>> Paths.globToRegEx("file")        == "^file$"
      * >>> Paths.globToRegEx("*.txt")       == "^[^\\\\^\\/]*\\.txt$"
      * >>> Paths.globToRegEx("*file*")      == "^[^\\\\^\\/]*file[^\\\\^\\/]*$"
      * >>> Paths.globToRegEx("file?.txt")   == "^file[^\\\\^\\/]\\.txt$"
+     * >>> Paths.globToRegEx("file[A-Z]")   == "^file[A-Z]$"
+     * >>> Paths.globToRegEx("file[!A-Z]")  == "^file[^A-Z]$"
      * >>> Paths.globToRegEx("")            == ""
      * >>> Paths.globToRegEx(null)          == null
      * </code></pre>
@@ -439,6 +453,11 @@ class Paths {
                         // "," => "|" if in group or => "," if not in group
                         sb.addChar(groupDepth > 0 ? Char.PIPE : Char.COMMA);
                     }
+                case Char.EXCLAMATION_MARK:
+                    if (chPrev == Char.BRACKET_SQUARE_LEFT)
+                        sb.addChar(Char.CARET);  // "[!" => "[^"
+                    else
+                        sb.addChar(ch);
                 case Char.ASTERISK:
                     if (chars[idx + 1] == Char.ASTERISK) { // **
                         if (chars[idx + 2] == Char.SLASH) { // **/
