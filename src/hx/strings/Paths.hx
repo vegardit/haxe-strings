@@ -19,7 +19,6 @@ import haxe.io.Path;
 import hx.strings.Pattern;
 import hx.strings.internal.Either2;
 import hx.strings.internal.Either3;
-import hx.strings.internal.OS;
 
 using hx.strings.Strings;
 
@@ -45,7 +44,7 @@ class Paths {
     /**
      * operating system specific directory separator (slash or backslash)
      */
-    public static var DIRECTORY_SEPARATOR(default, null):String = OS.isWindows() ? DIRECTORY_SEPARATOR_WIN : DIRECTORY_SEPARATOR_NIX;
+    public static var DIRECTORY_SEPARATOR(default, null):String = hx.strings.internal.OS.isWindows() ? DIRECTORY_SEPARATOR_WIN : DIRECTORY_SEPARATOR_NIX;
     
     /**
      * Unix-flavor path separator (:) used to separate paths in the PATH environment variable
@@ -60,43 +59,87 @@ class Paths {
     /**
      * operating system specific path separator (colon or semicolon) used to separate paths in the PATH environment variable
      */
-    public static var PATH_SEPARATOR(default, null):String = OS.isWindows() ? PATH_SEPARATOR_WIN : PATH_SEPARATOR_NIX;
+    public static var PATH_SEPARATOR(default, null):String = hx.strings.internal.OS.isWindows() ? PATH_SEPARATOR_WIN : PATH_SEPARATOR_NIX;
+
+    private static function _getSeparator(path:Either2<String, Array<String>>, sep:DirectorySeparatorType) {
+        return switch(sep) {
+            case AUTO:
+                var nixSepPos = Strings.POS_NOT_FOUND;
+                var winSepPos = Strings.POS_NOT_FOUND;
+                
+                if (path == null) return DIRECTORY_SEPARATOR_NIX;
+                
+                switch(path.value) {
+                    case a(str):
+                        nixSepPos = str.indexOf8(DIRECTORY_SEPARATOR_NIX);
+                        winSepPos = str.indexOf8(DIRECTORY_SEPARATOR_WIN);                        
+                    case b(arr):
+                        for (str in arr) {
+                            if(nixSepPos == Strings.POS_NOT_FOUND)
+                                nixSepPos = str.indexOf8(DIRECTORY_SEPARATOR_NIX);
+                            if(winSepPos == Strings.POS_NOT_FOUND)
+                                winSepPos = str.indexOf8(DIRECTORY_SEPARATOR_WIN);
+                        }
+                }
+
+                if (winSepPos > Strings.POS_NOT_FOUND)
+                    return DIRECTORY_SEPARATOR_WIN;
+
+                if (nixSepPos == Strings.POS_NOT_FOUND && winSepPos == Strings.POS_NOT_FOUND) {
+                    
+                    // test for "C:"
+                    return switch(path.value) {
+                        case a(str):
+                            if (str.length8() == 2 && str.charCodeAt8(0).isAsciiAlpha() && str.charCodeAt8(1) == Char.COLON)
+                                DIRECTORY_SEPARATOR_WIN;
+                            else
+                                DIRECTORY_SEPARATOR_NIX;
+                        case b(arr):
+                            if(arr.length > 0) {
+                                var str = arr[0];
+                                if (str.length8() == 2 && str.charCodeAt8(0).isAsciiAlpha() && str.charCodeAt8(1) == Char.COLON)
+                                    DIRECTORY_SEPARATOR_WIN;                            
+                                else
+                                    DIRECTORY_SEPARATOR_NIX;
+                            } else
+                                DIRECTORY_SEPARATOR_NIX;
+                    }
+
+                }
+
+                return DIRECTORY_SEPARATOR_NIX;
+
+            case OS:
+                DIRECTORY_SEPARATOR;
+                
+            case NIX:
+                DIRECTORY_SEPARATOR_NIX;
+                
+            case WIN:
+                DIRECTORY_SEPARATOR_WIN;
+        }
+    }
 
     /**
      * <pre><code>
-     * >>> Paths.addTrailingSlash("/dir")      == "/dir/"
-     * >>> Paths.addTrailingSlash("C:\\dir")   == "C:\\dir\\"
-     * >>> Paths.addTrailingSlash("dir")       == "dir/"
-     * >>> Paths.addTrailingSlash("C:")        == "C:\\"
-     * >>> Paths.addTrailingSlash("")          == "/"
-     * >>> Paths.addTrailingSlash(null)        == null
+     * >>> Paths.addDirectorySeparator("/dir")      == "/dir/"
+     * >>> Paths.addDirectorySeparator("C:\\dir")   == "C:\\dir\\"
+     * >>> Paths.addDirectorySeparator("dir")       == "dir/"
+     * >>> Paths.addDirectorySeparator("C:")        == "C:\\"
+     * >>> Paths.addDirectorySeparator("")          == "/"
+     * >>> Paths.addDirectorySeparator(null)        == null
      * </code></pre>
      */
-    public static function addTrailingSlash(path:String):String {
+    public static function addDirectorySeparator(path:String, sep:DirectorySeparatorType = AUTO):String {
         if (path == null)
             return null;
-            
-        if (path.length == 0)
-            return DIRECTORY_SEPARATOR_NIX;
-            
-        var nixSepPos = path.lastIndexOf(DIRECTORY_SEPARATOR_NIX);
-        var winSepPos = path.lastIndexOf(DIRECTORY_SEPARATOR_WIN);
 
-        if (nixSepPos == -1 && winSepPos == -1) {
-            if (path.charCodeAt8(0).isAsciiAlpha() &&  path.charCodeAt8(1) == Char.COLON)
-                return path + DIRECTORY_SEPARATOR_WIN;
-            return path + DIRECTORY_SEPARATOR_NIX;
-        }
-        
-        if(nixSepPos < winSepPos) {
-            if (winSepPos != path.length - 1)
-                return path + DIRECTORY_SEPARATOR_WIN;
-            return path;
-        }
-        
-        if (nixSepPos != path.length - 1)
-            return path + DIRECTORY_SEPARATOR_NIX;
-        return path;
+        var dirSep = _getSeparator(path, sep);
+
+        if (path.isEmpty())
+            return dirSep;
+
+        return path + dirSep;
     }
     
     /**
@@ -119,10 +162,11 @@ class Paths {
             return path;
 
         while(true) {
-            var nixSepPos = path.lastIndexOf(DIRECTORY_SEPARATOR_NIX);
-            var winSepPos = path.lastIndexOf(DIRECTORY_SEPARATOR_WIN);
+            var nixSepPos = path.lastIndexOf8(DIRECTORY_SEPARATOR_NIX);
+            var winSepPos = path.lastIndexOf8(DIRECTORY_SEPARATOR_WIN);
             var sepPos = nixSepPos > winSepPos ? nixSepPos : winSepPos;
             if (sepPos == path.length8() - 1) {
+                // handle path ending with multiple separators properly, e.g. "dir//"
                 path = path.left(path.length8() - 1);
                 continue;
             }
@@ -132,12 +176,151 @@ class Paths {
     
     /**
      * <pre><code>
-     * > >> Paths.globToEReg("**"+"/file?.txt").match("aa/bb/file1.txt") == true
-     * > >> Paths.globToEReg("*.txt").match("file.txt")       == true
-     * > >> Paths.globToEReg("*.txt").match("file.pdf")       == false
-     * > >> Paths.globToEReg("*.{pdf,txt}").match("file.txt") == true
-     * > >> Paths.globToEReg("*.{pdf,txt}").match("file.pdf") == true
-     * > >> Paths.globToEReg("*.{pdf,txt}").match("file.xml") == false
+     * >>> Paths.basenameWithoutExtension("/dir/file.txt")     == "file"
+     * >>> Paths.basenameWithoutExtension("C:\\dir\\file.txt") == "file"
+     * >>> Paths.basenameWithoutExtension("/dir/")             == ""
+     * >>> Paths.basenameWithoutExtension("/dir//")            == ""
+     * >>> Paths.basenameWithoutExtension("/dir/..")           == ""
+     * >>> Paths.basenameWithoutExtension("..")                == ""
+     * >>> Paths.basenameWithoutExtension(".")                 == ""
+     * >>> Paths.basenameWithoutExtension("")                  == ""
+     * >>> Paths.basenameWithoutExtension(null)                == null
+     * </code></pre>
+     * 
+     * @return the last part of the given path
+     */
+    public static function basenameWithoutExtension(path:String):String {
+        if (path.isEmpty())
+            return path;
+
+        var basename = basename(path);
+        if (basename == "." || basename == "..") return "";
+        var dotPos = basename.lastIndexOf8(".");
+        return basename.substring8(0, dotPos);
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Paths.dirname("C:\\Users\\Default\\Desktop\\") == "C:\\Users\\Default"
+     * >>> Paths.dirname("../../..") == "../.."
+     * >>> Paths.dirname("../..")    == ".."
+     * >>> Paths.dirname("../..///") == ".."
+     * >>> Paths.dirname("..")       == "."
+     * >>> Paths.dirname(".")        == "."
+     * >>> Paths.dirname("")         == "."
+     * >>> Paths.dirname(null)       == null
+     * </code></pre>
+     */
+    public static function dirname(path:String):String {
+        if (path == null)
+            return null;
+
+        if (path == "" || path == "." || path == "..")
+            return ".";
+
+        while(true) {
+            var nixSepPos = path.lastIndexOf8(DIRECTORY_SEPARATOR_NIX);
+            var winSepPos = path.lastIndexOf8(DIRECTORY_SEPARATOR_WIN);
+            var sepPos = nixSepPos > winSepPos ? nixSepPos : winSepPos;
+            if (sepPos == path.length8() - 1) {
+                // handle path ending with multiple separators properly, e.g. "dir//"
+                path = path.left(path.length8() - 1);
+                continue;
+            }
+            return path.substring8(0, sepPos);
+        }
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 15)             == "C:\\...\\Desktop"
+     * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop", 15)               == "C:\\...\\Desktop"
+     * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\..\\..\\John", 15) == "C:\\Users\\John"
+     * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 3)              == "..."
+     * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 7)              == "C:\\..."
+     * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 7, false)       == "..."
+     * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 12, false)      == "...\\Desktop"
+     * >>> Paths.ellipsize("", 0) == ""
+     * >>> Paths.ellipsize("", 3) == ""
+     * >>> Paths.ellipsize(null, 0) == null
+     * >>> Paths.ellipsize(null, 3) == null
+     * </code></pre>
+     * 
+     * @throws exception if maxLength < ellipsis.length
+     */
+    public static function ellipsize(path:String, maxLength:Int, startFromLeft:Bool = true, ellipsis:String = "..."):String {
+        if (path.length8() <= maxLength)
+            return path;
+
+        var dirSep = _getSeparator(path, AUTO);
+
+        // check if path fits by normalizing it
+        path = normalize(path);
+        if (path.length8() <= maxLength)
+            return path;
+        
+        var ellipsisLen = ellipsis.length8();
+        if (maxLength < ellipsisLen) throw '[maxLength] must not be smaller than ${ellipsisLen}';
+
+        var processLeftSide = startFromLeft;
+        var leftPart = new StringBuilder();
+        var leftPartsCount = 0;
+        var rightPart = new StringBuilder();
+        var rightPartsCount = 0;
+        var pathParts = path.split8(dirSep);
+        var dirSepLen = dirSep.length8();
+
+        for (i in 0...pathParts.length) {
+            var partToAdd = processLeftSide ? pathParts[leftPartsCount] : pathParts[pathParts.length - rightPartsCount - 1];
+            if (leftPart.length + rightPart.length + ellipsisLen + partToAdd.length8() + dirSepLen > maxLength) {
+                break;
+            }
+            
+            if (processLeftSide) {
+                leftPart.add(partToAdd);
+                leftPart.add(dirSep);
+                leftPartsCount++;
+            } else {
+                rightPart.prepend(partToAdd);
+                rightPart.prepend(dirSep);
+                rightPartsCount++;
+            }
+            processLeftSide = !processLeftSide;
+        }
+
+        return leftPart + ellipsis + rightPart;
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Paths.extension("file.txt")         == "txt"
+     * >>> Paths.extension("file")             == ""
+     * >>> Paths.extension("file.tar.gz")      == "gz"
+     * >>> Paths.extension("dir.cfg/file.txt") == "txt"
+     * >>> Paths.extension(null)               == null
+     * </code></pre>
+     * 
+     * @return dot extension of the given dir/file
+     */
+    public static function extension(path:String) {
+        if (path == null) 
+            return null;
+            
+        var fileName = basename(path);
+        var dotPos = fileName.lastIndexOf8(".");
+        if (dotPos == Strings.POS_NOT_FOUND)
+            return "";
+        return fileName.substr8(dotPos + 1);
+    }
+    
+    /**
+     * <pre><code>
+     * >>> Paths.globToEReg("**"+"/file?.txt").match("aa/bb/file1.txt") == true
+     * >>> Paths.globToEReg("*.txt").match("file.txt")       == true
+     * >>> Paths.globToEReg("*.txt").match("file.pdf")       == false
+     * >>> Paths.globToEReg("*.{pdf,txt}").match("file.txt") == true
+     * >>> Paths.globToEReg("*.{pdf,txt}").match("file.pdf") == true
+     * >>> Paths.globToEReg("*.{pdf,txt}").match("file.xml") == false
      * </code></pre>
      * 
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
@@ -150,12 +333,12 @@ class Paths {
     
     /**
      * <pre><code>
-     * > >> Paths.globToPattern("**"+"/file?.txt").matcher("aa/bb/file1.txt").matches() == true
-     * > >> Paths.globToPattern("*.txt").matcher("file.txt").matches()       == true
-     * > >> Paths.globToPattern("*.txt").matcher("file.pdf").matches()       == false
-     * > >> Paths.globToPattern("*.{pdf,txt}").matcher("file.txt").matches() == true
-     * > >> Paths.globToPattern("*.{pdf,txt}").matcher("file.pdf").matches() == true
-     * > >> Paths.globToPattern("*.{pdf,txt}").matcher("file.xml").matches() == false
+     * >>> Paths.globToPattern("**"+"/file?.txt").matcher("aa/bb/file1.txt").matches() == true
+     * >>> Paths.globToPattern("*.txt").matcher("file.txt").matches()       == true
+     * >>> Paths.globToPattern("*.txt").matcher("file.pdf").matches()       == false
+     * >>> Paths.globToPattern("*.{pdf,txt}").matcher("file.txt").matches() == true
+     * >>> Paths.globToPattern("*.{pdf,txt}").matcher("file.pdf").matches() == true
+     * >>> Paths.globToPattern("*.{pdf,txt}").matcher("file.xml").matches() == false
      * </code></pre>
      * 
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
@@ -168,12 +351,12 @@ class Paths {
     
     /**
      * <pre><code>
-     * > >> Paths.globToRegEx("file")        == "^file$"
-     * > >> Paths.globToRegEx("*.txt")       == "^[^\\\\^\\/]*\\.txt$"
-     * > >> Paths.globToRegEx("*file*")      == "^[^\\\\^\\/]*file[^\\\\^\\/]*$"
-     * > >> Paths.globToRegEx("file?.txt")   == "^file[^\\\\^\\/]\\.txt$"
-     * > >> Paths.globToRegEx("")            == ""
-     * > >> Paths.globToRegEx(null)          == null
+     * >>> Paths.globToRegEx("file")        == "^file$"
+     * >>> Paths.globToRegEx("*.txt")       == "^[^\\\\^\\/]*\\.txt$"
+     * >>> Paths.globToRegEx("*file*")      == "^[^\\\\^\\/]*file[^\\\\^\\/]*$"
+     * >>> Paths.globToRegEx("file?.txt")   == "^file[^\\\\^\\/]\\.txt$"
+     * >>> Paths.globToRegEx("")            == ""
+     * >>> Paths.globToRegEx(null)          == null
      * </code></pre>
      * 
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
@@ -273,7 +456,7 @@ class Paths {
     /**
      * <pre><code>
      * >>> Paths.isAbsolute("/")                == true
-     * >>> Paths.isAbsolute("C:\\")             == true
+     * >>> Paths.isAbsolute("C:")               == true
      * >>> Paths.isAbsolute("\\\\server.local") == true
      * >>> Paths.isAbsolute("dir/file")         == false
      * >>> Paths.isAbsolute("../dir")           == false
@@ -299,48 +482,11 @@ class Paths {
 
     /**
      * <pre><code>
-     * >>> Paths.normalize("C:\\dir1\\..\\dir2\\") == "C:/dir2"
-     * >>> Paths.normalize("C:\\..\\foo\\")        == "foo"
-     * >>> Paths.normalize("/a/b/../c/")           == "/a/c"
-     * >>> Paths.normalize("a/b/../../../")        == ".."
-     * >>> Paths.normalize("")                     == ""
-     * >>> Paths.normalize(null)                   == null
-     * </code></pre>
-     * 
-     * @return normalized version of the given path with trailing slashes are removed and separators turned into slashes
-     */
-    public static function normalize(path:String):String {
-        if (path.isEmpty()) 
-            return path;
-
-        path = path.replaceAll(DIRECTORY_SEPARATOR_WIN, DIRECTORY_SEPARATOR_NIX);
-        var parts = path.split(DIRECTORY_SEPARATOR_NIX);
-        
-        var resultParts = new Array<String>();
-        for(i in 0...parts.length) {
-            var part = parts[i];
-            if (part.length == 0) {
-                if (i == 0) {
-                    resultParts.push("");
-                }
-                continue;
-            }
-            if (part == ".." && resultParts.length > 0) {
-                resultParts.pop();
-                continue;
-            }
-            
-            resultParts.push(part);
-        }
-        
-        return resultParts.join(DIRECTORY_SEPARATOR_NIX);
-    }
-    
-    /**
-     * <pre><code>
      * >>> Paths.join("dir", "test.txt")              == "dir/test.txt"
-     * >>> Paths.join("dir1\\..\\dir2", "dir3")       == "dir2/dir3"
-     * >>> Paths.join(["dir1\\dir2", "dir3", "dir4"]) == "dir1/dir2/dir3/dir4"
+     * >>> Paths.join("dir1\\..\\dir2", "dir3")       == "dir2\\dir3"
+     * >>> Paths.join("dir1\\..\\dir2", "dir3", NIX)  == "dir2/dir3"
+     * >>> Paths.join(["dir1\\dir2", "dir3", "dir4"]) == "dir1\\dir2\\dir3\\dir4"
+     * >>> Paths.join(["dir1/dir2", "dir3", "dir4"])  == "dir1/dir2/dir3/dir4"
      * >>> Paths.join([null], null)      == ""
      * >>> Paths.join([""], "")          == ""
      * >>> Paths.join("", "")            == ""
@@ -349,10 +495,9 @@ class Paths {
      * >>> Paths.join(null, "")          == ""
      * </code><pre>
      * 
-     * @param useOsSeparator if set to true, the OS specific directory separator will be used slash on *nix and backslash on Windows
      * @param normalize if set to false no path normalization will be applied
      */
-    public static function join(part1:Either2<String, Array<String>>, part2:String = null, useOsSeparator = false, normalize = true):String {
+    public static function join(part1:Either2<String, Array<String>>, part2:String = null, sep:DirectorySeparatorType = AUTO, normalize = true):String {
         if (part1.value == null && part2 == null)
             return null;
 
@@ -367,20 +512,81 @@ class Paths {
         if (parts.length == 0)
             return "";
 
-        var sep = useOsSeparator ? DIRECTORY_SEPARATOR : DIRECTORY_SEPARATOR_NIX;
-        var path = parts.join(sep);
+        var path = parts.join(_getSeparator(parts, sep));
         
         if (normalize) {
-            path = Paths.normalize(path);
-            if (sep == DIRECTORY_SEPARATOR_WIN)
-                path = path.replaceAll(DIRECTORY_SEPARATOR_NIX, DIRECTORY_SEPARATOR_WIN);
-        } else {
-            if (sep == DIRECTORY_SEPARATOR_WIN)
-                path = path.replaceAll(DIRECTORY_SEPARATOR_NIX, DIRECTORY_SEPARATOR_WIN);
-            else
-                path = path.replaceAll(DIRECTORY_SEPARATOR_WIN, DIRECTORY_SEPARATOR_NIX);
+            path = Paths.normalize(path, sep);
         }
-            
+
         return path;
     }
+    
+    /**
+     * <pre><code>
+     * >>> Paths.normalize("C:\\dir1\\..\\dir2\\") == "C:\\dir2"
+     * >>> Paths.normalize("C:\\..\\foo\\")        == "foo"
+     * >>> Paths.normalize("a\\..\\b/c", NIX)      == "b/c"
+     * >>> Paths.normalize("/a/b/../c/")           == "/a/c"
+     * >>> Paths.normalize("a/b/../../../")        == ".."
+     * >>> Paths.normalize("")                     == ""
+     * >>> Paths.normalize(null)                   == null
+     * </code></pre>
+     * 
+     * @return normalized version of the given path with trailing slashes are removed
+     */
+    public static function normalize(path:String, sep:DirectorySeparatorType = AUTO):String {
+        if (path.isEmpty()) 
+            return path;
+
+        var dirSep = _getSeparator(path, sep);
+        var parts = path.split8([DIRECTORY_SEPARATOR_NIX, DIRECTORY_SEPARATOR_WIN]);
+        var resultParts = new Array<String>();
+        for(i in 0...parts.length) {
+            var part = parts[i];
+            if (part.isEmpty()) {
+                if (i == 0) {
+                    resultParts.push("");
+                }
+                continue;
+            }
+            if (part == ".." && resultParts.length > 0) {
+                resultParts.pop();
+                continue;
+            }
+            
+            resultParts.push(part);
+        }
+
+        return resultParts.join(dirSep);
+    }
+    
+}
+
+/**
+ * Using abstract enum because of http://stackoverflow.com/questions/31307992/haxe-enum-default-parameters
+ */
+@:dox(hide)
+@:enum
+abstract DirectorySeparatorType(Int) {
+
+    /**
+     * tries to determine the separator based on the input, uses slash as fallback
+     */
+    var AUTO = 0;
+    
+    /**
+     * use current operating system separator
+     */
+    var OS = 1;
+    
+    /**
+     * use Linux/Unix separator (slash)
+     */
+    var NIX = 2;
+    
+    /**
+     * use Windows separator (back slash)
+     */
+    var WIN = 3;
+    
 }
