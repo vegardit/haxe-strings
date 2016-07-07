@@ -76,9 +76,9 @@ class Test {
         "myCSSClass".toUpperUnderscore();  // returns "MY_CSS_CLASS"
 
         // ellipsizing strings:
-        Strings.ellipsizeLeft("The weather is nice", 15);    // returns "The weather ..."
-        Strings.ellipsizeMiddle("The weather is nice", 15);  // returns "The we...s nice"
-        Strings.ellipsizeRight("The weather is nice", 15);   // returns "...ther is nice"
+        "The weather is very nice".ellipsizeLeft(20);    // returns "The weather is ve..."
+        "The weather is very nice".ellipsizeMiddle(20);  // returns "The weath...ery nice"
+        "The weather is very nice".ellipsizeRight(15);   // returns "...ther is very nice"
 
         // string differences:
         "It's green".diffAt("It's red"); // returns 5
