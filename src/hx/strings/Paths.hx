@@ -44,7 +44,12 @@ class Paths {
      * operating system specific directory separator (slash or backslash)
      */
     public static var DIRECTORY_SEPARATOR(default, null):String = hx.strings.internal.OS.isWindows() ? DIRECTORY_SEPARATOR_WIN : DIRECTORY_SEPARATOR_NIX;
-    
+
+    /**
+     * file name extension separator (.)
+     */
+    public static var EXTENSION_SEPARATOR = ".";
+
     /**
      * Unix-flavor path separator (:) used to separate paths in the PATH environment variable
      */
@@ -194,7 +199,7 @@ class Paths {
 
         var basename = basename(path);
         if (basename == "." || basename == "..") return basename;
-        var dotPos = basename.lastIndexOf8(".");
+        var dotPos = basename.lastIndexOf8(EXTENSION_SEPARATOR);
         return dotPos == Strings.POS_NOT_FOUND ? basename : basename.substring8(0, dotPos);
     }
     
