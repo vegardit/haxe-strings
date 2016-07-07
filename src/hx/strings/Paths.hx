@@ -16,6 +16,7 @@
 package hx.strings;
 
 import hx.strings.Pattern;
+import hx.strings.internal.Either2;
 import hx.strings.internal.Either3;
 
 using hx.strings.Strings;
