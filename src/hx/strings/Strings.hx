@@ -2312,7 +2312,7 @@ class Strings {
             return null;
 
         #if (flash || java || cs || python)
-            if(max <= 0 && separators.length == 1)
+            if(maxParts <= 0 && separators.length == 1)
                 return str.split(separators[0]);
         #end
 
