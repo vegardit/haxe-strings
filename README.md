@@ -261,7 +261,7 @@ haxelib git haxe-strings https://github.com/vegardit/haxe-strings master
 
 1. check-out the master branch
     ```
-    git clone https://github.com/vegardit/haxe-strings master D:\haxe-projects\haxe-strings
+    git clone https://github.com/vegardit/haxe-strings --branch master --single-branch D:\haxe-projects\haxe-strings
     ```
 
 2. register the development release with haxe
