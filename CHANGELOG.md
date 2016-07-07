@@ -17,7 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - hx.strings.Strings#right()
 - hx.strings.Strings#removeLeading()
 - hx.strings.Strings#removeTrailing()
-- hx.strings.Char: CARET, and constants for characters 0-9
+- hx.strings.Char: CARET, EXCLAMATION_MARK, and constants for characters 0-9
 - hx.strings.collection.SortedStringSet
 - hx.strings.collection.StringSet
 - hx.strings.collection.StringTreeMap

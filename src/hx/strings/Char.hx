@@ -74,6 +74,11 @@ abstract Char(Int) from Int to Int {
     public static inline var SPACE:Char = 32;
     
     /**
+     * character code for !
+     */
+    public static inline var EXCLAMATION_MARK:Char = 33;
+    
+    /**
      * character code for "
      */
     public static inline var DOUBLE_QUOTE:Char = 34;
