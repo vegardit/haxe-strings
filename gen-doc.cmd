@@ -15,6 +15,7 @@ echo Generating HTML files...
 haxelib run dox ^
   -in "^hx" ^
   -ex "^haxe" ^
+  -ex "internal" ^
   -ex "^[A-Z]" ^
   -i target/doc.xml ^
   -o target/site
@@ -23,4 +24,3 @@ setlocal
 set pwd=%~dp0
 echo Documentation generated at [file:///%pwd:\=/%target/site/index.html]...
 endlocal
-
