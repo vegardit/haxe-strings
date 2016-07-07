@@ -254,7 +254,7 @@ class Test {
 ### Using `haxelib git`
 
 ```
-haxelib git haxe-strings https://github.com/vegardit/haxe-strings master
+haxelib git haxe-strings https://github.com/vegardit/haxe-strings master D:\haxe-projects\haxe-strings
 ```
 
 ###  Using Git
