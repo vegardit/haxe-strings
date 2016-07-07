@@ -792,6 +792,35 @@ class Strings {
 
     /**
      * <pre><code>
+     * >>> Strings.ellipsizeMiddle("12345678", 5)   == "1...8"
+     * >>> Strings.ellipsizeMiddle("12345", 4)      == "1..."
+     * >>> Strings.ellipsizeMiddle("1234", 4)       == "1234"
+     * >>> Strings.ellipsizeMiddle("", 0)           == ""
+     * >>> Strings.ellipsizeMiddle("", 3)           == ""
+     * >>> Strings.ellipsizeMiddle(null, 0)         == null
+     * >>> Strings.ellipsizeMiddle(null, 3)         == null
+     * >>> Strings.ellipsizeMiddle("はいはいはい", 5)  == "は...い"
+     * </code></pre>
+     * 
+     * @throws exception if maxLength < ellipsis.length
+     */
+    public static function ellipsizeMiddle(str:String, maxLength:Int, ellipsis:String = "..."):String {
+        var strLen = str.length8();
+        if (strLen <= maxLength)
+            return str;
+
+        var ellipsisLen = ellipsis.length8();
+        if (maxLength < ellipsisLen) throw '[maxLength] must not be smaller than ${ellipsisLen}';
+
+        var maxStrLen = maxLength - ellipsisLen;
+        var leftLen = Math.round(maxStrLen / 2);
+        var rightLen = maxStrLen - leftLen;
+        
+        return str.left(leftLen) + ellipsis + str.right(rightLen);
+    }
+    
+    /**
+     * <pre><code>
      * >>> Strings.ellipsizeRight("12345678", 5)   == "12..."
      * >>> Strings.ellipsizeRight("12345", 4)      == "1..."
      * >>> Strings.ellipsizeRight("1234", 4)       == "1234"
