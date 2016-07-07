@@ -74,7 +74,12 @@ class Test {
         "MyCSSClass".toLowerHyphen();      // returns "my-css-class"
         "MyCSSClass".toLowerUnderscore();  // returns "my_css_class"
         "myCSSClass".toUpperUnderscore();  // returns "MY_CSS_CLASS"
-        
+
+        // ellipsizing strings:
+        Strings.ellipsizeLeft("The weather is nice", 15);    // returns "The weather ..."
+        Strings.ellipsizeMiddle("The weather is nice", 15);  // returns "The we...s nice"
+        Strings.ellipsizeRight("The weather is nice", 15);   // returns "...ther is nice"
+
         // string differences:
         "It's green".diffAt("It's red"); // returns 5
         "It's green".diff("It's red");   // returns { left: 'green', right: 'red', pos: 5 }
