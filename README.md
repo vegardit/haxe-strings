@@ -1,9 +1,10 @@
 # haxe-strings - [StringTools](http://api.haxe.org/StringTools.html) on steroids.
 
 1. [What is it?](#what-is-it)
-1. [The Strings utility class](#strings-class)
+1. [The `Strings` utility class](#strings-class)
 1. [The Spell Checker](#spell-checker)
-1. [The String collection classes](#string-collections)
+1. [The string collection classes](#string-collections)
+1. [The `Paths` utility class](#paths-class)
 1. [Installation](#installation)
 1. [Using the latest code](#latest)
 1. [License](#license)
@@ -67,10 +68,6 @@ class Test {
         "\x1B[1;33mHello World!\x1B[0m".ansiToHtml();  // returns '<span style="color:yellow;font-weight:bold;">Hello World!</span>'
         "\x1B[1mHello World!\x1B[0m".removeAnsi();     // returns "Hello World!"
 
-        // use glob pattern matching:
-        "src/**/*.hx".globToEReg().match("src/haxe/strings/Char.hx");            // returns true
-        "assets/**/*.{js,css}".globToEReg().match("assets/theme/dark/dark.css"); // returns true
-        
         // case formatting:
         "look at me".toUpperCamel();       // returns "LookAtMe"
         "MyCSSClass".toLowerCamel();       // returns "myCSSClass"
@@ -174,6 +171,63 @@ The package `hx.strings.collection` contains some useful collection classes for 
 1. `SortedStringSet` is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
 
 1. `StringTreeMap` is a map that is sorted by there keys (which are of type String).
+
+
+## <a name="paths-class"></a>The `Paths` utility class
+
+The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Paths.hx) class provides
+utility methods for string manipulations related to local filesystem paths. 
+It can be seen as an improved and extended version of the built-in `haxe.io.Path` class. 
+In contrast to functions provided by `haxe.io.Path`, there are no situations where the result of a function is unspecified.
+
+```haxe
+import hx.strings.Paths;
+
+class Test {
+
+    static function main() {
+        Paths.addDirectorySeparator("/dir");      // returns "/dir/"
+        Paths.addDirectorySeparator("C:\\dir");   // returns "C:\dir\"
+        Paths.addDirectorySeparator("C:");        // returns "C:\"
+        Paths.addDirectorySeparator("dir");       // returns "dir/"
+        Paths.addDirectorySeparator("dir", WIN);  // returns "dir\"
+        
+        Paths.basename("/dir/file.txt");      // returns "file.txt"
+        Paths.basename("C:\\dir\\file.txt");  // returns "file.txt"
+        Paths.basename("/dir//");             // returns "dir"
+        
+        Paths.basenameWithoutExtension("/dir/file.txt");      // returns "file.txt"
+        Paths.basenameWithoutExtension("C:\\dir\\file.txt");  // returns "file.txt"
+        Paths.basenameWithoutExtension("/dir//");             // returns "dir"
+        Paths.basenameWithoutExtension("/dir/..");            // returns ".."
+        
+        Paths.dirname("C:\\Users\\Default\\Desktop\\");       // returns "C:\Users\Default"
+        
+        Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 15); // returns "C:\...\Desktop"
+
+        Paths.extension("dir.cfg/file.txt");  // returns "txt"
+        
+        // use glob pattern matching:
+        Paths.globToEreg("src/**/*.hx").match("src/haxe/strings/Char.hx");            // returns true
+        Paths.globToEreg("assets/**/*.{js,css}").match("assets/theme/dark/dark.css"); // returns true
+        
+        Paths.isAbsolute("/");                       // returns true
+        Paths.isAbsolute("C:");                      // returns true
+        Paths.isAbsolute("\\\\winserver\\dir");      // returns true
+        Paths.isAbsolute("../dir");                  // returns false
+
+        // very convenient path joining
+        Paths.join("dir", "test.txt");               // returns "dir/test.txt"
+        Paths.join("dir1\\..\\dir2", "dir3");        // returns "dir2\\dir3"
+        Paths.join("dir1\\..\\dir2", "dir3", NIX);   // returns "dir2/dir3"
+        Paths.join(["dir1\\dir2", "dir3", "dir4"]);  // returns "dir1\\dir2\\dir3\\dir4"
+        Paths.join(["dir1/dir2", "dir3", "dir4"]);   // returns "dir1/dir2/dir3/dir4"
+        
+        Paths.normalize("C:\\dir1\\..\\dir2\\");               // returns "C:\dir2"
+        Paths.normalize("\\\\\\server.local\\a\\b\\..\\c\\");  // returns "\\server.local\a\c"
+    }
+}
+```
 
 ## <a name="installation"></a>Installation
 
