@@ -173,9 +173,9 @@ The package `hx.strings.collection` contains some useful collection classes for 
    // at this point the set only contains two elements: one 'a' and one 'b'
    ```
    
-1. `SortedStringSet` is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
+2. `SortedStringSet` is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
 
-1. `StringTreeMap` is a map that is sorted by there keys (which are of type String).
+3. `StringTreeMap` is a map that is sorted by there keys (which are of type String).
 
 
 ## <a name="paths-class"></a>The `Paths` utility class
@@ -254,9 +254,21 @@ class Test {
 ### Using `haxelib git`
 
 ```
-haxelib git haxe-strings https://github.com/vegardit/haxe-strings.git master
+haxelib git haxe-strings https://github.com/vegardit/haxe-strings master
 ```
 
+###  Using Git
+
+1. check-out the master branch
+    ```
+    git clone https://github.com/vegardit/haxe-strings master D:\haxe-projects\haxe-strings
+    ```
+
+2. register the development release with haxe
+    ```
+    haxelib dev haxe-strings D:\haxe-projects\haxe-strings
+    ```
+    
 ###  Using Subversion
 
 1. check-out the trunk
