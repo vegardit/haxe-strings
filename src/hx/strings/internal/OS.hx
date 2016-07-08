@@ -23,6 +23,7 @@ import hx.strings.Pattern;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:dox(hide)
+@:noCompletion
 class OS {
 
     static var REGEX_IS_WINDOWS = Pattern.compile("windows", IGNORE_CASE);

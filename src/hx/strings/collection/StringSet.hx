@@ -17,6 +17,7 @@ package hx.strings.collection;
 
 import haxe.Constraints.IMap;
 import haxe.ds.StringMap;
+import hx.strings.internal.AnyAsString;
 
 /**
  * haxe.ds.StringMap backed set implementation.
@@ -54,7 +55,7 @@ class StringSet {
      * </code></pre>
      * @return true if item was added, false if it was already present
      */
-	public function add(item:String):Bool {
+	public function add(item:AnyAsString):Bool {
         if (item == null) throw "[item] must not be null!";
         
         if (contains(item))

@@ -21,6 +21,7 @@ package hx.strings.internal;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:dox(hide)
+@:noCompletion
 class Arrays {
     
     /**

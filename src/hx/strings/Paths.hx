@@ -16,8 +16,8 @@
 package hx.strings;
 
 import hx.strings.Pattern;
-import hx.strings.internal.Either2;
 import hx.strings.internal.Either3;
+import hx.strings.internal.OneOrMany;
 
 using hx.strings.Strings;
 using hx.strings.internal.Arrays;
@@ -71,50 +71,28 @@ class Paths {
      */
     public static var PATH_SEPARATOR(default, null):String = hx.strings.internal.OS.isWindows() ? PATH_SEPARATOR_WIN : PATH_SEPARATOR_NIX;
 
-    private static function _getSeparator(path:Either2<String, Array<String>>, sep:DirectorySeparatorType) {
+    private static function _getSeparator(path:OneOrMany<String>, sep:DirectorySeparatorType) {
         return switch(sep) {
             case AUTO:
                 var nixSepPos = Strings.POS_NOT_FOUND;
-                var winSepPos = Strings.POS_NOT_FOUND;
-                
                 if (path == null) return DIRECTORY_SEPARATOR_NIX;
-                
-                switch(path.value) {
-                    case a(str):
-                        nixSepPos = str.indexOf8(DIRECTORY_SEPARATOR_NIX);
-                        winSepPos = str.indexOf8(DIRECTORY_SEPARATOR_WIN);                        
-                    case b(arr):
-                        for (str in arr) {
-                            if(nixSepPos == Strings.POS_NOT_FOUND)
-                                nixSepPos = str.indexOf8(DIRECTORY_SEPARATOR_NIX);
-                            if(winSepPos == Strings.POS_NOT_FOUND)
-                                winSepPos = str.indexOf8(DIRECTORY_SEPARATOR_WIN);
-                        }
+
+                for (p in path) {
+                    if(nixSepPos == Strings.POS_NOT_FOUND)
+                        nixSepPos = p.indexOf8(DIRECTORY_SEPARATOR_NIX);
+                    if (p.indexOf8(DIRECTORY_SEPARATOR_WIN) != Strings.POS_NOT_FOUND)
+                        return DIRECTORY_SEPARATOR_WIN;
                 }
 
-                if (winSepPos > Strings.POS_NOT_FOUND)
-                    return DIRECTORY_SEPARATOR_WIN;
-
-                if (nixSepPos == Strings.POS_NOT_FOUND && winSepPos == Strings.POS_NOT_FOUND) {
-                    
+                if (nixSepPos == Strings.POS_NOT_FOUND) {                   
                     // test for "C:"
-                    return switch(path.value) {
-                        case a(str):
-                            if (str.length8() == 2 && str.charCodeAt8(0).isAsciiAlpha() && str.charCodeAt8(1) == Char.COLON)
-                                DIRECTORY_SEPARATOR_WIN;
-                            else
-                                DIRECTORY_SEPARATOR_NIX;
-                        case b(arr):
-                            var str = arr.first();
-                            
-                            if (str == null) 
-                                return DIRECTORY_SEPARATOR_NIX;
-                                
-                            if (str.length8() == 2 && str.charCodeAt8(0).isAsciiAlpha() && str.charCodeAt8(1) == Char.COLON)
-                                DIRECTORY_SEPARATOR_WIN;                            
-                            else
-                                DIRECTORY_SEPARATOR_NIX;
-                    }
+                    var p = path.first();
+                    
+                    if (p == null) 
+                        return DIRECTORY_SEPARATOR_NIX;
+
+                    if (p.length8() == 2 && p.charCodeAt8(0).isAsciiAlpha() && p.charCodeAt8(1) == Char.COLON)
+                        return DIRECTORY_SEPARATOR_WIN;                            
                 }
 
                 return DIRECTORY_SEPARATOR_NIX;
@@ -519,38 +497,63 @@ class Paths {
     }
 
     /**
+     * Joins the given parts with a directory separator. Empty and blank parts are ignored.
+     * 
      * <pre><code>
      * >>> Paths.join("dir", "test.txt")              == "dir/test.txt"
      * >>> Paths.join("dir1\\..\\dir2", "dir3")       == "dir2\\dir3"
      * >>> Paths.join("dir1\\..\\dir2", "dir3", NIX)  == "dir2/dir3"
-     * >>> Paths.join(["dir1\\dir2", "dir3", "dir4"]) == "dir1\\dir2\\dir3\\dir4"
-     * >>> Paths.join(["dir1/dir2", "dir3", "dir4"])  == "dir1/dir2/dir3/dir4"
-     * >>> Paths.join([null], null)      == ""
-     * >>> Paths.join([""], "")          == ""
+     * >>> Paths.join("dir1\\..\\dir2", " ")          == "dir2"
+     * >>> Paths.join("dir1\\..\\dir2", "")           == "dir2"
+     * >>> Paths.join("dir1\\..\\dir2", null)         == null
      * >>> Paths.join("", "")            == ""
-     * >>> Paths.join(null)              == null
+     * >>> Paths.join(" ", " ")          == ""
+     * >>> Paths.join("", null)          == null
      * >>> Paths.join(null, null)        == null
-     * >>> Paths.join(null, "")          == ""
+     * >>> Paths.join(null, "")          == null
      * </code><pre>
      * 
      * @param normalize if set to false no path normalization will be applied
+     * 
+     * @return null if any null parts otherwise the elements concatenated with a directory separator
      */
-    public static function join(part1:Either2<String, Array<String>>, part2:String = null, sep:DirectorySeparatorType = AUTO, normalize = true):String {
-        if (part1.value == null && part2 == null)
+    inline
+    public static function join(part1:String, part2:String, sep:DirectorySeparatorType = AUTO, normalize = true):String {
+        return joinAll([part1, part2], sep, normalize);
+    }
+    
+    /**
+     * Joins the given parts with a directory separator. Empty and blank parts are ignored.
+     * 
+     * <pre><code>
+     * >>> Paths.joinAll(["dir1\\dir2", "dir3", "dir4"]) == "dir1\\dir2\\dir3\\dir4"
+     * >>> Paths.joinAll(["dir1/dir2", "dir3",  "dir4"]) == "dir1/dir2/dir3/dir4"
+     * >>> Paths.joinAll(["dir1/dir2", " ",     "dir4"]) == "dir1/dir2/dir4"
+     * >>> Paths.joinAll(["dir1/dir2", "",      "dir4"]) == "dir1/dir2/dir4"
+     * >>> Paths.joinAll(["dir1/dir2", null,    "dir4"]) == null
+     * >>> Paths.joinAll([""])   == ""
+     * >>> Paths.joinAll([])     == null
+     * >>> Paths.joinAll([null]) == null
+     * >>> Paths.joinAll(null)   == null
+     * </code><pre>
+     * 
+     * @param normalize if set to false no path normalization will be applied
+     * 
+     * @return null if any null parts otherwise the elements concatenated with a directory separator
+     */
+    public static function joinAll(parts:Array<String>, sep:DirectorySeparatorType = AUTO, normalize = true):String {       
+        if (parts == null || parts.length == 0) 
             return null;
 
-        var parts = part1.value == null ? [] : switch(part1.value) {
-            case a(str): str.isEmpty() ? [] : [ str ];
-            case b(arr): arr;
+        var filtered = [];
+        for (p in parts) {
+            if (p == null) return null;
+            if (p.isNotBlank()) filtered.push(p);
         }
-        
-        if (part2.isNotEmpty()) parts.push(part2);
-        
-        parts = parts.filter(function(part) return part.isNotEmpty());
-        if (parts.length == 0)
+        if (filtered.length == 0)
             return "";
 
-        var path = parts.join(_getSeparator(parts, sep));
+        var path = filtered.join(_getSeparator(filtered, sep));
         
         if (normalize) {
             path = Paths.normalize(path, sep);
@@ -560,26 +563,24 @@ class Paths {
     }
     
     /**
-     * Normalizes the given path as far as possible.
-     * 
      * <pre><code>
      * >>> Paths.normalize("C:\\dir1\\..\\dir2\\")              == "C:\\dir2"
-     * >>> Paths.normalize("C:\\..\\foo\\")                     == "C:\\..\\foo"
+     * >>> Paths.normalize("C:\\..\\foo\\")                     == null
      * >>> Paths.normalize("a\\..\\b/c", WIN)                   == "b\\c"
      * >>> Paths.normalize("a\\..\\b/c", NIX)                   == "b/c"
      * >>> Paths.normalize("/a/b/../c/")                        == "/a/c"
      * >>> Paths.normalize("//a/b/../c/")                       == "/a/c"
-     * >>> Paths.normalize("a/b/../../../../")                  == "../.."
-     * >>> Paths.normalize("../../a/b/../c/")                   == "../../a/c"
+     * >>> Paths.normalize("a/b/../../../../")                  == null
+     * >>> Paths.normalize("../../a/b/../c/")                   == null
      * >>> Paths.normalize("\\\\server.local\\a\\b\\..\\c\\")   == "\\\\server.local\\a\\c"
      * >>> Paths.normalize("\\\\\\server.local\\a\\b\\..\\c\\") == "\\\\server.local\\a\\c"
-     * >>> Paths.normalize("..")                                == ".."
+     * >>> Paths.normalize("..")                                == null
      * >>> Paths.normalize(".")                                 == "."
      * >>> Paths.normalize("")                                  == ""
      * >>> Paths.normalize(null)                                == null
      * </code></pre>
      * 
-     * @return normalized version of the given path with trailing slashes are removed
+     * @return normalized version of the given path with trailing slashes are removed, or <code>null</code> if normalization is not possible
      */
     public static function normalize(path:String, sep:DirectorySeparatorType = AUTO):String {
         if (path.isEmpty()) 
@@ -610,11 +611,10 @@ class Paths {
                     resultParts.pop();
                     continue;
                 }
+                return null;
             }
-            
             resultParts.push(part);
         }
-
         return resultParts.join(dirSep);
     }
     

@@ -16,6 +16,7 @@
 package hx.strings;
 
 import haxe.Utf8;
+import hx.strings.internal.AnyAsString;
 
 using hx.strings.Strings;
 
@@ -97,7 +98,7 @@ class StringBuilder {
 	 * @return <code>this</code> for chained operations
 	 */
     inline
-	public function add<T>(item:T):StringBuilder {
+	public function add(item:AnyAsString):StringBuilder {
 		sb.add(item);
         
         len = -2147483647; // force full calculation
@@ -132,7 +133,7 @@ class StringBuilder {
      * </code></pre>
      * @return <code>this</code> for chained operations
      */
-	public function addAll<T>(items:Array<T>):StringBuilder {
+	public function addAll(items:Array<AnyAsString>):StringBuilder {
         for (item in items) {
             sb.add(item);	
         }
@@ -188,12 +189,12 @@ class StringBuilder {
 	/**
 	 * @return <code>this</code> for chained operations
 	 */
-	public function prepend<T>(item:T):StringBuilder {
+	public function prepend(item:AnyAsString):StringBuilder {
         #if java
             untyped __java__("this.sb.b.insert(0, item)");
         #else
             if (pre == null) pre = [];
-            pre.unshift(Strings.toString(item));
+            pre.unshift(item);
         #end
 
         len = -2147483647; // force full calculation
@@ -218,7 +219,7 @@ class StringBuilder {
 	/**
 	 * @return <code>this</code> for chained operations
 	 */
-	public function prependAll<T>(items:Array<T>):StringBuilder {
+	public function prependAll(items:Array<AnyAsString>):StringBuilder {
         #if !java
             if (pre == null) pre = [];
         #end
@@ -228,7 +229,7 @@ class StringBuilder {
             #if java
                 untyped __java__("this.sb.b.insert(0, item)");
             #else
-                pre.unshift(Strings.toString(item));
+                pre.unshift(item);
             #end
         }
         

@@ -24,9 +24,10 @@ import haxe.crypto.Md5;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import hx.strings.Pattern;
-import hx.strings.internal.Either2;
+import hx.strings.internal.AnyAsString;
 import hx.strings.internal.Either3;
 import hx.strings.internal.OS;
+import hx.strings.internal.OneOrMany;
 
 using hx.strings.Strings;
 
@@ -950,8 +951,8 @@ class Strings {
      * </code></pre>
      */
     inline
-    public static function equals<T>(str:String, other:T):Bool {
-        return toString(str) == toString(other);
+    public static function equals(str:String, other:AnyAsString):Bool {
+        return str == other;
     }
 
     /**
@@ -970,8 +971,8 @@ class Strings {
      * </code></pre>
      */
     inline
-    public static function equalsIgnoreCase<T>(str:String, other:T):Bool {
-        return toString(str).toLowerCase() == toString(other).toLowerCase();
+    public static function equalsIgnoreCase(str:String, other:AnyAsString):Bool {
+        return str.toLowerCase8() == other.toLowerCase8();
     }
     
     /**
@@ -2295,7 +2296,7 @@ class Strings {
      * @param separator one or multiple separators to use for splitting
      * @param maxParts the split limit, the maximum number of elements in the resulting array
      */
-    public static function split8(str:String, separator:Either2<String, Array<String>>, ?maxParts:Int = 0):Array<String> {
+    public static function split8(str:String, separator:OneOrMany<String>, ?maxParts:Int = 0):Array<String> {
         if (str == null || separator == null)
             return null;
 
@@ -2304,10 +2305,7 @@ class Strings {
         if (strLen == 0)
             return [];
 
-        var separators = switch(separator.value) {
-            case a(str): [str];
-            case b(arr): arr.filter(function(s) return s != null);
-        }
+        var separators = separator.filter(function(s) return s != null);
         if (separators.length == 0) 
             return null;
 
@@ -3255,8 +3253,8 @@ class Strings {
      * </code></pre>
      */
     inline
-    public static function toString<T>(str:T):String {
-        return Std.string(str);
+    public static function toString(str:AnyAsString):String {
+        return str == null ? "null" : str;
     }
 
     /**

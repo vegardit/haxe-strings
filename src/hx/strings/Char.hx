@@ -18,8 +18,6 @@ package hx.strings;
 import haxe.Utf8;
 import haxe.ds.IntMap;
 
-import hx.strings.internal.Either2;
-
 using hx.strings.Strings;
 
 /**
@@ -47,17 +45,17 @@ abstract Char(Int) from Int to Int {
      * character code for backspace
      */    
     public static inline var BACKSPACE:Char = 8;
-        
+
     /**
      * character code for tab
      */
     public static inline var TAB:Char = 9;
-    
+
     /**
      * character code for line feed \n
      */
     public static inline var LF:Char = 10;
-    
+
     /**
      * character code for carriage return \r
      */
@@ -263,18 +261,23 @@ abstract Char(Int) from Int to Int {
      */
     public static inline var BRACKET_CURLY_RIGHT:Char = 125;
     
-    public static function of(ch:Either2<String,Int>):Char {
-        return switch(ch.value) {
-            case a(str): str.charCodeAt8(0);                    
-            case b(int): int;
-        }
-    }
+    @:from
+    static inline function fromString(str:String):Char return str.charCodeAt8(0);
     
+    public static function of(ch:Char):Char {
+        return ch;
+    }
+
     @:op(A + B)
     static function op_plus_string(ch:Char, other:String):String {
         return ch.toString() + other;
     }
-
+    
+    @:op(A + B)
+    static function op_plus_string2(str:String, ch:Char):String {
+        return str + ch.toString();
+    }
+    
     @:op(A + B)
     static function op_plus(ch:Char, other:Char):Char {
         return ch.toInt() + other.toInt();
@@ -581,7 +584,7 @@ abstract Char(Int) from Int to Int {
     public function toInt():Int {
         return this;
     }
-    
+
     /**
      * <pre><code>
      * >>> Char.of(32).toString()    == " "
