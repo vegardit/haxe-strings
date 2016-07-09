@@ -14,8 +14,8 @@ haxe -xml target/doc.xml -cp src --macro include('hx.strings')
 echo Generating HTML files...
 haxelib run dox ^
   -in "^hx" ^
+  -ex "^hx\.strings\.internal" ^
   -ex "^haxe" ^
-  -ex "internal" ^
   -ex "^[A-Z]" ^
   -i target/doc.xml ^
   -o target/site
