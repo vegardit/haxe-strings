@@ -5,6 +5,7 @@
 1. [The Spell Checker](#spell-checker)
 1. [The string collection classes](#string-collections)
 1. [The `Paths` utility class](#paths-class)
+1. [The `StringBuilder` class](#stringbuilder-class)
 1. [Installation](#installation)
 1. [Using the latest code](#latest)
 1. [License](#license)
@@ -63,7 +64,7 @@ class Test {
         "кот".toUpperCase8();         // returns "КОТ"
         "кот".toUpperCaseFirstChar(); // returns "Кот"
         "はいはい".length8();          // returns 4
-
+        
         // ANSI escape sequence processing:
         "\x1B[1;33mHello World!\x1B[0m".ansiToHtml();  // returns '<span style="color:yellow;font-weight:bold;">Hello World!</span>'
         "\x1B[1mHello World!\x1B[0m".removeAnsi();     // returns "Hello World!"
@@ -99,9 +100,9 @@ class Test {
 
 ## <a name="spell-checker"></a>The Spell Checker
 
-The package `hx.strings.spelling` contains an extensible spell checker implementation that is based on ideas outlined by Peter Norvig in his article [How to write a Spell Checker](http://www.norvig.com/spell-correct.html).
+The package [hx.strings.spelling](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/spelling) contains an extensible spell checker implementation that is based on ideas outlined by Peter Norvig in his article [How to write a Spell Checker](http://www.norvig.com/spell-correct.html).
 
-The `SpellChecker#correctWord()` method can for example be used to implement a Google-like "did you mean 'xyz'?" feature for a custom search engine.
+The [SpellChecker#correctWord()](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/spelling/checker/SpellChecker.hx#L38) method can for example be used to implement a Google-like "did you mean 'xyz'?" feature for a custom search engine.
 
 Now let's do some spell checking...
 
@@ -160,10 +161,9 @@ class Test {
 
 ## <a name="string-collections"></a>The String collection classes
 
-The package `hx.strings.collection` contains some useful collection classes for Strings.
+The package [hx.strings.collection](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection) contains some useful collection classes for Strings.
 
-1. `StringSet` is a collection of unique strings. Each string is guaranteed to only exists once within the collection.
-
+1. [StringSet](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/StringSet.hx) is a collection of unique strings. Each string is guaranteed to only exists once within the collection.
    ```haxe
    var set = new hx.strings.collection.StringSet();
    set.add("a");
@@ -172,17 +172,16 @@ The package `hx.strings.collection` contains some useful collection classes for 
    set.add("b");
    // at this point the set only contains two elements: one 'a' and one 'b'
    ```
-   
-2. `SortedStringSet` is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
 
-3. `StringTreeMap` is a map that is sorted by there keys (which are of type String).
+2. [SortedStringSet](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/SortedStringSet.hx) is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
+
+3. [StringTreeMap](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/StringTreeMap.hx) is a map that is sorted by there keys (which are of type String).
 
 
 ## <a name="paths-class"></a>The `Paths` utility class
 
-The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Paths.hx) class provides
-utility methods for string manipulations related to local filesystem paths. 
-It can be seen as an improved and extended version of the built-in `haxe.io.Path` class. 
+The [hx.strings.Paths](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Paths.hx) class provides utility methods for string manipulations related to local filesystem paths. 
+It can be seen as an improved and extended version of the built-in [haxe.io.Path](http://api.haxe.org/haxe/io/Path.html) class. 
 In contrast to functions provided by `haxe.io.Path`, there are no situations where the result of a function is unspecified.
 
 ```haxe
@@ -224,14 +223,45 @@ class Test {
         Paths.isAbsolute("../dir");                  // returns false
 
         // very convenient path joining:
-        Paths.join("dir", "test.txt");               // returns "dir/test.txt"
-        Paths.join("dir1\\..\\dir2", "dir3");        // returns "dir2\dir3"
-        Paths.join("dir1\\..\\dir2", "dir3", NIX);   // returns "dir2/dir3"
-        Paths.join(["dir1\\dir2", "dir3", "dir4"]);  // returns "dir1\dir2\dir3\dir4"
-        Paths.join(["dir1/dir2", "dir3", "dir4"]);   // returns "dir1/dir2/dir3/dir4"
+        Paths.join("dir", "test.txt");                  // returns "dir/test.txt"
+        Paths.join("dir1\\..\\dir2", "dir3");           // returns "dir2\dir3"
+        Paths.join("dir1\\..\\dir2", "dir3", NIX);      // returns "dir2/dir3"
+        Paths.joinAll(["dir1\\dir2", "dir3", "dir4"]);  // returns "dir1\dir2\dir3\dir4"
+        Paths.joinAll(["dir1/dir2", "dir3", "dir4"]);   // returns "dir1/dir2/dir3/dir4"
         
         Paths.normalize("C:\\dir1\\..\\dir2\\");               // returns "C:\dir2"
         Paths.normalize("\\\\\\server.local\\a\\b\\..\\c\\");  // returns "\\server.local\a\c"
+    }
+}
+```
+
+## <a name="stringbuilder-class"></a>The `StringBuilder` class
+
+The [hx.strings.StringBuilder](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/StringBuilder.hx) class is an alternative to the built-in [StringBuf](http://api.haxe.org/StringBuf.html).
+It provides an fluent API, cross-platform UTF-8 support and the ability to prepend Strings.
+
+```haxe
+import hx.strings.StringBuilder;
+
+class Test {
+
+    static function main() {
+        // create a new instance with initial content
+        var sb = new StringBuilder("def");
+        
+        // prepend / add some strings via fluent API calls
+        sb.prepend("abc")
+          .newLine()        // appends "\n"
+          .add("ghi")
+          .addChar(106);
+        
+        sb.toString();  // returns "abcdef\nghij\n"
+        
+        sb.clear();   // reset the internal state
+        
+        sb.addAll(["a", 1, true, null]);
+        
+        sb.toString();  // returns "a1truenull"
     }
 }
 ```
