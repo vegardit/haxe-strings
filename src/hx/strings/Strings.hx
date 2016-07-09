@@ -1617,9 +1617,8 @@ class Strings {
      * >>> Strings.isLowerCase("cat2") == true
      * </code></pre>
      */
+    inline
     public static function isLowerCase(str:String):Bool {
-        if (str.isEmpty()) 
-            return false;
         return str == str.toLowerCase8();
     }
     
@@ -1633,9 +1632,8 @@ class Strings {
      * >>> Strings.isUpperCase("CAT2") == true
      * </code></pre>
      */
+    inline
     public static function isUpperCase(str:String):Bool {
-        if (str.isEmpty()) 
-            return false;
         return str == str.toUpperCase8();
     }
     
@@ -3343,7 +3341,7 @@ class Strings {
      */
     inline
     public static function trimRight(str:String):String {
-        if (str.isEmpty()) 
+        if (str == null) 
             return str;
 
         return StringTools.rtrim(str);
@@ -3363,7 +3361,7 @@ class Strings {
      */
     inline
     public static function trimLeft(str:String):String {
-        if (str.isEmpty()) 
+        if (str == null) 
             return str;
 
         return StringTools.ltrim(str);

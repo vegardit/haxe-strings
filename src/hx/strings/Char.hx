@@ -593,7 +593,6 @@ abstract Char(Int) from Int to Int {
      * </code></pre>
      */
     @:to
-    #if (java || flash) inline #end
     public function toString():String {
         return switch(this) {
             case AMPERSAND: "&";
@@ -609,7 +608,7 @@ abstract Char(Int) from Int to Int {
             case EQUALS: "=";
             case GREATER_THAN: ">";
             default:
-                #if (!(java || flash))
+                #if (!(java || flash || cs || python))
                 if (this > 127) {
                     var ch8 = new Utf8();
                     ch8.addChar(this);

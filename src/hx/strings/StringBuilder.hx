@@ -110,7 +110,7 @@ class StringBuilder {
      */
     public function addChar(ch:Char):StringBuilder {
         
-        #if (java || flash)
+        #if (java || flash || cs || python)
             sb.addChar(ch);
         #else
             if (ch.isAscii()) {
@@ -253,7 +253,5 @@ class StringBuilder {
         
         len = str.length8();
         return str;
-        
 	}
-    
 }
