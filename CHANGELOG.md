@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
 ## [2.0.0] - 2016-07-09
+
 ### Added
 - Spell Checker in package hx.strings.spelling
 - hx.strings.collection.SortedStringSet class
@@ -23,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - hx.strings.Strings#removeLeading()
 - hx.strings.Strings#removeTrailing()
 - hx.strings.Char: CARET, EXCLAMATION_MARK, and constants for characters 0-9
+
 ### Changed
 - changed license from MIT to Apache License 2.0
 - hx.strings.Strings#split8() now allows multiple separators
@@ -37,10 +39,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - moved hx.strings.Strings#globToEReg() to hx.strings.Paths#globToEReg()
 - moved hx.strings.Strings#globToPattern() to hx.strings.Paths#globToPattern()
 - moved hx.strings.Strings#globToRegEx() to hx.strings.Paths#globToRegEx()
+
 ### Fixed
 - hx.strings.Char.toLowerCase() was broken for character I
 
 ## [1.2.0] - 2016-06-21
+
 ### Added
 - hx.strings.Strings#endsWithAny()
 - hx.strings.Strings#endsWithAnyIgnoreCase()
@@ -48,10 +52,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - hx.strings.Strings#startsWithAnyIgnoreCase()
 - hx.strings.Strings#toTitle()
 - algorithm parameter to hx.strings.Strings#hashCode()
+
 ### Fixed
 - hx.strings.StringBuilder#addChar() with values between 128 and 255 didn't work on all platforms as expected
 
 ## [1.1.0] - 2016-06-11
+
 ### Added
 - hx.strings.Pattern class for threadsafe pattern matching
 - hx.strings.Strings#abbreviate()
@@ -66,5 +72,6 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - hx.strings.StringBuilder#isEmpty()
 
 ## 1.0.0 - 2016-06-05
+
 ### Added
 - Initial release
