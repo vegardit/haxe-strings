@@ -31,7 +31,7 @@ using hx.strings.Strings;
 @:keep
 class TestRunner extends DocTestRunner {
   
-	public static function main() {
+    public static function main() {
         var runner = new TestRunner();
         runner.runAndExit();
     }
