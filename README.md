@@ -161,7 +161,7 @@ class Test {
 
 ## <a name="string-collections"></a>The string collection classes
 
-The package [hx.strings.collection](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection) contains some useful collection classes for Strings.
+The package [hx.strings.collection](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection) contains some useful collection classes for strings.
 
 1. [StringSet](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/StringSet.hx) is a collection of unique strings. Each string is guaranteed to only exists once within the collection.
    ```haxe
@@ -175,7 +175,7 @@ The package [hx.strings.collection](https://github.com/vegardit/haxe-strings/blo
 
 2. [SortedStringSet](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/SortedStringSet.hx) is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
 
-3. [StringTreeMap](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/StringTreeMap.hx) is a map that is sorted by there keys (which are of type String).
+3. [StringTreeMap](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/StringTreeMap.hx) is a map that is sorted by there keys (which are of type [String](http://api.haxe.org/String.html)).
 
 
 ## <a name="paths-class"></a>The `Paths` utility class
