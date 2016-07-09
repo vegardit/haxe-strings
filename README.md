@@ -159,7 +159,7 @@ class Test {
 ```
 
 
-## <a name="string-collections"></a>The String collection classes
+## <a name="string-collections"></a>The string collection classes
 
 The package [hx.strings.collection](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection) contains some useful collection classes for Strings.
 
