@@ -8,7 +8,7 @@
     "contributors": [
         "vegardit"
     ],
-    "releasenote": "changed to Apache License 2.0, added spell checker, added collection classes, see CHANGELOG.md for all details",
+    "releasenote": "changed to Apache License 2.0, added SpellChecker/Paths/collection classes, see CHANGELOG.md for all details",
     "version": "2.0.0",
     "dependencies": { }
 }
