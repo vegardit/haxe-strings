@@ -96,7 +96,7 @@ class Paths {
                 }
 
                 return DIRECTORY_SEPARATOR_NIX;
-
+                
             case OS:
                 DIRECTORY_SEPARATOR;
                 
@@ -156,9 +156,10 @@ class Paths {
             var nixSepPos = path.lastIndexOf8(DIRECTORY_SEPARATOR_NIX);
             var winSepPos = path.lastIndexOf8(DIRECTORY_SEPARATOR_WIN);
             var sepPos = nixSepPos > winSepPos ? nixSepPos : winSepPos;
-            if (sepPos == path.length8() - 1) {
+            var pLenMinus1 = path.length8() - 1;
+            if (sepPos == pLenMinus1) {
                 // handle path ending with multiple separators properly, e.g. "dir//"
-                path = path.left(path.length8() - 1);
+                path = path.left(pLenMinus1);
                 continue;
             }
             return path.substring8(sepPos + 1);
@@ -213,9 +214,10 @@ class Paths {
             var nixSepPos = path.lastIndexOf8(DIRECTORY_SEPARATOR_NIX);
             var winSepPos = path.lastIndexOf8(DIRECTORY_SEPARATOR_WIN);
             var sepPos = nixSepPos > winSepPos ? nixSepPos : winSepPos;
-            if (sepPos == path.length8() - 1) {
+            var pLenMinus1 = path.length8() - 1;
+            if (sepPos == pLenMinus1) {
                 // handle path ending with multiple separators properly, e.g. "dir//"
-                path = path.left(path.length8() - 1);
+                path = path.left(pLenMinus1);
                 continue;
             }
             return path.substring8(0, sepPos);
@@ -248,7 +250,7 @@ class Paths {
 
         // check if path fits by normalizing it
         path = normalize(path);
-        trace(path);
+
         if (path.length8() <= maxLength)
             return path;
         
@@ -265,7 +267,9 @@ class Paths {
 
         for (i in 0...pathParts.length) {
             var partToAdd = processLeftSide ? pathParts[leftPartsCount] : pathParts[pathParts.length - rightPartsCount - 1];
-            if (leftPart.length + rightPart.length + ellipsisLen + partToAdd.length8() + dirSepLen > maxLength) {
+            var newTotalLength = leftPart.length + rightPart.length + ellipsisLen + partToAdd.length8() + dirSepLen;
+            
+            if (newTotalLength > maxLength) {
                 break;
             }
             
@@ -277,6 +281,7 @@ class Paths {
                 // handle special case of Windows network share \\server\folder
                 if ((i == 0 || i == 1) && partToAdd.isEmpty()) 
                     continue;
+
             } else {
                 rightPart.prepend(partToAdd);
                 rightPart.prepend(dirSep);
@@ -379,10 +384,11 @@ class Paths {
         var sb = new StringBuilder();
         sb.addChar(Char.CARET);
         var chars = globPattern.toChars();
+        var charsLenMinus1 = chars.length - 1;
         var chPrev:Char = -1;
         var groupDepth = 0;
         var idx = -1;
-        while(idx < chars.length - 1) {
+        while(idx < charsLenMinus1) {
             idx++;
             var ch = chars[idx];
 
@@ -556,13 +562,15 @@ class Paths {
         var path = filtered.join(_getSeparator(filtered, sep));
         
         if (normalize) {
-            path = Paths.normalize(path, sep);
+            path = Paths.normalize(path, sep, false);
         }
 
         return path;
     }
     
     /**
+     * <b>IMPORTANT:</b> If the path cannot be fully normalized, <code>null</code> is returned by default.
+     * 
      * <pre><code>
      * >>> Paths.normalize("C:\\dir1\\..\\dir2\\")              == "C:\\dir2"
      * >>> Paths.normalize("C:\\..\\foo\\")                     == null
@@ -580,9 +588,11 @@ class Paths {
      * >>> Paths.normalize(null)                                == null
      * </code></pre>
      * 
-     * @return normalized version of the given path with trailing slashes are removed, or <code>null</code> if normalization is not possible
+     * @param strictMode if <code>true</code> (default) returns <code>null</code> in case full normalization 
+     *                   is impossible otherwise returns the path normalized as far as possible
+     * @return normalized version of the given path with trailing slashes are removed
      */
-    public static function normalize(path:String, sep:DirectorySeparatorType = AUTO):String {
+    public static function normalize(path:String, sep:DirectorySeparatorType = AUTO, strictMode = true):String {
         if (path.isEmpty()) 
             return path;
 
@@ -611,7 +621,8 @@ class Paths {
                     resultParts.pop();
                     continue;
                 }
-                return null;
+                if(strictMode)
+                    return null;
             }
             resultParts.push(part);
         }
@@ -626,7 +637,6 @@ class Paths {
 @:dox(hide)
 @:enum
 abstract DirectorySeparatorType(Int) {
-
     /**
      * tries to determine the separator based on the input, uses slash as fallback
      */
@@ -646,5 +656,4 @@ abstract DirectorySeparatorType(Int) {
      * use Windows separator (back slash)
      */
     var WIN = 3;
-    
 }

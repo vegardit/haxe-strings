@@ -55,7 +55,7 @@ class StringSet {
      * </code></pre>
      * @return true if item was added, false if it was already present
      */
-	public function add(item:AnyAsString):Bool {
+    public function add(item:AnyAsString):Bool {
         if (item == null) throw "[item] must not be null!";
         
         if (contains(item))
@@ -84,7 +84,7 @@ class StringSet {
      * @return true if the item is present
      */
     inline
-	public function contains(item:String):Bool {
+    public function contains(item:String):Bool {
         return item == null ? false : map.exists(item);
     }
     
@@ -100,7 +100,7 @@ class StringSet {
      * @return true if the item was removed, false if it was not present
      */
     inline
-	public function remove(item:String):Bool {
+    public function remove(item:String):Bool {
         if (item == null) 
             return false;
             
@@ -111,11 +111,11 @@ class StringSet {
         return false;
     }
     
-	/**
+    /**
      * @return an Iterator over the items. No particular order is guaranteed.
      */
     inline
-	public function iterator():Iterator<String> {
+    public function iterator():Iterator<String> {
         return map.keys();
     }
     
@@ -141,7 +141,7 @@ class StringSet {
      * </code></pre>
      */
     inline
-	public function toString() {
+    public function toString() {
         if (size == 0) return "[]";
         return '[ "' + toArray().join('", "') + '" ]';
     }

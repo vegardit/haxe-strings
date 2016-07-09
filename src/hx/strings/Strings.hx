@@ -184,19 +184,19 @@ class Strings {
         }
 
         var effectiveState = new ANSIState(initialState);
-        var strLen = str.length8();
+        var strLenMinus1 = str.length8() - 1;
         var i = -1;
         var lookAhead = new StringBuilder();
-        while (i < strLen - 1) {
+        while (i < strLenMinus1) {
             i++;
             var ch:Char = str._charCodeAt8Unsafe(i);
-            if (ch == Char.ESC && i < strLen - 1 && str._charCodeAt8Unsafe(i + 1) == 91 /*[*/) { // is beginning of ANSI Escape Sequence?
+            if (ch == Char.ESC && i < strLenMinus1 && str._charCodeAt8Unsafe(i + 1) == 91 /*[*/) { // is beginning of ANSI Escape Sequence?
                 lookAhead.clear();
                 var currentState = new ANSIState(effectiveState);
                 var currentGraphicModeParam = 0;
                 var isValidEscapeSequence = false;
                 i += 1;
-                while (i < strLen - 1) {
+                while (i < strLenMinus1) {
                     i++;
                     var ch2:Char = str._charCodeAt8Unsafe(i);
                     lookAhead.addChar(ch2);
@@ -992,7 +992,7 @@ class Strings {
             return str;
 
         return str.split8(separator).filter(filter).join(separator);
-	}
+    }
     
     /**
      * <pre><code>
@@ -1010,7 +1010,7 @@ class Strings {
             return str;
 
         return str.toChars().filter(filter).map(function (ch) return ch.toString() ).join("");
-	}
+    }
     
     /**
      * Calculates the Fuzzy distance between the given strings. A higher value indicates a higher similarity.
@@ -1123,8 +1123,9 @@ class Strings {
             costs[0] = rightIdx;
 
             for (leftIdx in 1...leftLen + 1) {
-                var cost = leftChars[leftIdx - 1] == rightChar ? 0 : 1;
-                costs[leftIdx] = min(min(costs[leftIdx - 1] + 1, prevCosts[leftIdx] + 1), prevCosts[leftIdx - 1] + cost);
+                var leftIdxMinus1 = leftIdx - 1;
+                var cost = leftChars[leftIdxMinus1] == rightChar ? 0 : 1;
+                costs[leftIdx] = min(min(costs[leftIdxMinus1] + 1, prevCosts[leftIdx] + 1), prevCosts[leftIdxMinus1] + cost);
             }
 
             var tmp = prevCosts;
@@ -1617,8 +1618,10 @@ class Strings {
      * >>> Strings.isLowerCase("cat2") == true
      * </code></pre>
      */
-    inline
     public static function isLowerCase(str:String):Bool {
+        if (str.isEmpty()) 
+            return false;
+
         return str == str.toLowerCase8();
     }
     
@@ -1632,8 +1635,10 @@ class Strings {
      * >>> Strings.isUpperCase("CAT2") == true
      * </code></pre>
      */
-    inline
     public static function isUpperCase(str:String):Bool {
+        if (str.isEmpty()) 
+            return false;
+            
         return str == str.toUpperCase8();
     }
     
@@ -1647,7 +1652,7 @@ class Strings {
         for (sub in str.split8(separator)) {
             callback(sub);
         }
-	}
+    }
     
     /**
      * Invokes the callback function on each character of the given string.
@@ -1659,7 +1664,7 @@ class Strings {
         for (i in 0...str.length8()) {
             callback(str._charCodeAt8Unsafe(i));
         }
-	}
+    }
 
     /**
      * String#lastIndexOf() variant with cross-platform UTF-8 support and ECMAScript like behavior.
@@ -1879,7 +1884,7 @@ class Strings {
             return null;
 
         return str.split8(separator).map(mapper);
-	}
+    }
     
     /**
      * <pre><code>

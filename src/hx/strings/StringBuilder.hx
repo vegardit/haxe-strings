@@ -41,23 +41,20 @@ using hx.strings.Strings;
 @notThreadSafe
 class StringBuilder {
 
-	var sb = new StringBuf();
-    var len:Int;
+    var sb = new StringBuf();
     
     #if !java
-    var pre:Array<String>;
+    var pre:Array<String> = null;
+    var len:Int = 0;
     #end
 
-	public function new(?initialContent:String) {
-        if(initialContent != null) {
+    inline
+    public function new(?initialContent:AnyAsString) {
+        if (initialContent != null) 
             add(initialContent);
-            len = initialContent.length;
-        } else {
-            len = 0;
-        }
-	}
-	
-	/**
+    }
+    
+    /**
      * <b>Important:</b> Invocation may result in temporary string object generation during invocation
      * on platforms except Java.
      * 
@@ -66,50 +63,42 @@ class StringBuilder {
      * >>> new StringBuilder("はい").add("は").add("い").length   == 4
      * </code></pre>
      * 
-	 * @return the length of the string representation of all added items
-	 */
-	public var length(get, null): Int;
+     * @return the length of the string representation of all added items
+     */
+    public var length(get, null): Int;
 
     inline
-	function get_length():Int {
-        if (len > -1) 
-            return len;
-            
+    function get_length():Int {
         #if java
             return sb.length;
-        #elseif (flash || cs || python)
-            if (pre == null || pre.length == 0) // no prepends
-                return sb.length; // is UTF8 compatible
-            toString(); // recalculates len variable
-            return len;
         #else
-            toString(); // recalculates len variable
             return len;
         #end
-	}
-	
-	/**
+    }
+    
+    /**
      * <pre><code>
      * >>> new StringBuilder(null).add(null).toString() == "null"
      * >>> new StringBuilder("hi").add(null).toString() == "hinull"
      * >>> new StringBuilder("hi").add(1).toString()    == "hi1"
      * </code></pre>
      * 
-	 * @return <code>this</code> for chained operations
-	 */
+     * @return <code>this</code> for chained operations
+     */
     inline
-	public function add(item:AnyAsString):StringBuilder {
-		sb.add(item);
-        
-        len = -2147483647; // force full calculation
-		return this;
-	}
+    public function add(item:AnyAsString):StringBuilder {
+        sb.add(item);
+        #if !java
+        len += item.length8();
+        #end
+        return this;
+    }
     
     /**
      * @return <code>this</code> for chained operations
      */
-    public function addChar(ch:Char):StringBuilder {
-        
+    #if java inline #end
+    public function addChar(ch:Char):StringBuilder {       
         #if (java || flash || cs || python)
             sb.addChar(ch);
         #else
@@ -122,7 +111,9 @@ class StringBuilder {
             }
         #end
         
+        #if !java
         len++;
+        #end
         return this;
     }
 
@@ -133,73 +124,76 @@ class StringBuilder {
      * </code></pre>
      * @return <code>this</code> for chained operations
      */
-	public function addAll(items:Array<AnyAsString>):StringBuilder {
+    public function addAll(items:Array<AnyAsString>):StringBuilder {
         for (item in items) {
-            sb.add(item);	
+            sb.add(item);    
+            #if !java
+            len += item.length8();
+            #end
         }
-        
-        len = -2147483647; // force full calculation
-		return this;
-	}
-	
-	/**
-	 * Resets the builders internal buffer
+        return this;
+    }
+    
+    /**
+     * Resets the builders internal buffer
      * 
      * <pre><code>
      * >>> new StringBuilder("hi").clear().add(1).toString()    == "1"
      * </code></pre>
      * 
      * @return <code>this</code> for chained operations
-	 */
-	public function clear():StringBuilder {
+     */
+    public function clear():StringBuilder {
         #if java
             untyped __java__("this.sb.b.setLength(0)");
         #else
+            pre = null;
             sb = new StringBuf();
+            len = 0;
         #end
-        len = 0;
-		return this;
-	}
+        return this;
+    }
     
-	/**
+    /**
      * <pre><code>
      * >>> new StringBuilder("").isEmpty()    == true
      * >>> new StringBuilder("cat").isEmpty() == false
      * </code></pre>
      * 
      * @return <code>true</code> if no chars/strings have been added to the string builder yet
-	 */
+     */
     public function isEmpty():Bool {
         return length == 0;
     }
-	
-	/**
-	 * adds the operating system dependent new line character(s)
+    
+    /**
+     * adds the "\n" new line character
      * 
      * @return <code>this</code> for chained operations
-	 */
+     */
     inline
-	public function newLine():StringBuilder {
-		sb.add(Strings.NEW_LINE);
+    public function newLine():StringBuilder {
+        sb.add(Strings.NEW_LINE_NIX);
         
-        len += -2147483647; // force full calculation
-		return this;
-	}
+        #if !java
+        len ++;
+        #end
+        return this;
+    }
     
-	/**
-	 * @return <code>this</code> for chained operations
-	 */
-	public function prepend(item:AnyAsString):StringBuilder {
+    /**
+     * @return <code>this</code> for chained operations
+     */
+    public function prepend(item:AnyAsString):StringBuilder {
         #if java
             untyped __java__("this.sb.b.insert(0, item)");
         #else
             if (pre == null) pre = [];
             pre.unshift(item);
+            len += item.length8();
         #end
-
-        len += -2147483647; // force full calculation
-		return this;
-	}
+        return this;
+    }
 
     /**
      * @return <code>this</code> for chained operations
@@ -210,16 +204,15 @@ class StringBuilder {
         #else
             if (pre == null) pre = [];
             pre.unshift(ch);
+            len++;
         #end
-        
-        len++;
         return this;
     }
     
-	/**
-	 * @return <code>this</code> for chained operations
-	 */
-	public function prependAll(items:Array<AnyAsString>):StringBuilder {
+    /**
+     * @return <code>this</code> for chained operations
+     */
+    public function prependAll(items:Array<AnyAsString>):StringBuilder {
         #if !java
             if (pre == null) pre = [];
         #end
@@ -230,28 +223,27 @@ class StringBuilder {
                 untyped __java__("this.sb.b.insert(0, item)");
             #else
                 pre.unshift(item);
+                len += item.length8();
             #end
         }
         
-        len = -2147483647; // force full calculation
-		return this;
-	}
-	
+        return this;
+    }
+    
     /**
      * @return a new string object representing the builder's content
      */
-	public function toString():String {
-        var str:String;
+    #if java inline #end
+    public function toString():String {
         #if java
-            str = sb.toString();
+            return sb.toString();
         #else
             if (pre == null)
-                str = sb.toString();
-            else
-                str = pre.join("") + sb.toString();
+                return sb.toString();
+            var str = pre.join("") + sb.toString();
+            clear();
+            add(str);
+            return str;
         #end
-        
-        len = str.length8();
-        return str;
-	}
+    }
 }

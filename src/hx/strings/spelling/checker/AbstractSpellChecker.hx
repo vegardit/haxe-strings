@@ -48,10 +48,10 @@ class AbstractSpellChecker implements SpellChecker {
     
     public function correctText(text:String, timeoutMS:Int = 500):String throw "Not implemented";
     
-	public function correctWord(word:String, timeoutMS:Int = 500):String {
+    public function correctWord(word:String, timeoutMS:Int = 500):String {
         var timeoutAt = haxe.Timer.stamp() + (timeoutMS / 1000);
 
-		if(dict.exists(word))
+        if(dict.exists(word))
             return word;
 
         var candidate:String = null;
@@ -66,13 +66,13 @@ class AbstractSpellChecker implements SpellChecker {
                 candidatePopularity = editPopularity;
             }
         }
-		if (candidate != null) 
+        if (candidate != null) 
             return candidate;
 
         if (timeoutAt < Timer.stamp()) return word;
         
         // check for words that are 2 edits away from the given input word
-		for (edit in edits) {
+        for (edit in edits) {
             if (timeoutAt < Timer.stamp()) break;
 
             for (edit2 in generateEdits(edit, timeoutAt)) {
@@ -83,8 +83,8 @@ class AbstractSpellChecker implements SpellChecker {
                 }
             }
         }
-		return candidate == null ? word : candidate;
-	}
+        return candidate == null ? word : candidate;
+    }
     
     /**
      * @return the a list of word variations that are 1 character edit away from the given input string

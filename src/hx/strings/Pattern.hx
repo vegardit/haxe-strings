@@ -55,7 +55,7 @@ class Pattern {
                         ;
                 });
             case b(opt): opt.toString();
-            case c(arr): arr.join("");
+            case c(arr): arr.filter(function (m) return m != null /* remove null enties */).join("");
         });
     }
     

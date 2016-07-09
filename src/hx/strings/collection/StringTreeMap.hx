@@ -42,6 +42,6 @@ class StringTreeMap<V> extends BalancedTree<String, V> implements haxe.Constrain
     inline
     override
     function compare(s1:String, s2:String):Int {
-		return cmp(s1, s2);
-	}
+        return cmp(s1, s2);
+    }
 }
