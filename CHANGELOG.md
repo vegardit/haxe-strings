@@ -3,8 +3,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
-## [2.0.0] - 2016-07-02
+## [2.0.0] - 2016-07-09
 ### Added
+- Spell Checker in package hx.strings.spelling
+- hx.strings.collection.SortedStringSet class
+- hx.strings.collection.StringSet class
+- hx.strings.collection.StringTreeMap class
+- hx.strings.Paths class for path related string manipulations
 - hx.strings.Pattern.Matcher#iterate()
 - hx.strings.Strings##ellipsizeLeft()
 - hx.strings.Strings##ellipsizeMiddle()
@@ -18,14 +23,10 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - hx.strings.Strings#removeLeading()
 - hx.strings.Strings#removeTrailing()
 - hx.strings.Char: CARET, EXCLAMATION_MARK, and constants for characters 0-9
-- hx.strings.collection.SortedStringSet
-- hx.strings.collection.StringSet
-- hx.strings.collection.StringTreeMap
-- Spell Checker in package hx.strings.spelling
-- hx.strings.Paths class for path related string manipulations
 ### Changed
-- hx.strings.Strings#split8() now allows multiple separators
 - changed license from MIT to Apache License 2.0
+- hx.strings.Strings#split8() now allows multiple separators
+- slight performance improvement in hx.strings.StringBuilder
 - renamed hx.strings.Strings#stripAnsi() to hx.strings.Strings#removeAnsi()
 - renamed hx.strings.Strings#stripTags() to hx.strings.Strings#removeTags()
 - renamed hx.strings.Strings#ltrim() to hx.strings.Strings#trimLeft()
@@ -36,7 +37,6 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - moved hx.strings.Strings#globToEReg() to hx.strings.Paths#globToEReg()
 - moved hx.strings.Strings#globToPattern() to hx.strings.Paths#globToPattern()
 - moved hx.strings.Strings#globToRegEx() to hx.strings.Paths#globToRegEx()
-- slight performance improvement in hx.strings.StringBuilder
 ### Fixed
 - hx.strings.Char.toLowerCase() was broken for character I
 
