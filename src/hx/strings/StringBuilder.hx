@@ -182,7 +182,7 @@ class StringBuilder {
 	public function newLine():StringBuilder {
 		sb.add(Strings.NEW_LINE);
         
-        len += Strings.NEW_LINE.length8();
+        len += -2147483647; // force full calculation
 		return this;
 	}
     
@@ -197,7 +197,7 @@ class StringBuilder {
             pre.unshift(item);
         #end
 
-        len = -2147483647; // force full calculation
+        len += -2147483647; // force full calculation
 		return this;
 	}
 
