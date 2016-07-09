@@ -98,7 +98,7 @@ class Strings {
     /**
      * operating system specific line separator
      */
-    public static var NEW_LINE(default, null):String = OS.isWindows() ? NEW_LINE_WIN : NEW_LINE_NIX;
+    public static var NEW_LINE(default, never):String = OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
 
     /**
      * no bounds checking

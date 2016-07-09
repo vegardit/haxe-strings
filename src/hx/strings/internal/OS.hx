@@ -15,8 +15,6 @@
  */
 package hx.strings.internal;
 
-import hx.strings.Pattern;
-
 /**
  * <b>IMPORTANT:</b> This class it not part of the API. Direct usage is discouraged.
  * 
@@ -26,9 +24,7 @@ import hx.strings.Pattern;
 @:noCompletion
 class OS {
 
-    static var REGEX_IS_WINDOWS = Pattern.compile("windows", IGNORE_CASE);
-
-    public static function isWindows():Bool {
+    public static var isWindows(default, never):Bool = {
         #if flash
         var os = flash.system.Capabilities.os;
         #elseif hl
@@ -39,7 +35,6 @@ class OS {
         #else
         var os = Sys.systemName();
         #end
-        return REGEX_IS_WINDOWS.matcher(os).matches();
+        ~/windows/i.match(os);
     }
-    
 }
