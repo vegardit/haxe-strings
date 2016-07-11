@@ -8,7 +8,7 @@
     "contributors": [
         "vegardit"
     ],
-    "releasenote": "fix 'Warning: maybe loop in static generation'",
-    "version": "2.0.1",
+    "releasenote": "interim fixes for HL/CPP target specific issues",
+    "version": "2.0.2",
     "dependencies": { }
 }

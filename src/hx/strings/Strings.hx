@@ -80,7 +80,12 @@ class Strings {
     static var REGEX_SPLIT_LINES = Pattern.compile("\\r?\\n", MATCH_ALL);
     
     #if !php
-    static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
+        #if hl
+            // TODO https://github.com/HaxeFoundation/haxe/issues/5312
+            static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z/][^>]*>", MATCH_ALL);
+        #else
+            static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
+        #end
     #end
     
     public static inline var POS_NOT_FOUND:CharPos = -1;
@@ -98,7 +103,13 @@ class Strings {
     /**
      * operating system specific line separator
      */
-    public static var NEW_LINE(default, never):String = OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
+    #if cpp
+        // TODO workaround for https://github.com/HaxeFoundation/hxcpp/issues/483
+        public static var NEW_LINE(get, never):String;
+        static function get_NEW_LINE():String return OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
+    #else
+        public static var NEW_LINE(default, never):String = OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
+    #end
 
     /**
      * no bounds checking

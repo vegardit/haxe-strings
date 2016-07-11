@@ -44,12 +44,24 @@ class Paths {
     /**
      * operating system specific directory separator (slash or backslash)
      */
-    public static var DIRECTORY_SEPARATOR(default, never):String = hx.strings.internal.OS.isWindows ? DIRECTORY_SEPARATOR_WIN : DIRECTORY_SEPARATOR_NIX;
+    #if cpp
+        // TODO workaround for https://github.com/HaxeFoundation/hxcpp/issues/483
+        public static var DIRECTORY_SEPARATOR(get, never):String;
+        static function get_DIRECTORY_SEPARATOR():String return hx.strings.internal.OS.isWindows ? DIRECTORY_SEPARATOR_WIN : DIRECTORY_SEPARATOR_NIX;
+    #else
+        public static var DIRECTORY_SEPARATOR(default, never):String = hx.strings.internal.OS.isWindows ? DIRECTORY_SEPARATOR_WIN : DIRECTORY_SEPARATOR_NIX;
+    #end
 
     /**
      * if the DIRECTORY_SEPARATOR is slash, this contains backslash and vice versa
      */
-    public static var OTHER_DIRECTORY_SEPARATOR(default, never):String = hx.strings.internal.OS.isWindows ? DIRECTORY_SEPARATOR_NIX : DIRECTORY_SEPARATOR_WIN;
+    #if cpp
+        // TODO workaround for https://github.com/HaxeFoundation/hxcpp/issues/483
+        public static var OTHER_DIRECTORY_SEPARATOR(get, never):String;
+        static function get_OTHER_DIRECTORY_SEPARATOR():String return hx.strings.internal.OS.isWindows ? DIRECTORY_SEPARATOR_NIX : DIRECTORY_SEPARATOR_WIN;
+    #else
+        public static var OTHER_DIRECTORY_SEPARATOR(default, never):String = hx.strings.internal.OS.isWindows ? DIRECTORY_SEPARATOR_NIX : DIRECTORY_SEPARATOR_WIN;
+    #end
 
     /**
      * file name extension separator (.)
@@ -69,7 +81,13 @@ class Paths {
     /**
      * operating system specific path separator (colon or semicolon) used to separate paths in the PATH environment variable
      */
-    public static var PATH_SEPARATOR(default, never):String = hx.strings.internal.OS.isWindows ? PATH_SEPARATOR_WIN : PATH_SEPARATOR_NIX;
+    #if cpp
+        // TODO workaround for https://github.com/HaxeFoundation/hxcpp/issues/483
+        public static var PATH_SEPARATOR(get, never):String;
+        static function get_PATH_SEPARATOR():String return hx.strings.internal.OS.isWindows ? PATH_SEPARATOR_WIN : PATH_SEPARATOR_NIX;
+    #else
+        public static var PATH_SEPARATOR(default, never):String = hx.strings.internal.OS.isWindows ? PATH_SEPARATOR_WIN : PATH_SEPARATOR_NIX;
+    #end
 
     private static function _getSeparator(path:OneOrMany<String>, sep:DirectorySeparatorType) {
         return switch(sep) {

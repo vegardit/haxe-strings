@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
+## [2.0.2] - 2016-07-11
+
+### Fixed
+- [hl] interim workaround for "EReg.hx Unsupported escaped char '/'"
+- [cpp] interim fix for static initializer issue
+
 ## [2.0.1] - 2016-07-09
 
 ### Fixed
