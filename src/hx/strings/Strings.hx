@@ -3628,9 +3628,10 @@ class ANSIState {
             if (underline)
                 sb.add("text-decoration:underline;");
             if (blink)
-                sb.add("text-decoration: blink;");
+                sb.add("text-decoration:blink;");
             return sb.toString();
         }
         return "";
     }
+
 }
