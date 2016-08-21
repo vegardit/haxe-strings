@@ -6,6 +6,7 @@
 1. [The string collection classes](#string-collections)
 1. [The `Paths` utility class](#paths-class)
 1. [The `StringBuilder` class](#stringbuilder-class)
+1. [The `Ansi` class](#ansi-class)
 1. [Installation](#installation)
 1. [Using the latest code](#latest)
 1. [License](#license)
@@ -262,6 +263,33 @@ class Test {
         sb.addAll(["a", 1, true, null]);
         
         sb.toString();  // returns "a1truenull"
+    }
+}
+```
+
+
+## <a name="ansi-class"></a>The `Ansi`  class
+
+The [hx.strings.ansi.Ansi](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/ansi/Ansi.hx) class provides functionalities to write [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code) in a type-safe manner.
+
+```haxe
+import hx.strings.ansi.Ansi;
+
+class Test {
+
+    static function main() {
+        var stdout = Sys.stdout();
+        
+        stdout.writeString(Ansi.fg(RED));           // set the text foreground color to red
+        stdout.writeString(Ansi.bg(WHITE));         // set the text background color to white
+        stdout.writeString(Ansi.attr(BOLD));        // make the text bold
+        stdout.writeString(Ansi.attr(RESET));       // reset all color or text attributes
+        stdout.writeString(Ansi.clearScreen());     // clears the screen
+        stdout.writeString(Ansi.cursor(MoveUp(2))); // moves the cursor 2 lines up
+        
+        // now let's work with a fluent API
+        var writer = Ansi.writer(stdout); // takes StringBuf, haxe.io.Ouput or StringBuilder
+        writer.fg(RED).bg(WHITE).attr(UNDERLINE).write("Hello World!").attr.reset();
     }
 }
 ```

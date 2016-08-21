@@ -3,16 +3,24 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
+## [2.1.0] - 2016-08-21
+
+### Added
+- hx.strings.ansi package
+
+
 ## [2.0.2] - 2016-07-11
 
 ### Fixed
 - [hl] interim workaround for "EReg.hx Unsupported escaped char '/'"
 - [cpp] interim fix for static initializer issue
 
+
 ## [2.0.1] - 2016-07-09
 
 ### Fixed
 - "Warning: maybe loop in static generation"
+
 
 ## [2.0.0] - 2016-07-09
 
@@ -54,6 +62,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ### Fixed
 - hx.strings.Char.toLowerCase() was broken for character I
 
+
 ## [1.2.0] - 2016-06-21
 
 ### Added
@@ -66,6 +75,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ### Fixed
 - hx.strings.StringBuilder#addChar() with values between 128 and 255 didn't work on all platforms as expected
+
 
 ## [1.1.0] - 2016-06-11
 
@@ -81,6 +91,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - hx.strings.Strings#toPattern()
 - hx.strings.Strings#wrap()
 - hx.strings.StringBuilder#isEmpty()
+
 
 ## [1.0.0] - 2016-06-05
 
