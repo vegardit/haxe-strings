@@ -19,7 +19,7 @@ package hx.strings.ansi;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:enum
-abstract AnsiColor(Int) from Int to Int {
+abstract AnsiColor(Int) {
     var BLACK = 0;
     var RED = 1;
     var GREEN = 2;

@@ -54,26 +54,26 @@ class Ansi {
      */
     inline
     public static function bg(color:AnsiColor):String {
-        return ESC + (40 + color) + "m";
+        return ESC + "4" + color + "m";
     }
     
     /**
      * <pre><code>
      * >>> Ansi.cursor(MoveUp(5)) == "\x1B[5A"
-     * >>> Ansi.cursor(GoTo(5,5)) == "\x1B[5;5H"
+     * >>> Ansi.cursor(Pos(5,5)) == "\x1B[5;5H"
      * </code></pre>
      */
     inline
     public static function cursor(cmd:AnsiCursor):String {
         return switch(cmd) {
-            case GoTo(line, column): Ansi.ESC + line + ";" + column + "H";
-            case GoToHome: Ansi.ESC + "H";
+            case Home: Ansi.ESC + "H";
+            case Pos(line, column): Ansi.ESC + line + ";" + column + "H";
             case MoveUp(lines): Ansi.ESC + lines + "A";
             case MoveDown(lines): Ansi.ESC + lines + "B";
             case MoveRight(columns): Ansi.ESC + columns + "C";
             case MoveLeft(columns): Ansi.ESC + columns + "D";
-            case SavePosition: Ansi.ESC + "s";
-            case RestorePosition: Ansi.ESC + "s";
+            case SavePos: Ansi.ESC + "s";
+            case RestorePos: Ansi.ESC + "s";
         }
     }
 
@@ -102,7 +102,7 @@ class Ansi {
      */
     inline
     public static function fg(color:AnsiColor):String {
-        return ESC + (30 +color) + "m";
+        return ESC + "3" + color + "m";
     }
 
     /**

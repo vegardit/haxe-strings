@@ -291,7 +291,7 @@ class Test {
         var writer = Ansi.writer(stdout); // supports StringBuf, haxe.io.Ouput and hx.strings.StringBuilder
         writer
           .clearScreen()
-          .cursor(GoTo(10,10))
+          .cursor(Pos(10,10))
           .fg(GREEN).bg(BLACK).attr(ITALIC).write("How are you?").attr(RESET)
           .cursor(MoveUp(2))
           .fg(RED).bg(WHITE).attr(UNDERLINE).write("Hello World!").attr(UNDERLINE_OFF)
