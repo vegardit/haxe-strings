@@ -29,25 +29,37 @@ cd %~dp0
 
 REM extract GIT URL from haxelib.json
 for /f "tokens=*" %%a in ( 'findstr url haxelib.json' ) do (set textLine=%%a)
-set REPO_URL=%textLine:"name": "=%
+set REPO_URL=%textLine:"url": "=%
 set REPO_URL=%REPO_URL:",=%
+echo REPO_URL=%REPO_URL%
 
 REM extract repo name from haxelib.json
 set REPO_NAME=%REPO_URL:https://github.com/=%
+echo REPO_NAME=%REPO_NAME%
 
 REM extract project version from haxelib.json
 for /f "tokens=*" %%a in ( 'findstr version haxelib.json' ) do (set textLine=%%a)
 set PROJECT_VERSION=%textLine:"version": "=%
 set PROJECT_VERSION=%PROJECT_VERSION:",=%
+echo PROJECT_VERSION=%PROJECT_VERSION%
 
 REM extract release note from haxelib.json
 for /f "tokens=*" %%a in ( 'findstr releasenote haxelib.json' ) do (set textLine=%%a)
 set RELEASE_NOTE=%textLine:"releasenote": "=%
 set RELEASE_NOTE=%RELEASE_NOTE:",=%
+echo RELEASE_NOTE=%RELEASE_NOTE%
 
 if not exist target mkdir target
 
+:: create haxelib release
+if exist target/haxelib-upload.zip (
+    del target/haxelib-upload.zip
+)
+echo Building haxelib release...
+zip target\haxelib-upload.zip src haxelib.json LICENSE.txt CONTRIBUTING.md README.md -r -9 || goto :eof
+
 :: create github release https://developer.github.com/v3/repos/releases/#create-a-release
+echo Creating GitHub release https://github.com/%REPO_NAME%/releases/tag/v%PROJECT_VERSION%...
 (
   echo {
   echo "tag_name":"v%PROJECT_VERSION%",
@@ -60,11 +72,9 @@ if not exist target mkdir target
 )>target/github_release.json
 wget -qO- --post-file=target/github_release.json "https://api.github.com/repos/%REPO_NAME%/releases?access_token=%GITHUB_ACCESS_TOKEN%" || goto :eof
 
-:: create haxelib release
-zip target/haxelib-upload.zip src haxelib.json LICENSE.txt CONTRIBUTING.md README.md -r -9 || goto :eof
-
 :: submit haxelib release
-haxelib submit target/haxelib-upload.zip
+echo Submitting haxelib release...
+haxelib submit target\haxelib-upload.zip
 
 :eof
 endlocal
