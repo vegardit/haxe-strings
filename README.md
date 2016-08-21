@@ -2,7 +2,7 @@
 
 1. [What is it?](#what-is-it)
 1. [The `Strings` utility class](#strings-class)
-1. [The Spell Checker](#spell-checker)
+1. [The spell checker](#spell-checker)
 1. [The string collection classes](#string-collections)
 1. [The `Paths` utility class](#paths-class)
 1. [The `StringBuilder` class](#stringbuilder-class)
@@ -99,7 +99,7 @@ class Test {
 }
 ```
 
-## <a name="spell-checker"></a>The Spell Checker
+## <a name="spell-checker"></a>The spell checker
 
 The package [hx.strings.spelling](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/spelling) contains an extensible spell checker implementation that is based on ideas outlined by Peter Norvig in his article [How to write a Spell Checker](http://www.norvig.com/spell-correct.html).
 
