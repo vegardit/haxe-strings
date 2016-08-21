@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ## [2.1.0] - 2016-08-21
 
 ### Added
-- hx.strings.ansi package
+- hx.strings.ansi package: type-safe ANSI escape sequence generation
 
 
 ## [2.0.2] - 2016-07-11
@@ -25,7 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ## [2.0.0] - 2016-07-09
 
 ### Added
-- Spell Checker in package hx.strings.spelling
+- spell checker in package hx.strings.spelling
 - hx.strings.collection.SortedStringSet class
 - hx.strings.collection.StringSet class
 - hx.strings.collection.StringTreeMap class

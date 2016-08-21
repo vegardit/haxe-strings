@@ -8,7 +8,7 @@
     "contributors": [
         "vegardit"
     ],
-    "releasenote": "hx.strings.ansi package",
+    "releasenote": "Added hx.strings.ansi package for type-safe ANSI escape sequence generation",
     "version": "2.1.0",
     "dependencies": { }
 }
