@@ -23,9 +23,11 @@ import hx.strings.internal.Either3;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:abstract
-class AnsiWriter {
+class AnsiWriter<T> {
 
-    public static function of(out:Either3<Output, StringBuf, StringBuilder>):AnsiWriter {
+    public var out(default, null):T;
+    
+    public static function of(out:Either3<Output, StringBuf, StringBuilder>):AnsiWriter<Dynamic> {
         return switch(out.value) {
             case a(output): new OutputAnsiWriter(output);
             case b(strBuf): new StringBufAnsiWriter(strBuf);
@@ -33,32 +35,32 @@ class AnsiWriter {
         };
     }
     
-    public function write(str:AnyAsString):AnsiWriter throw "Not implemented";
+    /**
+     * flushes any buffered data
+     */
+    public function flush() return this;
     
-    public function flush():AnsiWriter return this;
+    public function write(str:AnyAsString):AnsiWriter<T> throw "Not implemented";
     
     /**
      * sets the given text attribute
      */
     public function attr(attr:AnsiTextAttribute) {
-        write(Ansi.attr(attr));
-        return this;
+        return write(Ansi.attr(attr));
     }
     
     /**
      * set the text background color
      */
     public function bg(color:AnsiColor) {
-        write(Ansi.bg(color));
-        return this;
+        return write(Ansi.bg(color));
     }
 
     /**
      * Clears the screen and moves the cursor to the home position
      */
     public function clearScreen() {
-        write(Ansi.clearScreen());
-        return this;
+        return write(Ansi.clearScreen());
     }
 
     /**
@@ -80,21 +82,18 @@ class AnsiWriter {
     }
 }
 
-private class OutputAnsiWriter extends AnsiWriter {
-    public var out(default, null):Output;  
+private class OutputAnsiWriter extends AnsiWriter<Output> {
     public function new(out:Output) this.out = out;
-    override function write(str:AnyAsString) { out.writeString(str); return this; }
-    override public function flush():AnsiWriter { out.flush(); return this } ;
+    override public function flush() { out.flush(); return this; } ;
+    override public function write(str:AnyAsString) { out.writeString(str); return this; }
 }
 
-private class StringBufAnsiWriter extends AnsiWriter {
-    public var out(default, null):StringBuf;   
+private class StringBufAnsiWriter extends AnsiWriter<StringBuf> {
     public function new(out:StringBuf) this.out = out;
-    override function write(str:AnyAsString) { out.add(str); return this; }
+    override public function write(str:AnyAsString) { out.add(str); return this; }
 }
 
-private class StringBuilderAnsiWriter extends AnsiWriter {
-    public var out(default, null):StringBuilder;
+private class StringBuilderAnsiWriter extends AnsiWriter<StringBuilder> {
     public function new(out:StringBuilder) this.out = out;
-    override function write(str:AnyAsString) { out.add(str); return this; }
+    override public function write(str:AnyAsString) { out.add(str); return this; }
 }

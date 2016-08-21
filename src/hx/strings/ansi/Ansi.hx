@@ -60,20 +60,20 @@ class Ansi {
     /**
      * <pre><code>
      * >>> Ansi.cursor(MoveUp(5)) == "\x1B[5A"
-     * >>> Ansi.cursor(GotoPosition(5,5)) == "\x1B[5;5H"
+     * >>> Ansi.cursor(GoTo(5,5)) == "\x1B[5;5H"
      * </code></pre>
      */
     inline
     public static function cursor(cmd:AnsiCursor):String {
         return switch(cmd) {
-            case GotoHome: Ansi.ESC + "H";
-            case GotoPosition(line, column): Ansi.ESC + line + ";" + column + "H";
-            case SavePosition: Ansi.ESC + "s";
-            case RestorePosition: Ansi.ESC + "s";
+            case GoTo(line, column): Ansi.ESC + line + ";" + column + "H";
+            case GoToHome: Ansi.ESC + "H";
             case MoveUp(lines): Ansi.ESC + lines + "A";
             case MoveDown(lines): Ansi.ESC + lines + "B";
             case MoveRight(columns): Ansi.ESC + columns + "C";
             case MoveLeft(columns): Ansi.ESC + columns + "D";
+            case SavePosition: Ansi.ESC + "s";
+            case RestorePosition: Ansi.ESC + "s";
         }
     }
 
@@ -111,7 +111,7 @@ class Ansi {
      * </code></pre>
      */
     inline
-    public static function writer(out:Either3<Output, StringBuf, StringBuilder>):AnsiWriter {
+    public static function writer(out:Either3<Output, StringBuf, StringBuilder>):AnsiWriter<Dynamic> {
         return AnsiWriter.of(out);
     }
 }

@@ -287,9 +287,15 @@ class Test {
         stdout.writeString(Ansi.clearScreen());     // clears the screen
         stdout.writeString(Ansi.cursor(MoveUp(2))); // moves the cursor 2 lines up
         
-        // now let's work with a fluent API
-        var writer = Ansi.writer(stdout); // takes StringBuf, haxe.io.Ouput or StringBuilder
-        writer.fg(RED).bg(WHITE).attr(UNDERLINE).write("Hello World!").attr(RESET).flush();
+        // now let's work with the fluent API:
+        var writer = Ansi.writer(stdout); // supports StringBuf, haxe.io.Ouput and hx.strings.StringBuilder
+        writer
+          .clearScreen()
+          .cursor(GoTo(10,10))
+          .fg(GREEN).bg(BLACK).attr(ITALIC).write("How are you?").attr(RESET)
+          .cursor(MoveUp(2))
+          .fg(RED).bg(WHITE).attr(UNDERLINE).write("Hello World!").attr(UNDERLINE_OFF)
+          .flush();
     }
 }
 ```

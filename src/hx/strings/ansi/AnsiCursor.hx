@@ -19,12 +19,12 @@ package hx.strings.ansi;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 enum AnsiCursor {
-    GotoHome;
-    GotoPosition(line:Int, column:Int);
-    SavePosition;
-    RestorePosition;
+    GoTo(line:Int, column:Int);
+    GoToHome;
     MoveUp(lines:Int);
     MoveDown(lines:Int);
     MoveRight(columns:Int);
     MoveLeft(columns:Int);
+    SavePosition;
+    RestorePosition;
 }
