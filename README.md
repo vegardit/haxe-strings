@@ -289,7 +289,7 @@ class Test {
         
         // now let's work with a fluent API
         var writer = Ansi.writer(stdout); // takes StringBuf, haxe.io.Ouput or StringBuilder
-        writer.fg(RED).bg(WHITE).attr(UNDERLINE).write("Hello World!").attr.reset();
+        writer.fg(RED).bg(WHITE).attr(UNDERLINE).write("Hello World!").attr(RESET).flush();
     }
 }
 ```
