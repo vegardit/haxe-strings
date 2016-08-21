@@ -3,24 +3,25 @@
 ::
 :: creates a new release in GitHub and haxelib.org
 
-where  zip.exe /Q
+where zip.exe /Q
 if %errorlevel% neq 0 (
-    echo Rerquired command 'zip' not found. Download from http://www.info-zip.org/Zip.html#Downloads
+    echo Required command 'zip' not found. Download from http://www.info-zip.org/Zip.html#Downloads
     exit /b 1
 )
 
 where wget.exe /Q
 if %errorlevel% neq 0 (
-    echo Rerquired command 'wget' not found. Download from https://eternallybored.org/misc/wget/
+    echo Required command 'wget' not found. Download from https://eternallybored.org/misc/wget/
     exit /b 1
 )
 
 if [%GITHUB_ACCESS_TOKEN%] == [] (
-    echo Rerquired environment variable GITHUB_ACCESS_TOKEN is not set!
+    echo Required environment variable GITHUB_ACCESS_TOKEN is not set!
     exit /b 1
 )
 
-setlocalset DRAFT=false
+setlocal
+set DRAFT=false
 set PREPRELEASE=false
 
 :: cd into project root
