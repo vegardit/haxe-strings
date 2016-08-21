@@ -60,14 +60,14 @@ class Ansi {
     /**
      * <pre><code>
      * >>> Ansi.cursor(MoveUp(5)) == "\x1B[5A"
-     * >>> Ansi.cursor(Pos(5,5)) == "\x1B[5;5H"
+     * >>> Ansi.cursor(GoToPos(5,5)) == "\x1B[5;5H"
      * </code></pre>
      */
     inline
     public static function cursor(cmd:AnsiCursor):String {
         return switch(cmd) {
-            case Home: Ansi.ESC + "H";
-            case Pos(line, column): Ansi.ESC + line + ";" + column + "H";
+            case GoToHome: Ansi.ESC + "H";
+            case GoToPos(line, column): Ansi.ESC + line + ";" + column + "H";
             case MoveUp(lines): Ansi.ESC + lines + "A";
             case MoveDown(lines): Ansi.ESC + lines + "B";
             case MoveRight(columns): Ansi.ESC + columns + "C";

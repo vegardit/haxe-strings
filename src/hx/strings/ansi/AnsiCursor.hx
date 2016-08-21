@@ -19,8 +19,9 @@ package hx.strings.ansi;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 enum AnsiCursor {
-    Home;
-    Pos(line:Int, column:Int);
+
+    GoToHome;
+    GoToPos(line:Int, column:Int);
     MoveUp(lines:Int);
     MoveDown(lines:Int);
     MoveRight(columns:Int);
