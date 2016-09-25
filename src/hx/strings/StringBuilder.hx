@@ -162,6 +162,7 @@ class StringBuilder {
      * 
      * @return <code>true</code> if no chars/strings have been added to the string builder yet
      */
+    inline
     public function isEmpty():Bool {
         return length == 0;
     }

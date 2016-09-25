@@ -63,7 +63,6 @@ class Ansi {
      * >>> Ansi.cursor(GoToPos(5,5)) == "\x1B[5;5H"
      * </code></pre>
      */
-    inline
     public static function cursor(cmd:AnsiCursor):String {
         return switch(cmd) {
             case GoToHome: Ansi.ESC + "H";
