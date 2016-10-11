@@ -57,7 +57,7 @@ class Test {
         
         // all functions are null-safe:
         var nullString:String = null;
-        nullString.isWhiteSpace();    // returns true
+        nullString.isWhiteSpace();    // returns false
         nullString.length8();         // returns 0
         nullString.contains("cat");   // returns false
 
@@ -80,7 +80,7 @@ class Test {
         // ellipsizing strings:
         "The weather is very nice".ellipsizeLeft(20);    // returns "The weather is ve..."
         "The weather is very nice".ellipsizeMiddle(20);  // returns "The weath...ery nice"
-        "The weather is very nice".ellipsizeRight(15);   // returns "...ther is very nice"
+        "The weather is very nice".ellipsizeRight(20);   // returns "...ther is very nice"
 
         // string differences:
         "It's green".diffAt("It's red"); // returns 5
@@ -89,7 +89,7 @@ class Test {
         // hash codes:
         "Cool String".hashCode();       // generate a platform specific hash code
         "Cool String".hashCode(CRC32);  // generate a hash code using CRC32
-        "Cool String".hashCode(JAVA);   // generate a hash code using the Java algorithm
+        "Cool String".hashCode(JAVA);   // generate a hash code using the Java hash algorithm
         
         // cleanup:
         "/my/path/".removeLeading("/");       // returns "my/path/"
