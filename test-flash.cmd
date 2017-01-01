@@ -20,4 +20,4 @@ haxe -main hx.strings.TestRunner ^
 -swf target/flash/TestRunner.swf || goto :eof
 
 echo Testing...
-flashplayer_21_sa_debug target/flash/TestRunner.swf
+flashplayer_24_sa_debug target/flash/TestRunner.swf
