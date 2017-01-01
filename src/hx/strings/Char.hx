@@ -345,6 +345,7 @@ abstract Char(Int) from Int to Int {
      * <pre><code>
      * >>> Char.of( " ").isAsciiAlpha() == false
      * >>> Char.of( "a").isAsciiAlpha() == true
+     * >>> Char.of( "Z").isAsciiAlpha() == true
      * >>> Char.of( "1").isAsciiAlpha() == false
      * >>> Char.of("\t").isAsciiAlpha() == false
      * >>> Char.of("は").isAsciiAlpha() == false
@@ -360,6 +361,32 @@ abstract Char(Int) from Int to Int {
     inline
     public function isAsciiAlpha():Bool {
         return (this > 64 && this < 91) || (this > 96 && this < 123);
+    }
+    
+    /**
+     * Tests if the character is ASCII 7 bit alphanumeric (A-Z, a-z, 0-9).
+     * 
+     * @return <code>true</code> if between 48 and 57, 65 and 90, or 97 and 122 inclusive
+     * 
+     * <pre><code>
+     * >>> Char.of( " ").isAsciiAlphanumeric() == false
+     * >>> Char.of( "a").isAsciiAlphanumeric() == true
+     * >>> Char.of( "Z").isAsciiAlphanumeric() == true
+     * >>> Char.of( "1").isAsciiAlphanumeric() == true
+     * >>> Char.of("\t").isAsciiAlphanumeric() == false
+     * >>> Char.of("は").isAsciiAlphanumeric() == false
+     * >>> Char.of(  -1).isAsciiAlphanumeric() == false
+     * >>> Char.of(   0).isAsciiAlphanumeric() == false
+     * >>> Char.of(  31).isAsciiAlphanumeric() == false
+     * >>> Char.of(  32).isAsciiAlphanumeric() == false
+     * >>> Char.of( 126).isAsciiAlphanumeric() == false
+     * >>> Char.of( 127).isAsciiAlphanumeric() == false
+     * >>> Char.of( 128).isAsciiAlphanumeric() == false
+     * </code></pre>
+     */
+    inline
+    public function isAsciiAlphanumeric():Bool {
+        return isAsciiAlpha() || isDigit();
     }
     
     /**

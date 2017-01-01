@@ -105,6 +105,7 @@ class Strings {
      */
     #if cpp
         // TODO workaround for https://github.com/HaxeFoundation/hxcpp/issues/483
+        // TODO workaround for https://github.com/HaxeFoundation/haxe/issues/5358
         public static var NEW_LINE(get, never):String;
         static function get_NEW_LINE():String return OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
     #else
@@ -1415,6 +1416,40 @@ class Strings {
     }
     
     /**
+     * <pre><code>
+     * >>> Strings.indentLines(null, null)         == null
+     * >>> Strings.indentLines(null, "")           == null
+     * >>> Strings.indentLines("", null)           == ""
+     * >>> Strings.indentLines("dog", null)        == "dog"
+     * >>> Strings.indentLines("dog", "")          == "dog"
+     * >>> Strings.indentLines("dog", "  ")        == "  dog"
+     * >>> Strings.indentLines("dog\ndog", "  ")   == "  dog\n  dog"
+     * >>> Strings.indentLines("dog\r\ndog", "  ") == "  dog\n  dog"
+     * </code></pre>
+     * 
+     * @param indentWith all lines of the <code>str</code> will be prefixed with this string
+     */
+    public static function indentLines(str:String, indentWith:String):String {
+        if (str == null) 
+            return null;
+        
+        if (str.length == 0 || indentWith.isEmpty()) 
+            return str;
+
+        var isFirstLine = true;
+        var sb = new StringBuilder();
+        for (line in REGEX_SPLIT_LINES.split(str)) {
+            if (isFirstLine)
+               isFirstLine = false;
+            else
+               sb.newLine();
+            sb.add(indentWith);
+            sb.add(line);
+        }
+        return sb.toString();
+    }
+    
+    /**
      * String#indexOf() variant with cross-platform UTF-8 support and ECMAScript like behavior.
      * 
      * Solves cross-platform issue https://github.com/HaxeFoundation/haxe/issues/5271
@@ -1896,7 +1931,7 @@ class Strings {
 
         return str.split8(separator).map(mapper);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.prependIfMissing(null, null)   == null
@@ -1977,11 +2012,12 @@ class Strings {
      * Removes all occurences of <b>searchFor</b> from the given string.
      * 
      * <pre><code>
-     * >>> Strings.removeAll(null, null)  == null
-     * >>> Strings.removeAll(null, "")    == null
-     * >>> Strings.removeAll("", null)    == ""
-     * >>> Strings.removeAll("", "")      == ""
-     * >>> Strings.removeAll("abab", "a") == "bb"
+     * >>> Strings.removeAll(null, null)      == null
+     * >>> Strings.removeAll(null, "")        == null
+     * >>> Strings.removeAll("", null)        == ""
+     * >>> Strings.removeAll("", "")          == ""
+     * >>> Strings.removeAll("abab", "a")     == "bb"
+     * >>> Strings.removeAll("abcabca", "bc") == "aaa"
      * </code></pre>
      */
     public static function removeAll(searchIn:String, searchFor:String):String {

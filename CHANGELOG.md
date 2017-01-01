@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
+## [2.2.0] - 2016-12-2?
+
+### Added
+- hx.strings.Char#isAsciiAlphanumeric()
+- hx.strings.Strings#indentLines()
+
+
 ## [2.1.0] - 2016-08-21
 
 ### Added
@@ -31,8 +38,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - hx.strings.collection.StringTreeMap class
 - hx.strings.Paths class for path related string manipulations
 - hx.strings.Pattern.Matcher#iterate()
-- hx.strings.Strings##ellipsizeLeft()
-- hx.strings.Strings##ellipsizeMiddle()
+- hx.strings.Strings#ellipsizeLeft()
+- hx.strings.Strings#ellipsizeMiddle()
 - hx.strings.Strings#getLevenshteinDistance()
 - hx.strings.Strings#getFuzzyDistance()
 - hx.strings.Strings#getLongestCommonSubstring()
