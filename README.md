@@ -310,6 +310,8 @@ import hx.strings.Version;
 
 class Test {
         
+        var ver:Version;
+
         ver = new Version(11, 2, 4);
         ver.major;                  // returns 11
         ver.minor;                  // returns 2
