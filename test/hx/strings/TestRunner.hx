@@ -106,4 +106,64 @@ class TestRunner extends DocTestRunner {
             assertEquals(matches, ["dog", "dog"]);
         }
     }
+    
+    public function testVersion():Void {
+        
+        var v1:Version = "1.1.1";
+        var v1_B:Version = "1.1.1";
+        var v2:Version = "1.1.2";
+
+        /*
+         * Testing operator overloading etc
+         */
+        assertEquals(v1, v1_B);
+        assertTrue(v1 == v1_B);
+        assertFalse(v1 != v1_B);
+        assertFalse(v1 > v1_B);
+        assertFalse(v1 < v1_B);
+        assertTrue(v1 <= v1_B);
+        assertTrue(v1 >= v1_B);
+
+        assertEquals(v1_B, v1);
+        assertTrue(v1_B == v1);
+        assertFalse(v1_B != v1);
+        assertFalse(v1_B > v1);
+        assertFalse(v1_B < v1);
+        assertTrue(v1_B <= v1);
+        assertTrue(v1_B >= v1);
+        
+        assertNotEquals(v1, v2);
+        assertFalse(v1 == v2);
+        assertTrue(v1 != v2);
+        assertFalse(v1 > v2);
+        assertTrue(v1 < v2);
+        assertTrue(v1 <= v2);
+        assertFalse(v1 >= v2);
+
+        assertNotEquals(v2, v1);
+        assertFalse(v2 == v1);
+        assertTrue(v2 != v1);
+        assertTrue(v2 > v1);
+        assertFalse(v2 < v1);
+        assertFalse(v2 <= v1);
+        assertTrue(v2 >= v1);
+        
+        /*
+         * testing using Version as Map keys
+         */
+        var map:Map<Version, Bool> = new Map<Version, Bool>();
+        map.set(v1, true);
+        
+        assertTrue(map.exists(v1));
+        assertTrue(map.exists(v1_B));
+        assertFalse(map.exists(v2));
+        
+        map.set(v1_B, true);
+
+        var mapLen = 0;
+        for (key in map.keys()) {
+                mapLen++;
+        }
+        assertEquals(1, mapLen);
+    }
 }

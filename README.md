@@ -7,6 +7,7 @@
 1. [The `Paths` utility class](#paths-class)
 1. [The `StringBuilder` class](#stringbuilder-class)
 1. [The `Ansi` class](#ansi-class)
+1. [Semantic version parsing with the `Version` type](#version-type)
 1. [Installation](#installation)
 1. [Using the latest code](#latest)
 1. [License](#license)
@@ -15,7 +16,7 @@
 ## <a name="what-is-it"></a>What is it?
 
 A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cross-platform UTF-8 string manipulation. 
-It has been extensively unit tested (over 1,300 individual test cases) on the targets C++, C#, Flash, Neko, Java, JavaScript, PHP, and Python.
+It has been extensively unit tested (over 1,500 individual test cases) on the targets C++, C#, Flash, Neko, Java, JavaScript, PHP, and Python.
 
 The classes are under the package `hx.strings`.
 
@@ -268,7 +269,7 @@ class Test {
 ```
 
 
-## <a name="ansi-class"></a>The `Ansi`  class
+## <a name="ansi-class"></a>The `Ansi` class
 
 The [hx.strings.ansi.Ansi](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/ansi/Ansi.hx) class provides functionalities to write [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code) in a type-safe manner.
 
@@ -299,6 +300,49 @@ class Test {
     }
 }
 ```
+
+## <a name="version-type"></a>Semantic version parsing with the `Version` type
+
+The [hx.strings.Version](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Version.hx) type provides functionalities for parsing of and working with version strings following the [SemVer 2.0 Specification](https://semver.org).
+
+```haxe
+import hx.strings.Version;
+
+class Test {
+        
+        ver = new Version(11, 2, 4);
+        ver.major;                  // returns 11
+        ver.minor;                  // returns 2
+        ver.patch;                  // returns 4
+        ver.toString();             // returns '11.2.4'
+        ver.nextPatch().toString(); // returns '11.2.5'
+        ver.nextMinor().toString(); // returns '11.3.0'
+        ver.nextMajor().toString(); // returns '12.0.0'
+        
+        ver = Version.of("11.2.4-alpha.2+exp.sha.141d2f7");
+        ver.major;            // returns 11
+        ver.minor;            // returns 2
+        ver.patch;            // returns 4
+        ver.isPreRelease;     // returns true
+        ver.preRelease;       // returns 'alpha.2'
+        ver.buildMetadata;    // returns 'exp.sha.141d2f7'
+        ver.hasBuildMetadata; // returns true       
+        ver.nextPreRelease().toString(); // returns "11.2.4-alpha.3"
+        
+        var v1_0_0:Version = "1.0.0";
+        var v1_0_1:Version = "1.0.1";
+        
+        v1_0_0 < v1_0_1;       // returns true
+        v1_0_1 >= v1_0_1;      // returns true
+        
+        v1_0_1.isGreaterThan(v1_0_0); // returns true
+        v1_0_1.isLessThan(Version.of(v1_0_0); // returns false
+        
+        Version.isValid("foobar"); // returns false
+    }
+}
+```
+
 
 ## <a name="installation"></a>Installation
 

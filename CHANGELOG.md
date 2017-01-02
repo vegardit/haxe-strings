@@ -3,11 +3,12 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
-## [2.2.0] - 2016-12-2?
+## [2.2.0] - 2017-01-02
 
 ### Added
 - hx.strings.Char#isAsciiAlphanumeric()
 - hx.strings.Strings#indentLines()
+- hx.strings.Version (Version parsing according SemVer.org 2.0 specification)
 
 
 ## [2.1.0] - 2016-08-21
