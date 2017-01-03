@@ -103,7 +103,7 @@ abstract Version(VersionData) from VersionData to VersionData {
             m.matched(1).toInt(),
             m.matched(2).toInt(),
             m.matched(3).toInt(),
-            #if php
+            #if (php || cs)
             try { m.matched(4); } catch (e:Dynamic) { null; },
             try { m.matched(5); } catch (e:Dynamic) { null; }
             #else
