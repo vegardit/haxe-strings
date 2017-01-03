@@ -93,8 +93,9 @@ abstract Version(VersionData) from VersionData to VersionData {
     public static function of(str:String):Version {
         if(str == null)
             return null;
-        
+
         var m = VALIDATOR_VERSION.matcher(str);
+
         if(!m.matches())
             throw '[$str] is not a valid $SEM_VER_SPEC version string!';
 
@@ -102,8 +103,13 @@ abstract Version(VersionData) from VersionData to VersionData {
             m.matched(1).toInt(),
             m.matched(2).toInt(),
             m.matched(3).toInt(),
+            #if php
+            try { m.matched(4); } catch (e:Dynamic) { null; },
+            try { m.matched(5); } catch (e:Dynamic) { null; }
+            #else
             m.matched(4),
             m.matched(5)
+            #end
         );
     }
     
