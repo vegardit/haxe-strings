@@ -17,6 +17,5 @@ haxe -main hx.strings.TestRunner ^
 -dce full ^
 -debug ^
 -D dump=pretty ^
+-D interp ^
 -hl target/hl/TestRunner.hl
-
-hl target/hl/TestRunner.hl
