@@ -8,7 +8,7 @@
     "contributors": [
         "vegardit"
     ],
-    "releasenote": "Added Char#isAsciiAlphanumeric(), Strings#indentLines(), SemVer.org Version type",
-    "version": "2.2.0",
+    "releasenote": "added Strings#containsWhitespaces()",
+    "version": "2.3.0",
     "dependencies": { }
 }

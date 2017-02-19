@@ -589,6 +589,31 @@ class Strings {
     }
     
     /**
+     * Tests if <b>searchIn</b> contains any whitespaces
+     * 
+     * <pre><code>
+     * >>> Strings.containsWhitespaces(" ")        == true
+     * >>> Strings.containsWhitespaces("dog cat")  == true
+     * >>> Strings.containsWhitespaces("dog\tcat") == true
+     * >>> Strings.containsWhitespaces("")         == false
+     * >>> Strings.containsWhitespaces(null)       == false
+     * >>> Strings.containsWhitespaces("はい")      == false
+     * >>> Strings.containsWhitespaces("は い")     == true
+     * </code></pre>
+     */
+    public static function containsWhitespaces(searchIn:String):Bool {
+        if (searchIn == null)
+            return false;         
+            
+        for (ch in searchIn.toChars()) {
+            if (ch.isWhitespace())
+                return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * <pre><code>
      * >>> Strings.countMatches("dogdog", "g")      == 2
      * >>> Strings.countMatches("dogdog", "og", 1)  == 2
@@ -3097,6 +3122,7 @@ class Strings {
      * >>> Strings.toLowerCase8("DoG") == "dog"
      * >>> Strings.toLowerCase8("dog") == "dog"
      * >>> Strings.toLowerCase8("КОТ") == "кот"
+     * >>> Strings.toLowerCase8("はい") == "はい"
      * </code></pre>
      */
     public static function toLowerCase8(str:String):String {
@@ -3145,6 +3171,8 @@ class Strings {
      * 
      * First character lower case, e.g., "stringBuilder".
      * 
+     * <b>NOTE:</b> Non-ASCII characters are NOT preserved!
+     * 
      * <pre><code>
      * >>> Strings.toLowerCamel(null)                 == null
      * >>> Strings.toLowerCamel("")                   == ""
@@ -3154,6 +3182,7 @@ class Strings {
      * >>> Strings.toLowerCamel("1dog2cat3")          == "1Dog2Cat3"
      * >>> Strings.toLowerCamel("AnXMLParser")        == "anXMLParser"
      * >>> Strings.toLowerCamel("AnXMLParser", false) == "anXmlParser"
+     * >>> Strings.toLowerCamel("はいはい")             == ""
      * </code></pre>
      */
     public static function toLowerCamel(str:String, keepUppercasedWords = true) {
@@ -3175,6 +3204,8 @@ class Strings {
      * 
      * Lower case words separated by hyphen, e.g. "string-builder".
      * 
+     * <b>NOTE:</b> Non-ASCII characters are NOT preserved!
+     * 
      * <pre><code>
      * >>> Strings.toLowerHyphen(null)          == null
      * >>> Strings.toLowerHyphen("")            == ""
@@ -3183,6 +3214,7 @@ class Strings {
      * >>> Strings.toLowerHyphen("Dog Cat")     == "dog-cat"
      * >>> Strings.toLowerHyphen("1Dog2Cat3")   == "1-dog-2-cat-3"
      * >>> Strings.toLowerHyphen("AnXMLParser") == "an-xml-parser"
+     * >>> Strings.toLowerHyphen("はいはい")      == ""
      * </code></pre>
      */
     public static function toLowerHyphen(str:String) {
@@ -3197,6 +3229,8 @@ class Strings {
      * 
      * Lower case words separated by underscore, e.g. "string_builder".
      * 
+     * <b>NOTE:</b> Non-ASCII characters are NOT preserved!
+     * 
      * <pre><code>
      * >>> Strings.toLowerUnderscore(null)          == null
      * >>> Strings.toLowerUnderscore("")            == ""
@@ -3205,6 +3239,7 @@ class Strings {
      * >>> Strings.toLowerUnderscore("Dog Cat")     == "dog_cat"
      * >>> Strings.toLowerUnderscore("1Dog2Cat3")   == "1_dog_2_cat_3"
      * >>> Strings.toLowerUnderscore("AnXMLParser") == "an_xml_parser"
+     * >>> Strings.toLowerUnderscore("はいはい")      == ""
      * </code></pre>
      */
     public static function toLowerUnderscore(str:String) {
@@ -3217,6 +3252,8 @@ class Strings {
     /**
      * Decamels (=first-char uppercase words separated by space) the given input string.
      * 
+     * <b>NOTE:</b> Non-ASCII characters are NOT preserved!
+     * 
      * <pre><code>
      * >>> Strings.toTitle(null)                 == null
      * >>> Strings.toTitle("")                   == ""
@@ -3226,6 +3263,7 @@ class Strings {
      * >>> Strings.toTitle("1Dog2Cat3")          == "1 Dog 2 Cat 3"
      * >>> Strings.toTitle("anXMLParser")        == "An XML Parser"
      * >>> Strings.toTitle("anXMLParser", false) == "An Xml Parser"
+     * >>> Strings.toTitle("はいはい")             == ""
      * </code></pre>
      */
     public static function toTitle(str:String, keepUppercasedWords = true) {
@@ -3317,6 +3355,7 @@ class Strings {
      * >>> Strings.toUpperCase8("dOg") == "DOG"
      * >>> Strings.toUpperCase8("DOG") == "DOG"
      * >>> Strings.toUpperCase8("кот") == "КОТ"
+     * >>> Strings.toUpperCase8("はい") == "はい"
      * </code></pre>
      */
     public static function toUpperCase8(str:String):String {
