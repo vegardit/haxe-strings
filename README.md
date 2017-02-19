@@ -20,6 +20,8 @@ It has been extensively unit tested (over 1,500 individual test cases) on the ta
 
 The classes are under the package `hx.strings`.
 
+**Important:** When targeting PHP ensure the [php_mbstring](http://php.net/manual/en/book.mbstring.php) extension is enabled in the `php.ini` file. This extension is required for proper UTF-8 support.
+
 
 ## <a name="strings-class"></a>The `Strings` utility class
 
