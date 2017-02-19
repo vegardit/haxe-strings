@@ -1,7 +1,7 @@
 @echo off
 echo Cleaning...
 if exist dump\php rd /s /q dump\php
-if exist target\php rd /s /q target\php
+if exist target\php7 rd /s /q target\php7
 
 haxelib list | findstr haxe-doctest >NUL
 if errorlevel 1 (
@@ -17,7 +17,8 @@ haxe -main hx.strings.TestRunner ^
 -dce full ^
 -debug ^
 -D dump=pretty ^
--php target\php || goto :eof
+-D php7 ^
+-php target\php7 || goto :eof
 
 echo Testing...
-%PHP5_HOME%\php target\php\index.php
+%PHP7_HOME%\php target\php7\index.php
