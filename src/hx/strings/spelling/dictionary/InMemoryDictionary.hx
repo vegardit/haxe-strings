@@ -163,12 +163,12 @@ class InMemoryDictionary implements TrainableDictionary {
             }
         } catch(ex:haxe.io.Eof) {
             // expected --> https://github.com/HaxeFoundation/haxe/issues/5418
-            if (autoClose) input.close();
         } catch (ex:Dynamic) {
-            trace('Exception while reading line #$lineNo [$line]');
-            #if neko neko.Lib.rethrow #else throw #end (ex);
+            trace('Exception while reading line #$lineNo. Previous line content was [$line]');
             if (autoClose) input.close();
+            #if neko neko.Lib.rethrow #else throw #end (ex);
         }
+        if (autoClose) input.close();
         return count;
     }
     
