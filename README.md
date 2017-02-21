@@ -337,10 +337,10 @@ class Test {
         var v1_0_1:Version = "1.0.1";
         
         v1_0_0 < v1_0_1;       // returns true
-        v1_0_1 >= v1_0_1;      // returns true
+        v1_0_1 >= v1_0_0;      // returns true
         
         v1_0_1.isGreaterThan(v1_0_0); // returns true
-        v1_0_1.isLessThan(Version.of(v1_0_0); // returns false
+        v1_0_1.isLessThan(Version.of("1.0.0"); // returns false
         
         Version.isValid("foobar"); // returns false
     }
