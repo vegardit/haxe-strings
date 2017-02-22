@@ -30,6 +30,7 @@ import hx.strings.internal.OS;
 import hx.strings.internal.OneOrMany;
 
 using hx.strings.Strings;
+using hx.strings.internal.Arrays;
 
 /**
  * https://defuse.ca/checksums.htm
@@ -1382,6 +1383,40 @@ class Strings {
     
     /**
      * <pre><code>
+     * >>> Strings.insert(null,   0, "dog") == null
+     * >>> Strings.insert("cat",  0, null)  == "cat"
+     * >>> Strings.insert("",     0, "dog") == "dog"
+     * >>> Strings.insert("cat",  0, "dog") == "dogcat"
+     * >>> Strings.insert("cat",  1, "dog") == "cdogat"
+     * >>> Strings.insert("cat",  2, "dog") == "cadogt"
+     * >>> Strings.insert("cat",  3, "dog") == "catdog"
+     * >>> Strings.insert("cat", -1, "dog") == "cadogt"
+     * >>> Strings.insert("cat", -2, "dog") == "cdogat"
+     * >>> Strings.insert("cat", -3, "dog") == "dogcat"
+     * >>> Strings.insert("cat", -4, "dog") throws "Absolute value of [insertAt] must be <= str.length"
+     * >>> Strings.insert("cat",  4, "dog") throws "Absolute value of [insertAt] must be <= str.length"
+     * </code></pre>
+     * 
+     * @throws if the absolute value of insertAt is greater than str.length
+     */
+    public static function insert(str:String, insertAt:CharPos, insertion:AnyAsString):String {
+        if (str == null)
+            return null;
+
+        var strLen = str.length8();
+        var pos = insertAt < 0 ? strLen + insertAt : insertAt;
+        
+        if (pos < 0 || pos > strLen)
+            throw "Absolute value of [insertAt] must be <= str.length";
+
+        if (insertion.isEmpty())
+            return str;
+
+        return str.substring8(0, pos) + insertion + str.substring8(pos);
+    }
+    
+    /**
+     * <pre><code>
      * >>> Strings.ifBlank(null, null) == null
      * >>> Strings.ifBlank(null, "")   == ""
      * >>> Strings.ifBlank(null, "a")  == "a"
@@ -2429,6 +2464,97 @@ class Strings {
     }
     
     /**
+     * >>> Strings.splitAt(null, null)  == null
+     * >>> Strings.splitAt(null, 0)     == null
+     * >>> Strings.splitAt(null, 1)     == null
+     * >>> Strings.splitAt("", null)    == [""]
+     * >>> Strings.splitAt("cat",  0) == ["cat"]
+     * >>> Strings.splitAt("cat",  1) == ["c", "at"]
+     * >>> Strings.splitAt("cat",  2) == ["ca", "t"]
+     * >>> Strings.splitAt("cat",  3) == ["cat"]
+     * >>> Strings.splitAt("cat",  4) == ["cat"]
+     * >>> Strings.splitAt("cat", -1) == ["ca", "t"]
+     * >>> Strings.splitAt("cat", -2) == ["c", "at"]
+     * >>> Strings.splitAt("cat", -3) == ["cat"]
+     * >>> Strings.splitAt("cat", -4) == ["cat"]
+     * >>> Strings.splitAt("cat", [2,1]) == ["c", "a", "t"]
+     */
+    public static function splitAt(str:String, splitPos:OneOrMany<CharPos>):Array<String> {
+        if (str == null)
+            return null;
+            
+        if (splitPos == null || splitPos.length == 0)
+            return [str];
+
+        var strLen = str.length8();
+        if (strLen == 0)
+            return [str];
+
+        // remove dups, out-of-bound positions and calculate absolute position of negative values
+        var pos = new Array<CharPos>();
+        for (p in splitPos) {
+            if (p < 0)
+                p = strLen + p;
+            if (p < 0 || p >= strLen)
+                continue;
+            if (pos.indexOf(p) > -1)
+                continue;
+            pos.push(p);
+        }
+        
+        pos.sort(function(a, b) return a < b ? -1 : a > b ? 1 : 0);
+        
+        var result = new Array<String>();
+        
+        var lastPos = 0;
+        for (p in pos) {
+            var chunk = str.substring8(lastPos, p);
+            if (chunk.isNotEmpty())
+                result.push(chunk);
+            lastPos = p;
+        }
+        var chunk = str.substring8(lastPos);
+            if (chunk.isNotEmpty())
+                result.push(chunk);
+        return result;
+    }
+    
+    /**
+     * >>> Strings.splitEvery(null,   1) == null
+     * >>> Strings.splitEvery("",     1) == [ "" ]
+     * >>> Strings.splitEvery("dog",  1) == [ "d", "o", "g" ]
+     * >>> Strings.splitEvery("dog",  2) == [ "do", "g" ]
+     * >>> Strings.splitEvery("dog",  3) == [ "dog" ]
+     * >>> Strings.splitEvery("dog",  4) == [ "dog" ]
+     * >>> Strings.splitEvery("dog",  0) throws "[count] must be greater than 0"
+     * >>> Strings.splitEvery("dog", -1) throws "[count] must be greater than 0"
+     * 
+     * @throws if length < 1
+     */
+    public static function splitEvery(str:String, count:Int):Array<String> {
+        if (str == null)
+            return null;
+            
+        if (count < 1)
+            throw "[count] must be greater than 0";
+
+        var strLen = str.length8();
+        if (strLen == 0 || count >= strLen)
+            return [str];
+        
+        var result = new Array<String>();
+        var pos = 0;
+        while (true) {
+            var chunk = str.substr8(pos, count);
+            pos += count;
+            if (chunk.isEmpty())
+                break;
+            result.push(chunk);
+        }
+        return result;
+    }
+
+    /**
      * Splits all lines.
      * 
      * <pre><code>
@@ -2439,6 +2565,7 @@ class Strings {
      * >>> Strings.splitLines(" dog \r\n cat ") == [ " dog ", " cat " ]
      * </code></pre>
      */
+    inline
     public static function splitLines(str:String):Array<String> {
         if (str.isEmpty())
             return [];
