@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ### Added
 - hx.strings.Strings#containsWhitespaces()
+- hx.strings.Strings#insert()
+- hx.strings.Strings#splitAt()
+- hx.strings.Strings#splitEvery()
 
 
 ## [2.2.0] - 2017-01-02
