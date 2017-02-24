@@ -24,14 +24,15 @@ package hx.strings.internal;
 @:noCompletion
 class OS {
 
+    #if js
+    static var isNodeJS = untyped __js__("(typeof process !== 'undefined') && (process.release.name === 'node')");
+    #end
+    
     public static var isWindows(default, never):Bool = {
         #if flash
         var os = flash.system.Capabilities.os;
-        #elseif hl
-        // TODO https://github.com/HaxeFoundation/haxe/issues/5314
-        var os = "Windows";
         #elseif js
-        var os = js.Browser.navigator.oscpu;
+        var os = isNodeJS ? untyped __js__("process.platform") : js.Browser.navigator.oscpu;
         #else
         var os = Sys.systemName();
         #end
