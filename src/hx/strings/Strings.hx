@@ -20,7 +20,6 @@ import haxe.Utf8;
 import haxe.crypto.Adler32;
 import haxe.crypto.Base64;
 import haxe.crypto.Crc32;
-import haxe.crypto.Md5;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import hx.strings.Pattern;
@@ -30,7 +29,6 @@ import hx.strings.internal.OS;
 import hx.strings.internal.OneOrMany;
 
 using hx.strings.Strings;
-using hx.strings.internal.Arrays;
 
 /**
  * https://defuse.ca/checksums.htm

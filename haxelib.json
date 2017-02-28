@@ -8,7 +8,7 @@
     "contributors": [
         "vegardit"
     ],
-    "releasenote": "added Strings#containsWhitespaces()/insert()/splitAt()/splitEvery() and Node.js support",
-    "version": "2.3.0",
+    "releasenote": "added StringArray, StringSet#isEmpty(), StringTreeMap#isEmpty()",
+    "version": "2.4.0",
     "dependencies": { }
 }

@@ -16,7 +16,7 @@
 package hx.strings.collection;
 
 /**
- * hx.strings.collection.StringTree backed sorted set implementation.
+ * hx.strings.collection.StringTreeMap backed sorted set implementation.
  * 
  * <pre><code>
  * >>> new SortedStringSet(["", "c", "a", "b", "a"]).toArray()  ==  [ "", "a", "b", "c" ]

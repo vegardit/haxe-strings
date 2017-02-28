@@ -18,12 +18,10 @@ package hx.strings.spelling.checker;
 import haxe.Timer;
 import haxe.ds.ArraySort;
 import hx.strings.collection.StringSet;
-
-import hx.strings.Pattern;
 import hx.strings.spelling.dictionary.Dictionary;
+import hx.strings.internal.Arrays;
 
 using hx.strings.Strings;
-using hx.strings.internal.Arrays;
 
 /**
  * Partially implemented spell checker class that provides shared functionality to subclasses.
@@ -43,7 +41,7 @@ class AbstractSpellChecker implements SpellChecker {
         if (dictionary == null) throw "[dictionary] must not be null!";
         if (alphabet == null) throw "[alphabet] must not be null!";
         this.dict = dictionary;
-        this.alphabet = alphabet.toChars().unique();
+        this.alphabet = Arrays.unique(alphabet.toChars());
     }
     
     public function correctText(text:String, timeoutMS:Int = 500):String throw "Not implemented";
@@ -126,7 +124,7 @@ class AbstractSpellChecker implements SpellChecker {
             }
         }
         ArraySort.sort(candidates, function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
-        var result = [for (candidate in candidates) candidate.word].unique();
+        var result = Arrays.unique([for (candidate in candidates) candidate.word]);
 
         if (result.length < max) {
             candidates = new Array<{word:String, popularity:Int}>();
@@ -155,6 +153,6 @@ class AbstractSpellChecker implements SpellChecker {
             }
         }
 
-        return result.unique().slice(0, max);
+        return Arrays.unique(result).slice(0, max);
     }
 }

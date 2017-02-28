@@ -16,6 +16,7 @@
 package hx.strings;
 
 import hx.strings.Pattern;
+import hx.strings.collection.StringArray;
 import hx.strings.internal.Either3;
 import hx.strings.internal.OneOrMany;
 
@@ -104,7 +105,7 @@ class Paths {
 
                 if (nixSepPos == Strings.POS_NOT_FOUND) {                   
                     // test for "C:"
-                    var p = path.first();
+                    var p = Arrays.first(path);
                     
                     if (p == null) 
                         return DIRECTORY_SEPARATOR_NIX;
@@ -617,7 +618,7 @@ class Paths {
         var absolute = isAbsolute(path);
         var dirSep = _getSeparator(path, sep);
         var parts = path.split8([DIRECTORY_SEPARATOR_NIX, DIRECTORY_SEPARATOR_WIN]);
-        var resultParts = new Array<String>();
+        var resultParts = new StringArray();
         for(i in 0...parts.length) {
             var part = parts[i];
             if (part.isEmpty()) {
@@ -632,7 +633,7 @@ class Paths {
                 if (canGoUp && len == 1 && absolute) {
                     canGoUp = false;
                 }
-                if (canGoUp && resultParts.last() == "..") {
+                if (canGoUp && resultParts.last == "..") {
                     canGoUp = false; 
                 }
                 if(canGoUp) {
@@ -646,7 +647,6 @@ class Paths {
         }
         return resultParts.join(dirSep);
     }
-    
 }
 
 /**

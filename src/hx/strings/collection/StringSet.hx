@@ -88,6 +88,17 @@ class StringSet {
         return item == null ? false : map.exists(item);
     }
     
+    /**
+     * <pre><code>
+     * >>> new StringSet(          ).isEmpty() == true
+     * >>> new StringSet([]        ).isEmpty() == true
+     * >>> new StringSet(["a", "b"]).isEmpty() == false
+     * </code></pre>
+     */
+    inline
+    public function isEmpty():Bool {
+        return size == 0;
+    }
     
     /**
      * <pre><code>
@@ -128,7 +139,7 @@ class StringSet {
      * </code></pre>
      */
     inline
-    public function toArray():Array<String> {
+    public function toArray():StringArray {
         return [ for (k in map.keys()) k ];
     }
     

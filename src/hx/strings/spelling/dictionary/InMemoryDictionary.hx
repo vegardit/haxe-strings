@@ -15,16 +15,11 @@
  */
 package hx.strings.spelling.dictionary;
 
-import haxe.Json;
 import haxe.Resource;
 import haxe.ds.ArraySort;
-import haxe.io.BufferInput;
 import haxe.io.BytesInput;
 import haxe.io.Input;
 import haxe.io.Output;
-
-import hx.strings.StringBuilder;
-import hx.strings.internal.Arrays;
 
 using hx.strings.Strings;
 

@@ -35,8 +35,24 @@ class StringTreeMap<V> extends BalancedTree<String, V> implements haxe.Constrain
         this.cmp = comparator == null ? Strings.compare : comparator;
     }
 
+    /**
+     * <pre><code>
+     * >>> function(){var m = new StringTreeMap<Int>(); m.set("1", 1); m.clear(); return m.isEmpty(); }() == true
+     * </code></pre>
+     */
     public function clear():Void {
         root = null;
+    }
+    
+    /**
+     * <pre><code>
+     * >>> new StringTreeMap<Int>().isEmpty() == true
+     * >>> function(){var m = new StringTreeMap<Int>(); m.set("1", 1); return m.isEmpty(); }() == false
+     * </code></pre>
+     */
+    inline
+    public function isEmpty():Bool {
+        return !this.iterator().hasNext();
     }
     
     inline
