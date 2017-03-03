@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Vegard IT GmbH, http://vegardit.com
+ * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package hx.strings;
 
 import hx.doctest.DocTestRunner;
 import hx.strings.Pattern;
-import hx.strings.collection.StringSet;
 import hx.strings.spelling.checker.*;
 import hx.strings.spelling.dictionary.*;
 import hx.strings.spelling.trainer.*;
@@ -30,7 +29,7 @@ using hx.strings.Strings;
 @:build(hx.doctest.DocTestGenerator.generateDocTests("src", ".*\\.hx"))
 @:keep
 class TestRunner extends DocTestRunner {
-  
+
     public static function main() {
         var runner = new TestRunner();
         runner.runAndExit();

@@ -38,7 +38,7 @@ using hx.strings.Strings;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 abstract Char(Int) from Int to Int {
-        
+    
     static var CHAR_CASE_MAPPER = new CharCaseMapper();
 
     /**
@@ -262,23 +262,30 @@ abstract Char(Int) from Int to Int {
     public static inline var BRACKET_CURLY_RIGHT:Char = 125;
     
     @:from
-    static inline function fromString(str:String):Char return str.charCodeAt8(0);
+    inline
+    static function fromString(str:String):Char {
+        return str.charCodeAt8(0);
+    }
     
+    inline
     public static function of(ch:Char):Char {
         return ch;
     }
 
     @:op(A + B)
+    inline
     static function op_plus_string(ch:Char, other:String):String {
         return ch.toString() + other;
     }
     
     @:op(A + B)
+    inline
     static function op_plus_string2(str:String, ch:Char):String {
         return str + ch.toString();
     }
     
     @:op(A + B)
+    inline
     static function op_plus(ch:Char, other:Char):Char {
         return ch.toInt() + other.toInt();
     }

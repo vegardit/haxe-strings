@@ -23,7 +23,7 @@
     <option directives="" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
-    <option mainClass="" />
+    <option mainClass="hx.strings.TestRunner" />
     <option enabledebug="False" />
     <option additional="" />
   </build>

@@ -26,7 +26,7 @@ import hx.strings.Strings;
 class StringTreeMap<V> extends BalancedTree<String, V> implements haxe.Constraints.IMap<String,V> {
 
     var cmp:String -> String -> Int;
-    
+
     /**
      * @param comparator used for sorting the String keys. Default is the UTF8 supporting Strings#compare() method
      */
@@ -46,18 +46,43 @@ class StringTreeMap<V> extends BalancedTree<String, V> implements haxe.Constrain
     
     /**
      * <pre><code>
+     * >>> new StringTreeMap<Int>().clone() != null
+     * </code></pre>
+     */
+    inline
+	public function clone():StringTreeMap<V> {
+        var clone = new StringTreeMap<V>();
+		for (k in this.keys()) {
+			clone.set(k, this.get(k));
+		}
+		return clone;
+	}
+
+    /**
+     * <pre><code>
      * >>> new StringTreeMap<Int>().isEmpty() == true
      * >>> function(){var m = new StringTreeMap<Int>(); m.set("1", 1); return m.isEmpty(); }() == false
      * </code></pre>
      */
     inline
     public function isEmpty():Bool {
-        return !this.iterator().hasNext();
+        return StringMaps.isEmpty(this);
     }
-    
+
     inline
     override
     function compare(s1:String, s2:String):Int {
         return cmp(s1, s2);
+    }
+    
+    /**
+     * Copies all key-value pairs from the source map into this map.
+     * 
+     * @param replace if true existing key-value pairs are replaced otherwise they will be skipped
+     * @return the number of copied key-value pairs
+     */
+    inline
+    public function setAll(source:haxe.Constraints.IMap<String,V>, replace:Bool = true):Int {
+        return StringMaps.setAll(source, this);
     }
 }

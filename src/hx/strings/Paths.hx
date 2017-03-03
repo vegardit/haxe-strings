@@ -103,14 +103,19 @@ class Paths {
                         return DIRECTORY_SEPARATOR_WIN;
                 }
 
-                if (nixSepPos == Strings.POS_NOT_FOUND) {                   
+                if (nixSepPos == Strings.POS_NOT_FOUND) {
                     // test for "C:"
-                    var p = Arrays.first(path);
+                    #if hl
+                        // https://github.com/HaxeFoundation/haxe/issues/6071
+                        var path1 = path.length == 0 ? null : path[0];
+                    #else
+                        var path1 = Arrays.first(path);
+                    #end
                     
-                    if (p == null) 
+                    if (path1 == null) 
                         return DIRECTORY_SEPARATOR_NIX;
 
-                    if (p.length8() == 2 && p.charCodeAt8(0).isAsciiAlpha() && p.charCodeAt8(1) == Char.COLON)
+                    if (path1.length8() == 2 && path1.charCodeAt8(0).isAsciiAlpha() && path1.charCodeAt8(1) == Char.COLON)
                         return DIRECTORY_SEPARATOR_WIN;                            
                 }
 

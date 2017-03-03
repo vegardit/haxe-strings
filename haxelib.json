@@ -8,7 +8,7 @@
     "contributors": [
         "vegardit"
     ],
-    "releasenote": "added StringArray, StringSet#isEmpty(), StringTreeMap#isEmpty()",
-    "version": "2.4.0",
+    "releasenote": "added String8, RandomStrings, StringMaps, StringTreeMap#clone()/#setAll(), Strings#compact()/#randomSubstring()/#containsOnly()/#remove...()",
+    "version": "2.5.0",
     "dependencies": { }
 }

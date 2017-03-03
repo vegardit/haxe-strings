@@ -38,7 +38,9 @@ class Arrays {
         return result;
     }
     
+    #if !hl
     inline
+    #end
     public static function first<T>(items:Array<T>):T {
         return (items == null || items.length == 0) ? null :items[0];
     }

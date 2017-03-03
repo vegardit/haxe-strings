@@ -16,7 +16,6 @@
 package hx.strings.spelling.checker;
 
 import haxe.Timer;
-import haxe.ds.ArraySort;
 import hx.strings.collection.StringSet;
 import hx.strings.spelling.dictionary.Dictionary;
 import hx.strings.internal.Arrays;
@@ -123,7 +122,7 @@ class AbstractSpellChecker implements SpellChecker {
                 candidates.push({word:edit,popularity:editPopularity});
             }
         }
-        ArraySort.sort(candidates, function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
+        candidates.sort(function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
         var result = Arrays.unique([for (candidate in candidates) candidate.word]);
 
         if (result.length < max) {
@@ -144,7 +143,7 @@ class AbstractSpellChecker implements SpellChecker {
                     }
                 }
             }
-            ArraySort.sort(candidates, function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
+            candidates.sort(function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
             for (candidate in candidates) {
                 if(result.length < max)
                     result.push(candidate.word);

@@ -24,6 +24,7 @@ using hx.strings.Strings;
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
+@immutable
 abstract Version(VersionData) from VersionData to VersionData {
     
     /*
@@ -99,17 +100,24 @@ abstract Version(VersionData) from VersionData to VersionData {
         if(!m.matches())
             throw '[$str] is not a valid $SEM_VER_SPEC version string!';
 
+        #if (php && haxe_ver < "3.4.0")
+            // workaround for "Undefined variable: __hx__spos"
+            untyped __php__("$__hx__spos = $GLOBALS['%s']->length;");
+        #end
+        #if (cs || php)
+            var preRelease    = try { m.matched(4); } catch (e:Dynamic) {  null; };
+            var buildMetadata = try { m.matched(5); } catch (e:Dynamic) {  null; };
+        #else
+            var preRelease    = m.matched(4);
+            var buildMetadata = m.matched(5);
+        #end
+        
         return new Version(
             m.matched(1).toInt(),
             m.matched(2).toInt(),
             m.matched(3).toInt(),
-            #if (php || cs)
-            try { m.matched(4); } catch (e:Dynamic) { null; },
-            try { m.matched(5); } catch (e:Dynamic) { null; }
-            #else
-            m.matched(4),
-            m.matched(5)
-            #end
+            preRelease,
+            buildMetadata
         );
     }
     

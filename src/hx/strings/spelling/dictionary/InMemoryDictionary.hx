@@ -16,7 +16,6 @@
 package hx.strings.spelling.dictionary;
 
 import haxe.Resource;
-import haxe.ds.ArraySort;
 import haxe.io.BytesInput;
 import haxe.io.Input;
 import haxe.io.Output;
@@ -28,7 +27,6 @@ using hx.strings.Strings;
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-@notThreadSafe
 class InMemoryDictionary implements TrainableDictionary {
 
     /**
@@ -81,7 +79,7 @@ class InMemoryDictionary implements TrainableDictionary {
             return 0;
 
         var arr = [ for (word in dict.keys()) { word:word, popularity:dict.get(word) } ];
-        ArraySort.sort(arr, function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
+        arr.sort(function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
         var removables = arr.slice(n);
         for (r in removables)
             remove(r.word);
@@ -93,7 +91,7 @@ class InMemoryDictionary implements TrainableDictionary {
      */
     public function exportWordsToOutput(out:Output, autoClose:Bool=true):Void {
         var words = [ for (word in dict.keys()) word ];
-        ArraySort.sort(words, Strings.compare);
+        words.sort(Strings.compare);
         for (word in words) {
             out.writeString('$word:${dict[word]}\n');
         }

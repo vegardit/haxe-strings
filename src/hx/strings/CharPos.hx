@@ -16,7 +16,7 @@
 package hx.strings;
 
 /**
- * Represents a character (not byte index) position in a String.
+ * Represents a character position (not byte index) in a String.
  * 
  * First character is at position 0.
  * 

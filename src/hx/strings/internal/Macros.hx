@@ -28,6 +28,12 @@ import haxe.macro.Expr;
 @:noCompletion
 class Macros {
 
+    static var __static_init = {
+        #if (php7 && haxe_ver <= "3.4.0")
+            throw "For the PHP7 target a Haxe version newer than 3.4.0 is required because of bugs in the earlier PHP7 target implementation.";
+        #end
+    };
+    
     /**
      * Embeds the given file as resource.
      * 

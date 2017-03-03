@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@ import haxe.io.Bytes;
 import haxe.io.Path;
 import hx.strings.Pattern;
 import hx.strings.internal.AnyAsString;
+import hx.strings.internal.Either2;
 import hx.strings.internal.Either3;
 import hx.strings.internal.OS;
 import hx.strings.internal.OneOrMany;
@@ -31,64 +32,24 @@ import hx.strings.internal.OneOrMany;
 using hx.strings.Strings;
 
 /**
- * https://defuse.ca/checksums.htm
- * 
- * http://www.partow.net/programming/hashfunctions/
- * http://programmers.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
- * https://github.com/rurban/smhasher
- */
-@:dox(hide)
-enum HashCodeAlgorithm {
-    
-    PLATFORM_SPECIFIC;
-    
-    ADLER32;
-
-    /**
-     * http://stackoverflow.com/questions/10953958/can-crc32-be-used-as-a-hash-function
-     */
-    CRC32B;
-    
-    /**
-     * http://www.cse.yorku.ca/~oz/hash.html
-     */
-    DJB2A; 
-    
-    /**
-     * Java String#hashCode()
-     */
-    JAVA;
-    
-    /**
-     * http://www.cse.yorku.ca/~oz/hash.html
-     */
-    SDBM;
-}
-
-/**
- * Utility functions for Strings with UTF-8 support and consistent behavior accross platforms. 
- * 
- * Can be used as <a href="http://haxe.org/manual/lf-static-extension.html">static extension</a>.
- * 
+ * Utility functions for Strings with UTF-8 support and consistent behavior across platforms.
+ *
+ * This class can be used as <a href="http://haxe.org/manual/lf-static-extension.html">static extension</a>.
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-class Strings {
-
+ class Strings {
+   
     static var REGEX_ANSI_ESC = Pattern.compile(Char.ESC + "\\[[;\\d]*m", MATCH_ALL);
     static var REGEX_HTML_UNESCAPE = Pattern.compile("&(#\\d+|amp|nbsp|apos|lt|gt|quot);", MATCH_ALL);
     static var REGEX_SPLIT_LINES = Pattern.compile("\\r?\\n", MATCH_ALL);
-    
+
     #if !php
-        #if hl
-            // TODO https://github.com/HaxeFoundation/haxe/issues/5312
-            static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z/][^>]*>", MATCH_ALL);
-        #else
-            static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
-        #end
+    static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
     #end
-    
+
     public static inline var POS_NOT_FOUND:CharPos = -1;
-    
+
     /**
      * Unix line separator (LF)
      */
@@ -114,7 +75,8 @@ class Strings {
     /**
      * no bounds checking
      */
-    inline
+    // to prevent "lua53: target/lua/TestRunner.lua:24443: ')' expected near ':'"
+    #if !lua inline #end
     private static function _charCodeAt8Unsafe(str:String, pos:CharPos):Char {
         #if (flash || java || cs || python)
             return str.charCodeAt(pos);
@@ -122,7 +84,7 @@ class Strings {
             return Utf8.charCodeAt(str, pos);
         #end
     }
-    
+
     /**
      * no bounds checking
      */
@@ -141,16 +103,16 @@ class Strings {
                 currentWord.addChar(ch);
                 if (chNext.isDigit()) {
                     words.push(currentWord.toString());
-                    currentWord.clear();                    
+                    currentWord.clear();
                 } else if (ch.isUpperCase()) {
                     if (chNext.isUpperCase() && chars.length > i + 2) {
-                        if(!chars[i + 2].isUpperCase()) {
+                        if (!chars[i + 2].isUpperCase()) {
                             words.push(currentWord.toString());
                             currentWord.clear();
                         }
                     }
-                } else /*if (!ch.isUpperCase()) */ {
-                    if(chNext.isUpperCase()) {
+                } else { /*if (!ch.isUpperCase()) */
+                    if (chNext.isUpperCase()) {
                         words.push(currentWord.toString());
                         currentWord.clear();
                     }
@@ -160,20 +122,19 @@ class Strings {
                 var chNext = i < lastIndex ? chars[i + 1] : -1;
                 if (!chNext.isDigit()) {
                     words.push(currentWord.toString());
-                    currentWord.clear();                    
+                    currentWord.clear();
                 }
             } else if (currentWord.length > 0) {
                 words.push(currentWord.toString());
                 currentWord.clear();
             }
         }
-        
-        if (currentWord.length > 0) {
+
+        if (currentWord.length > 0)
             words.push(currentWord.toString());
-        }
         return words;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.ansiToHtml(null)                                  == null
@@ -187,12 +148,11 @@ class Strings {
     public static function ansiToHtml(str:String, ?initialState:ANSIState):String {
         if (isEmpty(str))
             return str;
-        
+
         var sb = new StringBuilder();
-        
-        if (initialState != null && initialState.isActive()) {
+
+        if (initialState != null && initialState.isActive())
             sb.add("<span style=\"").add(initialState.toCSS()).add("\">");
-        }
 
         var effectiveState = new ANSIState(initialState);
         var strLenMinus1 = str.length8() - 1;
@@ -229,9 +189,8 @@ class Strings {
                             currentState.setGraphicModeParameter(currentGraphicModeParam);
                             if (effectiveState.isActive())
                                 sb.add("</span>");
-                            if (currentState.isActive()) {
+                            if (currentState.isActive())
                                 sb.add("<span style=\"").add(currentState.toCSS()).add("\">");
-                            }
                             effectiveState = currentState;
                             isValidEscapeSequence = true;
                             break; // break out of the while loop
@@ -244,17 +203,17 @@ class Strings {
                     // in case of a missing ESC sequence delimiter, we treat the whole ESC string not as an ANSI escape sequence
                     sb.addChar(Char.ESC).add('[').add(lookAhead);
                 }
-            } else {
-                sb.addChar(ch);
             }
+            else
+                sb.addChar(ch);
         }
 
-        if (effectiveState.isActive()) {
+        if (effectiveState.isActive())
             sb.add("</span>");
-        }
+            
         return sb.toString();
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.appendIfMissing(null, null)   == null
@@ -269,15 +228,15 @@ class Strings {
      * </code></pre>
      */
     public static function appendIfMissing(str:String, suffix:String):String {
-        if (str == null) 
+        if (str == null)
             return null;
 
         if (str.length == 0)
             return str + suffix;
-        
+
         if (str.endsWith(suffix))
             return str;
-            
+
         return str + suffix;
     }
 
@@ -300,7 +259,7 @@ class Strings {
             return Base64.encode(plain.toBytes());
         #end
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.base64Decode(null)       == null
@@ -323,7 +282,7 @@ class Strings {
 
     /**
      * String#charAt() variant with cross-platform UTF-8 support.
-     * 
+     *
      * <pre><code>
      * >>> Strings.charAt8(" dog", 0)     == " "
      * >>> Strings.charAt8(" dog", 1 )    == "d"
@@ -338,23 +297,23 @@ class Strings {
      * >>> Strings.charAt8(" はい", 1)     == "は"
      * >>> Strings.charAt8(" はい", 2)     == "い"
      * </code></pre>
-     * 
+     *
      * @param pos character position
      */
     public static function charAt8(str:String, pos:CharPos, resultIfOutOfBound = ""):String {
         if (str.isEmpty() || pos < 0 || pos >= str.length8())
             return resultIfOutOfBound;
-            
+
         #if (java || flash || cs || python)
             return str.charAt(pos);
         #else
             return Utf8.sub(str, pos, 1);
         #end
     }
-    
+
     /**
      * String#charCodeAt() variant with cross-platform UTF-8 support.
-     * 
+     *
      * <pre><code>
      * >>> Strings.charCodeAt8(" dog", 0)           == 32
      * >>> Strings.charCodeAt8(" dog", 0).isSpace() == true
@@ -374,7 +333,7 @@ class Strings {
      * >>> Strings.charCodeAt8(" はい", 1)         == 12399
      * >>> Strings.charCodeAt8(" はい", 2)         == 12356
      * </code></pre>
-     * 
+     *
      * @param pos character position
      */
     inline
@@ -385,10 +344,42 @@ class Strings {
 
         return str._charCodeAt8Unsafe(pos);
     }
-    
+
+    /**
+     * Removes trailing and leading whitespace characters.
+     * Replaces all whitespace characters with the space character.
+     * Only leaves one space character between words.
+     *
+     * <pre><code>
+     * >>> Strings.compact(null) == null
+     * >>> Strings.compact("")   == ""
+     * >>> Strings.compact(" dog \n \t cat ") == "dog cat"
+     * </code></pre>
+     */
+    public static function compact(str:String):String {
+        if (str.isEmpty())
+            return str;
+
+        var sb = new StringBuilder();
+        var needWhiteSpace = false;
+        for (char in str.toChars()) {
+            if (char.isWhitespace()) {
+                if (!sb.isEmpty())
+                    needWhiteSpace = true;
+                continue;
+            }
+            else if (needWhiteSpace) {
+                sb.addChar(Char.SPACE);
+                needWhiteSpace = false;
+            }
+            sb.addChar(char);
+        }
+        return sb.toString();
+    }
+
     /**
      * Tests if <b>searchIn</b> contains <b>searchFor</b> as a substring
-     * 
+     *
      * <pre><code>
      * >>> Strings.contains("dog", "")  == true
      * >>> Strings.contains("dog", "g") == true
@@ -405,16 +396,49 @@ class Strings {
     public static function contains(searchIn:String, searchFor:String):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
+
         if (searchFor == "")
             return true;
 
         return searchIn.indexOf(searchFor) > POS_NOT_FOUND;
     }
-    
+
+    /**
+     * Tests if <b>searchIn</b> contains only the allowed characters
+     *
+     * <pre><code>
+     * >>> Strings.containsOnly(null, null)  == true
+     * >>> Strings.containsOnly("", null)    == true
+     * >>> Strings.containsOnly("a", null)   == false
+     * >>> Strings.containsOnly("AA", [65])  == true
+     * >>> Strings.containsOnly("Aa", [65])  == false
+     * >>> Strings.containsOnly("AA", "A")   == true
+     * >>> Strings.containsOnly("Aa", "A")   == false
+     * >>> Strings.containsOnly("Aa", "Aa")  == true
+     * </code></pre>
+     */
+    public static function containsOnly(searchIn:String, allowedChars:Either2<String, Array<Char>>):Bool {
+        if (searchIn.isEmpty())
+            return true;
+
+        if (allowedChars == null)
+            return false;
+
+        var allowedCharsArray:Array<Char> = switch (allowedChars.value) {
+            case a(str): str.toChars();
+            case b(chars): chars;
+        }
+
+        for (ch in searchIn.toChars()) {
+            if (allowedCharsArray.indexOf(ch) < 0)
+                return false;
+        }
+        return true;
+    }
+
     /**
      * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
-     * 
+     *
      * <pre><code>
      * >>> Strings.containsAll("dog", ["c", ""])  == false
      * >>> Strings.containsAll("dog", ["c", "g"]) == false
@@ -432,17 +456,17 @@ class Strings {
     public static function containsAll(searchIn:String, searchFor:Array<String>):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
-        for (candidate in searchFor) {            
+
+        for (candidate in searchFor) {
             if (!contains(searchIn, candidate))
                 return false;
         }
         return true;
     }
-    
+
     /**
      * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
-     * 
+     *
      * <pre><code>
      * >>> Strings.containsAllIgnoreCase("dog", ["c", ""])  == false
      * >>> Strings.containsAllIgnoreCase("dog", ["c", "G"]) == false
@@ -460,19 +484,19 @@ class Strings {
     public static function containsAllIgnoreCase(searchIn:String, searchFor:Array<String>):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
+
         searchIn = searchIn.toLowerCase();
-        
-        for (candidate in searchFor) {            
+
+        for (candidate in searchFor) {
             if (!contains(searchIn, candidate.toLowerCase()))
                 return false;
         }
         return true;
     }
-    
+
     /**
      * Tests if <b>searchIn</b> contains any of <b>searchFor</b> as a substring
-     * 
+     *
      * <pre><code>
      * >>> Strings.containsAny("dog", ["c", ""])  == true
      * >>> Strings.containsAny("dog", ["c", "g"]) == true
@@ -491,17 +515,17 @@ class Strings {
     public static function containsAny(searchIn:String, searchFor:Array<String>):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
-        for (candidate in searchFor) {            
+
+        for (candidate in searchFor) {
             if (contains(searchIn, candidate))
                 return true;
         }
         return false;
     }
-    
+
     /**
      * Tests if <b>searchIn</b> contains any of <b>searchFor</b> as a substring
-     * 
+     *
      * <pre><code>
      * >>> Strings.containsAnyIgnoreCase("dog", ["c", ""])  == true
      * >>> Strings.containsAnyIgnoreCase("dog", ["c", "G"]) == true
@@ -519,19 +543,19 @@ class Strings {
     public static function containsAnyIgnoreCase(searchIn:String, searchFor:Array<String>):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
+
         searchIn = searchIn.toLowerCase();
-        
-        for (candidate in searchFor) {            
+
+        for (candidate in searchFor) {
             if (contains(searchIn, candidate.toLowerCase()))
                 return true;
         }
         return false;
     }
-    
+
     /**
-     * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
-     * 
+     * Checks that <b>searchIn</b> contains none of <b>searchFor</b> as a substring
+     *
      * <pre><code>
      * >>> Strings.containsNone("dog", ["c", ""])  == false
      * >>> Strings.containsNone("dog", ["c", "g"]) == false
@@ -546,20 +570,14 @@ class Strings {
      * >>> Strings.containsNone("はは", ["い"])     == true
      * </code></pre>
      */
+    inline
     public static function containsNone(searchIn:String, searchFor:Array<String>):Bool {
-        if (searchIn == null || searchFor == null)
-            return true;
-        
-        for (candidate in searchFor) {            
-            if (contains(searchIn, candidate))
-                return false;
-        }
-        return true;
+        return !containsAny(searchIn, searchFor);
     }
-    
+
     /**
-     * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
-     * 
+     * Checks that <b>searchIn</b> contains none of <b>searchFor</b> as a substring
+     *
      * <pre><code>
      * >>> Strings.containsNoneIgnoreCase("dog", ["c", ""])  == false
      * >>> Strings.containsNoneIgnoreCase("dog", ["c", "G"]) == false
@@ -574,22 +592,14 @@ class Strings {
      * >>> Strings.containsNoneIgnoreCase("はは", ["い"])     == true
      * </code></pre>
      */
+    inline
     public static function containsNoneIgnoreCase(searchIn:String, searchFor:Array<String>):Bool {
-        if (searchIn == null || searchFor == null)
-            return true;
-        
-        searchIn = searchIn.toLowerCase();
-        
-        for (candidate in searchFor) {            
-            if (contains(searchIn, candidate.toLowerCase()))
-                return false;
-        }
-        return true;
+        return !containsAnyIgnoreCase(searchIn, searchFor);
     }
-    
+
     /**
      * Tests if <b>searchIn</b> contains any whitespaces
-     * 
+     *
      * <pre><code>
      * >>> Strings.containsWhitespaces(" ")        == true
      * >>> Strings.containsWhitespaces("dog cat")  == true
@@ -602,16 +612,16 @@ class Strings {
      */
     public static function containsWhitespaces(searchIn:String):Bool {
         if (searchIn == null)
-            return false;         
-            
+            return false;
+
         for (ch in searchIn.toChars()) {
             if (ch.isWhitespace())
                 return true;
         }
-        
+
         return false;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.countMatches("dogdog", "g")      == 2
@@ -624,17 +634,17 @@ class Strings {
      * >>> Strings.countMatches(null, null)         == 0
      * >>> Strings.countMatches(null, "")           == 0
      * </code></pre>
-     * 
-     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting 
+     *
+     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting
      *         from the given character position.
      */
     public static function countMatches(searchIn:String, searchFor:String, startAt:CharPos = 0):Int {
         if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length)
             return 0;
-            
-        if (startAt < 0) 
+
+        if (startAt < 0)
             startAt = 0;
-        
+
         var count = 0;
         var foundAt = startAt > -1 ? startAt - 1 : 0;
         while ((foundAt = searchIn.indexOf(searchFor, foundAt + 1)) > -1) {
@@ -655,20 +665,20 @@ class Strings {
      * >>> Strings.countMatchesIgnoreCase("", null)           == 0
      * >>> Strings.countMatchesIgnoreCase("", "a")            == 0
      * </code></pre>
-     * 
-     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting 
+     *
+     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting
      *         from the given character position ignoring case.
      */
     public static function countMatchesIgnoreCase(searchIn:String, searchFor:String, startAt:CharPos = 0):Int {
         if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length)
             return 0;
-            
-        if (startAt < 0) 
+
+        if (startAt < 0)
             startAt = 0;
-            
+
         searchIn = searchIn.toLowerCase();
         searchFor = searchFor.toLowerCase();
-        
+
         var count = 0;
         var foundAt = startAt > -1 ? startAt - 1 : 0;
         while ((foundAt = searchIn.indexOf(searchFor, foundAt + 1)) > -1) {
@@ -676,13 +686,13 @@ class Strings {
         }
         return count;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.compare("a", "b")     == -1
      * >>> Strings.compare("b", "a")     == 1
+     * TODO csharp https://github.com/HaxeFoundation/hxcs/issues/25
      * >>> Strings.compare("a", "A")     == 1
-     * TODO C# https://github.com/HaxeFoundation/hxcs/issues/25
      * >>> Strings.compare("A", "a")     == -1
      * >>> Strings.compare("a", "B")     == 1
      * >>> Strings.compare("", null)     == 1
@@ -693,14 +703,14 @@ class Strings {
      * >>> Strings.compare("к--", "т--") == -1
      * >>> Strings.compare("кот", "КОТ") == 1
      * </core></pre>
-     * 
-     * @return 1 if <code>str > other</code>, -1 if <code>str < other</code>, 0 if <code>str == other</code>
+     *
+     * @return 1 if `str > other`, -1 if `str < other`, 0 if `str == other`
      */
     public static function compare(str:String, other:String):Int {
-        if (str == null) 
+        if (str == null)
             return other == null ? 0 : -1;
-            
-        if (other == null) 
+
+        if (other == null)
             return str == null ? 0 : 1;
 
         #if neko
@@ -710,7 +720,7 @@ class Strings {
             return Utf8.compare(str, other);
         #end
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.compareIgnoreCase("a", "b")     == -1
@@ -726,24 +736,24 @@ class Strings {
      * >>> Strings.compareIgnoreCase("к--", "т--") == -1
      * >>> Strings.compareIgnoreCase("кот", "КОТ") == 0
      * </core></pre>
-     * 
-     * @return 1 if <code>str > other</code>, -1 if <code>str < other</code>, 0 if <code>str == other</code>
+     *
+     * @return 1 if `str > other`, -1 if `str < other`, 0 if `str == other`
      */
     public static function compareIgnoreCase(str:String, other:String):Int {
-        if (str == null) 
+        if (str == null)
             return other == null ? 0 : -1;
-            
-        if (other == null) 
+
+        if (other == null)
             return str == null ? 0 : 1;
-            
+
         str = str.toLowerCase8();
         other = other.toLowerCase8();
-        
+
         #if neko
-            // TODO https://github.com/HaxeFoundation/haxe/issues/5308
-            return str > other ? 1 : (str == other ? 0 : -1);
+        // TODO https://github.com/HaxeFoundation/haxe/issues/5308
+        return str > other ? 1 : (str == other ? 0 : -1);
         #else
-            return Utf8.compare(str, other);
+        return Utf8.compare(str, other);
         #end
     }
 
@@ -781,19 +791,19 @@ class Strings {
      * >>> Strings.diffAt("", "")                   == -1
      * >>> Strings.diffAt("", "cat")                == 0
      * </code></pre>
-     * 
+     *
      * @return the UTF8 character position where the strings begin to differ or -1 if they are equal
      */
     public static function diffAt(str:String, other:String):CharPos {
-        if (str.equals(other)) 
+        if (str.equals(other))
             return POS_NOT_FOUND;
-            
+
         var strLen = str.length8();
         var otherLen = other.length8();
-        
+
         if (strLen == 0 || otherLen == 0)
             return 0;
-        
+
         var checkLen = strLen > otherLen ? otherLen : strLen;
 
         for (i in 0...checkLen) {
@@ -802,7 +812,7 @@ class Strings {
         }
         return checkLen;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.ellipsizeLeft("12345678", 5)   == "...78"
@@ -814,7 +824,7 @@ class Strings {
      * >>> Strings.ellipsizeLeft(null, 3)         == null
      * >>> Strings.ellipsizeLeft("はいはいはい", 5)  == "...はい"
      * </code></pre>
-     * 
+     *
      * @throws exception if maxLength < ellipsis.length
      */
     public static function ellipsizeLeft(str:String, maxLength:Int, ellipsis:String = "..."):String {
@@ -838,7 +848,7 @@ class Strings {
      * >>> Strings.ellipsizeMiddle(null, 3)         == null
      * >>> Strings.ellipsizeMiddle("はいはいはい", 5)  == "は...い"
      * </code></pre>
-     * 
+     *
      * @throws exception if maxLength < ellipsis.length
      */
     public static function ellipsizeMiddle(str:String, maxLength:Int, ellipsis:String = "..."):String {
@@ -852,10 +862,10 @@ class Strings {
         var maxStrLen = maxLength - ellipsisLen;
         var leftLen = Math.round(maxStrLen / 2);
         var rightLen = maxStrLen - leftLen;
-        
+
         return str.left(leftLen) + ellipsis + str.right(rightLen);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.ellipsizeRight("12345678", 5)   == "12..."
@@ -867,7 +877,7 @@ class Strings {
      * >>> Strings.ellipsizeRight(null, 3)         == null
      * >>> Strings.ellipsizeRight("はいはいはい", 5)  == "はい..."
      * </code></pre>
-     * 
+     *
      * @throws exception if maxLength < ellipsis.length
      */
     public static function ellipsizeRight(str:String, maxLength:Int, ellipsis:String = "..."):String {
@@ -899,7 +909,7 @@ class Strings {
 
         return StringTools.endsWith(searchIn, searchFor);
     }
-        
+
     /**
      * <pre><code>
      * >>> Strings.endsWithAny(null, ["cat"])            == false
@@ -917,14 +927,14 @@ class Strings {
     public static function endsWithAny(searchIn:String, searchFor:Array<String>):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
-        for (candidate in searchFor) {            
+
+        for (candidate in searchFor) {
             if (candidate != null && StringTools.endsWith(searchIn, candidate))
                 return true;
         }
         return false;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.endsWithAnyIgnoreCase(null, ["cat"])            == false
@@ -942,15 +952,15 @@ class Strings {
     public static function endsWithAnyIgnoreCase(searchIn:String, searchFor:Array<String>):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
+
         searchIn = searchIn.toLowerCase8();
-        for (candidate in searchFor) {            
+        for (candidate in searchFor) {
             if (candidate != null && StringTools.endsWith(searchIn, candidate.toLowerCase8()))
                 return true;
         }
         return false;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.endsWithIgnoreCase(null, "cat")     == false
@@ -970,10 +980,10 @@ class Strings {
 
         return StringTools.endsWith(searchIn.toLowerCase(), searchFor.toLowerCase());
     }
-    
+
     /**
      * Tests if the string representation of <b>other</b> equals <b>str</b>.
-     * 
+     *
      * <pre><code>
      * >>> Strings.equals(null, null)   == true
      * >>> Strings.equals(null, "")     == false
@@ -993,7 +1003,7 @@ class Strings {
 
     /**
      * Tests if the string representation of <b>other</b> equals <b>str</b> ignoring the case.
-     * 
+     *
      * <pre><code>
      * >>> Strings.equalsIgnoreCase(null, null)   == true
      * >>> Strings.equalsIgnoreCase(null, "")     == false
@@ -1010,7 +1020,7 @@ class Strings {
     public static function equalsIgnoreCase(str:String, other:AnyAsString):Bool {
         return str.toLowerCase8() == other.toLowerCase8();
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.filter(null,       function(s) return s == " ")       == null
@@ -1019,8 +1029,8 @@ class Strings {
      * >>> Strings.filter("はいはい",   function(s) return s == "は")      == "はは"
      * >>> Strings.filter("ab:cd:ab", function(s) return s == "ab", ":") == "ab:ab"
      * </code></pre>
-     * 
-     * @return a string containing only those characters/substrings for which <b>filter</b> returned <code>true</code>.
+     *
+     * @return a string containing only those characters/substrings for which <b>filter</b> returned `true`.
      */
     inline
     public static function filter(str:String, filter:String -> Bool, separator = ""):String {
@@ -1029,7 +1039,7 @@ class Strings {
 
         return str.split8(separator).filter(filter).join(separator);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.filterChars(null,       function(ch) return ch == 32)            == null
@@ -1037,8 +1047,8 @@ class Strings {
      * >>> Strings.filterChars(" b b b",   function(ch) return ch == 32)            == "   "
      * >>> Strings.filterChars("はいはい",   function(ch) return ch == Char.of("は")) == "はは"
      * </code></pre>
-     * 
-     * @return a string containing only those characters for which <b>filter</b> returned <code>true</code>.
+     *
+     * @return a string containing only those characters for which <b>filter</b> returned `true`.
      */
     inline
     public static function filterChars(str:String, filter:Char -> Bool):String {
@@ -1047,10 +1057,10 @@ class Strings {
 
         return str.toChars().filter(filter).map(function (ch) return ch.toString() ).join("");
     }
-    
+
     /**
      * Calculates the Fuzzy distance between the given strings. A higher value indicates a higher similarity.
-     * 
+     *
      * This string matching algorithm is case-insensitive and similar to the algorithms of editors such as
      * Sublime Text, TextMate, and Atom. One point is given for every matched character. Subsequent
      * matches receive two additional points.
@@ -1066,7 +1076,7 @@ class Strings {
      * >>> Strings.getFuzzyDistance("dogcat", "do")             == 4
      * >>> Strings.getFuzzyDistance("Laughing Out Loud", "lol") == 3
      * </code></pre>
-     * 
+     *
      * Based on https://commons.apache.org/proper/commons-lang/javadocs/api-3.4/org/apache/commons/lang3/StringUtils.html#getFuzzyDistance(java.lang.CharSequence,%20java.lang.CharSequence,%20java.util.Locale)
      */
     public static function getFuzzyDistance(left:String, right:String) {
@@ -1075,14 +1085,14 @@ class Strings {
 
         left = left.toLowerCase8();
         right = right.toLowerCase8();
-            
+
         var leftChars = left.toChars();
         var rightChars = right.toChars();
         var leftLastMatchAt = -100;
         var rightLastMatchAt = -100;
-        
+
         var score = 0;
-        
+
         for (leftIdx in 0...leftChars.length) {
             var leftChar = leftChars[leftIdx];
             for (rightIdx in (rightLastMatchAt > -1 ? rightLastMatchAt + 1 : 0)...rightChars.length) {
@@ -1098,16 +1108,16 @@ class Strings {
                 }
             }
         }
-        
+
         return score;
     }
-    
+
     /**
      * Calculates the Levenshtein distance between the given strings.
-     * 
-     * This is the number of single character modification (deletion, insertion, or 
+     *
+     * This is the number of single character modification (deletion, insertion, or
      * substitution) needed to change one string into another.
-     * 
+     *
      * See https://en.wikipedia.org/wiki/Levenshtein_distance
      *
      * <pre><code>
@@ -1127,7 +1137,7 @@ class Strings {
     public static function getLevenshteinDistance(left:String, right:String):Int {
         var leftLen = left.length8();
         var rightLen = right.length8();
-        
+
         if (leftLen == 0) return rightLen;
         if (rightLen == 0) return leftLen;
 
@@ -1153,7 +1163,7 @@ class Strings {
         var rightChars = right.toChars();
 
         var min = function(a:Int, b:Int) return a > b ? b : a;
-        
+
         for (rightIdx in 1...rightLen + 1) {
             var rightChar = rightChars[rightIdx - 1];
             costs[0] = rightIdx;
@@ -1171,12 +1181,12 @@ class Strings {
 
         return prevCosts[leftLen];
     }
-    
+
     /**
      * Determines the longest common substring between the given strings.
-     * 
+     *
      * See https://en.wikipedia.org/wiki/Longest_common_substring_problem
-     * 
+     *
      * <pre><code>
      * >>> Strings.getLongestCommonSubstring(null, null)                   == null
      * >>> Strings.getLongestCommonSubstring(null, "")                     == null
@@ -1188,28 +1198,28 @@ class Strings {
      * </code></pre>
      */
     public static function getLongestCommonSubstring(left:String, right:String):String {
-        if (left == null || right == null) 
+        if (left == null || right == null)
             return null;
-            
+
         var leftLen = left.length8();
-        var rightLen = right.length8();        
-        
+        var rightLen = right.length8();
+
         if (leftLen == 0 || rightLen == 0)
             return "";
 
-
         var leftChars = left.toChars();
         var rightChars = right.toChars();
-        
+
         var leftSubStartAt = 0;
         var leftSubLen = 0;
-        
+
         for (leftIdx in 0...leftLen) {
             for (rightIdx in 0...rightLen) {
                 var currLen = 0;
                 while (leftChars[leftIdx + currLen] == rightChars[rightIdx + currLen]) {
                     currLen++;
-                    if (((leftIdx + currLen) >= leftLen) || ((rightIdx + currLen) >= rightLen)) break;
+                    if (((leftIdx + currLen) >= leftLen) || ((rightIdx + currLen) >= rightLen)) 
+                        break;
                 }
                 if (currLen > leftSubLen) {
                     leftSubLen = currLen;
@@ -1219,7 +1229,7 @@ class Strings {
         }
         return left.substr8(leftSubStartAt, leftSubLen);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.hashCode(null)                 == 0
@@ -1231,7 +1241,7 @@ class Strings {
      * >>> Strings.hashCode("dog & cat", JAVA)    == 0x76C244F8
      * >>> Strings.hashCode("dog & cat", SDBM)    == 0x329DB138
      * </code></pre>
-     * 
+     *
      * @return a (by default platform dependent) hashcode for the given string
      */
     public static function hashCode(str:String, ?algo:HashCodeAlgorithm):Int {
@@ -1239,9 +1249,9 @@ class Strings {
             return 0;
 
         if (algo == null) algo = PLATFORM_SPECIFIC;
-        
-        return switch(algo) {                   
-            case ADLER32:    
+
+        return switch (algo) {
+            case ADLER32:
                 Adler32.make(str.toBytes());
 
             case CRC32B:
@@ -1249,35 +1259,35 @@ class Strings {
 
             case DJB2A:
                 var hc:Int32 = 5381;
-                for (ch in str.toChars()) 
+                for (ch in str.toChars())
                     hc = ((hc << 5) + hc /* hc * 33 */) ^ ch;
                 hc;
 
             case JAVA:
                 var hc:Int32 = 0;
-                for (ch in str.toChars()) 
+                for (ch in str.toChars())
                     hc = ((hc << 5) - hc /* hc * 31 */) + ch;
                 hc;
 
             case SDBM:
                 var hc:Int32 = 0;
-                for (ch in str.toChars()) 
+                for (ch in str.toChars())
                     hc = ((hc << 6) + (hc << 16) - hc /* 65599 * hc */) + ch;
                 hc;
-                
+
             default: // PLATFORM SPECIFIC
                 #if java
-                    untyped __java__("str.hashCode()");
+                untyped __java__("str.hashCode()");
                 #elseif cs
-                    untyped __cs__("str.GetHashCode()");
+                untyped __cs__("str.GetHashCode()");
                 #elseif python
-                    untyped hash(str);
+                untyped hash(str);
                 #else
-                    Crc32.make(str.toBytes());
+                Crc32.make(str.toBytes());
                 #end
         }
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.htmlDecode(null)                == null
@@ -1303,7 +1313,7 @@ class Strings {
 
         return REGEX_HTML_UNESCAPE.matcher(str).map(function(m:Matcher):String {
             var match:String = m.matched();
-            return switch(match) {
+            return switch (match) {
                 case "&amp;":  "&";
                 case "&apos;": "'";
                 case "&gt;":   ">";
@@ -1311,11 +1321,11 @@ class Strings {
                 case "&nbsp;": " ";
                 case "&quot;": "\"";
                 default:
-                   Char.of(Std.parseInt(match.substr8(2, match.length8() - 3))).toString();
+                    Char.of(Std.parseInt(match.substr8(2, match.length8() - 3))).toString();
             }
         });
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.htmlEncode(null)             == null
@@ -1339,14 +1349,15 @@ class Strings {
 
         var sb = new StringBuilder();
         var isFirstSpace = true;
-        for (i in 0...str.length8()){
+        for (i in 0...str.length8()) {
             var ch:Int /*fails with Char for some reason*/ = str._charCodeAt8Unsafe(i);
-            switch(ch) {
+            switch (ch) {
                 case Char.SPACE:
                     if (isFirstSpace) {
                         sb.add(" ");
                         isFirstSpace = false;
-                    } else 
+                    }
+                    else
                         sb.add("&nbsp;");
 
                 case Char.AMPERSAND:
@@ -1361,58 +1372,58 @@ class Strings {
 
                 case Char.LOWER_THAN:
                     sb.add("&lt;");
-                    
+
                 case Char.GREATER_THAN:
                     sb.add("&gt;");
 
                 default:
-                    if(ch > 127)
+                    if (ch > 127)
                         sb.add('&#$ch;');
                     else
                         sb.addChar(ch);
             }
-            
+
             if (ch != Char.SPACE)
                 isFirstSpace = true;
         }
 
         return sb.toString();
     }
-    
+
     /**
      * <pre><code>
-     * >>> Strings.insert(null,   0, "dog") == null
-     * >>> Strings.insert("cat",  0, null)  == "cat"
-     * >>> Strings.insert("",     0, "dog") == "dog"
-     * >>> Strings.insert("cat",  0, "dog") == "dogcat"
-     * >>> Strings.insert("cat",  1, "dog") == "cdogat"
-     * >>> Strings.insert("cat",  2, "dog") == "cadogt"
-     * >>> Strings.insert("cat",  3, "dog") == "catdog"
-     * >>> Strings.insert("cat", -1, "dog") == "cadogt"
-     * >>> Strings.insert("cat", -2, "dog") == "cdogat"
-     * >>> Strings.insert("cat", -3, "dog") == "dogcat"
-     * >>> Strings.insert("cat", -4, "dog") throws "Absolute value of [insertAt] must be <= str.length"
-     * >>> Strings.insert("cat",  4, "dog") throws "Absolute value of [insertAt] must be <= str.length"
+     * >>> Strings.insertAt(null,   0, "dog") == null
+     * >>> Strings.insertAt("cat",  0, null)  == "cat"
+     * >>> Strings.insertAt("",     0, "dog") == "dog"
+     * >>> Strings.insertAt("cat",  0, "dog") == "dogcat"
+     * >>> Strings.insertAt("cat",  1, "dog") == "cdogat"
+     * >>> Strings.insertAt("cat",  2, "dog") == "cadogt"
+     * >>> Strings.insertAt("cat",  3, "dog") == "catdog"
+     * >>> Strings.insertAt("cat", -1, "dog") == "cadogt"
+     * >>> Strings.insertAt("cat", -2, "dog") == "cdogat"
+     * >>> Strings.insertAt("cat", -3, "dog") == "dogcat"
+     * >>> Strings.insertAt("cat", -4, "dog") throws "Absolute value of [pos] must be <= str.length"
+     * >>> Strings.insertAt("cat",  4, "dog") throws "Absolute value of [pos] must be <= str.length"
      * </code></pre>
-     * 
+     *
      * @throws if the absolute value of insertAt is greater than str.length
      */
-    public static function insert(str:String, insertAt:CharPos, insertion:AnyAsString):String {
+    public static function insertAt(str:String, pos:CharPos, insertion:AnyAsString):String {
         if (str == null)
             return null;
 
         var strLen = str.length8();
-        var pos = insertAt < 0 ? strLen + insertAt : insertAt;
-        
+        pos = pos < 0 ? strLen + pos : pos;
+
         if (pos < 0 || pos > strLen)
-            throw "Absolute value of [insertAt] must be <= str.length";
+            throw "Absolute value of [pos] must be <= str.length";
 
         if (insertion.isEmpty())
             return str;
 
         return str.substring8(0, pos) + insertion + str.substring8(pos);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.ifBlank(null, null) == null
@@ -1433,7 +1444,7 @@ class Strings {
     public static function ifBlank(str:String, fallback:String):String {
         return str.isBlank() ? fallback : str;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.ifEmpty(null, null) == null
@@ -1454,7 +1465,7 @@ class Strings {
     public static function ifEmpty(str:String, fallback:String):String {
         return str.isEmpty() ? fallback : str;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.ifNull(null, null) == null
@@ -1472,7 +1483,7 @@ class Strings {
     public static function ifNull(str:String, fallback:String):String {
         return str == null ? fallback : str;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.indentLines(null, null)         == null
@@ -1484,41 +1495,41 @@ class Strings {
      * >>> Strings.indentLines("dog\ndog", "  ")   == "  dog\n  dog"
      * >>> Strings.indentLines("dog\r\ndog", "  ") == "  dog\n  dog"
      * </code></pre>
-     * 
+     *
      * @param indentWith all lines of the <code>str</code> will be prefixed with this string
      */
     public static function indentLines(str:String, indentWith:String):String {
-        if (str == null) 
+        if (str == null)
             return null;
-        
-        if (str.length == 0 || indentWith.isEmpty()) 
+
+        if (str.length == 0 || indentWith.isEmpty())
             return str;
 
         var isFirstLine = true;
         var sb = new StringBuilder();
         for (line in REGEX_SPLIT_LINES.split(str)) {
             if (isFirstLine)
-               isFirstLine = false;
+                isFirstLine = false;
             else
-               sb.newLine();
+                sb.newLine();
             sb.add(indentWith);
             sb.add(line);
         }
         return sb.toString();
     }
-    
+
     /**
      * String#indexOf() variant with cross-platform UTF-8 support and ECMAScript like behavior.
-     * 
+     *
      * Solves cross-platform issue https://github.com/HaxeFoundation/haxe/issues/5271
-     * 
-     * @param startAt Character position within <b>str</b> where the search for <b>searchFor</b> starts. 
-     *                If <code>startAt < 0</code> the entire string is searched. 
-     *                If <code>startAt >= str.length</code>, the string is not searched and -1 is returned. 
+     *
+     * @param startAt Character position within <b>str</b> where the search for <b>searchFor</b> starts.
+     *                If <code>startAt < 0</code> the entire string is searched.
+     *                If <code>startAt >= str.length</code>, the string is not searched and -1 is returned.
      *                Unless <b>searchFor</b> is an empty string, then str.length is returned.
      *
      * @return the character position of the leftmost occurrence of <b>substr</b> within <b>str</b>.
-     * 
+     *
      * <pre><code>
      * >>> Strings.indexOf8(null, null)         == -1
      * >>> Strings.indexOf8(null, "")           == -1
@@ -1553,8 +1564,6 @@ class Strings {
      * </code></pre>
      */
     public static function indexOf8(str:String, searchFor:String, startAt:CharPos = 0):CharPos {
-
-        // handling null strings
         if (str == null || searchFor == null)
             return POS_NOT_FOUND;
 
@@ -1574,7 +1583,7 @@ class Strings {
             }
             return strLen;
         }
-        
+
         // startAt out-of-bound
         if (startAt >= strLen)
             return POS_NOT_FOUND;
@@ -1587,17 +1596,17 @@ class Strings {
         #else
             var strNeedsUTF8Workaround = str.length != strLen;
             var searchForNeedsUTF8Workaround = searchFor.length != searchForLen;
-            
+
             // delegate to native lastIndexOf() if either no UTF8 chars are present or the current platform uses UTF8 encoding by default
             if (!strNeedsUTF8Workaround && !searchForNeedsUTF8Workaround)
                 return str.indexOf(searchFor, startAt);
-                
+
             if (searchForNeedsUTF8Workaround && !strNeedsUTF8Workaround)
                 // won't find UTF8 chars in non-UTF8 string
                 return POS_NOT_FOUND;
 
             var searchForChars = [ for (i in 0...searchForLen) searchFor._charCodeAt8Unsafe(i) ];
-            
+
             var searchForPosToCheck = 0;
             for (strPos in startAt...strLen) {
                 var strCh = str.charCodeAt8(strPos);
@@ -1612,7 +1621,7 @@ class Strings {
             return POS_NOT_FOUND;
         #end
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.isBlank(null)   == true
@@ -1624,14 +1633,14 @@ class Strings {
      * >>> Strings.isBlank("\t")   == true
      * >>> Strings.isBlank("は")   == false
      * </code></pre>
-     * 
-     * @return <code>true</code> if <code>null</code> or empty ("") or only contains whitespace characters
+     *
+     * @return `true` if <code>null</code> or empty ("") or only contains whitespace characters
      */
     inline
     public static function isBlank(str:String):Bool {
         return str == null ? true : StringTools.trim(str).length == 0;
     }
-        
+
     /**
      * <pre><code>
      * >>> Strings.isDigits("1")   == true
@@ -1642,7 +1651,7 @@ class Strings {
      * >>> Strings.isDigits(null)  == false
      * >>> Strings.isDigits("は")  == false
      * </code></pre>
-     * 
+     *
      * @return true if the string only contains digits (0-9).
      */
     #if php inline #end
@@ -1650,7 +1659,7 @@ class Strings {
         #if php
             return untyped __call__("ctype_digit", str);
         #else
-            if(str.isEmpty())
+            if (str.isEmpty())
                 return false;
 
             for (i in 0...str.length8())
@@ -1660,7 +1669,7 @@ class Strings {
             return true;
         #end
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.isEmpty(null)   == true
@@ -1694,7 +1703,7 @@ class Strings {
     public static function isNotBlank(str:String):Bool {
         return str != null && StringTools.trim(str).length > 0;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.isNotEmpty(null)   == false
@@ -1711,7 +1720,7 @@ class Strings {
     public static function isNotEmpty(str:String):Bool {
         return str != null && str.length > 0;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.isLowerCase(null)   == false
@@ -1723,12 +1732,12 @@ class Strings {
      * </code></pre>
      */
     public static function isLowerCase(str:String):Bool {
-        if (str.isEmpty()) 
+        if (str.isEmpty())
             return false;
 
         return str == str.toLowerCase8();
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.isUpperCase(null)   == false
@@ -1740,12 +1749,12 @@ class Strings {
      * </code></pre>
      */
     public static function isUpperCase(str:String):Bool {
-        if (str.isEmpty()) 
+        if (str.isEmpty())
             return false;
-            
+
         return str == str.toUpperCase8();
     }
-    
+
     /**
      * Invokes the callback function separately on each character/substring of the given string.
      */
@@ -1757,7 +1766,7 @@ class Strings {
             callback(sub);
         }
     }
-    
+
     /**
      * Invokes the callback function on each character of the given string.
      */
@@ -1772,14 +1781,14 @@ class Strings {
 
     /**
      * String#lastIndexOf() variant with cross-platform UTF-8 support and ECMAScript like behavior.
-     * 
+     *
      * @param startAt Character position within <b>str</b> from where the search for <b>searchFor</b> starts in reverse.
      *                The default value is `str.length - 1`, so the whole array is searched.
-     *                If `startAt >= str.length`, the whole string is searched. 
+     *                If `startAt >= str.length`, the whole string is searched.
      *                If `startAt < 0`, the behavior will be the same as if it would be 0.
-     * 
+     *
      * @return character position of the leftmost occurrence of <b>searchFor</b> within <b>str</b>.
-     * 
+     *
      * <pre><code>
      * >>> Strings.lastIndexOf8(null, null)               == -1
      * >>> Strings.lastIndexOf8(null, "")                 == -1
@@ -1819,8 +1828,6 @@ class Strings {
      * </code></pre>
      */
     public static function lastIndexOf8(str:String, searchFor:String, ?startAt:CharPos):CharPos {
-
-        // handling null strings
         if (str == null || searchFor == null)
             return POS_NOT_FOUND;
 
@@ -1834,7 +1841,7 @@ class Strings {
         if (searchForLen == 0) {
             if (startAt < 0)
                 return 0;
-            if(startAt > strLen)
+            if (startAt > strLen)
                 return strLen;
             return startAt;
         }
@@ -1842,11 +1849,11 @@ class Strings {
         // startAt out-of-bound
         if (startAt < 0)
             return POS_NOT_FOUND;
-            
+
         else if (startAt >= strLen) {
             startAt = strLen - 1;
         }
-            
+
         #if (java || flash)
             return str.lastIndexOf(searchFor, startAt);
         #else
@@ -1858,8 +1865,8 @@ class Strings {
             if (!strNeedsUTF8Workaround && !searchForNeedsUTF8Workaround) {
                 return str.lastIndexOf(searchFor, startAt);
             }
-            #end
-            
+        #end
+
             if (searchForNeedsUTF8Workaround && !strNeedsUTF8Workaround)
                 // won't find UTF8 chars in non-UTF8 string
                 return POS_NOT_FOUND;
@@ -1874,7 +1881,7 @@ class Strings {
                 var strCh = str._charCodeAt8Unsafe(strPos);
 
                 if (strCh == searchForChars[searchForPosToCheck]) {
-                    if(searchForPosToCheck == 0)
+                    if (searchForPosToCheck == 0)
                         return strPos;
                     searchForPosToCheck--;
                 } else {
@@ -1884,10 +1891,10 @@ class Strings {
             return POS_NOT_FOUND;
         #end
     }
-    
+
     /**
-     * String#length() variant with cross-platform UTF-8 support.
-     * 
+     * String#length variant with cross-platform UTF-8 support.
+     *
      * <pre><code>
      * >>> Strings.length8(null)     == 0
      * >>> Strings.length8("")       == 0
@@ -1899,7 +1906,7 @@ class Strings {
     public static function length8(str:String):Int {
         if (str == null)
             return 0;
-      
+
         #if (flash || java || cs || python)
             return str.length;
         #elseif php
@@ -1908,7 +1915,7 @@ class Strings {
             return Utf8.length(str);
         #end
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.left(null, 1)     == null
@@ -1920,7 +1927,7 @@ class Strings {
      * >>> Strings.left("abc", -1)   == ""
      * >>> Strings.left("はいはい", 2) == "はい"
      * </code></pre>
-     * 
+     *
      * @return the leftmost <b>len</b> characters of the given string
      */
     inline
@@ -1930,10 +1937,10 @@ class Strings {
 
         return str.substring8(0, len);
     }
-    
+
     /**
      * Left pads <b>str</b> with <b>padStr</b> until <b>targetLength</b> is reached.
-     * 
+     *
      * <pre><code>
      * >>> Strings.lpad(null, 5, null)        == null
      * >>> Strings.lpad(null, 5, "")          == null
@@ -1947,8 +1954,8 @@ class Strings {
      * >>> Strings.lpad("は", 3, " ")          == "  は"
      * >>> Strings.lpad("は", 3, "い")         == "いいは"
      * </code></pre>
-     * 
-     * @param canOverflow if <code>true</code>, the resulting string's length may exceed <b>targetLength</b> in case <b>padStr</b> contains more than one character.
+     *
+     * @param canOverflow if `true`, the resulting string's length may exceed <b>targetLength</b> in case <b>padStr</b> contains more than one character.
      */
     public static function lpad(str:String, targetLength:Int, padStr:String = " ", canOverflow:Bool = true):String {
         var strLen = str.length8();
@@ -1970,7 +1977,7 @@ class Strings {
 
         return sb.join("").right(targetLength);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.map(null,     function(s) return s.equals("a") ? "xy" : s)      == null
@@ -1979,13 +1986,16 @@ class Strings {
      * >>> Strings.map("はいはい", function(s) return s.equals("は") ? "い" : s)      == ["い", "い", "い", "い"]
      * >>> Strings.map("ab:cd",  function(s) return s.equals("ab")? "xy" : s, ":") == ["xy", "cd"]
      * </code></pre>
-     * 
+     *
      * @return a string with each character/substring mapped by <b>mapper</b>.
      */
     inline
     public static function map<T>(str:String, mapper:String -> T, separator = ""):Array<T> {
-        if (str == null) 
+        if (str == null)
             return null;
+
+        if (separator == null)
+            throw "[seperator] must not be null";
 
         return str.split8(separator).map(mapper);
     }
@@ -2003,21 +2013,21 @@ class Strings {
      * </code></pre>
      */
     public static function prependIfMissing(str:String, suffix:String):String {
-        if (str == null) 
+        if (str == null)
             return null;
-            
+
         if (str.length == 0)
             return suffix + str;
-        
+
         if (str.startsWith(suffix))
             return str;
-            
+
         return suffix + str;
     }
 
     /**
      * Surrounds the string with double quotes and escapses contained double quote characters with backslashes.
-     * 
+     *
      * <pre><code>
      * >>> Strings.quoteDouble(null)          == null
      * >>> Strings.quoteDouble("")            == '""'
@@ -2033,7 +2043,7 @@ class Strings {
 
         if (str.length == 0)
             return '""';
-            
+
         if (!str.contains('"'))
             return '"' + str + '"';
 
@@ -2042,7 +2052,7 @@ class Strings {
 
     /**
      * Surrounds the string with single quotes and escapses contained single quote characters with backslashes.
-     * 
+     *
      * <pre><code>
      * >>> Strings.quoteSingle(null)          == null
      * >>> Strings.quoteSingle("")            == "''"
@@ -2053,22 +2063,121 @@ class Strings {
      * </code></pre>
      */
     public static function quoteSingle(str:String):String {
-
         if (str == null)
             return str;
 
         if (str.length == 0)
             return "''";
-            
+
         if (!str.contains("'"))
             return "'" + str + "'";
 
         return "'" + str.replaceAll("'", "\\'") + "'";
     }
-    
+
+    /**
+     * Alias for `substringBefore()`.
+     */
+    inline
+    public static function removeAfter(str:String, searchFor:String):String {
+        return substringBefore(str, searchFor);
+    }
+
+    /**
+     * Alias for `substringBeforeLast()`.
+     */
+    inline
+    public static function removeAfterLast(str:String, searchFor:String):String {
+        return substringBeforeLast(str, searchFor);
+    }
+
+    /**
+     * Alias for `substringBeforeIgnoreCase()`.
+     */
+    inline
+    public static function removeAfterIgnoreCase(str:String, searchFor:String):String {
+        return substringBeforeIgnoreCase(str, searchFor);
+    }
+
+    /**
+     * Alias for `substringBeforeLastIgnoreCase()`.
+     */
+    inline
+    public static function removeAfterLastIgnoreCase(str:String, searchFor:String):String {
+        return substringBeforeLastIgnoreCase(str, searchFor);
+    }
+
+    /**
+     * Removes a substring at the given position with the given length
+     *
+     * <pre><code>
+     * >>> Strings.removeAt(null, 1, 1)     == null
+     * >>> Strings.removeAt("", 1, 1)       == ""
+     * >>> Strings.removeAt("dogcat",  3, 3) == "dog"
+     * >>> Strings.removeAt("dogcat",  3, 1) == "dogat"
+     * >>> Strings.removeAt("dogcat",  3, 0) == "dogcat"
+     * >>> Strings.removeAt("dogcat",  4, 2) == "dogc"
+     * >>> Strings.removeAt("dogcat",  5, 2) == "dogca"
+     * >>> Strings.removeAt("dogcat",  6, 2) == "dogcat"
+     * >>> Strings.removeAt("dogcat",  9, 2) == "dogcat"
+     * >>> Strings.removeAt("dogcat",  0, 3) == "cat"
+     * >>> Strings.removeAt("dogcat", -4, 3) == "dot"
+     * >>> Strings.removeAt("dogcat", -9, 1) throws "[pos] must be smaller than -1 * str.length"
+     * </code></pre>
+     *
+     * @throws if the <b>pos</b> is smaller than `-1 * str.length`
+     */
+    public static function removeAt(str:String, pos:CharPos, length:Int):String {
+        if (str.isEmpty() || length < 1)
+            return str;
+
+        var strLen = str.length8();
+        pos = pos < 0 ? strLen + pos : pos;
+
+        if (pos < 0)
+            throw "[pos] must be smaller than -1 * str.length";
+
+        if (pos + length >= strLen)
+            return str.substring8(0, pos);
+
+        return str.substring8(0, pos) + str.substring8(pos + length);
+    }
+
+    /**
+     * Alias for <code>substringAfter()</code>.
+     */
+    inline
+    public static function removeBefore(str:String, searchFor:String):String {
+        return substringAfter(str, searchFor);
+    }
+
+    /**
+     * Alias for <code>substringAfterLast()</code>.
+     */
+    inline
+    public static function removeBeforeLast(str:String, searchFor:String):String {
+        return substringAfterLast(str, searchFor);
+    }
+
+    /**
+     * Alias for <code>substringAfterIgnoreCase()</code>.
+     */
+    inline
+    public static function removeBeforeIgnoreCase(str:String, searchFor:String):String {
+        return substringAfterIgnoreCase(str, searchFor);
+    }
+
+    /**
+     * Alias for <code>substringAfterIgnoreCase()</code>.
+     */
+    inline
+    public static function removeBeforeLastIgnoreCase(str:String, searchFor:String):String {
+        return substringAfterLastIgnoreCase(str, searchFor);
+    }
+
     /**
      * Removes all occurences of <b>searchFor</b> from the given string.
-     * 
+     *
      * <pre><code>
      * >>> Strings.removeAll(null, null)      == null
      * >>> Strings.removeAll(null, "")        == null
@@ -2078,16 +2187,49 @@ class Strings {
      * >>> Strings.removeAll("abcabca", "bc") == "aaa"
      * </code></pre>
      */
+    inline
     public static function removeAll(searchIn:String, searchFor:String):String {
-        if (searchIn.isEmpty() || searchFor.isEmpty())
-            return searchIn;
-
-        return StringTools.replace(searchIn, searchFor, "");
+        return replaceAll(searchIn, searchFor, "");
     }
-   
+
+    /**
+     * Removes the first occurrence of <b>searchFor</b> in <b>searchIn</b>.
+     *
+     * <pre><code>
+     * >>> Strings.removeFirst(null, "dog")           == null
+     * >>> Strings.removeFirst("", "dog")             == ""
+     * >>> Strings.removeFirst("a", "")               == "a"
+     * >>> Strings.removeFirst("dogCATdogCAT", "dog") == "CATdogCAT"
+     * >>> Strings.removeFirst("dogCATdogCAT", null)  == "dogCATdogCAT"
+     * >>> Strings.removeFirst("dogCATdogCAT", "")    == "dogCATdogCAT"
+     * >>> Strings.removeFirst("はいはい", "は")        == "いはい"
+     * </code></pre>
+     */
+    inline
+    public static function removeFirst(searchIn:String, searchFor:String):String {
+        return replaceFirst(searchIn, searchFor, "");
+    }
+
+    /**
+     *  Removes the first occurrence of <b>searchFor</b> in <b>searchIn</b> igorning the case.
+     *
+     * <pre><code>
+     * >>> Strings.removeFirstIgnoreCase(null, "dog")           == null
+     * >>> Strings.removeFirstIgnoreCase("", "dog")             == ""
+     * >>> Strings.removeFirstIgnoreCase("a", "")               == "a"
+     * >>> Strings.removeFirstIgnoreCase("dogCATdogCAT", "DOG") == "CATdogCAT"
+     * >>> Strings.removeFirstIgnoreCase("dogCATdogCAT", null)  == "dogCATdogCAT"
+     * >>> Strings.removeFirstIgnoreCase("dogCATdogCAT", "")    == "dogCATdogCAT"
+     * >>> Strings.removeFirstIgnoreCase("はいはい", "は")        == "いはい"
+     * </code></pre>
+     */
+    inline
+    public static function removeFirstIgnoreCase(searchIn:String, searchFor:String):String {
+        return replaceFirstIgnoreCase(searchIn, searchFor, "");
+    }
     /**
      * Removes all ANSI escape sequences from the given string.
-     * 
+     *
      * <pre><code>
      * >>> Strings.removeAnsi(null)                         == null
      * >>> Strings.removeAnsi("")                           == ""
@@ -2100,10 +2242,10 @@ class Strings {
 
         return REGEX_ANSI_ESC.replace(str, "");
     }
-    
+
     /**
      * Removes the substring <b>searchFor</b> from the start of the given string.
-     * 
+     *
      * <pre><code>
      * >>> Strings.removeLeading(null, null)   == null
      * >>> Strings.removeLeading(null, "")     == null
@@ -2126,10 +2268,10 @@ class Strings {
         }
         return searchIn;
     }
-       
+
     /**
      * Removes all XML tags from the given string.
-     * 
+     *
      * <pre><code>
      * >>> Strings.removeTags(null)                   == null
      * >>> Strings.removeTags("")                     == ""
@@ -2152,10 +2294,10 @@ class Strings {
             return REGEX_REMOVE_XML_TAGS.replace(xml, "");
         #end
     }
-    
+
     /**
      * Removes the substring <b>searchFor</b> from the end of the given string.
-     * 
+     *
      * <pre><code>
      * >>> Strings.removeTrailing(null, null)   == null
      * >>> Strings.removeTrailing(null, "")     == null
@@ -2173,7 +2315,7 @@ class Strings {
         if (searchIn.isEmpty() || searchFor.isEmpty())
             return searchIn;
 
-        while(searchIn.endsWith(searchFor)) {
+        while (searchIn.endsWith(searchFor)) {
             searchIn = searchIn.substring(0, searchIn.length - searchFor.length);
         }
         return searchIn;
@@ -2198,27 +2340,26 @@ class Strings {
     public static function repeat(str:String, count:Int, separator:String = ""):String {
         if (str == null)
             return null;
-            
+
         if (count < 1)
             return "";
-            
+
         if (count == 1)
             return str;
-            
+
         return [ for(i in 0...count) str ].join(separator);
     }
-    
+
     /**
      * Replaces all occurrences of <b>searchFor</b> in <b>searchIn</b> by <b>replaceWith</b>.
      *
      * <pre><code>
      * >>> Strings.replaceAll(null, "dog", "***")           == null
      * >>> Strings.replaceAll("", "dog", "***")             == ""
+     * >>> Strings.replaceAll("d", "", ",")                 == "d"
      * >>> Strings.replaceAll("dogCATdogCAT", "dog", "***") == "***CAT***CAT"
      * >>> Strings.replaceAll("dogCATdog", "dog", null)     == "nullCATnull"
      * >>> Strings.replaceAll("dogCATdogCAT", null, "cat")  == "dogCATdogCAT"
-     * >>> Strings.replaceAll("dogCATdogCAT", null, "cat")  == "dogCATdogCAT"
-     * >>> Strings.replaceAll("d", "", ",")                 == "d"
      * >>> Strings.replaceAll("dogCATdogCAT", "", ",")      == "d,o,g,C,A,T,d,o,g,C,A,T"
      * >>> Strings.replaceAll("はいはい", "は", "い")          == "いいいい"
      * </code></pre>
@@ -2228,22 +2369,20 @@ class Strings {
             return searchIn;
 
         if (replaceWith == null) replaceWith = "null";
-        
+
         return StringTools.replace(searchIn, searchFor, replaceWith);
     }
-    
+
     /**
      * Replaces the first occurrence of <b>searchFor</b> in <b>searchIn</b> by <b>replaceWith</b>.
      *
      * <pre><code>
      * >>> Strings.replaceFirst(null, "dog", "***")           == null
      * >>> Strings.replaceFirst("", "dog", "***")             == ""
-     * >>> Strings.replaceFirst("a", "", ",")                 == "a"
+     * >>> Strings.replaceFirst("d", "", ",")                 == "d"
      * >>> Strings.replaceFirst("dogCATdogCAT", "dog", "***") == "***CATdogCAT"
      * >>> Strings.replaceFirst("dogCATdogCAT", "dog", null)  == "nullCATdogCAT"
      * >>> Strings.replaceFirst("dogCATdogCAT", null, "cat")  == "dogCATdogCAT"
-     * >>> Strings.replaceFirst("dogCATdogCAT", null, "cat")  == "dogCATdogCAT"
-     * >>> Strings.replaceFirst("d", "", ",")                 == "d"
      * >>> Strings.replaceFirst("dogCATdogCAT", "", ",")      == "d,ogCATdogCAT"
      * >>> Strings.replaceFirst("はいはい", "は", "い")          == "いいはい"
      * </code></pre>
@@ -2256,13 +2395,13 @@ class Strings {
 
         var foundAt;
         if (searchFor.length == 0)
-            if(searchIn.length8() > 1)
+            if (searchIn.length8() > 1)
                 foundAt = 1;
             else
                 return searchIn
         else
             foundAt = searchIn.indexOf8(searchFor);
-            
+
         return searchIn.substr8(0, foundAt) + replaceWith + searchIn.substr8(foundAt + searchFor.length8());
     }
 
@@ -2272,12 +2411,10 @@ class Strings {
      * <pre><code>
      * >>> Strings.replaceFirstIgnoreCase(null, "dog", "***")           == null
      * >>> Strings.replaceFirstIgnoreCase("", "dog", "***")             == ""
-     * >>> Strings.replaceFirstIgnoreCase("a", "", ",")                 == "a"
+     * >>> Strings.replaceFirstIgnoreCase("d", "", ",")                 == "d"
      * >>> Strings.replaceFirstIgnoreCase("dogCATdogCAT", "DOG", "***") == "***CATdogCAT"
      * >>> Strings.replaceFirstIgnoreCase("dogCATdogCAT", "DOG", null)  == "nullCATdogCAT"
      * >>> Strings.replaceFirstIgnoreCase("dogCATdogCAT", null, "cat")  == "dogCATdogCAT"
-     * >>> Strings.replaceFirstIgnoreCase("dogCATdogCAT", null, "cat")  == "dogCATdogCAT"
-     * >>> Strings.replaceFirstIgnoreCase("d", "", ",")                 == "d"
      * >>> Strings.replaceFirstIgnoreCase("dogCATdogCAT", "", ",")      == "d,ogCATdogCAT"
      * >>> Strings.replaceFirstIgnoreCase("はいはい", "は", "い")          == "いいはい"
      * </code></pre>
@@ -2289,19 +2426,19 @@ class Strings {
         if (replaceWith == null) replaceWith = "null";
 
         searchFor = searchFor.toLowerCase();
-        
+
         var foundAt;
         if (searchFor.length == 0)
-            if(searchIn.length8() > 1)
+            if (searchIn.length8() > 1)
                 foundAt = 1;
             else
                 return searchIn
         else
             foundAt = searchIn.toLowerCase().indexOf8(searchFor);
-            
+
         return searchIn.substr8(0, foundAt) + replaceWith + searchIn.substr8(foundAt + searchFor.length8());
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.reverse(null) == null
@@ -2319,7 +2456,7 @@ class Strings {
         chars.reverse();
         return chars.join("");
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.right(null, 1)    == null
@@ -2330,19 +2467,19 @@ class Strings {
      * >>> Strings.right("abc", 4)   == "abc"
      * >>> Strings.right("abc", -1)  == ""
      * </code></pre>
-     * 
+     *
      * @return the rightmost <b>len</b> characters of the given string
      */
     public static function right(str:String, len:Int) {
-        if (str.isEmpty()) 
+        if (str.isEmpty())
             return str;
-            
+
         return str.substring8(str.length8() - len);
     }
-    
+
     /**
      * Right pads <b>str</b> with <b>padStr</b> until <b>targetLength</b> is reached.
-     * 
+     *
      * <pre><code>
      * >>> Strings.rpad(null, 5, null)        == null
      * >>> Strings.rpad(null, 5, "")          == null
@@ -2356,8 +2493,8 @@ class Strings {
      * >>> Strings.rpad("は", 3, " ")          == "は  "
      * >>> Strings.rpad("は", 3, "い")         == "はいい"
      * </code></pre>
-     * 
-     * @param canOverflow if <code>true</code>, the resulting string's length may exceed <b>targetLength</b> in case <b>padStr</b> contains more than one character.
+     *
+     * @param canOverflow if `true`, the resulting string's length may exceed <b>targetLength</b> in case <b>padStr</b> contains more than one character.
      */
     public static function rpad(str:String, targetLength:Int, padStr:String = " ", canOverflow:Bool = true):String {
         var strLen = str.length8();
@@ -2382,7 +2519,7 @@ class Strings {
 
     /**
      * String#split() variant with cross-platform UTF-8 support and consistent behavior.
-     * 
+     *
      * <pre><code>
      * >>> Strings.split8(null, null)          == null
      * >>> Strings.split8(null, "")            == null
@@ -2400,7 +2537,7 @@ class Strings {
      * >>> Strings.split8(".a.b.c.", ".", -1)  == [ "", "a", "b", "c", "" ]
      * >>> Strings.split8("はい", "")           == [ "は", "い" ]
      * </code></pre>
-     * 
+     *
      * @param separator one or multiple separators to use for splitting
      * @param maxParts the split limit, the maximum number of elements in the resulting array
      */
@@ -2409,31 +2546,31 @@ class Strings {
             return null;
 
         var strLen = str.length8();
-        
+
         if (strLen == 0)
             return [];
 
         var separators = separator.filter(function(s) return s != null);
-        if (separators.length == 0) 
+        if (separators.length == 0)
             return null;
 
         #if (flash || java || cs || python)
-            if(maxParts <= 0 && separators.length == 1)
+            if (maxParts <= 0 && separators.length == 1)
                 return str.split(separators[0]);
         #end
 
         if (separators.indexOf("") > -1) {
-            if(maxParts <= 0)
+            if (maxParts <= 0)
                 return [ for (i in 0...strLen) Utf8.sub(str, i, 1) ];
-            
-            if (maxParts > strLen) 
+
+            if (maxParts > strLen)
                 maxParts = strLen;
             maxParts--;
             var result = [ for (i in 0...maxParts) Utf8.sub(str, i, 1) ];
             result.push(Utf8.sub(str, maxParts, strLen - maxParts));
             return result;
         }
-        
+
         var separatorsLengths = [ for (sep in separators) sep.length8() ];
         var lastFoundAt = 0;
         var result = [];
@@ -2443,8 +2580,8 @@ class Strings {
             var foundAt = POS_NOT_FOUND;
             for (i in 0...separators.length) {
                 var sepFoundAt = str.indexOf8(separators[i], lastFoundAt);
-                if(sepFoundAt != POS_NOT_FOUND) {
-                    if (foundAt == POS_NOT_FOUND || sepFoundAt < foundAt) {                        
+                if (sepFoundAt != POS_NOT_FOUND) {
+                    if (foundAt == POS_NOT_FOUND || sepFoundAt < foundAt) {
                         foundAt = sepFoundAt;
                         separatorLen = separatorsLengths[i];
                     }
@@ -2460,7 +2597,7 @@ class Strings {
         }
         return result;
     }
-    
+
     /**
      * >>> Strings.splitAt(null, null)  == null
      * >>> Strings.splitAt(null, 0)     == null
@@ -2480,7 +2617,7 @@ class Strings {
     public static function splitAt(str:String, splitPos:OneOrMany<CharPos>):Array<String> {
         if (str == null)
             return null;
-            
+
         if (splitPos == null || splitPos.length == 0)
             return [str];
 
@@ -2499,11 +2636,11 @@ class Strings {
                 continue;
             pos.push(p);
         }
-        
+
         pos.sort(function(a, b) return a < b ? -1 : a > b ? 1 : 0);
-        
+
         var result = new Array<String>();
-        
+
         var lastPos = 0;
         for (p in pos) {
             var chunk = str.substring8(lastPos, p);
@@ -2512,11 +2649,11 @@ class Strings {
             lastPos = p;
         }
         var chunk = str.substring8(lastPos);
-            if (chunk.isNotEmpty())
-                result.push(chunk);
+        if (chunk.isNotEmpty())
+            result.push(chunk);
         return result;
     }
-    
+
     /**
      * >>> Strings.splitEvery(null,   1) == null
      * >>> Strings.splitEvery("",     1) == [ "" ]
@@ -2526,20 +2663,20 @@ class Strings {
      * >>> Strings.splitEvery("dog",  4) == [ "dog" ]
      * >>> Strings.splitEvery("dog",  0) throws "[count] must be greater than 0"
      * >>> Strings.splitEvery("dog", -1) throws "[count] must be greater than 0"
-     * 
+     *
      * @throws if length < 1
      */
     public static function splitEvery(str:String, count:Int):Array<String> {
         if (str == null)
             return null;
-            
+
         if (count < 1)
             throw "[count] must be greater than 0";
 
         var strLen = str.length8();
         if (strLen == 0 || count >= strLen)
             return [str];
-        
+
         var result = new Array<String>();
         var pos = 0;
         while (true) {
@@ -2554,7 +2691,7 @@ class Strings {
 
     /**
      * Splits all lines.
-     * 
+     *
      * <pre><code>
      * >>> Strings.splitLines(null)             == []
      * >>> Strings.splitLines("")               == []
@@ -2584,13 +2721,13 @@ class Strings {
     public static function startsWith(searchIn:String, searchFor:String):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
-        if (searchFor.isEmpty()) 
+
+        if (searchFor.isEmpty())
             return true;
-            
+
         return StringTools.startsWith(searchIn, searchFor);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.startsWithAny(null, ["cat"])            == false
@@ -2608,14 +2745,14 @@ class Strings {
     public static function startsWithAny(searchIn:String, searchFor:Array<String>):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
-        for (candidate in searchFor) {            
+
+        for (candidate in searchFor) {
             if (candidate != null && StringTools.startsWith(searchIn, candidate))
                 return true;
         }
         return false;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.startsWithAnyIgnoreCase(null, ["cat"])            == false
@@ -2630,18 +2767,19 @@ class Strings {
      * >>> Strings.startsWithAnyIgnoreCase("はい", ["い"])            == false
      * </code></pre>
      */
-    public static function startsWithAnyIgnoreCase(searchIn:String, searchFor:Array<String>):Bool {
+    public static function startsWithAnyIgnoreCase(searchIn:String, searchFor:Array<String>):Bool
+{
         if (searchIn == null || searchFor == null)
             return false;
-        
+
         searchIn = searchIn.toLowerCase8();
-        for (candidate in searchFor) {            
+        for (candidate in searchFor) {
             if (candidate != null && StringTools.startsWith(searchIn, candidate.toLowerCase8()))
                 return true;
         }
         return false;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.startsWithIgnoreCase(null, "cat")     == false
@@ -2655,10 +2793,10 @@ class Strings {
     public static function startsWithIgnoreCase(searchIn:String, searchFor:String):Bool {
         if (searchIn == null || searchFor == null)
             return false;
-        
-        if (searchFor.isEmpty()) 
+
+        if (searchFor.isEmpty())
             return true;
-            
+
         return StringTools.startsWith(searchIn.toLowerCase(), searchFor.toLowerCase());
     }
 
@@ -2680,25 +2818,24 @@ class Strings {
      * >>> Strings.substr8("はいはい", 2)    == "はい"
      * >>> Strings.substr8("はいはい", 1, 2) == "いは"
      * </code></pre>
-     * 
+     *
      * @return <b>len</b> characters of <b>str</b>, starting from <b>startAt</b>.
      */
     public static function substr8(str:String, startAt:CharPos, ?len:Int):String {
         if (str.isEmpty())
             return str;
 
-        if (len == null) {
+        if (len == null)
             len = str.length8();
-        }
-        
+
         if (len <= 0)
             return "";
-        
+
         if (startAt < 0) {
             startAt += str.length8();
             if (startAt < 0) startAt = 0;
         }
-            
+
         #if (flash || java || cs || python)
             return str.substr(startAt, len);
         #elseif php
@@ -2718,7 +2855,7 @@ class Strings {
 
     /**
      * String#substring() variant with cross-platform UTF-8 support.
-     * 
+     *
      * <pre><code>
      * >>> Strings.substring8(null, 0)         == null
      * >>> Strings.substring8("", 0)           == ""
@@ -2739,13 +2876,13 @@ class Strings {
      * >>> Strings.substring8("はいはい", 1, 2)  == "い"
      * >>> Strings.substring8("はいはい", 2)     == "はい"
      * </code></pre>
-     * 
+     *
      * @return the part of <b>str</b> from <b>startAt</b> to but not including <b>endAt</b>.
      */
     public static function substring8(str:String, startAt:CharPos, ?endAt:CharPos):String {
         if (str.isEmpty())
             return str;
-            
+
         if (endAt == null)
             endAt = str.length8();
 
@@ -2762,7 +2899,7 @@ class Strings {
             #if php
                 return untyped __call__("mb_substr", str, startAt, endAt - startAt, 'UTF-8');
             #else
-                return Utf8.sub(str, startAt, endAt - startAt);        
+                return Utf8.sub(str, startAt, endAt - startAt);
             #end
         #end
     }
@@ -2779,20 +2916,20 @@ class Strings {
      * >>> Strings.substringAfter("はいはい", "い")        == "はい"
      * </code></pre>
      */
-    public static function substringAfter(str:String, separator:String):String {
+    public static function substringAfter(str:String, searchFor:String):String {
         if (str.isEmpty())
             return str;
 
-        if (separator.isEmpty()) 
+        if (searchFor.isEmpty())
             return "";
-        
-        var foundAt = str.indexOf(separator);
-        if (foundAt == POS_NOT_FOUND) {
+
+        var foundAt = str.indexOf(searchFor);
+        if (foundAt == POS_NOT_FOUND)
             return "";
-        }
-        return str.substring(foundAt + separator.length);
+
+        return str.substring(foundAt + searchFor.length);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.substringAfterIgnoreCase(null, "dog")           == null
@@ -2805,22 +2942,22 @@ class Strings {
      * >>> Strings.substringAfterIgnoreCase("はいはい", "い")        == "はい"
      * </code></pre>
      */
-    public static function substringAfterIgnoreCase(str:String, separator:String):String {
+    public static function substringAfterIgnoreCase(str:String, searchFor:String):String {
         if (str.isEmpty())
             return str;
-        
-        if (separator.isEmpty()) 
+
+        if (searchFor.isEmpty())
             return "";
-            
-        separator = separator.toLowerCase();
-        
-        var foundAt = str.toLowerCase().indexOf(separator);
-        if (foundAt == POS_NOT_FOUND) {
+
+        searchFor = searchFor.toLowerCase();
+
+        var foundAt = str.toLowerCase().indexOf(searchFor);
+        if (foundAt == POS_NOT_FOUND)
             return "";
-        }
-        return str.substring(foundAt + separator.length);
+
+        return str.substring(foundAt + searchFor.length);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.substringBetween(null, null, null)             == null
@@ -2839,20 +2976,20 @@ class Strings {
     public static function substringBetween(str:String, after:String, ?before:String):String {
         if (str.isEmpty())
             return str;
-            
+
         if (before == null) before = after;
-        
-        if (after.isEmpty() || before.isEmpty()) 
+
+        if (after.isEmpty() || before.isEmpty())
             return "";
-        
+
         var foundAfterAt = str.indexOf(after);
-        if (foundAfterAt == POS_NOT_FOUND) {
+        if (foundAfterAt == POS_NOT_FOUND)
             return "";
-        }
+
         var foundBeforeAt = str.indexOf(before, foundAfterAt + after.length);
-        if (foundBeforeAt == POS_NOT_FOUND) {
+        if (foundBeforeAt == POS_NOT_FOUND)
             return "";
-        }
+
         return str.substring(foundAfterAt + after.length, foundBeforeAt);
     }
 
@@ -2874,27 +3011,27 @@ class Strings {
     public static function substringBetweenIgnoreCase(str:String, after:String, ?before:String):String {
         if (str.isEmpty())
             return str;
-            
+
         if (before == null) before = after;
-        
-        if (after.isEmpty() || before.isEmpty()) 
+
+        if (after.isEmpty() || before.isEmpty())
             return "";
-        
+
         var strLower = str.toLowerCase8();
         after = after.toLowerCase8();
         before = before.toLowerCase8();
-        
+
         var foundAfterAt = strLower.indexOf(after);
-        if (foundAfterAt == POS_NOT_FOUND) {
+        if (foundAfterAt == POS_NOT_FOUND)
             return "";
-        }
+            
         var foundBeforeAt = strLower.indexOf(before, foundAfterAt + after.length);
-        if (foundBeforeAt == POS_NOT_FOUND) {
+        if (foundBeforeAt == POS_NOT_FOUND)
             return "";
-        }
+
         return str.substring(foundAfterAt + after.length, foundBeforeAt);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.substringAfterLast(null, "dog")           == null
@@ -2907,20 +3044,20 @@ class Strings {
      * >>> Strings.substringAfterLast("はいはい", "は")        == "い"
      * </code></pre>
      */
-    public static function substringAfterLast(str:String, separator:String):String {
+    public static function substringAfterLast(str:String, searchFor:String):String {
         if (str.isEmpty())
             return str;
-        
-        if (separator.isEmpty()) 
+
+        if (searchFor.isEmpty())
             return "";
-            
-        var foundAt = str.lastIndexOf(separator);
-        if (foundAt == POS_NOT_FOUND) {
+
+        var foundAt = str.lastIndexOf(searchFor);
+        if (foundAt == POS_NOT_FOUND)
             return "";
-        }
-        return str.substring(foundAt + separator.length);
+
+        return str.substring(foundAt + searchFor.length);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.substringAfterLastIgnoreCase(null, "dog")           == null
@@ -2934,22 +3071,22 @@ class Strings {
      * >>> Strings.substringAfterLastIgnoreCase("はいはい", "は")        == "い"
      * </code></pre>
      */
-    public static function substringAfterLastIgnoreCase(str:String, separator:String):String {
+    public static function substringAfterLastIgnoreCase(str:String, searchFor:String):String {
         if (str.isEmpty())
             return str;
-        
-        if (separator.isEmpty()) 
+
+        if (searchFor.isEmpty())
             return "";
-            
-        separator = separator.toLowerCase();
-            
-        var foundAt = str.toLowerCase().lastIndexOf(separator);
-        if (foundAt == POS_NOT_FOUND) {
+
+        searchFor = searchFor.toLowerCase();
+
+        var foundAt = str.toLowerCase().lastIndexOf(searchFor);
+        if (foundAt == POS_NOT_FOUND)
             return "";
-        }
-        return str.substring(foundAt + separator.length);
+
+        return str.substring(foundAt + searchFor.length);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.substringBefore(null, "dog")           == null
@@ -2962,20 +3099,20 @@ class Strings {
      * >>> Strings.substringBefore("はいはい", "い")        == "は"
      * </code></pre>
      */
-    public static function substringBefore(str:String, separator:String):String {
+    public static function substringBefore(str:String, searchFor:String):String {
         if (str.isEmpty())
             return str;
-        
-        if (separator.isEmpty()) 
+
+        if (searchFor.isEmpty())
             return "";
-            
-        var foundAt = str.indexOf(separator);
-        if (foundAt == POS_NOT_FOUND) {
+
+        var foundAt = str.indexOf(searchFor);
+        if (foundAt == POS_NOT_FOUND)
             return "";
-        }
+
         return str.substring(0, foundAt);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.substringBeforeIgnoreCase(null, "dog")           == null
@@ -2991,23 +3128,24 @@ class Strings {
     public static function substringBeforeIgnoreCase(str:String, separator:String):String {
         if (str.isEmpty())
             return str;
-        
-        if (separator.isEmpty()) 
+
+        if (separator.isEmpty())
             return "";
-            
+
         separator = separator.toLowerCase();
-            
+
         var foundAt = str.toLowerCase().indexOf(separator);
-        if (foundAt == POS_NOT_FOUND) {
+        if (foundAt == POS_NOT_FOUND)
             return "";
-        }
+            
         return str.substring(0, foundAt);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.substringBeforeLast(null, "dog")           == null
      * >>> Strings.substringBeforeLast("", "dog")             == ""
+     * >>> Strings.substringBeforeLast("cat", "dog")          == ""
      * >>> Strings.substringBeforeLast("dogCATdogCAT", "CAT") == "dogCATdog"
      * >>> Strings.substringBeforeLast("dogCATdogCAT", "dog") == "dogCAT"
      * >>> Strings.substringBeforeLast("fo1CATdogCAT", "fo1") == ""
@@ -3019,17 +3157,17 @@ class Strings {
     public static function substringBeforeLast(str:String, separator:String):String {
         if (str.isEmpty())
             return str;
-        
-        if (separator.isEmpty()) 
+
+        if (separator.isEmpty())
             return "";
-            
+
         var foundAt = str.lastIndexOf(separator);
-        if (foundAt == POS_NOT_FOUND) {
+        if (foundAt == POS_NOT_FOUND)
             return "";
-        }
+
         return str.substring(0, foundAt);
     }
-        
+
     /**
      * <pre><code>
      * >>> Strings.substringBeforeLastIgnoreCase(null, "dog")           == null
@@ -3045,19 +3183,19 @@ class Strings {
     public static function substringBeforeLastIgnoreCase(str:String, separator:String):String {
         if (str.isEmpty())
             return str;
-        
-        if (separator.isEmpty()) 
+
+        if (separator.isEmpty())
             return "";
-            
+
         separator = separator.toLowerCase();
-            
+
         var foundAt = str.toLowerCase().lastIndexOf(separator);
-        if (foundAt == POS_NOT_FOUND) {
+        if (foundAt == POS_NOT_FOUND)
             return "";
-        }
+
         return str.substring(0, foundAt);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.toBool(null)    == false
@@ -3069,26 +3207,27 @@ class Strings {
      * >>> Strings.toBool("2")     == true
      * >>> Strings.toBool("dog")   == true
      * </code></pre>
-     * 
+     *
      * @return false if value is null, "", "false" or "0". otherwise returns true.
      */
     inline
     public static function toBool(str:String):Bool {
-        if (str.isEmpty()) return false;
-        
-        return switch(str.toLowerCase()) {
+        if (str.isEmpty()) 
+            return false;
+
+        return switch (str.toLowerCase()) {
             case "false", "0", "no": false;
             default: true;
         }
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.toBytes(null)                 == null
      * >>> Strings.toBytes("abc").getString(1,2) == "bc"
      * >>> Strings.toBytes("はい").getString(3,3) == "い"
      * </code></pre>
-     * 
+     *
      * @return the strings internal byte array
      */
     inline
@@ -3097,15 +3236,15 @@ class Strings {
         // in a name clash when used as static extenion in Java
         if (str == null)
             return null;
-            
+
         return Bytes.ofString(str);
     }
-        
+
     /**
      * Casts the given <code>Int</code> to <code>hx.strings.Char</code>.
-     * 
+     *
      * Static extension for <code>Int</code>.
-     * 
+     *
      * <pre><code>
      * >>> 32.toChar().toString() == " "
      * >>> 32.toChar().isSpace()  == true
@@ -3115,7 +3254,7 @@ class Strings {
     public static function toChar(charCode:Int):Char {
         return Char.of(charCode);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.toChars(null)  == null
@@ -3123,15 +3262,15 @@ class Strings {
      * >>> Strings.toChars("  ")  == [ 32, 32 ]
      * >>> Strings.toChars(" は") == [ 32, 12399 ]
      * </code></pre>
-     * 
+     *
      * @return array containing the codes of all characters
      */
     public static function toChars(str:String):Array<Char> {
         if (str == null)
             return null;
-        
+
         var strLen = str.length8();
-        
+
         if (strLen == 0)
             return [];
 
@@ -3143,19 +3282,19 @@ class Strings {
      * >>> Strings.toPattern(null) == null
      * >>> Strings.toPattern(".*").matcher("foo").matches() == true
      * </code></pre>
-     * 
+     *
      * @return an hx.strings.Pattern object using the given string as regular expression pattern.
      */
     inline
     public static function toPattern(str:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
-        if(str == null)
+        if (str == null)
             return null;
         return Pattern.compile(str, options);
     }
-    
+
     /**
      * @return an EReg object using the given string as regular expression pattern.
-     * 
+     *
      * <pre><code>
      * >>> Strings.toEReg(null) == null
      * >>> Strings.toEReg(".*").match("foo") == true
@@ -3163,11 +3302,11 @@ class Strings {
      */
     inline
     public static function toEReg(str:String, opt:String = ""):EReg {
-        if(str == null)
+        if (str == null)
             return null;
         return new EReg(str, opt);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.toFloat(null)    == null
@@ -3190,30 +3329,35 @@ class Strings {
             return ifUnparseable;
         return result;
     }
-    
+
     /**
      * Static extension for <code>Int</code>.
-     * 
+     *
      * <pre><code>
-     * >>> Strings.toHex(1)       == "1"
-     * >>> Strings.toHex(10)      == "A"
-     * >>> Strings.toHex(100)     == "64"
-     * >>> Strings.toHex(100, 4)  == "0064"
-     * >>> Strings.toHex(1000, 2) == "3E8"
-     * >>> Strings.toHex(-1)      == "FFFFFFFF"
-     * >>> Strings.toHex(-10)     == "FFFFFFF6"
-     * >>> Strings.toHex(-10, 10) == "00FFFFFFF6"
+     * >>> Strings.toHex(1)              == "1"
+     * >>> Strings.toHex(10)             == "A"
+     * >>> Strings.toHex(100)            == "64"
+     * >>> Strings.toHex(100, 4)         == "0064"
+     * >>> Strings.toHex(1000, 2)        == "3E8"
+     * >>> Strings.toHex(1000, 2, false) == "3e8"
+     * >>> Strings.toHex(-1)             == "FFFFFFFF"
+     * >>> Strings.toHex(-10)            == "FFFFFFF6"
+     * >>> Strings.toHex(-10, 10)        == "00FFFFFFF6"
      * </code></pre>
-     * 
+     *
      * @param minDigits the resulting string is left padded with <code>0</code> until it length equals <code>minDigits</code>
      * @return the hexadecimal representation of <b>num</b>
      */
-    inline
-    public static function toHex(num:Int, minDigits:Int = 0):String {
-        var hexed = StringTools.hex(num, 0);        
+    public static function toHex(num:Int, minDigits:Int = 0, upperCase:Bool = true):String {
+        var hexed = StringTools.hex(num, 0);
+        if (!upperCase) {
+            return hexed.toLowerCase();
+        }
+        if (hexed.length >= minDigits)
+            return hexed;
         return hexed.lpad(minDigits, "0");
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.toInt(null)    == null
@@ -3236,10 +3380,10 @@ class Strings {
             return ifUnparseable;
         return result;
     }
-    
+
     /**
      * String#toLowerCase() variant with cross-platform UTF-8 support and consistent behavior.
-     * 
+     *
      * <pre><code>
      * >>> Strings.toLowerCase8(null)  == null
      * >>> Strings.toLowerCase8(""  )  == ""
@@ -3266,10 +3410,10 @@ class Strings {
             return sb.toString();
         #end
     }
-    
+
     /**
      * Lowercase the first character of the given string.
-     * 
+     *
      * <pre><code>
      * >>> Strings.toLowerCaseFirstChar(null)  == null
      * >>> Strings.toLowerCaseFirstChar(""  )  == ""
@@ -3284,20 +3428,20 @@ class Strings {
             return str;
 
         var firstChar = str._charCodeAt8Unsafe(0).toLowerCase();
-        
+
         if (str.length == 1)
             return firstChar;
 
         return firstChar + str.substr8(1);
     }
-    
+
     /**
      * Naming convention for variables in e.g. Java.
-     * 
+     *
      * First character lower case, e.g., "stringBuilder".
-     * 
+     *
      * <b>NOTE:</b> Non-ASCII characters are NOT preserved!
-     * 
+     *
      * <pre><code>
      * >>> Strings.toLowerCamel(null)                 == null
      * >>> Strings.toLowerCamel("")                   == ""
@@ -3313,9 +3457,9 @@ class Strings {
     public static function toLowerCamel(str:String, keepUppercasedWords = true) {
         if (str.isEmpty())
             return str;
-        
+
         var sb = new StringBuilder();
-        if(keepUppercasedWords)
+        if (keepUppercasedWords)
             for (word in _splitAsciiWordsUnsafe(str))
                 sb.add(word.toUpperCaseFirstChar());
         else
@@ -3323,14 +3467,14 @@ class Strings {
                 sb.add(word.toLowerCase8().toUpperCaseFirstChar());
         return sb.toString().toLowerCaseFirstChar();
     }
-    
+
     /**
      * Naming convention for e.g. XML tags.
-     * 
+     *
      * Lower case words separated by hyphen, e.g. "string-builder".
-     * 
+     *
      * <b>NOTE:</b> Non-ASCII characters are NOT preserved!
-     * 
+     *
      * <pre><code>
      * >>> Strings.toLowerHyphen(null)          == null
      * >>> Strings.toLowerHyphen("")            == ""
@@ -3348,14 +3492,14 @@ class Strings {
 
         return _splitAsciiWordsUnsafe(str).map(function(s) return s.toLowerCase8()).join("-");
     }
-    
+
     /**
      * Naming convention for variables in e.g. C/C++.
-     * 
+     *
      * Lower case words separated by underscore, e.g. "string_builder".
-     * 
+     *
      * <b>NOTE:</b> Non-ASCII characters are NOT preserved!
-     * 
+     *
      * <pre><code>
      * >>> Strings.toLowerUnderscore(null)          == null
      * >>> Strings.toLowerUnderscore("")            == ""
@@ -3373,12 +3517,12 @@ class Strings {
 
         return _splitAsciiWordsUnsafe(str).map(function(s) return s.toLowerCase8()).join("_");
     }
-    
+
     /**
      * Decamels (=first-char uppercase words separated by space) the given input string.
-     * 
+     *
      * <b>NOTE:</b> Non-ASCII characters are NOT preserved!
-     * 
+     *
      * <pre><code>
      * >>> Strings.toTitle(null)                 == null
      * >>> Strings.toTitle("")                   == ""
@@ -3404,12 +3548,12 @@ class Strings {
             return s.toLowerCase8().toUpperCaseFirstChar();
         }).join(" ");
     }
-    
+
     /**
      * Naming convention for types in e.g. Java.
-     * 
+     *
      * First character upper case, e.g., "StringBuilder".
-     * 
+     *
      * <pre><code>
      * >>> Strings.toUpperCamel(null)                 == null
      * >>> Strings.toUpperCamel("")                   == ""
@@ -3423,22 +3567,22 @@ class Strings {
     public static function toUpperCamel(str:String, keepUppercasedWords = true) {
         if (str.isEmpty())
             return str;
-        
+
         var sb = new StringBuilder();
-        if(keepUppercasedWords)
+        if (keepUppercasedWords)
             for (word in _splitAsciiWordsUnsafe(str))
                 sb.add(word.toUpperCaseFirstChar());
         else
             for (word in _splitAsciiWordsUnsafe(str))
-                sb.add(word.toLowerCase8().toUpperCaseFirstChar());        
+                sb.add(word.toLowerCase8().toUpperCaseFirstChar());
         return sb.toString();
     }
-    
+
     /**
      * Naming convention for constants in e.g. Java.
-     * 
+     *
      * All characters upper case separated by underscore, e.g. "STRING_BUILDER".
-     * 
+     *
      * <pre><code>
      * >>> Strings.toUpperUnderscore(null)          == null
      * >>> Strings.toUpperUnderscore("")            == ""
@@ -3454,7 +3598,7 @@ class Strings {
 
         return _splitAsciiWordsUnsafe(str).map(function(s) return s.toUpperCase8()).join("_");
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.toString(null)  == "null"
@@ -3472,7 +3616,7 @@ class Strings {
 
     /**
      * String#toUpperCase() variant with cross-platform UTF-8 support and consistent behavior.
-     * 
+     *
      * <pre><code>
      * >>> Strings.toUpperCase8(null)  == null
      * >>> Strings.toUpperCase8(""  )  == ""
@@ -3499,10 +3643,10 @@ class Strings {
             return sb.toString();
         #end
     }
-    
+
     /**
      * Uppercase the first character of the given string.
-     * 
+     *
      * <pre><code>
      * >>> Strings.toUpperCaseFirstChar(null)  == null
      * >>> Strings.toUpperCaseFirstChar(""  )  == ""
@@ -3522,10 +3666,10 @@ class Strings {
             return firstChar;
         return firstChar + str.substr8(1);
     }
-        
+
     /**
      * Removes leading and trailing whitespace characters.
-     * 
+     *
      * <pre><code>
      * >>> Strings.trim(null)      == null
      * >>> Strings.trim("")        == ""
@@ -3537,15 +3681,15 @@ class Strings {
      */
     inline
     public static function trim(str:String):String {
-        if (str == null) 
+        if (str == null)
             return str;
 
         return StringTools.trim(str);
     }
-    
+
     /**
      * Removes trailing whitespace characters.
-     * 
+     *
      * <pre><code>
      * >>> Strings.trimRight(null)      == null
      * >>> Strings.trimRight("")        == ""
@@ -3557,15 +3701,15 @@ class Strings {
      */
     inline
     public static function trimRight(str:String):String {
-        if (str == null) 
+        if (str == null)
             return str;
 
         return StringTools.rtrim(str);
     }
-    
+
     /**
      * Removes leading whitespace characters of <b>str</b>.
-     * 
+     *
      * <pre><code>
      * >>> Strings.trimLeft(null)      == null
      * >>> Strings.trimLeft("")        == ""
@@ -3577,15 +3721,15 @@ class Strings {
      */
     inline
     public static function trimLeft(str:String):String {
-        if (str == null) 
+        if (str == null)
             return str;
 
         return StringTools.ltrim(str);
     }
-    
+
     /**
      * Trims all lines and changes new line character to linux style "\n".
-     * 
+     *
      * <pre><code>
      * >>> Strings.trimLines(null)             == null
      * >>> Strings.trimLines("")               == ""
@@ -3614,15 +3758,15 @@ class Strings {
     public static function trimToNull(str:String):String {
         if (str == null)
             return null;
-            
+
         var trimmed = str.trim();
-        
-        if (trimmed.isEmpty()) 
+
+        if (trimmed.isEmpty())
             return null;
-            
+
         return trimmed;
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.trimToEmpty(null)      == ""
@@ -3635,8 +3779,8 @@ class Strings {
     inline
     public static function trimToEmpty(str:String):String {
         var trimmed = str.trim();
-        
-        if (trimmed.isEmpty()) 
+
+        if (trimmed.isEmpty())
             return "";
 
         return trimmed;
@@ -3656,8 +3800,8 @@ class Strings {
     inline
     public static function truncate(str:String, maxLength:Int):String {
         return left(str, maxLength);
-    }  
-    
+    }
+
     /**
      * <pre><code>
      * >>> Strings.urlDecode(null)                                == null
@@ -3668,7 +3812,7 @@ class Strings {
      */
     inline
     public static function urlDecode(str:String):String {
-        if (str.isEmpty()) 
+        if (str.isEmpty())
             return str;
 
         #if php
@@ -3677,7 +3821,7 @@ class Strings {
             return StringTools.urlDecode(str);
         #end
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.urlEncode(null)                    == null
@@ -3688,7 +3832,7 @@ class Strings {
      */
     inline
     public static function urlEncode(str:String):String {
-        if (str.isEmpty()) 
+        if (str.isEmpty())
             return str;
 
         #if php
@@ -3697,8 +3841,7 @@ class Strings {
             return StringTools.urlEncode(str);
         #end
     }
-    
-    
+
     /**
      * <pre><code>
      * >>> Strings.wrap(null,      2)         == null
@@ -3712,9 +3855,9 @@ class Strings {
      * </code></pre>
      */
     public static function wrap(str:String, maxLineLength:Int, splitLongWords:Bool = true, newLineSeparator = "\n") {
-        if (str.length8() <= maxLineLength || maxLineLength < 1) 
+        if (str.length8() <= maxLineLength || maxLineLength < 1)
             return str;
-        
+
         var sb = new StringBuilder();
         var wordChars:Array<Char> = [];
         var currLineLength = 0;
@@ -3737,7 +3880,8 @@ class Strings {
                 }
                 sb.addChar(ch);
                 currLineLength++;
-            } else {
+            }
+            else {
                 wordChars.push(ch);
             }
         }
@@ -3755,9 +3899,67 @@ class Strings {
     }
 }
 
+/**
+ * Return value of hx.strings.Strings#diff(String, String)
+ */
+class StringDiff {
+    
+    public function new() {
+    }
+    
+    /**
+     * position where the strings start to differ
+     */
+    public var pos:CharPos;
+    
+    /**
+     * diff of the left string
+     */
+    public var left:String;
+    
+    /**
+     * diff of the right string
+     */
+    public var right:String;
+}
+
+/**
+ * https://defuse.ca/checksums.htm
+ *
+ * http://www.partow.net/programming/hashfunctions/
+ * http://programmers.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
+ * https://github.com/rurban/smhasher
+ */
+@:dox(hide)
+enum HashCodeAlgorithm {
+
+    PLATFORM_SPECIFIC;
+
+    ADLER32;
+
+    /**
+     * http://stackoverflow.com/questions/10953958/can-crc32-be-used-as-a-hash-function
+     */
+    CRC32B;
+
+    /**
+     * http://www.cse.yorku.ca/~oz/hash.html
+     */
+    DJB2A;
+
+    /**
+     * Java String#hashCode()
+     */
+    JAVA;
+
+    /**
+     * http://www.cse.yorku.ca/~oz/hash.html
+     */
+    SDBM;
+}
+
 @:dox(hide)
 class ANSIState {
-
     public var bgcolor:String;
     public var blink:Bool;
     public var bold:Bool;
@@ -3765,7 +3967,7 @@ class ANSIState {
     public var underline:Bool;
 
     public function new(?copyFrom:ANSIState) {
-        if(copyFrom == null)
+        if (copyFrom == null)
             reset();
         else
             this.copyFrom(copyFrom);
@@ -3782,7 +3984,7 @@ class ANSIState {
         underline = false;
         blink = false;
     }
-    
+
     public function copyFrom(other:ANSIState) {
         fgcolor = other.fgcolor;
         bgcolor = other.bgcolor;
@@ -3833,5 +4035,4 @@ class ANSIState {
         }
         return "";
     }
-
 }

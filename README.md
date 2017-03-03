@@ -2,11 +2,13 @@
 
 1. [What is it?](#what-is-it)
 1. [The `Strings` utility class](#strings-class)
+1. [The `String8` type](#string8-type)
 1. [The spell checker](#spell-checker)
 1. [The string collection classes](#string-collections)
 1. [The `Paths` utility class](#paths-class)
 1. [The `StringBuilder` class](#stringbuilder-class)
 1. [The `Ansi` class](#ansi-class)
+1. [Random string generation](#random-strings)
 1. [Semantic version parsing with the `Version` type](#version-type)
 1. [Installation](#installation)
 1. [Using the latest code](#latest)
@@ -16,7 +18,7 @@
 ## <a name="what-is-it"></a>What is it?
 
 A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cross-platform UTF-8 string manipulation. 
-It has been extensively unit tested (over 1,500 individual test cases) on the targets C++, C#, Flash, HashLink, Neko, Java, JavaScript, PHP, and Python.
+It has been extensively unit tested (over 1,600 individual test cases) on the targets C++, C#, Flash, HashLink, Neko, Java, JavaScript, PHP, and Python.
 
 The classes are under the package `hx.strings`.
 
@@ -34,7 +36,7 @@ provided by Haxe's [String](http://api.haxe.org/String.html) class, offering UTF
 
 The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class can also be used as a [static extension](http://haxe.org/manual/lf-static-extension.html).
 
-    
+
 ### <a name="strings-examples"></a>Some examples
 
 ```haxe
@@ -102,6 +104,29 @@ class Test {
 }
 ```
 
+## <a name="string8-type"></a>The `String8` type
+
+The `hx.strings.String8` is an abstract type based on `String`. All exposed methods are UTF-8 compatible and have consistent behavior across platforms.
+
+It can be used as a drop-in replacement for type String.
+
+Example usage:
+```haxe
+class Test {
+    static function main() {
+        
+       var str:String = "はいはい";  // create a string with UTF8 chars
+       str.length;  // will return different values depending on the default UTF8 support of the target platform
+     
+       var str8:String8 = str; // we assign the string to a variable of type String8 - because of the nature of Haxe`s abstract types this will not result in the creation of a new object instance
+       str8.length;  // will return the correct character length on all platforms
+       
+       str8.ellipsizeLeft(2); // the String8 type automatically has all utility string functions provided by the Strings class.
+}
+```
+
+The type declaration in the Strings8.hx file is nearly empty because all methods are auto generated based on the static methods provided by the `hx.strings.Strings` class.
+
 ## <a name="spell-checker"></a>The spell checker
 
 The package [hx.strings.spelling](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/spelling) contains an extensible spell checker implementation that is based on ideas outlined by Peter Norvig in his article [How to write a Spell Checker](http://www.norvig.com/spell-correct.html).
@@ -116,7 +141,6 @@ import hx.strings.spelling.dictionary.*;
 import hx.strings.spelling.trainer.*;
 
 class Test {
-
     static function main() {
         /* 
          * first we use the English spell checker with a pre-trained dictionary 
@@ -192,8 +216,8 @@ In contrast to functions provided by `haxe.io.Path`, there are no situations whe
 import hx.strings.Paths;
 
 class Test {
-
     static function main() {
+        
         Paths.addDirectorySeparator("/dir");      // returns "/dir/"
         Paths.addDirectorySeparator("C:\\dir");   // returns "C:\dir\"
         Paths.addDirectorySeparator("C:");        // returns "C:\"
@@ -248,8 +272,8 @@ It provides an fluent API, cross-platform UTF-8 support and the ability to prepe
 import hx.strings.StringBuilder;
 
 class Test {
-
     static function main() {
+        
         // create a new instance with initial content
         var sb = new StringBuilder("def");
         
@@ -279,7 +303,6 @@ The [hx.strings.ansi.Ansi](https://github.com/vegardit/haxe-strings/blob/master/
 import hx.strings.ansi.Ansi;
 
 class Test {
-
     static function main() {
         var stdout = Sys.stdout();
         
@@ -303,6 +326,29 @@ class Test {
 }
 ```
 
+## [Random string generation](#random-strings)
+
+The `hx.strings.RandomStrings` class contains methods to generate different types of random strings, 
+e.g. UUIDs or alpha-numeric sequences.
+
+```haxe
+import hx.strings.RandomStrings;
+using hx.strings.Strings;
+
+class Test {
+    static function main() {
+        
+        RandomStrings.randomUUIDv4(); // generates a UUID according to RFC 4122 UUID Version 4, e.g. "f3cdf7a7-a179-464b-ae98-83f6659ae33f"
+        
+        RandomStrings.randomDigits(4); // generates a 4-char numeric strings, e.g. "4832"
+        
+        RandomStrings.randomAsciiAlphaNumeric(8); // generates a 8-char ascii alph numeric strings, e.g. "aZvDF34L"
+        
+        RandomStrings.randomSubstring("abcdefghijlkmn", 4); // returns a random 4-char substring of the given string, e.g. "defg"
+    }
+}
+````
+
 ## <a name="version-type"></a>Semantic version parsing with the `Version` type
 
 The [hx.strings.Version](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Version.hx) type provides functionalities for parsing of and working with version strings following the [SemVer 2.0 Specification](https://semver.org).
@@ -311,6 +357,7 @@ The [hx.strings.Version](https://github.com/vegardit/haxe-strings/blob/master/sr
 import hx.strings.Version;
 
 class Test {
+    static function main() {
         
         var ver:Version;
 

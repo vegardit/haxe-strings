@@ -88,7 +88,7 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
      */
     inline
     public function sortAscending():Void {
-        haxe.ds.ArraySort.sort(this, Strings.compare);
+        this.sort(Strings.compare);
     }
     
     /**
@@ -98,6 +98,6 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
      */
     inline
     public function sortDescending():Void {
-        haxe.ds.ArraySort.sort(this, function(s1:String, s2:String) return -1 * Strings.compare(s1, s2));
+        this.sort(function(s1:String, s2:String) return -1 * Strings.compare(s1, s2));
     }
 }
