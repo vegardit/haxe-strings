@@ -157,11 +157,14 @@ class RandomStrings {
      * 
      * <pre><code>
      * >>> RandomStrings.randomUUIDv4().length == 36
-     * >>> Strings.containsOnly(RandomStrings.randomUUIDv4(), "01234567890abcdef-") == true
+     * >>> Strings.containsOnly(RandomStrings.randomUUIDv4(),    "01234567890abcdef-") == true
+     * >>> Strings.containsOnly(RandomStrings.randomUUIDv4(":"), "01234567890abcdef:") == true
      * >>> ~/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[ab89][a-f0-9]{3}-[a-f0-9]{12}/.match(RandomStrings.randomUUIDv4()) == true
      * </code></pre>
+     * 
+     * @param separator string to separate the UUID parts, default is a dash -
      */
-	public static function randomUUIDv4():String {
+	public static function randomUUIDv4(separator:String = "-"):String {
         // set variant bits (i.e. 10xx) according to RFC4122 4.1.1. Variant: http://www.ietf.org/rfc/rfc4122.txt
         var variantByte = Math.floor(Math.random() * 16);
         variantByte = Bits.setBit(variantByte, 4); // set the 4th bit to 1
@@ -171,21 +174,21 @@ class RandomStrings {
             StringTools.hex(Math.floor(Math.random() * 65536), 4) + //
             StringTools.hex(Math.floor(Math.random() * 65536), 4) + //
             
-            "-" + //
+            separator + //
 
             StringTools.hex(Math.floor(Math.random() * 65536), 4) + //
             
-            "-" + //
+            separator + //
             
             "4" + // Version 4 indicator
             StringTools.hex(Math.floor(Math.random() * 4096), 3) + //
             
-            "-" + //
+            separator + //
 
             StringTools.hex(variantByte) + //
             StringTools.hex(Math.floor(Math.random() * 4096), 3) + //
             
-            "-" + //
+            separator + //
 
             StringTools.hex(Math.floor(Math.random() * 65536), 4) + //
             StringTools.hex(Math.floor(Math.random() * 65536), 4) + //

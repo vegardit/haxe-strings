@@ -9,6 +9,6 @@
         "vegardit"
     ],
     "releasenote": "added String8, RandomStrings, StringMaps, StringTreeMap#clone()/#setAll(), Strings#compact()/#randomSubstring()/#containsOnly()/#remove...()",
-    "version": "2.5.0",
+    "version": "2.5.1-SNAPSHOT",
     "dependencies": { }
 }

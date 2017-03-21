@@ -20,7 +20,7 @@ import hx.strings.internal.Either3;
 using hx.strings.Strings;
 
 /**
- * Thread safe API for regex pattern matching backed by Haxe's EReg class.
+ * Thread-safe API for regex pattern matching backed by Haxe's EReg class.
  * 
  * UTF8 matching (EReg's 'u' flag) is enabled by default.
  * 
@@ -179,14 +179,25 @@ interface Matcher {
     public function matchesInRegion(pos:Int, len:Int=-1):Bool;
     
     /**
+     * Resets the matcher with the given input string
+     * 
+     * <pre><code>
+     * >>> Pattern.compile("b").matcher("abcb").reset("abCB").substringAfterMatch()  == "CB"
+     * </code></pre>
+     * 
+     * @return self reference
+     */
+    public function reset(str:String):Matcher;
+    
+    /**
      * If no match attempt was made before Matcher#matches() will be excuted implicitly.
      * 
      * @return the substring after the current match or "" if no match was found
      *
      * <pre><code>
-     * >>> Pattern.compile("b"     ).matcher("abab").substringAfterMatch() == "ab"
-     * >>> Pattern.compile("b", "g").matcher("abab").substringAfterMatch() == "ab"
-     * >>> Pattern.compile("c", "g").matcher("abab").substringAfterMatch() == ""
+     * >>> Pattern.compile("b"     ).matcher("abcb").substringAfterMatch() == "cb"
+     * >>> Pattern.compile("b", "g").matcher("abcb").substringAfterMatch() == "cb"
+     * >>> Pattern.compile("d", "g").matcher("abcb").substringAfterMatch() == ""
      * </code></pre>
      */
     public function substringAfterMatch():String;
@@ -197,9 +208,9 @@ interface Matcher {
      * @return the substring before the current match or "" if no match was found
      *
      * <pre><code>
-     * >>> Pattern.compile("b"     ).matcher("abab").substringBeforeMatch() == "a"
-     * >>> Pattern.compile("b", "g").matcher("abab").substringBeforeMatch() == "a"
-     * >>> Pattern.compile("c", "g").matcher("abab").substringBeforeMatch() == ""
+     * >>> Pattern.compile("b"     ).matcher("abcb").substringBeforeMatch() == "a"
+     * >>> Pattern.compile("b", "g").matcher("abcb").substringBeforeMatch() == "a"
+     * >>> Pattern.compile("d", "g").matcher("abcb").substringBeforeMatch() == ""
      * </code></pre>
      */
     public function substringBeforeMatch():String;
@@ -237,19 +248,20 @@ abstract MatchingOption(String) {
 }
 
 private class MatcherImpl implements Matcher {
-    
-    var pattern:String;
-    var options:String;
     var isMatch:Null<Bool>;
     var ereg:EReg;
-    
     var str:String;
     
     public function new(ereg:EReg, pattern:String, options:String, str:String) {
-        this.pattern = pattern;
-        this.options = options;
         this.ereg = _cloneEReg(ereg, pattern, options);
+        reset(str);
+    }
+
+    inline
+    public function reset(str:String):Matcher {
         this.str = str;
+        this.isMatch = null;
+        return this;
     }
     
     public function iterate(onMatch:Matcher -> Void):Void {
@@ -297,7 +309,6 @@ private class MatcherImpl implements Matcher {
     public function matchedPos(): { pos:Int, len:Int } {
         if(isMatch == null) matches();
         if(!isMatch) throw "No string matched";
-
         return ereg.matchedPos();
     }
     
@@ -313,7 +324,7 @@ private class MatcherImpl implements Matcher {
         return ereg.matchedLeft();
     }
 
-    static function _cloneEReg(from:EReg, pattern:String, options:String) {
+    function _cloneEReg(from:EReg, pattern:String, options:String) {
 
         // partially copy internal state (if possible) to reuse the inner pre-compiled pattern instance
         // and avoid expensive reparsing of the pattern string

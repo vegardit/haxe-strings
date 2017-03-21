@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
+## [2.5.1] - 2017-03-??
+
+### Added
+- parameter hx.strings.RandomStrings#randomUUIDv4(separator)
+- method hx.strings.Pattern.Matcher#reset(str)
+
 ## [2.5.0] - 2017-03-03
 
 ### Added
