@@ -266,7 +266,7 @@ class Test {
 ## <a name="stringbuilder-class"></a>The `StringBuilder` class
 
 The [hx.strings.StringBuilder](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/StringBuilder.hx) class is an alternative to the built-in [StringBuf](http://api.haxe.org/StringBuf.html).
-It provides an fluent API, cross-platform UTF-8 support and the ability to prepend Strings.
+It provides an fluent API, cross-platform UTF-8 support and the ability to insert Strings at arbitrary positions.
 
 ```haxe
 import hx.strings.StringBuilder;
@@ -277,8 +277,8 @@ class Test {
         // create a new instance with initial content
         var sb = new StringBuilder("def");
         
-        // prepend / add some strings via fluent API calls
-        sb.prepend("abc")
+        // insert / add some strings via fluent API calls
+        sb.insert(0, "abc")
           .newLine()        // appends "\n"
           .add("ghi")
           .addChar(106);
