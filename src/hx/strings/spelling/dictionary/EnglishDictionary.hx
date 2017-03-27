@@ -28,13 +28,12 @@ import hx.strings.internal.Macros;
  */
 class EnglishDictionary extends InMemoryDictionary {
 
-    public static var INSTANCE(default, never) = {
-        Macros.addResource("hx/strings/spelling/dictionary/EnglishDictionary.txt", "EnglishDictionary");
-        new EnglishDictionary();
-    }
+    public static var INSTANCE(default, never) = new EnglishDictionary();
 
     public function new() {
         super();
+        
+        Macros.addResource("hx/strings/spelling/dictionary/EnglishDictionary.txt", "EnglishDictionary");
         
         // not using loadWordsFromResource for full DCE support
         loadWordsFromInput(new BytesInput(Resource.getBytes("EnglishDictionary")));

@@ -15,26 +15,15 @@
  */
 package hx.strings;
 
-import haxe.Utf8;
 import hx.strings.internal.AnyAsString;
 
 using hx.strings.Strings;
 
 /**
  * An UTF-8 and fluent API supporting alternative to <code>StringBuf</code>
- * 
- * <pre><code>
- * >>> new StringBuilder().toString()                       == ""
- * >>> new StringBuilder("").toString()                     == ""
- * >>> new StringBuilder(null).toString()                   == ""
- * >>> new StringBuilder("hi").toString()                   == "hi"
- * >>> new StringBuilder("hi").prepend(1).toString()        == "1hi"
- * >>> new StringBuilder("hi").prepend(1).toString()        == "1hi"
- * >>> new StringBuilder("hi").prependAll([1,2]).toString() == "12hi"
- * >>> new StringBuilder("").addChar(223).toString()        == "ß"
- * >>> new StringBuilder("hi").addChar(12399).toString()    == "hiは"
- * >>> new StringBuilder("hi").prependChar(32).toString()   == " hi"
- * </code></pre>
+ * with additional functions such as <code>clear()</code>, <code>insert()</code>, <code>isEmpty()</code>
+ * <br/>
+ * This implementation tries to avoid the creation of intermediate String objects as much as possible.
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
@@ -42,7 +31,7 @@ class StringBuilder {
 
     var sb = new StringBuf();
     
-    #if !java
+    #if !(java || cs)
     var pre:Array<String> = null;
     var len:Int = 0;
     #end
@@ -58,8 +47,9 @@ class StringBuilder {
      * on platforms except Java.
      * 
      * <pre><code>
-     * >>> new StringBuilder("").length                         == 0
-     * >>> new StringBuilder("はい").add("は").add("い").length   == 4
+     * >>> new StringBuilder("").length                       == 0
+     * >>> new StringBuilder("はい").add("は").add("い").length == 4
+     * >>> new StringBuilder("ab").insert(0, "cd").insert(2, "はい").insertChar(1, 32).insertChar(4, 32).length == 8
      * </code></pre>
      * 
      * @return the length of the string representation of all added items
@@ -68,7 +58,7 @@ class StringBuilder {
 
     inline
     function get_length():Int {
-        #if java
+        #if (java || cs)
             return sb.length;
         #else
             return len;
@@ -87,13 +77,18 @@ class StringBuilder {
     inline
     public function add(item:AnyAsString):StringBuilder {
         sb.add(item);
-        #if !java
-        len += item.length8();
+        #if !(java || cs)
+            len += item.length8();
         #end
         return this;
     }
     
     /**
+     * <pre><code>
+     * >>> new StringBuilder("").addChar(223).toString()     == "ß"
+     * >>> new StringBuilder("hi").addChar(12399).toString() == "hiは"
+     * </code></pre>
+     * 
      * @return <code>this</code> for chained operations
      */
     #if java inline #end
@@ -103,31 +98,29 @@ class StringBuilder {
         #else
             if (ch.isAscii()) {
                 sb.addChar(ch);
-            } else {
-                var ch8 = new Utf8();
-                ch8.addChar(ch);
-                sb.add(ch8.toString());
-            }
+            } 
+            else
+                sb.add(ch.toString());
         #end
         
-        #if !java
-        len++;
+        #if !(java || cs)
+            len++;
         #end
         return this;
     }
 
     /**
      * <pre><code>
-     * >>> new StringBuilder("hi").addAll([1,2]).toString()     == "hi12"
-     * >>> new StringBuilder("hi").addAll([1,2]).length         == 4
+     * >>> new StringBuilder("hi").addAll([1,2]).toString() == "hi12"
+     * >>> new StringBuilder("hi").addAll([1,2]).length     == 4
      * </code></pre>
      * @return <code>this</code> for chained operations
      */
     public function addAll(items:Array<AnyAsString>):StringBuilder {
         for (item in items) {
             sb.add(item);    
-            #if !java
-            len += item.length8();
+            #if !(java || cs)
+                len += item.length8();
             #end
         }
         return this;
@@ -137,7 +130,7 @@ class StringBuilder {
      * Resets the builders internal buffer
      * 
      * <pre><code>
-     * >>> new StringBuilder("hi").clear().add(1).toString()    == "1"
+     * >>> new StringBuilder("hi").clear().add(1).toString() == "1"
      * </code></pre>
      * 
      * @return <code>this</code> for chained operations
@@ -145,6 +138,8 @@ class StringBuilder {
     public function clear():StringBuilder {
         #if java
             untyped __java__("this.sb.b.setLength(0)");
+        #elseif cs
+            untyped __cs__("this.sb.b.Clear()");
         #else
             pre = null;
             sb = new StringBuf();
@@ -175,67 +170,265 @@ class StringBuilder {
     public function newLine():StringBuilder {
         sb.add(Strings.NEW_LINE_NIX);
         
-        #if !java
-        len ++;
+        #if !(java || cs)
+            len ++;
         #end
         return this;
     }
     
     /**
+     * <pre><code>
+     * >>> new StringBuilder("hi").insert(0, "はい").toString() == "はいhi"
+     * >>> new StringBuilder("hi").insert(1, "はい").toString() == "hはいi"
+     * >>> new StringBuilder("hi").insert(2, "はい").toString() == "hiはい"
+     * >>> new StringBuilder("hi").insert(0, "はい").insert(1, "はい").toString() == "ははいいhi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insert(1, "はい").toString() == "hはいohi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insert(1, "はい").toString() == "hはいohi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insert(2, "はい").toString() == "hoはいhi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insert(3, "はい").toString() == "hohはいi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insert(4, "はい").toString() == "hohiはい"
+     * >>> new StringBuilder("hi").insert(3, " ").toString() throws "[pos] must not be greater than this.length"
+     * </code></pre>
+     * 
      * @return <code>this</code> for chained operations
+     * @throws if pos is out-of range (i.e. < 0 or > this.length)
      */
-    public function prepend(item:AnyAsString):StringBuilder {
+    public function insert(pos:CharPos, item:AnyAsString):StringBuilder {
+        if (pos < 0) throw "[pos] must not be negative";
+        if (pos > this.length) throw "[pos] must not be greater than this.length";
+        
+        if (pos == this.length) {
+            add(item);
+            return this;
+        }
+        
         #if java
-            untyped __java__("this.sb.b.insert(0, item)");
+            untyped __java__("this.sb.b.insert(pos, item)");
+        #elseif cs
+            untyped __cs__("this.sb.b.Insert(pos, item)");
         #else
-            if (pre == null) pre = [];
-            pre.unshift(item);
+            if (pos == 0) {
+                if (pre == null) pre = [];
+                pre.unshift(item);
+                len += item.length8();
+                return this;
+            }
+            
+            // insert the item into the pre[] array if required
+            var pre_len = 0;
+            if (pre != null) {
+                var i = pre.length;
+                for(i in 0...pre.length) {
+                    var next_pre_len = pre_len + pre[i].length8();
+                    if (next_pre_len == pos) {
+                        pre.insert(i + 1, item);
+                        len += item.length8();
+                        return this;
+                    }
+                    if (next_pre_len > pos) {
+                        var preSplitted = pre[i].splitAt(pos - pre_len);
+                        pre[i] = preSplitted[0];
+                        pre.insert(i + 1, item);
+                        pre.insert(i + 2, preSplitted[1]);
+                        len += item.length8();
+                        return this;
+                    }
+                    pre_len = next_pre_len;
+                }
+            }
+            
+            if (sb.length == 0) {
+                add(item);
+                return this;
+            }
+
+            var sbSplitted = sb.toString().splitAt(pos - pre_len);
+            sb = new StringBuf();
+            sb.add(sbSplitted[0]);
+            sb.add(item);
             len += item.length8();
+            sb.add(sbSplitted[1]);
         #end
         return this;
     }
 
     /**
+     * <pre><code>
+     * >>> new StringBuilder("hi").insertChar(0, Char.of("は")).toString() == "はhi"
+     * >>> new StringBuilder("hi").insertChar(1, Char.of("は")).toString() == "hはi"
+     * >>> new StringBuilder("hi").insertChar(2, Char.of("は")).toString() == "hiは"
+     * >>> new StringBuilder("hi").insertChar(0, Char.of("は")).insertChar(1, 32).toString() == "は hi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insertChar(1, Char.of("は")).toString() == "hはohi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insertChar(1, Char.of("は")).toString() == "hはohi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insertChar(2, Char.of("は")).toString() == "hoはhi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insertChar(3, Char.of("は")).toString() == "hohはi"
+     * >>> new StringBuilder("hi").insert(0, "ho").insertChar(4, Char.of("は")).toString() == "hohiは"
+     * >>> new StringBuilder("hi").insertChar(3, 32).toString() throws "[pos] must not be greater than this.length"
+     * </code></pre>
+     * 
      * @return <code>this</code> for chained operations
+     * @throws if pos is out-of range (i.e. < 0 or > this.length)
      */
-    public function prependChar(ch:Char):StringBuilder {
-        #if java
-            untyped __java__("this.sb.b.insert(0, (char)ch)");
-        #else
-            if (pre == null) pre = [];
-            pre.unshift(ch);
-            len++;
-        #end
-        return this;
-    }
-    
-    /**
-     * @return <code>this</code> for chained operations
-     */
-    public function prependAll(items:Array<AnyAsString>):StringBuilder {
-        #if !java
-            if (pre == null) pre = [];
-        #end
-        var i = items.length;
-        while (i-- > 0) {
-            var item = items[i];
-            #if java
-                untyped __java__("this.sb.b.insert(0, item)");
-            #else
-                pre.unshift(item);
-                len += item.length8();
-            #end
+    public function insertChar(pos:CharPos, ch:Char):StringBuilder {
+        if (pos < 0) throw "[pos] must not be negative";
+        if (pos > this.length) throw "[pos] must not be greater than this.length";
+        
+        if (pos == this.length) {
+            addChar(ch);
+            return this;
         }
         
+        #if java
+            untyped __java__("this.sb.b.insert(pos, (char)ch)");
+        #elseif cs
+            untyped __cs__("this.sb.b.Insert(pos, (System.Char)ch)");
+        #else
+            if (pos == 0) {
+                if (pre == null) pre = [];
+                    pre.unshift(ch);
+                len++;
+                return this;
+            }
+
+            // insert the char into the pre[] array if required
+            var pre_len = 0;
+            if (pre != null) {
+                var i = pre.length;
+                for(i in 0...pre.length) {
+                    var next_pre_len = pre_len + pre[i].length8();
+                    if (next_pre_len == pos) {
+                        pre.insert(i + 1, ch);
+                        len++;
+                        return this;
+                    }
+                    if (next_pre_len > pos) {
+                        var preSplitted = pre[i].splitAt(pos - pre_len);
+                        pre[i] = preSplitted[0];
+                        pre.insert(i + 1, ch);
+                        pre.insert(i + 2, preSplitted[1]);
+                        len++;
+                        return this;
+                    }
+                    pre_len = next_pre_len;
+                }
+            }
+            
+            if (sb.length == 0) {
+                addChar(ch);
+                return this;
+            }
+
+            var sbSplitted = sb.toString().splitAt(pos - pre_len);
+            sb = new StringBuf();
+            sb.add(sbSplitted[0]);
+            addChar(ch);
+            sb.add(sbSplitted[1]);
+        #end
         return this;
     }
     
     /**
+     * <pre><code>
+     * >>> new StringBuilder("hi").insertAll(0, [1,2]).toString() == "12hi"
+     * >>> new StringBuilder("hi").insertAll(1, [1,2]).toString() == "h12i"
+     * >>> new StringBuilder("hi").insertAll(2, [1,2]).toString() == "hi12"
+     * </code></pre>
+     * 
+     * @return <code>this</code> for chained operations
+     */
+    public function insertAll(pos:CharPos, items:Array<AnyAsString>):StringBuilder {
+        if (pos < 0) throw "[pos] must not be negative";
+        if (pos > this.length) throw "[pos] must not be greater than this.length";
+        
+        if (pos == this.length) {
+            addAll(items);
+            return this;
+        }
+
+        #if (java || cs)
+            var i = items.length;
+            while (i-- > 0) {
+                var item = items[i];
+                #if java
+                    untyped __java__("this.sb.b.insert(pos, item)");
+                #else
+                    untyped __cs__("this.sb.b.Insert(pos, item)");
+                #end
+            }
+        #else
+            if (pos == 0) {
+                if (pre == null) pre = [];
+                var i = items.length;
+                while (i-- > 0) {
+                    var item = items[i];
+                    pre.unshift(item);
+                    len += item.length8();
+                }
+                return this;
+            }
+            
+            // insert the items into the pre[] array if required
+            var pre_len = 0;
+            if (pre != null) {
+                var i = pre.length;
+                for(i in 0...pre.length) {
+                    var next_pre_len = pre_len + pre[i].length8();
+                    if (next_pre_len == pos) {
+                        var j = items.length;
+                        while (j-- > 0) {
+                            var item = items[j];
+                            pre.insert(i + 1, item);
+                            len += item.length8();
+                        }
+                        return this;
+                    }
+                    if (next_pre_len > pos) {
+                        var preSplitted = pre[i].splitAt(pos - pre_len);
+                        pre[i] = preSplitted[0];
+                        pre.insert(i + 1, preSplitted[1]);
+                        var j = items.length;
+                        while (j-- > 0) {
+                            var item = items[j];
+                            pre.insert(i + 1, item);
+                            len += item.length8();
+                        }                        
+                        return this;
+                    }
+                    pre_len = next_pre_len;
+                }
+            }
+            
+            if (sb.length == 0) {
+                for(item in items)
+                    add(item);
+                return this;
+            }
+
+            var sbSplitted = sb.toString().splitAt(pos - pre_len);
+            sb = new StringBuf();
+            sb.add(sbSplitted[0]);
+            for (item in items) {
+                sb.add(item);
+                len += item.length8();
+            }
+            sb.add(sbSplitted[1]);
+        #end
+        return this;
+    }
+    
+    /**
+     * <pre><code>
+     * >>> new StringBuilder().toString()     == ""
+     * >>> new StringBuilder("").toString()   == ""
+     * >>> new StringBuilder(null).toString() == ""
+     * >>> new StringBuilder("hi").toString() == "hi"
+     * </code></pre>
+     *
      * @return a new string object representing the builder's content
      */
     #if java inline #end
     public function toString():String {
-        #if java
+        #if (java || cs)
             return sb.toString();
         #else
             if (pre == null)

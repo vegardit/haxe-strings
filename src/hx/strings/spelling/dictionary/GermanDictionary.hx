@@ -33,14 +33,13 @@ import hx.strings.internal.Macros;
  */
 class GermanDictionary extends InMemoryDictionary {
   
-    public static var INSTANCE(default, never) = {
-        Macros.addResource("hx/strings/spelling/dictionary/GermanDictionary.txt", "GermanDictionary");       
-        new GermanDictionary();
-    }
+    public static var INSTANCE(default, never) = new GermanDictionary();
     
     public function new() {
         super();
 
+        Macros.addResource("hx/strings/spelling/dictionary/GermanDictionary.txt", "GermanDictionary");
+        
         // not using loadWordsFromResource for full DCE support
         loadWordsFromInput(new BytesInput(Resource.getBytes("GermanDictionary")));
     }

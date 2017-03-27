@@ -72,6 +72,15 @@ using hx.strings.Strings;
         public static var NEW_LINE(default, never):String = OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
     #end
 
+    inline
+    private static function _getNotFoundDefault(str:String, notFoundDefault:StringNotFoundDefault):String {
+        return switch(notFoundDefault) {
+            case NULL: null;
+            case EMPTY: "";
+            case INPUT: str;
+        }
+    }
+    
     /**
      * no bounds checking
      */
@@ -2913,19 +2922,20 @@ using hx.strings.Strings;
      * >>> Strings.substringAfter("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfter("dogCATdogCAT", "")    == ""
      * >>> Strings.substringAfter("dogCATdogCAT", "cow") == ""
+     * >>> Strings.substringAfter("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringAfter("はいはい", "い")        == "はい"
      * </code></pre>
      */
-    public static function substringAfter(str:String, searchFor:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringAfter(str:String, searchFor:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
-        if (searchFor.isEmpty())
-            return "";
+        if (str == "" || searchFor.isEmpty()) 
+            return _getNotFoundDefault(str, notFoundDefault);
 
         var foundAt = str.indexOf(searchFor);
         if (foundAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         return str.substring(foundAt + searchFor.length);
     }
@@ -2939,21 +2949,22 @@ using hx.strings.Strings;
      * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "")    == ""
      * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "cow") == ""
+     * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringAfterIgnoreCase("はいはい", "い")        == "はい"
      * </code></pre>
      */
-    public static function substringAfterIgnoreCase(str:String, searchFor:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringAfterIgnoreCase(str:String, searchFor:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
-        if (searchFor.isEmpty())
-            return "";
+        if (str == "" || searchFor.isEmpty()) 
+            return _getNotFoundDefault(str, notFoundDefault);
 
         searchFor = searchFor.toLowerCase();
 
         var foundAt = str.toLowerCase().indexOf(searchFor);
         if (foundAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         return str.substring(foundAt + searchFor.length);
     }
@@ -2970,25 +2981,26 @@ using hx.strings.Strings;
      * >>> Strings.substringBetween("dogCATdogCAT", null)         == ""
      * >>> Strings.substringBetween("dogCATdogCAT", "")           == ""
      * >>> Strings.substringBetween("dogCATdogCAT", "cow")        == ""
+     * >>> Strings.substringBetween("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringBetween("はいはい", "い")               == "は"
      * </code></pre>
      */
-    public static function substringBetween(str:String, after:String, ?before:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringBetween(str:String, after:String, ?before:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
         if (before == null) before = after;
-
-        if (after.isEmpty() || before.isEmpty())
-            return "";
+         
+        if (str == "" || after.isEmpty() || before.isEmpty())
+            return _getNotFoundDefault(str, notFoundDefault);
 
         var foundAfterAt = str.indexOf(after);
         if (foundAfterAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         var foundBeforeAt = str.indexOf(before, foundAfterAt + after.length);
         if (foundBeforeAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         return str.substring(foundAfterAt + after.length, foundBeforeAt);
     }
@@ -3005,17 +3017,18 @@ using hx.strings.Strings;
      * >>> Strings.substringBetweenIgnoreCase("dogCATdogCAT", null)         == ""
      * >>> Strings.substringBetweenIgnoreCase("dogCATdogCAT", "")           == ""
      * >>> Strings.substringBetweenIgnoreCase("dogCATdogCAT", "cow")        == ""
+     * >>> Strings.substringBetweenIgnoreCase("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringBetweenIgnoreCase("はいはい", "い")               == "は"
      * </code></pre>
      */
-    public static function substringBetweenIgnoreCase(str:String, after:String, ?before:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringBetweenIgnoreCase(str:String, after:String, ?before:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
         if (before == null) before = after;
-
-        if (after.isEmpty() || before.isEmpty())
-            return "";
+         
+        if (str == "" || after.isEmpty() || before.isEmpty())
+            return _getNotFoundDefault(str, notFoundDefault);
 
         var strLower = str.toLowerCase8();
         after = after.toLowerCase8();
@@ -3023,11 +3036,11 @@ using hx.strings.Strings;
 
         var foundAfterAt = strLower.indexOf(after);
         if (foundAfterAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
             
         var foundBeforeAt = strLower.indexOf(before, foundAfterAt + after.length);
         if (foundBeforeAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         return str.substring(foundAfterAt + after.length, foundBeforeAt);
     }
@@ -3041,19 +3054,20 @@ using hx.strings.Strings;
      * >>> Strings.substringAfterLast("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfterLast("dogCATdogCAT", "")    == ""
      * >>> Strings.substringAfterLast("dogCATdogCAT", "cow") == ""
+     * >>> Strings.substringAfterLast("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringAfterLast("はいはい", "は")        == "い"
      * </code></pre>
      */
-    public static function substringAfterLast(str:String, searchFor:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringAfterLast(str:String, searchFor:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
-        if (searchFor.isEmpty())
-            return "";
+        if (str == "" || searchFor.isEmpty()) 
+            return _getNotFoundDefault(str, notFoundDefault);
 
         var foundAt = str.lastIndexOf(searchFor);
         if (foundAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         return str.substring(foundAt + searchFor.length);
     }
@@ -3068,21 +3082,22 @@ using hx.strings.Strings;
      * >>> Strings.substringAfterLastIgnoreCase("dogCATdogCAT", null)  == ""
      * >>> Strings.substringAfterLastIgnoreCase("dogCATdogCAT", "")    == ""
      * >>> Strings.substringAfterLastIgnoreCase("dogCATdogCAT", "cow") == ""
+     * >>> Strings.substringAfterLastIgnoreCase("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringAfterLastIgnoreCase("はいはい", "は")        == "い"
      * </code></pre>
      */
-    public static function substringAfterLastIgnoreCase(str:String, searchFor:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringAfterLastIgnoreCase(str:String, searchFor:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
-        if (searchFor.isEmpty())
-            return "";
+        if (str == "" || searchFor.isEmpty()) 
+            return _getNotFoundDefault(str, notFoundDefault);
 
         searchFor = searchFor.toLowerCase();
 
         var foundAt = str.toLowerCase().lastIndexOf(searchFor);
         if (foundAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         return str.substring(foundAt + searchFor.length);
     }
@@ -3096,19 +3111,20 @@ using hx.strings.Strings;
      * >>> Strings.substringBefore("dogCATdogCAT", null)  == ""
      * >>> Strings.substringBefore("dogCATdogCAT", "")    == ""
      * >>> Strings.substringBefore("dogCATdogCAT", "cow") == ""
+     * >>> Strings.substringBefore("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringBefore("はいはい", "い")        == "は"
      * </code></pre>
      */
-    public static function substringBefore(str:String, searchFor:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringBefore(str:String, searchFor:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
-        if (searchFor.isEmpty())
-            return "";
+        if (str == "" || searchFor.isEmpty()) 
+            return _getNotFoundDefault(str, notFoundDefault);
 
         var foundAt = str.indexOf(searchFor);
         if (foundAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         return str.substring(0, foundAt);
     }
@@ -3122,21 +3138,23 @@ using hx.strings.Strings;
      * >>> Strings.substringBeforeIgnoreCase("dogCATdogCAT", "dog") == ""
      * >>> Strings.substringBeforeIgnoreCase("dogCATdogCAT", null)  == ""
      * >>> Strings.substringBeforeIgnoreCase("dogCATdogCAT", "")    == ""
+     * >>> Strings.substringBeforeIgnoreCase("dogCATdogCAT", "cow") == ""
+     * >>> Strings.substringBeforeIgnoreCase("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringBeforeIgnoreCase("はいはい", "い")        == "は"
      * </code></pre>
      */
-    public static function substringBeforeIgnoreCase(str:String, separator:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringBeforeIgnoreCase(str:String, searchFor:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
-        if (separator.isEmpty())
-            return "";
+        if (str == "" || searchFor.isEmpty())
+            return _getNotFoundDefault(str, notFoundDefault);
 
-        separator = separator.toLowerCase();
+        searchFor = searchFor.toLowerCase();
 
-        var foundAt = str.toLowerCase().indexOf(separator);
+        var foundAt = str.toLowerCase().indexOf(searchFor);
         if (foundAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
             
         return str.substring(0, foundAt);
     }
@@ -3151,19 +3169,21 @@ using hx.strings.Strings;
      * >>> Strings.substringBeforeLast("fo1CATdogCAT", "fo1") == ""
      * >>> Strings.substringBeforeLast("dogCATdogCAT", null)  == ""
      * >>> Strings.substringBeforeLast("dogCATdogCAT", "")    == ""
+     * >>> Strings.substringBeforeLast("dogCATdogCAT", "cow") == ""
+     * >>> Strings.substringBeforeLast("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringBeforeLast("はいはい", "い")        == "はいは"
      * </code></pre>
      */
-    public static function substringBeforeLast(str:String, separator:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringBeforeLast(str:String, searchFor:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
-        if (separator.isEmpty())
-            return "";
+        if (str == "" || searchFor.isEmpty())
+            return _getNotFoundDefault(str, notFoundDefault);
 
-        var foundAt = str.lastIndexOf(separator);
+        var foundAt = str.lastIndexOf(searchFor);
         if (foundAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         return str.substring(0, foundAt);
     }
@@ -3177,21 +3197,23 @@ using hx.strings.Strings;
      * >>> Strings.substringBeforeLastIgnoreCase("fo1CATdogCAT", "Fo1") == ""
      * >>> Strings.substringBeforeLastIgnoreCase("dogCATdogCAT", null)  == ""
      * >>> Strings.substringBeforeLastIgnoreCase("dogCATdogCAT", "")    == ""
+     * >>> Strings.substringBeforeLastIgnoreCase("dogCATdogCAT", "cow") == ""
+     * >>> Strings.substringBeforeLastIgnoreCase("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
      * >>> Strings.substringBeforeLastIgnoreCase("はいはい", "い")        == "はいは"
      * </code></pre>
      */
-    public static function substringBeforeLastIgnoreCase(str:String, separator:String):String {
-        if (str.isEmpty())
-            return str;
+    public static function substringBeforeLastIgnoreCase(str:String, searchFor:String, notFoundDefault:StringNotFoundDefault = EMPTY):String {
+        if (str == null)
+            return null;
 
-        if (separator.isEmpty())
-            return "";
+        if (str == "" || searchFor.isEmpty()) 
+            return _getNotFoundDefault(str, notFoundDefault);
 
-        separator = separator.toLowerCase();
+        searchFor = searchFor.toLowerCase();
 
-        var foundAt = str.toLowerCase().lastIndexOf(separator);
+        var foundAt = str.toLowerCase().lastIndexOf(searchFor);
         if (foundAt == POS_NOT_FOUND)
-            return "";
+            return _getNotFoundDefault(str, notFoundDefault);
 
         return str.substring(0, foundAt);
     }
@@ -3921,6 +3943,27 @@ class StringDiff {
      * diff of the right string
      */
     public var right:String;
+}
+
+
+@:dox(hide)
+@:enum
+abstract StringNotFoundDefault(Int) {
+    
+    /**
+     * <code>null</code> shall be returned.
+     */
+    var NULL = 1;
+
+    /**
+     * An empty string shall be returned.
+     */
+    var EMPTY = 2;
+    
+    /**
+     * The given input string shall be returned.
+     */
+    var INPUT = 3;
 }
 
 /**

@@ -307,8 +307,8 @@ class Paths {
                     continue;
 
             } else {
-                rightPart.prepend(partToAdd);
-                rightPart.prepend(dirSep);
+                rightPart.insert(0, partToAdd);
+                rightPart.insert(0, dirSep);
                 rightPartsCount++;
             }
             processLeftSide = !processLeftSide;

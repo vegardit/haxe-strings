@@ -621,36 +621,24 @@ abstract Char(Int) from Int to Int {
 
     /**
      * <pre><code>
+     * >>> Char.of(10).toString()    == "\n"
      * >>> Char.of(32).toString()    == " "
+     * >>> Char.of(38).toString()    == "&"
      * >>> Char.of(12399).toString() == "は"
      * >>> Char.of(" ").toString()   == " "
      * </code></pre>
      */
     @:to
+    #if (java || flash || cs || python) inline #end
     public function toString():String {
-        return switch(this) {
-            case AMPERSAND: "&";
-            case DOUBLE_QUOTE: "\"";
-            case SINGLE_QUOTE: "'";
-            case HASH: "#";
-            case ESC: "\x1B";
-            case CR: "\r";
-            case LF: "\n";
-            case SPACE: " ";
-            case TAB: "\t";
-            case LOWER_THAN: "<";
-            case EQUALS: "=";
-            case GREATER_THAN: ">";
-            default:
-                #if (!(java || flash || cs || python))
-                if (this > 127) {
-                    var ch8 = new Utf8();
-                    ch8.addChar(this);
-                    ch8.toString();
-                } else
-                #end
-                String.fromCharCode(this);
-        }
+        #if (!(java || flash || cs || python))
+        if (this > 127) {
+            var ch8 = new Utf8();
+            ch8.addChar(this);
+            return ch8.toString();
+        } else
+        #end
+        return String.fromCharCode(this);
     }
 }
 

@@ -144,12 +144,16 @@ class InMemoryDictionary implements TrainableDictionary {
             while (true) {
                 lineNo++;
                 line = input.readLine();
-                if (!line.contains(":"))
+                if (!line.contains(":")) {
                     trace('[WARN] Skipping line #$lineNo which misses the colon (:) separator');
+                    continue;
+                }
                 var word = line.substringBeforeLast(":");
                 var popularity = line.substringAfterLast(":").toInt(0);
-                if (popularity < 1)
+                if (popularity < 1) {
                     trace('[WARN] Skipping line #$lineNo with popularity < 1');
+                    continue;
+                }
                 if (!exists(word)) dictSize++;
                 count++;
                 dict.set(word, popularity);

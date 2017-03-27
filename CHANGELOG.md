@@ -3,11 +3,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
-## [2.5.1] - 2017-03-??
+## [3.0.0] - 2017-03-27
 
 ### Added
 - parameter hx.strings.RandomStrings#randomUUIDv4(separator)
-- method hx.strings.Pattern.Matcher#reset(str)
+- function hx.strings.Pattern.Matcher#reset(str)
+- parameter 'notFoundDefault' to hx.strings.Strings#substring...() methods
+- function hx.strings.StringBuilder#insert()
+- function hx.strings.StringBuilder#insertAll()
+- function hx.strings.StringBuilder#insertChar()
+
+### Removed
+- function hx.strings.StringBuilder#prepend()
+- function hx.strings.StringBuilder#prependAll()
+- function hx.strings.StringBuilder#prependChar()
+
+### Changed
+- StringBuilder now uses C#'s native StringBuilder#clear()/#insert() methods
 
 ## [2.5.0] - 2017-03-03
 

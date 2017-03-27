@@ -2,15 +2,15 @@
 <project version="2">
   <!-- Output SWF options -->
   <output>
-    <movie outputType="CustomBuild" />
+    <movie outputType="Application" />
     <movie input="" />
-    <movie path="" />
-    <movie fps="0" />
-    <movie width="0" />
-    <movie height="0" />
-    <movie version="0" />
+    <movie path="target\flash\TestRunner.swf" />
+    <movie fps="30" />
+    <movie width="640" />
+    <movie height="480" />
+    <movie version="23" />
     <movie minorVersion="0" />
-    <movie platform="Neko" />
+    <movie platform="Flash Player" />
     <movie background="#FFFFFF" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
@@ -21,10 +21,10 @@
   <!-- Build options -->
   <build>
     <option directives="" />
-    <option flashStrict="False" />
-    <option noInlineOnDebug="False" />
+    <option flashStrict="True" />
+    <option noInlineOnDebug="True" />
     <option mainClass="hx.strings.TestRunner" />
-    <option enabledebug="False" />
+    <option enabledebug="True" />
     <option additional="" />
   </build>
   <!-- haxelib libraries -->
@@ -35,6 +35,10 @@
   <compileTargets>
     <!-- example: <compile path="..." /> -->
   </compileTargets>
+  <!-- Assets to embed into the output SWF -->
+  <library>
+    <!-- example: <asset path="..." id="..." update="..." glyphs="..." mode="..." place="..." sharepoint="..." /> -->
+  </library>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
     <hidden path="obj" />
@@ -46,7 +50,7 @@
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="Unknown" />
+    <option testMovie="Default" />
     <option testMovieCommand="" />
   </options>
   <!-- Plugin storage -->
