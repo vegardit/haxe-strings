@@ -20,7 +20,7 @@ package hx.strings.internal;
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-@:dox(hide)
+@:noDoc @:dox(hide)
 @:noCompletion
 class OS {
 

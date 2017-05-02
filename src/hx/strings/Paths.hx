@@ -657,7 +657,7 @@ class Paths {
 /**
  * Using abstract enum because of http://stackoverflow.com/questions/31307992/haxe-enum-default-parameters
  */
-@:dox(hide)
+@:noDoc @:dox(hide)
 @:enum
 abstract DirectorySeparatorType(Int) {
     /**

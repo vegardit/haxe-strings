@@ -20,7 +20,7 @@ package hx.strings.internal;
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-@:dox(hide)
+@:noDoc @:dox(hide)
 @:noCompletion
 abstract Either3<A, B, C>(_Either3<A, B, C>) {
     
@@ -54,7 +54,7 @@ abstract Either3<A, B, C>(_Either3<A, B, C>) {
     }
 }
 
-@:dox(hide)
+@:noDoc @:dox(hide)
 private enum _Either3<A, B, C> {
     a(v:A);
     b(v:B);

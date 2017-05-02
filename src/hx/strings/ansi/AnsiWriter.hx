@@ -82,20 +82,20 @@ class AnsiWriter<T> {
     }
 }
 
-@:dox(hide)
+@:noDoc @:dox(hide)
 private class OutputAnsiWriter extends AnsiWriter<Output> {
     public function new(out:Output) this.out = out;
     override public function flush() { out.flush(); return this; } ;
     override public function write(str:AnyAsString) { out.writeString(str); return this; }
 }
 
-@:dox(hide)
+@:noDoc @:dox(hide)
 private class StringBufAnsiWriter extends AnsiWriter<StringBuf> {
     public function new(out:StringBuf) this.out = out;
     override public function write(str:AnyAsString) { out.add(str); return this; }
 }
 
-@:dox(hide)
+@:noDoc @:dox(hide)
 private class StringBuilderAnsiWriter extends AnsiWriter<StringBuilder> {
     public function new(out:StringBuilder) this.out = out;
     override public function write(str:AnyAsString) { out.add(str); return this; }
