@@ -26,7 +26,7 @@ using hx.strings.Strings;
  */
 @immutable
 abstract Version(VersionData) from VersionData to VersionData {
-    
+
     /*
      * Operator overloading
      */
@@ -75,12 +75,15 @@ abstract Version(VersionData) from VersionData to VersionData {
     static var VALIDATOR_VERSION(default, never)    = Pattern.compile("^" + PATTERN_VERSION + "$");
     
     /**
+     * Trims and parses the given string and returns a version instance.
+     * 
      * <pre><code>
      * >>> Version.of("1.2.3-alpha.1+exp.sha.141d2f7").major         == 1
      * >>> Version.of("1.2.3-alpha.1+exp.sha.141d2f7").minor         == 2
      * >>> Version.of("1.2.3-alpha.1+exp.sha.141d2f7").patch         == 3
      * >>> Version.of("1.2.3-alpha.1+exp.sha.141d2f7").preRelease    == "alpha.1"
      * >>> Version.of("1.2.3-alpha.1+exp.sha.141d2f7").buildMetadata == "exp.sha.141d2f7"
+     * >>> Version.of("  1.2.3-alpha.1+exp.sha.141d2f7  ").major     == 1
      * >>> Version.of(null)     == null
      * >>> Version.of("1")      throws      '[1] is not a valid SemVer 2.0.0 version string!'
      * >>> Version.of("1.2")    throws    '[1.2] is not a valid SemVer 2.0.0 version string!'
@@ -95,7 +98,7 @@ abstract Version(VersionData) from VersionData to VersionData {
         if(str == null)
             return null;
 
-        var m = VALIDATOR_VERSION.matcher(str);
+        var m = VALIDATOR_VERSION.matcher(str.trim());
 
         if(!m.matches())
             throw '[$str] is not a valid $SEM_VER_SPEC version string!';
@@ -392,6 +395,18 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function equals(other:Version, ignoreBuildMetadata=true) {
         return compareTo(other, ignoreBuildMetadata)  == 0;
     }
+    
+    /**
+     * See http://semver.org/#spec-item-8
+     * 
+     * @return true if the major component of both versions is identical.
+     */
+    public function isCompatible(other:Version):Bool {
+        if (other == null)
+            return false;
+
+        return major == other.major;
+    }
 
     /**
      * <pre><code>
@@ -543,7 +558,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function withBuildMetadata(buildMetadata:String):Version {
         return switch (this) {
           case VersionEnum(maj, min, pat, pre, build): 
-            build == buildMetadata ? this: VersionEnum(major, minor, patch, preRelease, buildMetadata.isEmpty() ? null : buildMetadata);              
+            build == buildMetadata ? this: VersionEnum(maj, min, pat, pre, buildMetadata.isEmpty() ? null : buildMetadata);              
         }
     }
     
@@ -557,12 +572,12 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function withPreRelease(preRelease:String):Version {
         return switch (this) {
           case VersionEnum(maj, min, pat, pre, build): 
-            pre == preRelease ? this : VersionEnum(major, minor, patch, preRelease.isEmpty() ? null : preRelease, buildMetadata);              
+            pre == preRelease ? this : VersionEnum(maj, min, pat, preRelease.isEmpty() ? null : preRelease, build);              
         }
     }
 }
 
-@:dox(hide)
+@:noDoc @:dox(hide)
 @:noCompletion
 enum VersionData {
   VersionEnum(major:Int, minor:Int, patch:Int, preRelease:String, buildMetadata:String);
