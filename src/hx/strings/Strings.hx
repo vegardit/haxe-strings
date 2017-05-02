@@ -38,7 +38,7 @@ using hx.strings.Strings;
  *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
- class Strings {
+class Strings {
    
     static var REGEX_ANSI_ESC = Pattern.compile(Char.ESC + "\\[[;\\d]*m", MATCH_ALL);
     static var REGEX_HTML_UNESCAPE = Pattern.compile("&(#\\d+|amp|nbsp|apos|lt|gt|quot);", MATCH_ALL);
@@ -3922,6 +3922,14 @@ using hx.strings.Strings;
 }
 
 /**
+ * Represents a character position (not byte index) in a String.
+ * 
+ * First character is at position 0.
+ */
+typedef CharPos = Int;
+
+
+/**
  * Return value of hx.strings.Strings#diff(String, String)
  */
 class StringDiff {
@@ -3946,7 +3954,6 @@ class StringDiff {
 }
 
 
-@:dox(hide)
 @:enum
 abstract StringNotFoundDefault(Int) {
     
@@ -3973,7 +3980,6 @@ abstract StringNotFoundDefault(Int) {
  * http://programmers.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
  * https://github.com/rurban/smhasher
  */
-@:dox(hide)
 enum HashCodeAlgorithm {
 
     PLATFORM_SPECIFIC;
@@ -4001,7 +4007,7 @@ enum HashCodeAlgorithm {
     SDBM;
 }
 
-@:dox(hide)
+@:noDoc @:dox(hide)
 class ANSIState {
     public var bgcolor:String;
     public var blink:Bool;
