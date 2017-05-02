@@ -18,6 +18,8 @@ package hx.strings.spelling.trainer;
 import haxe.io.BytesInput;
 import haxe.io.Input;
 import haxe.Resource;
+
+import hx.strings.collection.StringMap;
 import hx.strings.spelling.dictionary.TrainableDictionary;
 
 using hx.strings.Strings;
@@ -31,7 +33,7 @@ using hx.strings.Strings;
 @threadSafe
 class AbstractDictionaryTrainer implements DictionaryTrainer {
     
-    var vocabular:Map<String,Bool>;
+    var vocabular:StringMap<Bool>;
     
     #if sys
     public function trainWithFile(dictionary:TrainableDictionary, filePath:String, ignoreUnknownWords:Bool = false):Int {

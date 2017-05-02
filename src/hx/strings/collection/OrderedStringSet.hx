@@ -15,28 +15,27 @@
  */
 package hx.strings.collection;
 
+import haxe.ds.StringMap;
+
 /**
- * hx.strings.collection.SortedStringMap backed sorted set implementation.
+ * hx.strings.collection.OrderedStringMap backed set implementation that maintains insertion order.
  * 
  * <pre><code>
- * >>> new SortedStringSet(["", "c", "a", "b", "a"]).toArray()  ==  [ "", "a", "b", "c" ]
- * >>> new SortedStringSet(["", "c", "a", "b", "a"]).toString() == '[ "", "a", "b", "c" ]'
+ * >>> new OrderedStringSet(["", "c", "a", "b", "a"]).toArray()  ==  [ "", "c", "a", "b" ]
+ * >>> new OrderedStringSet(["", "c", "a", "b", "a"]).toString() == '[ "", "c", "a", "b" ]'
  * </code></pre>
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-class SortedStringSet extends StringSet {
-
-    var cmp:String -> String -> Int;
+class OrderedStringSet<V> extends StringSet {
 
     public function new(?initialItems:Array<String>, ?comparator:String -> String -> Int) {
-        cmp = comparator;
         super(initialItems);
     }
 
     inline
     override
     public function clear():Void {
-        map = new SortedStringMap<Bool>(cmp);
+        map = new OrderedStringMap<Bool>();
     }
 }

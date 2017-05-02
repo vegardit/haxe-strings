@@ -18,7 +18,7 @@
 ## <a name="what-is-it"></a>What is it?
 
 A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cross-platform UTF-8 string manipulation. 
-It has been extensively unit tested (over 1,600 individual test cases) on the targets C++, C#, Flash, HashLink, Neko, Java, JavaScript, PHP, and Python.
+It has been extensively unit tested (over 1,700 individual test cases) on the targets C++, C#, Flash, HashLink, Neko, Java, JavaScript, PHP, and Python.
 
 The classes are under the package `hx.strings`.
 

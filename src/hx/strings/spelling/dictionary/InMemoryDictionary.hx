@@ -20,6 +20,8 @@ import haxe.io.BytesInput;
 import haxe.io.Input;
 import haxe.io.Output;
 
+import hx.strings.collection.StringMap;
+
 using hx.strings.Strings;
 
 /**
@@ -32,7 +34,7 @@ class InMemoryDictionary implements TrainableDictionary {
     /**
      * key = word, value = popularity score
      */
-    var dict:Map<String,Int>;
+    var dict:StringMap<Int>;
     var dictSize:Int;
     
     public function new() {
@@ -40,7 +42,7 @@ class InMemoryDictionary implements TrainableDictionary {
     }
     
     public function clear():Void {
-        dict = new Map<String, Int>();
+        dict = new StringMap<Int>();
         dictSize = 0;
     }
     

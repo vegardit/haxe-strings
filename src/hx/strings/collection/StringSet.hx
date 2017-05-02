@@ -16,8 +16,10 @@
 package hx.strings.collection;
 
 import haxe.Constraints.IMap;
-import haxe.ds.StringMap;
+
+import hx.strings.collection.StringMap;
 import hx.strings.internal.AnyAsString;
+import hx.strings.internal.Either2;
 
 /**
  * haxe.ds.StringMap backed set implementation.
@@ -27,8 +29,8 @@ import hx.strings.internal.AnyAsString;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class StringSet {
-    var map:IMap<String, Bool>;
-
+    var map:StringMap<Bool>;
+    
     /**
      * <pre><code>
      * >>> new StringSet().size                     == 0
@@ -37,15 +39,13 @@ class StringSet {
      */
     public var size(default, null):Int = 0;
     
-    public function new(?initialItems:Array<String>) {
+    inline
+    public function new(?initialItems:Either2<StringSet,Array<String>>) {
         clear();
-        if (initialItems != null) {
-            for (i in initialItems) {
-                if(i != null) add(i);
-            }
-        }
+        
+        addAll(initialItems);
     }
-    
+
     /**
      * <pre><code>
      * >>> new StringSet(["", "a", "b"]).add("")   == false
@@ -64,6 +64,36 @@ class StringSet {
         map.set(item, true);
         size++;
         return true;
+    }
+    
+    /**
+     * <pre><code>
+     * >>> new StringSet(["", "a", "b"]).addAll(null)      == 0
+     * >>> new StringSet(["", "a", "b"]).addAll(["a", "b"]) == 0
+     * >>> new StringSet(["", "a", "b"]).addAll(["a", "c"]) == 1
+     * >>> new StringSet(["", "a", "b"]).addAll(["c", "d"]) == 2
+     * </code></pre>
+     * 
+     * @return number of added items
+     */
+    public function addAll(items:Either2<StringSet,Array<String>>):Int {
+        if (items == null)
+            return 0;
+
+        var count = 0;
+        switch(items.value) {
+            case a(set):
+                for (str in set) {
+                    if (str != null && add(str)) 
+                        count++;
+                }
+            case b(array): 
+                for (str in array) {
+                    if (str != null && add(str)) 
+                        count++;
+                }
+        }
+        return count;
     }
     
     /**
@@ -101,6 +131,14 @@ class StringSet {
     }
     
     /**
+     * @return an Iterator over the items. No particular order is guaranteed.
+     */
+    inline
+    public function iterator():Iterator<String> {
+        return map.keys();
+    }
+    
+    /**
      * <pre><code>
      * >>> new StringSet(["", "a", "b"]).remove("")   == true
      * >>> new StringSet(["", "a", "b"]).remove("a")  == true
@@ -110,7 +148,6 @@ class StringSet {
      * 
      * @return true if the item was removed, false if it was not present
      */
-    inline
     public function remove(item:String):Bool {
         if (item == null) 
             return false;
@@ -123,14 +160,6 @@ class StringSet {
     }
     
     /**
-     * @return an Iterator over the items. No particular order is guaranteed.
-     */
-    inline
-    public function iterator():Iterator<String> {
-        return map.keys();
-    }
-    
-    /**
      * <pre><code>
      * >>> new StringSet([]).toArray()     == [ ]
      * >>> new StringSet([null]).toArray() == [ ]
@@ -138,7 +167,6 @@ class StringSet {
      * >>> new StringSet(["a"]).toArray()  == [ "a" ]
      * </code></pre>
      */
-    inline
     public function toArray():StringArray {
         return [ for (k in map.keys()) k ];
     }
@@ -151,7 +179,6 @@ class StringSet {
      * >>> new StringSet(["b"]).toString()  == '[ "b" ]'
      * </code></pre>
      */
-    inline
     public function toString() {
         if (size == 0) return "[]";
         return '[ "' + toArray().join('", "') + '" ]';

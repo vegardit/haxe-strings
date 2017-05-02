@@ -3,6 +3,21 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
+## [4.0.0] - 2017-05-xx
+
+### Added
+- class hx.strings.collection.OrderedStringMap
+- class hx.strings.collection.OrderedStringSet
+- function hx.strings.collection.StringSet#addAll()
+- function hx.strings.collection.StringArray#contains()
+- function hx.strings.collection.StringArray#pushAll()
+- function hx.strings.Version#isCompatible()
+
+### Changed
+- renamed hx.strings.collection.StringTreeMap to hx.strings.collection.SortedStringMap
+- replaced hx.strings.CharPos Int abstract with hx.strings.Strings.CharPos Int typedef
+- replaced hx.strings.collection.StringMaps class with hx.strings.collection.StringMap abstract
+
 ## [3.0.0] - 2017-03-27
 
 ### Added
