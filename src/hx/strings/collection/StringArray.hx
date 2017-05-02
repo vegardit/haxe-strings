@@ -15,6 +15,8 @@
  */
 package hx.strings.collection;
 
+import hx.strings.internal.Either2;
+
 /**
  * Abstract of Array<String> with additional functionality.
  * 
@@ -29,15 +31,17 @@ package hx.strings.collection;
 abstract StringArray(Array<String>) from Array<String> to Array<String> {
 
     inline
-    public function new() {
+    public function new(?initialItems:Either2<StringSet,Array<String>>) {
         this = [];
+        if (initialItems != null)
+            pushAll(initialItems);
     }
-    
+
     /**
      * the first element of the array or null if empty
      *   
      * <pre><code>
-     * >>> function(){var a:StringArray = ["a", "b"]; return a.first;}() == "a"
+     * >>> new StringArray(["a", "b"]).first == "a"
      * </code></pre>
      */
     public var first(get, never): String;
@@ -50,13 +54,23 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
      * the last element of the array or null if empty
      *   
      * <pre><code>
-     * >>> function(){var a:StringArray = ["a", "b"]; return a.last;}()  == "b"
+     * >>> new StringArray(["a", "b"]).last == "b"
      * </code></pre>
      */
     public var last(get, never): String;
     inline
     function get_last():String {
         return isEmpty() ? null : this[this.length - 1];
+    }
+    
+    /**
+     * <pre><code>
+     * >>> new StringArray(["a", "b"]).contains("b") == true
+     * >>> new StringArray(["a", "b"]).contains("c") == false
+     * </code></pre>
+     */
+    public function contains(str:String):Bool {
+        return this.indexOf(str) > -1;
     }
     
     /**
@@ -76,11 +90,27 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
      * </code></pre>
      */
     inline
-    public function clear() {
+    public function clear():Void {
         while (this.length > 0)
             this.pop();
     }
+    
+    public function pushAll(items:Either2<StringSet,Array<String>>):Void {
+        if (items == null)
+            return;
 
+        switch(items.value) {
+            case a(set):
+                for (str in set) {
+                    this.push(str);
+                }
+            case b(array): 
+                for (str in array) {
+                    this.push(str);
+                }
+        }
+    }
+    
     /**
      * <pre><code>
      * >>> function(){var a:StringArray = ["b", "a"]; a.sortAscending(); return a;}() == ["a", "b"]
