@@ -15,36 +15,27 @@
  */
 package hx.strings.ansi;
 
-import haxe.io.Output;
 import hx.strings.internal.AnyAsString;
-import hx.strings.internal.Either3;
 
 /**
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-@:abstract
 class AnsiWriter<T> {
 
-    public var out(default, null):T;
+    var _out:StringBuf_StringBuilder_or_Output<T>;
+
+    public var out(get, null):T;
+    inline function get_out():T return _out.out;
     
-    public static function of(out:Either3<Output, StringBuf, StringBuilder>):AnsiWriter<Dynamic> {
-        return switch(out.value) {
-            case a(output): new OutputAnsiWriter(output);
-            case b(strBuf): new StringBufAnsiWriter(strBuf);
-            case c(strBuilder): new StringBuilderAnsiWriter(strBuilder);
-        };
+    inline
+    public function new(out:StringBuf_StringBuilder_or_Output<T>) {
+        this._out = out;
     }
-    
-    /**
-     * flushes any buffered data
-     */
-    public function flush() return this;
-    
-    public function write(str:AnyAsString):AnsiWriter<T> throw "Not implemented";
-    
+        
     /**
      * sets the given text attribute
      */
+    inline
     public function attr(attr:AnsiTextAttribute) {
         return write(Ansi.attr(attr));
     }
@@ -52,51 +43,93 @@ class AnsiWriter<T> {
     /**
      * set the text background color
      */
-    public function bg(color:AnsiColor) {
+    inline
+    public function bg(color:AnsiColor):AnsiWriter<T> {
         return write(Ansi.bg(color));
     }
 
     /**
      * Clears the screen and moves the cursor to the home position
      */
-    public function clearScreen() {
+    inline
+    public function clearScreen():AnsiWriter<T> {
         return write(Ansi.clearScreen());
     }
 
     /**
      * Clear all characters from current position to the end of the line including the character at the current position
      */
-    public function clearLine() {
+    inline
+    public function clearLine():AnsiWriter<T> {
         return write(Ansi.clearLine());
     }
 
-    public function cursor(cmd:AnsiCursor) {
+    inline
+    public function cursor(cmd:AnsiCursor):AnsiWriter<T> {
         return write(Ansi.cursor(cmd));
     }
     
     /**
      * set the text foreground color
      */
-    public function fg(color:AnsiColor) {
+    inline
+    public function fg(color:AnsiColor):AnsiWriter<T> {
         return write(Ansi.fg(color));
+    }
+    
+    /**
+     * flushes any buffered data
+     */
+    inline
+    public function flush():AnsiWriter<T> {
+        _out.flush();
+        return this;
+    }
+    
+    inline
+    public function write(str:AnyAsString):AnsiWriter<T> {
+        _out.write(str);
+        return this;
     }
 }
 
+@:noCompletion
 @:noDoc @:dox(hide)
-private class OutputAnsiWriter extends AnsiWriter<Output> {
-    public function new(out:Output) this.out = out;
-    override public function flush() { out.flush(); return this; } ;
-    override public function write(str:AnyAsString) { out.writeString(str); return this; }
+@:forward
+abstract StringBuf_StringBuilder_or_Output<T>(AbstractStringWriter<T>) { 
+
+    inline
+    function new(writer:AbstractStringWriter<T>) {
+        this = writer;
+    }
+
+    @:from inline static function fromStringBuilder<T:StringBuilder>  (out:T) return new StringBuf_StringBuilder_or_Output(new StringBuilderStringWriter(out));
+    @:from inline static function fromStringBuf    <T:StringBuf>      (out:T) return new StringBuf_StringBuilder_or_Output(new StringBufStringWriter(out));
+    @:from inline static function fromOutput       <T:haxe.io.Output> (out:T) return new StringBuf_StringBuilder_or_Output(new OutputStringWriter(out));
 }
 
 @:noDoc @:dox(hide)
-private class StringBufAnsiWriter extends AnsiWriter<StringBuf> {
-    public function new(out:StringBuf) this.out = out;
-    override public function write(str:AnyAsString) { out.add(str); return this; }
+private class AbstractStringWriter<T> {
+    public var out(default, null):T;
+    public function flush() {};
+    public function write(str:String) throw "Not implemented";
 }
 
 @:noDoc @:dox(hide)
-private class StringBuilderAnsiWriter extends AnsiWriter<StringBuilder> {
-    public function new(out:StringBuilder) this.out = out;
-    override public function write(str:AnyAsString) { out.add(str); return this; }
+private class OutputStringWriter<T:haxe.io.Output> extends AbstractStringWriter<T> {
+    inline public function new(out:T) this.out = out;
+    override public function flush() out.flush();
+    override public function write(str:String) out.writeString(str);
+}
+
+@:noDoc @:dox(hide)
+private class StringBufStringWriter<T:StringBuf> extends AbstractStringWriter<T> {
+    inline public function new(out:T) this.out = out;
+    override public function write(str:String) out.add(str);
+}
+
+@:noDoc @:dox(hide)
+private class StringBuilderStringWriter<T:StringBuilder> extends AbstractStringWriter<T> {
+    inline public function new(out:T) this.out = out;
+    override public function write(str:String) out.add(str);
 }

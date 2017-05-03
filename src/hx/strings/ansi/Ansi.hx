@@ -16,11 +16,12 @@
 package hx.strings.ansi;
 
 import haxe.io.Output;
+
 import hx.strings.StringBuilder;
 import hx.strings.ansi.AnsiColor;
 import hx.strings.ansi.AnsiTextAttribute;
+import hx.strings.ansi.AnsiWriter.StringBuf_StringBuilder_or_Output;
 import hx.strings.internal.AnyAsString;
-import hx.strings.internal.Either3;
 
 /**
  * https://en.wikipedia.org/wiki/ANSI_escape_code
@@ -106,11 +107,18 @@ class Ansi {
 
     /**
      * <pre><code>
-     * >>> (switch(1){default:var sb = new StringBuf(); Ansi.writer(sb).fg(GREEN).attr(ITALIC).write("Hello").attr(RESET); sb;}).toString() == "\x1B[32m\x1B[3mHello\x1B[0m"
+     * >>> Ansi.writer(new StringBuf()          ).fg(GREEN).attr(ITALIC).write("Hello").attr(RESET).out.toString()            == "\x1B[32m\x1B[3mHello\x1B[0m"
+     * >>> Ansi.writer(new StringBuilder()      ).fg(GREEN).attr(ITALIC).write("Hello").attr(RESET).out.toString()            == "\x1B[32m\x1B[3mHello\x1B[0m"
+     * >>> Ansi.writer(new haxe.io.BytesOutput()).fg(GREEN).attr(ITALIC).write("Hello").attr(RESET).out.getBytes().toString() == "\x1B[32m\x1B[3mHello\x1B[0m"
+     * >>> function(){var out=new StringBuf();           return Ansi.writer(out).out == out;}() == true
+     * >>> function(){var out=new StringBuilder();       return Ansi.writer(out).out == out;}() == true
+     * >>> function(){var out=new haxe.io.BytesOutput(); return Ansi.writer(out).out == out;}() == true
      * </code></pre>
+     * 
+     * @param out: StringBuf, haxe.io.Output or hx.strings.StringBuilder
      */
     inline
-    public static function writer(out:Either3<Output, StringBuf, StringBuilder>):AnsiWriter<Dynamic> {
-        return AnsiWriter.of(out);
+    public static function writer<T>(out:StringBuf_StringBuilder_or_Output<T>):AnsiWriter<T> {
+        return new AnsiWriter(out);
     }
 }
