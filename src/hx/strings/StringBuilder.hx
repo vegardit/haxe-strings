@@ -15,6 +15,9 @@
  */
 package hx.strings;
 
+import haxe.io.BytesOutput;
+import haxe.io.Output;
+
 import hx.strings.internal.AnyAsString;
 
 using hx.strings.Strings;
@@ -418,6 +421,17 @@ class StringBuilder {
     
     /**
      * <pre><code>
+     * >>> function(){var sb=new StringBuilder("1"); var out=sb.asOutput(); out.writeByte(Char.TWO); out.writeString("3"); return sb.toString(); }() == "123"
+     * </code></pre>
+     * 
+     * @return a haxe.ui.Output wrapper object around this instance
+     */
+    public function asOutput():Output {
+        return new OutputWrapper(this);
+    }
+    
+    /**
+     * <pre><code>
      * >>> new StringBuilder().toString()     == ""
      * >>> new StringBuilder("").toString()   == ""
      * >>> new StringBuilder(null).toString() == ""
@@ -439,4 +453,36 @@ class StringBuilder {
             return str;
         #end
     }
+}
+
+private class OutputWrapper extends Output {
+
+    private var sb:StringBuilder;
+    private var bo:BytesOutput;
+    
+    inline
+    public function new(sb:StringBuilder) {
+        this.sb = sb;
+    }
+    
+    override
+    public function flush() {
+        if (bo != null && bo.length > 0) {
+            sb.add(bo.getBytes().toString());
+            bo == null;
+        }
+	}
+
+    override
+  	public function writeByte(c:Int):Void {
+		if (bo == null) bo = new BytesOutput();
+        bo.writeByte(c);
+	}
+
+    @:dox(hide)
+	override 
+    function writeString(str:String) {
+        flush();
+		sb.add(str);
+	}
 }
