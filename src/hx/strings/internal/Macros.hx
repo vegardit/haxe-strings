@@ -63,4 +63,21 @@ class Macros {
         return macro {};
     }
     
+    macro 
+    public static function is(value:Expr, assignableTo:Expr) {
+        return 
+            switch assignableTo {
+                case macro ($i{varName}: $varType):
+                    var varTypeName = haxe.macro.ComplexTypeTools.toString(varType);
+                    var idxGenerics = varTypeName.indexOf("<", 1);
+                    if(idxGenerics > -1)
+                        varTypeName = varTypeName.substring(0, idxGenerics); 
+                    macro @:mergeBlock {
+                        var $varName:$varType = Std.is($value, $i{varTypeName}) ? cast $value : null;
+                        $i{varName} != null;
+                    }
+                default:
+                  throw "Unsupported expression. Expecting e.g. '(myvar: MyType)'";
+            }
+    }
 }

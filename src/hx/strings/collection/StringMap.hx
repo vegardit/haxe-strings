@@ -15,6 +15,8 @@
  */
 package hx.strings.collection;
 
+import hx.strings.internal.Macros;
+
 /**
  * Abstract on <code>haxe.Constraints.IMap[String, V]</code>
  * 
@@ -77,15 +79,11 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
      * </code></pre>
      */
 	public function clone():StringMap<V> {
-        if (Std.is(this, SortedStringMap)) {
-            var m:SortedStringMap<V> = cast this;
+        if (Macros.is(this, (m:SortedStringMap<V>)))
             return m.clone();
-        }
-
-        if (Std.is(this, OrderedStringMap)) {
-            var m:OrderedStringMap<V> = cast this;
+        
+        if (Macros.is(this, (m:OrderedStringMap<V>)))
             return m.clone();
-        }
         
         var clone:StringMap<V> = new StringMap<V>();
 		for (k in this.keys()) {
