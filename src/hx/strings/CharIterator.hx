@@ -99,7 +99,7 @@ class CharIterator {
     }
     
     public var pos(get, never):CharPos;
-    function get_pos() return new CharPos(index, line, col);
+    inline function get_pos() return new CharPos(index, line, col);
 
 	public function hasNext():Bool throw "Not implemented";
     
@@ -148,6 +148,7 @@ private class ArrayCharIterator extends CharIterator {
     var chars:Array<Char>;
     var charsMaxIndex:Int;
 
+    inline
     public function new(chars:Array<Char>) {
         this.chars = chars;
         charsMaxIndex = chars.length -1;
