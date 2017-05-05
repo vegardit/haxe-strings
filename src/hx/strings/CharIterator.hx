@@ -188,7 +188,8 @@ private class IteratorCharIterator extends CharIterator {
     }
 }
 
-private class InputCharIterator extends CharIterator {  
+private class InputCharIterator extends CharIterator {
+    var byteIndex = 0;
     var input:Input;
     var currCharIndex = -1;
     var nextChar:Char;
@@ -230,6 +231,7 @@ private class InputCharIterator extends CharIterator {
     inline
     function readUtf8Char():Char {
         var byte1 = input.readByte();
+        byteIndex++;
         if (byte1 <= 127)
             return byte1;
 
@@ -253,7 +255,7 @@ private class InputCharIterator extends CharIterator {
                 totalBytes++;
                 
                 var leftBit5 = Bits.getBit(byte1, 4);
-                if(leftBit5) throw "Unknown encoding!";
+                if(leftBit5) throw "Valid UTF-8 byte expected at position [$byteIndex] but found byte with value [$byte]!";
             }
         }
 
@@ -291,12 +293,13 @@ private class InputCharIterator extends CharIterator {
     inline
     function readUtf8MultiSequenceByte():Int {
         var byte = input.readByte();
+        byteIndex++;
         
         var leftBit1 = Bits.getBit(byte, 8);
-        if (!leftBit1) throw "Unknown encoding!";
+        if (!leftBit1) throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
         
         var leftBit2 = Bits.getBit(byte, 7);
-        if (leftBit2) throw "Unknown encoding!";
+        if (leftBit2) throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
         
         return Bits.clearBit(byte, 8);
     }
