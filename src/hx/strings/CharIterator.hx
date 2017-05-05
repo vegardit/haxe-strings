@@ -189,13 +189,13 @@ private class IteratorCharIterator extends CharIterator {
 }
 
 private class InputCharIterator extends CharIterator {  
-    var chars:Input;
+    var input:Input;
     var currCharIndex = -1;
     var nextChar:Char;
     var nextCharAvailable = TriState.UNKNOWN;
     
     public function new(chars:Input) {
-        this.chars = chars;
+        this.input = chars;
     }
 
     override
@@ -203,7 +203,7 @@ private class InputCharIterator extends CharIterator {
 	public function hasNext():Bool {
         if (nextCharAvailable == UNKNOWN) {
             try {
-                nextChar = readUtf8Char(chars);
+                nextChar = readUtf8Char();
                 nextCharAvailable = TRUE;
             } catch (ex:haxe.io.Eof) {
                 nextCharAvailable = FALSE;
@@ -222,13 +222,14 @@ private class InputCharIterator extends CharIterator {
         }
         return currChar;
     }
-    
+        
     /**
      * http://www.fileformat.info/info/unicode/utf8.htm
      * @throws exception if an unexpected byte was found
      */
-    function readUtf8Char(inp:haxe.io.Input):Char {
-        var byte1 = inp.readByte();
+    inline
+    function readUtf8Char():Char {
+        var byte1 = input.readByte();
         if (byte1 <= 127)
             return byte1;
 
@@ -261,44 +262,42 @@ private class InputCharIterator extends CharIterator {
         /*
          * read the second byte
          */
-        var byte2 = inp.readByte();
-        var leftBit1 = Bits.getBit(byte2, 8);
-        if(!leftBit1) throw "Unknown encoding!";
-        var leftBit2 = Bits.getBit(byte2, 7);
-        if(leftBit2) throw "Unknown encoding!";
-        byte2 = Bits.clearBit(byte2, 8);
+        var byte2 = readUtf8MultiSequenceByte();
         result += (byte2<<6*(totalBytes-2));
 
         /*
          * read the third byte
          */
         if(leftBit3) {
-            var byte3 = inp.readByte();
-            var leftBit1 = Bits.getBit(byte3, 8);
-            if(!leftBit1) throw "Unknown encoding!";
-            var leftBit2 = Bits.getBit(byte3, 7);
-            if(leftBit2) throw "Unknown encoding!";
-            byte3 = Bits.clearBit(byte3, 8);
+            var byte3 = readUtf8MultiSequenceByte();
             result += (byte3<<6*(totalBytes-3));
             
             /*
              * read the fourth byte
              */
             if(leftBit4) {
-                var byte4 = inp.readByte();
-                var leftBit1 = Bits.getBit(byte4, 8);
-                if(!leftBit1) throw "Unknown encoding!";
-                var leftBit2 = Bits.getBit(byte4, 7);
-                if(leftBit2) throw "Unknown encoding!";
-                byte4 = Bits.clearBit(byte4, 8);
+                var byte4 = readUtf8MultiSequenceByte();
                 result += (byte4<<6*(totalBytes-4));
             }
         }
         
         // UTF8-BOM marker http://unicode.org/faq/utf_bom.html#bom4
         if (index == 0 && result == 65279)
-            return readUtf8Char(inp);
+            return readUtf8Char();
         return result;
+    }
+    
+    inline
+    function readUtf8MultiSequenceByte():Int {
+        var byte = input.readByte();
+        
+        var leftBit1 = Bits.getBit(byte, 8);
+        if (!leftBit1) throw "Unknown encoding!";
+        
+        var leftBit2 = Bits.getBit(byte, 7);
+        if (leftBit2) throw "Unknown encoding!";
+        
+        return Bits.clearBit(byte, 8);
     }
 }
 
