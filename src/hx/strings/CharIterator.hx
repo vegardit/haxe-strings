@@ -1,0 +1,317 @@
+/*
+ * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package hx.strings;
+
+import haxe.Utf8;
+import haxe.io.Eof;
+import haxe.io.Input;
+
+import hx.strings.Strings.CharPos;
+import hx.strings.internal.AnyAsString;
+import hx.strings.internal.Bits;
+import hx.strings.internal.TriState;
+
+using hx.strings.Strings;
+
+/**
+ * @author Sebastian Thomschke, Vegard IT GmbH
+ */
+class CharIterator {
+    var index = -1;
+    var line = 0;
+    var col = 0;
+    var currChar = -1;
+    
+    /**
+     * <pre><code>
+     * >>> CharIterator.fromString(null).hasNext()          == false
+     * >>> CharIterator.fromString("").hasNext()            == false
+     * >>> CharIterator.fromString("cat").hasNext()         == true
+     * >>> CharIterator.fromString("cat").next().toString() == 'c'
+     * >>> CharIterator.fromString("はい").next().toString() == 'は'
+     * </code></pre>
+     */
+    inline
+    public static function fromString(chars:AnyAsString) {
+        return new StringCharIterator(chars);
+    }
+
+    /**
+     * <pre><code>
+     * >>> CharIterator.fromArray(null).hasNext()                           == false
+     * >>> CharIterator.fromArray(Strings.toChars("")).hasNext()            == false
+     * >>> CharIterator.fromArray(Strings.toChars("cat")).hasNext()         == true
+     * >>> CharIterator.fromArray(Strings.toChars("cat")).next().toString() == 'c'
+     * >>> CharIterator.fromArray(Strings.toChars("はい")).next().toString() == 'は'
+     * </code></pre>
+     */
+    inline
+    public static function fromArray(chars:Array<Char>) {
+        return new ArrayCharIterator(chars);
+    }
+
+    /**
+     * <pre><code>
+     * >>> CharIterator.fromInput(null).hasNext()          == false
+     * >>> CharIterator.fromInput(new haxe.io.StringInput("")).hasNext()            == false
+     * >>> CharIterator.fromInput(new haxe.io.StringInput("cat")).hasNext()         == true
+     * >>> CharIterator.fromInput(new haxe.io.StringInput("cat")).next().toString() == 'c'
+     * >>> CharIterator.fromInput(new haxe.io.StringInput("はい")).next().toString() == 'は'
+     * </code></pre>
+     * 
+     * Read characters from an ASCII or Utf8-encoded input.
+     */
+    inline
+    public static function fromInput(chars:Input) {
+        return new InputCharIterator(chars);
+    }
+    
+    /**
+     * <pre><code>
+     * >>> CharIterator.fromIterator(null).hasNext()                                      == false
+     * >>> CharIterator.fromIterator(Strings.toChars("").iterator()).hasNext()            == false
+     * >>> CharIterator.fromIterator(Strings.toChars("cat").iterator()).hasNext()         == true
+     * >>> CharIterator.fromIterator(Strings.toChars("cat").iterator()).next().toString() == 'c'
+     * >>> CharIterator.fromIterator(Strings.toChars("はい").iterator()).next().toString() == 'は'
+     * </code></pre>
+     */
+    inline
+    public static function fromIterator(chars:Iterator<Char>) {
+        return new IteratorCharIterator(chars);
+    }
+    
+    public var pos(get, never):CharPos;
+    function get_pos() return new CharPos(index, line, col);
+
+	public function hasNext():Bool throw "Not implemented";
+    
+    /**
+     * Returns the next character from the input sequence.
+     * 
+     * @throws haxe.io.Eof if no more characters are available
+     */
+    @:final
+    public function next():Char {
+        if (!hasNext())
+            throw new Eof();
+            
+        if (currChar == Char.LF || currChar < 0) {
+            line++;
+            col=0;
+        }
+
+        index++;
+        col++;
+        currChar = getChar();
+        return currChar;
+    }
+    
+    /**
+     * @return the char at the current position
+     */
+    function getChar():Char throw "Not implemented" ;
+}
+
+
+private class ArrayCharIterator extends CharIterator {  
+    var chars:Array<Char>;
+    var charsMaxIndex:Int;
+
+    public function new(chars:Array<Char>) {
+        if (chars == null) {
+            charsMaxIndex = -1;
+        } else {
+            this.chars = chars;
+            charsMaxIndex = chars.length -1;
+        }
+    }
+
+    override
+    inline
+	public function hasNext():Bool {
+        return index < charsMaxIndex;
+    }
+    
+    override
+    inline
+	function getChar(): Char {
+        return chars[index];
+    }
+}
+
+
+private class IteratorCharIterator extends CharIterator {  
+    var chars:Iterator<Char>;
+
+    public function new(chars:Iterator<Char>) {
+        this.chars = chars;
+    }
+
+    override
+    inline
+	public function hasNext():Bool {
+        return chars != null && chars.hasNext();
+    }
+    
+    override
+    inline
+	function getChar(): Char {
+        return chars.next();
+    }
+}
+
+private class InputCharIterator extends CharIterator {  
+    var chars:Input;
+    var currCharIndex = -1;
+    var nextChar:Char;
+    var nextCharAvailable = TriState.UNKNOWN;
+    
+    public function new(chars:Input) {
+        this.chars = chars;
+    }
+
+    override
+    inline
+	public function hasNext():Bool {
+        if (chars == null) 
+            return false;
+
+        if (nextCharAvailable == UNKNOWN) {
+            try {
+                nextChar = readUtf8Char(chars);
+                nextCharAvailable = TRUE;
+            } catch (ex:haxe.io.Eof) {
+                nextCharAvailable = FALSE;
+            }
+        }
+        return nextCharAvailable == TRUE;
+    }
+    
+    override
+    inline
+	function getChar(): Char {
+        if(index != currCharIndex) {
+            currCharIndex = index;
+            nextCharAvailable = UNKNOWN;
+            return nextChar;
+        }
+        return currChar;
+    }
+    
+    /**
+     * http://www.fileformat.info/info/unicode/utf8.htm
+     * @throws exception if an unexpected byte was found
+     */
+    function readUtf8Char(inp:haxe.io.Input):Char {
+        var byte1 = inp.readByte();
+        if (byte1 <= 127)
+            return byte1;
+
+        /*
+         * determine the number of bytes composing this UTF char
+         * and clear the control bits from the first byte.
+         */
+        byte1 = Bits.clearBit(byte1, 8);
+        byte1 = Bits.clearBit(byte1, 7);
+        var totalBytes = 2;
+
+        var leftBit3 = Bits.getBit(byte1, 6);
+        var leftBit4 = false;
+        if(leftBit3) {
+            byte1 = Bits.clearBit(byte1, 6);
+        	totalBytes++;
+
+            leftBit4 = Bits.getBit(byte1, 5);
+            if(leftBit4) {
+                byte1 = Bits.clearBit(byte1, 5);
+                totalBytes++;
+                
+                var leftBit5 = Bits.getBit(byte1, 4);
+                if(leftBit5) throw "Unknown encoding!";
+            }
+        }
+
+        var result:Int = (byte1<<6*(totalBytes-1));
+        
+        /*
+         * read the second byte
+         */
+        var byte2 = inp.readByte();
+        var leftBit1 = Bits.getBit(byte2, 8);
+        if(!leftBit1) throw "Unknown encoding!";
+        var leftBit2 = Bits.getBit(byte2, 7);
+        if(leftBit2) throw "Unknown encoding!";
+        byte2 = Bits.clearBit(byte2, 8);
+        result += (byte2<<6*(totalBytes-2));
+
+        /*
+         * read the third byte
+         */
+        if(leftBit3) {
+            var byte3 = inp.readByte();
+            var leftBit1 = Bits.getBit(byte3, 8);
+            if(!leftBit1) throw "Unknown encoding!";
+            var leftBit2 = Bits.getBit(byte3, 7);
+            if(leftBit2) throw "Unknown encoding!";
+            byte3 = Bits.clearBit(byte3, 8);
+            result += (byte3<<6*(totalBytes-3));
+            
+            /*
+             * read the fourth byte
+             */
+            if(leftBit4) {
+                var byte4 = inp.readByte();
+                var leftBit1 = Bits.getBit(byte4, 8);
+                if(!leftBit1) throw "Unknown encoding!";
+                var leftBit2 = Bits.getBit(byte4, 7);
+                if(leftBit2) throw "Unknown encoding!";
+                byte4 = Bits.clearBit(byte4, 8);
+                result += (byte4<<6*(totalBytes-4));
+            }
+        }
+        
+        // UTF8-BOM marker http://unicode.org/faq/utf_bom.html#bom4
+        if (index == 0 && result == 65279)
+            return readUtf8Char(inp);
+        return result;
+    }
+}
+
+private class StringCharIterator extends CharIterator {  
+    var chars:String;
+    var charsMaxIndex:Int;
+
+    public function new(chars:String) {
+        if (chars == null) {
+            charsMaxIndex = -1;
+        } else {
+            this.chars = chars;
+            charsMaxIndex = chars.length8() - 1;
+        }
+    }
+
+    override
+    inline
+	public function hasNext():Bool {
+        return index < charsMaxIndex;
+    }
+    
+    override
+    inline
+	function getChar(): Char {
+        return Strings._charCodeAt8Unsafe(chars, index);
+    }
+}

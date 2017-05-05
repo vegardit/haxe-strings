@@ -196,7 +196,7 @@ class StringBuilder {
      * @return <code>this</code> for chained operations
      * @throws if pos is out-of range (i.e. < 0 or > this.length)
      */
-    public function insert(pos:CharPos, item:AnyAsString):StringBuilder {
+    public function insert(pos:CharIndex, item:AnyAsString):StringBuilder {
         if (pos < 0) throw "[pos] must not be negative";
         if (pos > this.length) throw "[pos] must not be greater than this.length";
         
@@ -272,7 +272,7 @@ class StringBuilder {
      * @return <code>this</code> for chained operations
      * @throws if pos is out-of range (i.e. < 0 or > this.length)
      */
-    public function insertChar(pos:CharPos, ch:Char):StringBuilder {
+    public function insertChar(pos:CharIndex, ch:Char):StringBuilder {
         if (pos < 0) throw "[pos] must not be negative";
         if (pos > this.length) throw "[pos] must not be greater than this.length";
         
@@ -339,7 +339,7 @@ class StringBuilder {
      * 
      * @return <code>this</code> for chained operations
      */
-    public function insertAll(pos:CharPos, items:Array<AnyAsString>):StringBuilder {
+    public function insertAll(pos:CharIndex, items:Array<AnyAsString>):StringBuilder {
         if (pos < 0) throw "[pos] must not be negative";
         if (pos > this.length) throw "[pos] must not be greater than this.length";
         

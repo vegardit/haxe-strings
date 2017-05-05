@@ -26,7 +26,7 @@ using hx.strings.Strings;
 /**
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-@:build(hx.doctest.DocTestGenerator.generateDocTests("src", ".*\\.hx"))
+@:build(hx.doctest.DocTestGenerator.generateDocTests("src", ".*\\.hx$"))
 @:keep
 class TestRunner extends DocTestRunner {
 

@@ -3,12 +3,12 @@
     "url": "https://github.com/vegardit/haxe-strings",
 	"license": "Apache",
 	"classPath": "src/",
-    "tags": ["utility","vegardit","cross","cpp","cs","flash","java","js","neko","lua","php","python"],
-    "description": "A haxelib for consistent cross-platform UTF-8 string manipulation.",
+    "tags": ["utility","semver","vegardit","cross","cpp","cs","flash","java","js","neko","lua","php","python"],
+    "description": "A haxelib for consistent cross-platform UTF-8 string manipulation. Contains: comprehensive String utility functions, SemVer.org version parsing, spell checker, ANSI escape sequence builder, RandunUUID generator, thread-safe regular expression API, StringBuilder, SortedStringMap, SortedStringSet, camelcase strings, filepath normalizing and globbing (wildcards).",
     "contributors": [
         "vegardit"
     ],
     "releasenote": "See https://github.com/vegardit/haxe-strings/blob/master/CHANGELOG.md",
-    "version": "3.0.0",
+    "version": "4.0.0",
     "dependencies": { }
 }

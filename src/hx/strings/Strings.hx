@@ -48,7 +48,7 @@ class Strings {
     static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
     #end
 
-    public static inline var POS_NOT_FOUND:CharPos = -1;
+    public static inline var POS_NOT_FOUND:CharIndex = -1;
 
     /**
      * Unix line separator (LF)
@@ -85,8 +85,9 @@ class Strings {
      * no bounds checking
      */
     // to prevent "lua53: target/lua/TestRunner.lua:24443: ')' expected near ':'"
+    @:allow(hx.strings.CharIterator)
     #if !lua inline #end
-    private static function _charCodeAt8Unsafe(str:String, pos:CharPos):Char {
+    private static function _charCodeAt8Unsafe(str:String, pos:CharIndex):Char {
         #if (flash || java || cs || python)
             return str.charCodeAt(pos);
         #else
@@ -309,7 +310,7 @@ class Strings {
      *
      * @param pos character position
      */
-    public static function charAt8(str:String, pos:CharPos, resultIfOutOfBound = ""):String {
+    public static function charAt8(str:String, pos:CharIndex, resultIfOutOfBound = ""):String {
         if (str.isEmpty() || pos < 0 || pos >= str.length8())
             return resultIfOutOfBound;
 
@@ -346,7 +347,7 @@ class Strings {
      * @param pos character position
      */
     inline
-    public static function charCodeAt8(str:String, pos:CharPos, resultIfOutOfBound:Char = -1):Char {
+    public static function charCodeAt8(str:String, pos:CharIndex, resultIfOutOfBound:Char = -1):Char {
         var strLen = str.length8();
         if (strLen == 0 || pos < 0 || pos >= strLen)
             return resultIfOutOfBound;
@@ -647,7 +648,7 @@ class Strings {
      * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting
      *         from the given character position.
      */
-    public static function countMatches(searchIn:String, searchFor:String, startAt:CharPos = 0):Int {
+    public static function countMatches(searchIn:String, searchFor:String, startAt:CharIndex = 0):Int {
         if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length)
             return 0;
 
@@ -678,7 +679,7 @@ class Strings {
      * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting
      *         from the given character position ignoring case.
      */
-    public static function countMatchesIgnoreCase(searchIn:String, searchFor:String, startAt:CharPos = 0):Int {
+    public static function countMatchesIgnoreCase(searchIn:String, searchFor:String, startAt:CharIndex = 0):Int {
         if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length)
             return 0;
 
@@ -772,17 +773,17 @@ class Strings {
      * >>> Strings.diff("abc", "abC").right == "C"
      * >>> Strings.diff("ab", "abC").left   == ""
      * >>> Strings.diff("ab", "abC").right  == "C"
-     * >>> Strings.diff(null, null).pos     == -1
-     * >>> Strings.diff(null, "").pos       == 0
+     * >>> Strings.diff(null, null).at      == -1
+     * >>> Strings.diff(null, "").at        == 0
      * >>> Strings.diff(null, "").left      == null
      * >>> Strings.diff(null, "").right     == ""
      * </code></pre>
      */
     public static function diff(left:String, right:String):StringDiff {
         var diff = new StringDiff();
-        diff.pos = diffAt(left, right);
-        diff.left = left.substr8(diff.pos);
-        diff.right = right.substr8(diff.pos);
+        diff.at = diffAt(left, right);
+        diff.left = left.substr8(diff.at);
+        diff.right = right.substr8(diff.at);
         return diff;
     }
 
@@ -803,7 +804,7 @@ class Strings {
      *
      * @return the UTF8 character position where the strings begin to differ or -1 if they are equal
      */
-    public static function diffAt(str:String, other:String):CharPos {
+    public static function diffAt(str:String, other:String):CharIndex {
         if (str.equals(other))
             return POS_NOT_FOUND;
 
@@ -1417,7 +1418,7 @@ class Strings {
      *
      * @throws if the absolute value of insertAt is greater than str.length
      */
-    public static function insertAt(str:String, pos:CharPos, insertion:AnyAsString):String {
+    public static function insertAt(str:String, pos:CharIndex, insertion:AnyAsString):String {
         if (str == null)
             return null;
 
@@ -1572,7 +1573,7 @@ class Strings {
      * >>> Strings.indexOf8("いいはい", "は")      == 2
      * </code></pre>
      */
-    public static function indexOf8(str:String, searchFor:String, startAt:CharPos = 0):CharPos {
+    public static function indexOf8(str:String, searchFor:String, startAt:CharIndex = 0):CharIndex {
         if (str == null || searchFor == null)
             return POS_NOT_FOUND;
 
@@ -1836,7 +1837,7 @@ class Strings {
      * >>> Strings.lastIndexOf8("いいはい", "は")           == 2
      * </code></pre>
      */
-    public static function lastIndexOf8(str:String, searchFor:String, ?startAt:CharPos):CharPos {
+    public static function lastIndexOf8(str:String, searchFor:String, ?startAt:CharIndex):CharIndex {
         if (str == null || searchFor == null)
             return POS_NOT_FOUND;
 
@@ -1884,7 +1885,7 @@ class Strings {
             startAt += searchForLen - 1;
 
             var searchForPosToCheck = searchForLen - 1;
-            var strPos:CharPos = strLen;
+            var strPos:CharIndex = strLen;
             while (strPos-- > 0) {
                 if (strPos > startAt) continue;
                 var strCh = str._charCodeAt8Unsafe(strPos);
@@ -2136,7 +2137,7 @@ class Strings {
      *
      * @throws if the <b>pos</b> is smaller than `-1 * str.length`
      */
-    public static function removeAt(str:String, pos:CharPos, length:Int):String {
+    public static function removeAt(str:String, pos:CharIndex, length:Int):String {
         if (str.isEmpty() || length < 1)
             return str;
 
@@ -2623,7 +2624,7 @@ class Strings {
      * >>> Strings.splitAt("cat", -4) == ["cat"]
      * >>> Strings.splitAt("cat", [2,1]) == ["c", "a", "t"]
      */
-    public static function splitAt(str:String, splitPos:OneOrMany<CharPos>):Array<String> {
+    public static function splitAt(str:String, splitPos:OneOrMany<CharIndex>):Array<String> {
         if (str == null)
             return null;
 
@@ -2635,7 +2636,7 @@ class Strings {
             return [str];
 
         // remove dups, out-of-bound positions and calculate absolute position of negative values
-        var pos = new Array<CharPos>();
+        var pos = new Array<CharIndex>();
         for (p in splitPos) {
             if (p < 0)
                 p = strLen + p;
@@ -2830,7 +2831,7 @@ class Strings {
      *
      * @return <b>len</b> characters of <b>str</b>, starting from <b>startAt</b>.
      */
-    public static function substr8(str:String, startAt:CharPos, ?len:Int):String {
+    public static function substr8(str:String, startAt:CharIndex, ?len:Int):String {
         if (str.isEmpty())
             return str;
 
@@ -2888,7 +2889,7 @@ class Strings {
      *
      * @return the part of <b>str</b> from <b>startAt</b> to but not including <b>endAt</b>.
      */
-    public static function substring8(str:String, startAt:CharPos, ?endAt:CharPos):String {
+    public static function substring8(str:String, startAt:CharIndex, ?endAt:CharIndex):String {
         if (str.isEmpty())
             return str;
 
@@ -3924,10 +3925,42 @@ class Strings {
 /**
  * Represents a character position (not byte index) in a String.
  * 
- * First character is at position 0.
+ * First character is at index 0.
  */
-typedef CharPos = Int;
+typedef CharIndex = Int;
 
+/**
+ * Represents a character position in a sequence including its line/column coordinates.
+ */
+class CharPos {
+    
+    public function new(index:CharIndex, line:Int, col:Int) {
+        this.index = index;
+        this.line = line;
+        this.col = col;
+    }
+    
+    /**
+     * Character index in the character sequence.
+     * <br>
+     * First character is at position 0.
+     */
+    public var index(default, null):CharIndex = 0;
+    
+    /**
+     * Line number of the character in the sequence.
+     * <br>
+     * First line is 1.
+     */
+    public var line(default, null):Int = 0;
+    
+    /**
+     * Column number of the character in the sequence.
+     * <br>
+     * First column is 1.
+     */
+    public var col(default, null):Int = 0;
+}
 
 /**
  * Return value of hx.strings.Strings#diff(String, String)
@@ -3938,9 +3971,9 @@ class StringDiff {
     }
     
     /**
-     * position where the strings start to differ
+     * index where the strings start to differ
      */
-    public var pos:CharPos;
+    public var at:CharIndex;
     
     /**
      * diff of the left string

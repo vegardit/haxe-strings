@@ -19,6 +19,7 @@
 
 A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cross-platform UTF-8 string manipulation. 
 It has been extensively unit tested (over 1,700 individual test cases) on the targets C++, C#, Flash, HashLink, Neko, Java, JavaScript, PHP, and Python.
+The library is self-containing meaning it has no dependencies to other haxe-libs.
 
 The classes are under the package `hx.strings`.
 
@@ -89,8 +90,8 @@ class Test {
 
         // string differences:
         "It's green".diffAt("It's red"); // returns 5
-        "It's green".diff("It's red");   // returns { left: 'green', right: 'red', pos: 5 }
-        
+        "It's green".diff("It's red");   // returns { left: 'green', right: 'red', at: 5 }
+
         // hash codes:
         "Cool String".hashCode();       // generate a platform specific hash code
         "Cool String".hashCode(CRC32);  // generate a hash code using CRC32

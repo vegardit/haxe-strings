@@ -37,7 +37,7 @@ using hx.strings.Strings;
  * 
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-abstract Char(Int) from Int to Int {
+abstract Char(Int) from Int {
     
     static var CHAR_CASE_MAPPER = new CharCaseMapper();
 
@@ -266,7 +266,7 @@ abstract Char(Int) from Int to Int {
     static function fromString(str:String):Char {
         return str.charCodeAt8(0);
     }
-    
+
     inline
     public static function of(ch:Char):Char {
         return ch;
@@ -614,6 +614,7 @@ abstract Char(Int) from Int to Int {
      * >>> Char.of(14).toInt() == 14
      * </code></pre>
      */
+    @:to
     inline
     public function toInt():Int {
         return this;
