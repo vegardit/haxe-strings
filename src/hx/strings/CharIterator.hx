@@ -30,6 +30,7 @@ using hx.strings.Strings;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class CharIterator {
+       
     var index = -1;
     var line = 0;
     var col = 0;
@@ -45,7 +46,8 @@ class CharIterator {
      * </code></pre>
      */
     inline
-    public static function fromString(chars:AnyAsString) {
+    public static function fromString(chars:AnyAsString):CharIterator {
+        if (chars == null) return NullCharIterator.INSTANCE;
         return new StringCharIterator(chars);
     }
 
@@ -59,7 +61,8 @@ class CharIterator {
      * </code></pre>
      */
     inline
-    public static function fromArray(chars:Array<Char>) {
+    public static function fromArray(chars:Array<Char>):CharIterator {
+        if (chars == null) return NullCharIterator.INSTANCE;
         return new ArrayCharIterator(chars);
     }
 
@@ -75,7 +78,8 @@ class CharIterator {
      * Read characters from an ASCII or Utf8-encoded input.
      */
     inline
-    public static function fromInput(chars:Input) {
+    public static function fromInput(chars:Input):CharIterator {
+        if (chars == null) return NullCharIterator.INSTANCE;
         return new InputCharIterator(chars);
     }
     
@@ -89,7 +93,8 @@ class CharIterator {
      * </code></pre>
      */
     inline
-    public static function fromIterator(chars:Iterator<Char>) {
+    public static function fromIterator(chars:Iterator<Char>):CharIterator {
+        if (chars == null) return NullCharIterator.INSTANCE;
         return new IteratorCharIterator(chars);
     }
     
@@ -126,17 +131,26 @@ class CharIterator {
 }
 
 
+private class NullCharIterator extends CharIterator {
+    
+    public static var INSTANCE = new NullCharIterator();
+    
+    function new() {}
+
+    override
+    inline
+	public function hasNext():Bool {
+        return false;
+    }
+}
+
 private class ArrayCharIterator extends CharIterator {  
     var chars:Array<Char>;
     var charsMaxIndex:Int;
 
     public function new(chars:Array<Char>) {
-        if (chars == null) {
-            charsMaxIndex = -1;
-        } else {
-            this.chars = chars;
-            charsMaxIndex = chars.length -1;
-        }
+        this.chars = chars;
+        charsMaxIndex = chars.length -1;
     }
 
     override
@@ -163,7 +177,7 @@ private class IteratorCharIterator extends CharIterator {
     override
     inline
 	public function hasNext():Bool {
-        return chars != null && chars.hasNext();
+        return chars.hasNext();
     }
     
     override
@@ -186,9 +200,6 @@ private class InputCharIterator extends CharIterator {
     override
     inline
 	public function hasNext():Bool {
-        if (chars == null) 
-            return false;
-
         if (nextCharAvailable == UNKNOWN) {
             try {
                 nextChar = readUtf8Char(chars);
@@ -295,12 +306,8 @@ private class StringCharIterator extends CharIterator {
     var charsMaxIndex:Int;
 
     public function new(chars:String) {
-        if (chars == null) {
-            charsMaxIndex = -1;
-        } else {
-            this.chars = chars;
-            charsMaxIndex = chars.length8() - 1;
-        }
+        this.chars = chars;
+        charsMaxIndex = chars.length8() - 1;
     }
 
     override

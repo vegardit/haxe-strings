@@ -3277,6 +3277,20 @@ class Strings {
     public static function toChar(charCode:Int):Char {
         return Char.of(charCode);
     }
+    
+    /**
+     * <pre><code>
+     * >>> Strings.toCharIterator(null).hasNext()          == false
+     * >>> Strings.toCharIterator("").hasNext()            == false
+     * >>> Strings.toCharIterator("cat").hasNext()         == true
+     * >>> Strings.toCharIterator("cat").next().toString() == 'c'
+     * >>> Strings.toCharIterator("はい").next().toString() == 'は'
+     * </code></pre>
+     */
+    inline
+    public static function toCharIterator(str:String):CharIterator {
+        return CharIterator.fromString(str);
+    }
 
     /**
      * <pre><code>

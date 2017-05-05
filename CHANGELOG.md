@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - class hx.strings.Strings.CharPos
 - class hx.strings.collection.OrderedStringMap
 - class hx.strings.collection.OrderedStringSet
+- function hx.strings.Strings#toCharIterator()
 - function hx.strings.collection.StringSet#addAll()
 - function hx.strings.collection.StringArray#contains()
 - function hx.strings.collection.StringArray#pushAll()
