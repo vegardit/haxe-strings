@@ -327,7 +327,7 @@ class Test {
 }
 ```
 
-## [Random string generation](#random-strings)
+## <a name="random-strings"></a>Random string generation
 
 The `hx.strings.RandomStrings` class contains methods to generate different types of random strings, 
 e.g. UUIDs or alpha-numeric sequences.
