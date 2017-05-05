@@ -243,19 +243,19 @@ private class InputCharIterator extends CharIterator {
         byte1 = Bits.clearBit(byte1, 7);
         var totalBytes = 2;
 
-        var leftBit3 = Bits.getBit(byte1, 6);
-        var leftBit4 = false;
-        if(leftBit3) {
+        var isBit6Set = Bits.getBit(byte1, 6);
+        var isBit5Set = false;
+        if(isBit6Set) {
             byte1 = Bits.clearBit(byte1, 6);
             totalBytes++;
 
-            leftBit4 = Bits.getBit(byte1, 5);
-            if(leftBit4) {
+            isBit5Set = Bits.getBit(byte1, 5);
+            if(isBit5Set) {
                 byte1 = Bits.clearBit(byte1, 5);
                 totalBytes++;
-                
-                var leftBit5 = Bits.getBit(byte1, 4);
-                if(leftBit5) throw "Valid UTF-8 byte expected at position [$byteIndex] but found byte with value [$byte]!";
+
+                if (Bits.getBit(byte1, 4)) 
+                    throw "Valid UTF-8 byte expected at position [$byteIndex] but found byte with value [$byte]!";
             }
         }
 
@@ -270,14 +270,14 @@ private class InputCharIterator extends CharIterator {
         /*
          * read the third byte
          */
-        if(leftBit3) {
+        if(isBit6Set) {
             var byte3 = readUtf8MultiSequenceByte();
             result += (byte3 << 6*(totalBytes-3));
             
             /*
              * read the fourth byte
              */
-            if(leftBit4) {
+            if(isBit5Set) {
                 var byte4 = readUtf8MultiSequenceByte();
                 result += (byte4 << 6*(totalBytes-4));
             }
@@ -295,11 +295,11 @@ private class InputCharIterator extends CharIterator {
         var byte = input.readByte();
         byteIndex++;
         
-        var leftBit1 = Bits.getBit(byte, 8);
-        if (!leftBit1) throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
-        
-        var leftBit2 = Bits.getBit(byte, 7);
-        if (leftBit2) throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
+        if (!Bits.getBit(byte, 8)) 
+            throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
+
+        if (Bits.getBit(byte, 7)) 
+            throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
         
         return Bits.clearBit(byte, 8);
     }
