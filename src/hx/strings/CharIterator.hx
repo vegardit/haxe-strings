@@ -101,7 +101,7 @@ class CharIterator {
     public var pos(get, never):CharPos;
     inline function get_pos() return new CharPos(index, line, col);
 
-	public function hasNext():Bool throw "Not implemented";
+    public function hasNext():Bool throw "Not implemented";
     
     /**
      * Returns the next character from the input sequence.
@@ -139,7 +139,7 @@ private class NullCharIterator extends CharIterator {
 
     override
     inline
-	public function hasNext():Bool {
+    public function hasNext():Bool {
         return false;
     }
 }
@@ -156,13 +156,13 @@ private class ArrayCharIterator extends CharIterator {
 
     override
     inline
-	public function hasNext():Bool {
+    public function hasNext():Bool {
         return index < charsMaxIndex;
     }
     
     override
     inline
-	function getChar(): Char {
+    function getChar(): Char {
         return chars[index];
     }
 }
@@ -177,13 +177,13 @@ private class IteratorCharIterator extends CharIterator {
 
     override
     inline
-	public function hasNext():Bool {
+    public function hasNext():Bool {
         return chars.hasNext();
     }
     
     override
     inline
-	function getChar(): Char {
+    function getChar(): Char {
         return chars.next();
     }
 }
@@ -200,7 +200,7 @@ private class InputCharIterator extends CharIterator {
 
     override
     inline
-	public function hasNext():Bool {
+    public function hasNext():Bool {
         if (nextCharAvailable == UNKNOWN) {
             try {
                 nextChar = readUtf8Char();
@@ -214,7 +214,7 @@ private class InputCharIterator extends CharIterator {
     
     override
     inline
-	function getChar(): Char {
+    function getChar(): Char {
         if(index != currCharIndex) {
             currCharIndex = index;
             nextCharAvailable = UNKNOWN;
@@ -245,7 +245,7 @@ private class InputCharIterator extends CharIterator {
         var leftBit4 = false;
         if(leftBit3) {
             byte1 = Bits.clearBit(byte1, 6);
-        	totalBytes++;
+            totalBytes++;
 
             leftBit4 = Bits.getBit(byte1, 5);
             if(leftBit4) {
@@ -257,33 +257,34 @@ private class InputCharIterator extends CharIterator {
             }
         }
 
-        var result:Int = (byte1<<6*(totalBytes-1));
+        var result:Int = (byte1 << 6*(totalBytes-1));
         
         /*
          * read the second byte
          */
         var byte2 = readUtf8MultiSequenceByte();
-        result += (byte2<<6*(totalBytes-2));
+        result += (byte2 << 6*(totalBytes-2));
 
         /*
          * read the third byte
          */
         if(leftBit3) {
             var byte3 = readUtf8MultiSequenceByte();
-            result += (byte3<<6*(totalBytes-3));
+            result += (byte3 << 6*(totalBytes-3));
             
             /*
              * read the fourth byte
              */
             if(leftBit4) {
                 var byte4 = readUtf8MultiSequenceByte();
-                result += (byte4<<6*(totalBytes-4));
+                result += (byte4 << 6*(totalBytes-4));
             }
         }
         
         // UTF8-BOM marker http://unicode.org/faq/utf_bom.html#bom4
         if (index == 0 && result == 65279)
             return readUtf8Char();
+
         return result;
     }
     
@@ -312,13 +313,13 @@ private class StringCharIterator extends CharIterator {
 
     override
     inline
-	public function hasNext():Bool {
+    public function hasNext():Bool {
         return index < charsMaxIndex;
     }
     
     override
     inline
-	function getChar(): Char {
+    function getChar(): Char {
         return Strings._charCodeAt8Unsafe(chars, index);
     }
 }
