@@ -131,6 +131,7 @@ class CharIterator {
 }
 
 
+@:noDoc @:dox(hide)
 private class NullCharIterator extends CharIterator {
     
     public static var INSTANCE = new NullCharIterator();
@@ -144,6 +145,7 @@ private class NullCharIterator extends CharIterator {
     }
 }
 
+@:noDoc @:dox(hide)
 private class ArrayCharIterator extends CharIterator {  
     var chars:Array<Char>;
     var charsMaxIndex:Int;
@@ -167,7 +169,7 @@ private class ArrayCharIterator extends CharIterator {
     }
 }
 
-
+@:noDoc @:dox(hide)
 private class IteratorCharIterator extends CharIterator {  
     var chars:Iterator<Char>;
 
@@ -188,6 +190,7 @@ private class IteratorCharIterator extends CharIterator {
     }
 }
 
+@:noDoc @:dox(hide)
 private class InputCharIterator extends CharIterator {
     var byteIndex = 0;
     var input:Input;
@@ -305,6 +308,7 @@ private class InputCharIterator extends CharIterator {
     }
 }
 
+@:noDoc @:dox(hide)
 private class StringCharIterator extends CharIterator {  
     var chars:String;
     var charsMaxIndex:Int;
