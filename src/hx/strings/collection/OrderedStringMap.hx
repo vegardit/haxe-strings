@@ -15,10 +15,7 @@
  */
 package hx.strings.collection;
 
-import haxe.ds.StringMap;
-
 import hx.strings.StringBuilder;
-
 
 /**
  * A map with String keys ordered by insertion.

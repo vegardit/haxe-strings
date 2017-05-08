@@ -17,6 +17,8 @@ package hx.strings.collection;
 
 import haxe.ds.StringMap;
 
+import hx.strings.internal.Either2;
+
 /**
  * hx.strings.collection.OrderedStringMap backed set implementation that maintains insertion order.
  * 
@@ -29,7 +31,7 @@ import haxe.ds.StringMap;
  */
 class OrderedStringSet<V> extends StringSet {
 
-    public function new(?initialItems:Array<String>, ?comparator:String -> String -> Int) {
+    public function new(?initialItems:Either2<StringSet,Array<String>>, ?comparator:String -> String -> Int) {
         super(initialItems);
     }
 

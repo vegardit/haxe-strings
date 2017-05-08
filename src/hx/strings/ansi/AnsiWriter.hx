@@ -131,5 +131,11 @@ private class StringBufStringWriter<T:StringBuf> extends AbstractStringWriter<T>
 @:noDoc @:dox(hide)
 private class StringBuilderStringWriter<T:StringBuilder> extends AbstractStringWriter<T> {
     inline public function new(out:T) this.out = out;
-    override public function write(str:String) out.add(str);
+    override public function write(str:String) {
+        #if (cs||java)
+            cast(out, StringBuilder).add(str);
+        #else
+            out.add(str);
+        #end
+    }
 }
