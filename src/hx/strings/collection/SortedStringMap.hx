@@ -44,17 +44,19 @@ abstract SortedStringMap<V>(SortedStringMapImpl<V>) from SortedStringMapImpl<V> 
       return this.get(key);
     }
 
-	@:arrayAccess 
+    @:arrayAccess 
     @:noCompletion 
     @:noDoc @:dox(hide)
     inline
     public function __arrayWrite(key:String, value:V):V {
-		this.set(key, value);
-		return value;
-	}
+        this.set(key, value);
+        return value;
+    }
 }
 
-private class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Constraints.IMap<String,V> {
+@:noDoc @:dox(hide)
+@:noCompletion
+class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Constraints.IMap<String,V> {
 
     var cmp:String -> String -> Int;
 
@@ -66,14 +68,14 @@ private class SortedStringMapImpl<V> extends BalancedTree<String, V> implements 
         this.cmp = comparator == null ? Strings.compare : comparator;
     }
     
-	@:arrayAccess 
+    @:arrayAccess 
     @:noCompletion 
     @:noDoc @:dox(hide)
     inline
     public function __arrayWrite(k:String, v:V):V {
-		this.set(k, v);
-		return v;
-	}
+        this.set(k, v);
+        return v;
+    }
     
     /**
      * <pre><code>
@@ -91,13 +93,13 @@ private class SortedStringMapImpl<V> extends BalancedTree<String, V> implements 
      * </code></pre>
      */
     inline
-	public function clone():SortedStringMapImpl<V> {
+    public function clone():SortedStringMapImpl<V> {
         var clone = new SortedStringMapImpl<V>();
-		for (k in this.keys()) {
-			clone.set(k, this.get(k));
-		}
-		return clone;
-	}
+        for (k in this.keys()) {
+            clone.set(k, this.get(k));
+        }
+        return clone;
+    }
 
     inline
     override
@@ -112,9 +114,9 @@ private class SortedStringMapImpl<V> extends BalancedTree<String, V> implements 
      */
     @:arrayAccess
     override
-	public function get(key:String):Null<V> {
-		return super.get(key);
-	}
+    public function get(key:String):Null<V> {
+        return super.get(key);
+    }
     
     /**
      * <pre><code>

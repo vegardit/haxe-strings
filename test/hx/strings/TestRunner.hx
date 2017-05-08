@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,14 +31,14 @@ using hx.strings.Strings;
 class TestRunner extends DocTestRunner {
 
     public static function main() {
-        var runner = new TestRunner();
-        runner.runAndExit();
+       var runner = new TestRunner();
+       runner.runAndExit();
     }
 
     function new() {
         super();
     }
-    
+
     public function testPattern():Void {
 
         {
@@ -84,7 +84,7 @@ class TestRunner extends DocTestRunner {
             try { m.matched(0);     fail(); } catch (e:Dynamic) {};
             assertEquals(m.map(function(m) return "cat"), "cowcatcow");
         }
-    
+
         {
             var p:Pattern = Pattern.compile("DOG", [IGNORE_CASE]);
             var m:Matcher = p.matcher("dogcatdog");
@@ -95,19 +95,19 @@ class TestRunner extends DocTestRunner {
             assertEquals(m.matched(0), "dog");
             assertEquals(m.map(function(m) return "cat"), "catcatdog");
         }
-        
+
         {
             var p:Pattern = Pattern.compile("DOG", [IGNORE_CASE]);
             var m:Matcher = p.matcher("dogcatdog");
-            
+
             var matches = new Array<String>();
             m.iterate(function(m) matches.push(m.matched()));
             assertEquals(matches, ["dog", "dog"]);
         }
     }
-    
+
     public function testVersion():Void {
-        
+
         var v1:Version = "1.1.1";
         var v1_B:Version = "1.1.1";
         var v2:Version = "1.1.2";
@@ -130,7 +130,7 @@ class TestRunner extends DocTestRunner {
         assertFalse(v1_B < v1);
         assertTrue(v1_B <= v1);
         assertTrue(v1_B >= v1);
-        
+
         assertNotEquals(v1, v2);
         assertFalse(v1 == v2);
         assertTrue(v1 != v2);
@@ -146,17 +146,17 @@ class TestRunner extends DocTestRunner {
         assertFalse(v2 < v1);
         assertFalse(v2 <= v1);
         assertTrue(v2 >= v1);
-        
+
         /*
          * testing using Version as Map keys
          */
         var map:Map<Version, Bool> = new Map<Version, Bool>();
         map.set(v1, true);
-        
+
         assertTrue(map.exists(v1));
         assertTrue(map.exists(v1_B));
         assertFalse(map.exists(v2));
-        
+
         map.set(v1_B, true);
 
         var mapLen = 0;

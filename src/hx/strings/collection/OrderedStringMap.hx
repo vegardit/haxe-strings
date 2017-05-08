@@ -29,30 +29,32 @@ abstract OrderedStringMap<V>(OrderedStringMapImpl<V>) from OrderedStringMapImpl<
     public function new() {
         this = new OrderedStringMapImpl<V>();
     }
-    
+
     @:to
     function __toStringMap():StringMap<V> {
         return cast this;
     }
-    
+
     @:arrayAccess 
     @:noCompletion 
     @:noDoc @:dox(hide)
     public inline function __arrayGet(key:String):Null<V> {
       return this.get(key);
     }
-    
-	@:arrayAccess 
+
+    @:arrayAccess 
     @:noCompletion 
     @:noDoc @:dox(hide)
     inline
     public function __arrayWrite(key:String, value:V):V {
-		this.set(key, value);
-		return value;
-	}
+        this.set(key, value);
+        return value;
+    }
 }
 
-private class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
+@:noDoc @:dox(hide)
+@:noCompletion
+class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
 
     @:allow(hx.strings.collection.ValueIterator)
     var __keys:Array<String>;
@@ -86,14 +88,14 @@ private class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V>
      * </code></pre>
      */
     inline
-	public function clone():OrderedStringMapImpl<V> {
+    public function clone():OrderedStringMapImpl<V> {
         var clone = new OrderedStringMapImpl<V>();
-		for (k in this.keys()) {
-			clone.set(k, this.get(k));
-		}
-		return clone;
-	}
-	
+        for (k in this.keys()) {
+            clone.set(k, this.get(k));
+        }
+        return clone;
+    }
+    
     inline
     public function exists(key:String):Bool {
         return __map.exists(key);
@@ -121,15 +123,15 @@ private class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V>
     }
     
     inline
-	public function iterator():Iterator<V> {
+    public function iterator():Iterator<V> {
         return new ValueIterator<V>(this);
     }
 
     inline
-	public function keys():Iterator<String> {
+    public function keys():Iterator<String> {
         return __keys.iterator();
     }
-	
+    
     public function remove(key:String):Bool {
         if (__map.remove(key)) {
             __keys.remove(key);
@@ -147,18 +149,18 @@ private class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V>
         if (isNew)
             __keys.push(key);
     }
-	
-	public function toString() : String {
-		var sb = new StringBuilder("{");
+    
+    public function toString() : String {
+        var sb = new StringBuilder("{");
         var it = keys();
-		for(key in it) {
-			sb.add(key).add(" => ").add(get(key));
-			if(it.hasNext())
-				sb.add(", ");
-		}
-		sb.add("}");
-		return sb.toString();
-	}
+        for(key in it) {
+            sb.add(key).add(" => ").add(get(key));
+            if(it.hasNext())
+                sb.add(", ");
+        }
+        sb.add("}");
+        return sb.toString();
+    }
 }
 
 private class ValueIterator<V> {
@@ -167,17 +169,17 @@ private class ValueIterator<V> {
     var pos = -1;
     
     inline
-	public function new(map:OrderedStringMap<V>) {
-		this.map = map;
-	}
-	
+    public function new(map:OrderedStringMap<V>) {
+        this.map = map;
+    }
+    
     inline
-	public function hasNext():Bool {
-		return pos + 1 < map.__keys.length;
-	}
-	
+    public function hasNext():Bool {
+        return pos + 1 < map.__keys.length;
+    }
+    
     inline
-	public function next():V {
-		return map.get(map.__keys[++pos]);
-	}
+    public function next():V {
+        return map.get(map.__keys[++pos]);
+    }
 }

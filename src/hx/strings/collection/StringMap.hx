@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,7 @@ import hx.strings.internal.Macros;
 
 /**
  * Abstract on <code>haxe.Constraints.IMap[String, V]</code>
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:forward
@@ -29,33 +29,33 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
     public function new() {
         this = new Map<String,V>();
     }
-    
+
     @:to
     function __toMap():Map<String,V> {
         return cast this;
     }
-    
-	@:arrayAccess
-    @:noCompletion 
+
+    @:arrayAccess
+    @:noCompletion
     @:noDoc @:dox(hide)
-    inline 
+    inline
     public function __arrayGet(key:String):V {
         return this.get(key);
     }
 
-	@:arrayAccess 
-    @:noCompletion 
+    @:arrayAccess
+    @:noCompletion
     @:noDoc @:dox(hide)
     inline
     public function __arrayWrite(k:String, v:V):V {
-		this.set(k, v);
-		return v;
-	}
-    
+        this.set(k, v);
+        return v;
+    }
+
     /**
-     * <b>IMPORTANT:</b> There is currently no native support for getting the size of a map, 
+     * <b>IMPORTANT:</b> There is currently no native support for getting the size of a map,
      * therefore this is emulated for now by using an iterator - which impacts performance.
-     * 
+     *
      * <pre><code>
      * >>> new StringMap<Int>().size == 0
      * >>> function(){var m = new StringMap<Int>(); m.set("1", 1); m.set("2", 1); return m.size; }() == 2
@@ -72,26 +72,29 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
         }
         return count;
     }
-    
+
     /**
      * <pre><code>
      * >>> new StringMap<Int>().clone() != null
      * </code></pre>
      */
-	public function clone():StringMap<V> {
-        if (Macros.is(this, (m:SortedStringMap<V>)))
+    public function clone():StringMap<V> {
+
+        if (Macros.is(this, (m:SortedStringMap<V>))) {
             return m.clone();
-        
-        if (Macros.is(this, (m:OrderedStringMap<V>)))
+        }
+
+        if (Macros.is(this, (m:OrderedStringMap<V>))) {
             return m.clone();
-        
+        }
+
         var clone:StringMap<V> = new StringMap<V>();
-		for (k in this.keys()) {
-			clone.set(k, this.get(k));
-		}
-		return clone;
-	}
-    
+        for (k in this.keys()) {
+            clone.set(k, this.get(k));
+        }
+        return clone;
+    }
+
     /**
      * <pre><code>
      * >>> new StringMap<Int>().isEmpty() == true
@@ -105,11 +108,11 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
 
     /**
      * Copies all key-value pairs from the source map into this map.
-     * 
+     *
      * <pre><code>
      * >>> new StringMap<Int>().setAll(null) == 0
      * </code></pre>
-     * 
+     *
      * @param replace if true existing key-value pairs are replaced otherwise they will be skipped
      * @return the number of copied key-value pairs
      */
