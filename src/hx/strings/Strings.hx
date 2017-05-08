@@ -3865,6 +3865,8 @@ class Strings {
      * >>> Strings.urlEncode("")                      == ""
      * >>> Strings.urlEncode("param1=dog&param2=cat") == "param1%3Ddog%26param2%3Dcat"
      * >>> Strings.urlEncode("はい")                   == "%E3%81%AF%E3%81%84"
+     * >>> Strings.urlEncode("dog@cat.com")           == "dog%40cat.com"
+     * >>> Strings.urlEncode("dog+cat")               == "dog%2Bcat"
      * </pre></code>
      */
     inline
