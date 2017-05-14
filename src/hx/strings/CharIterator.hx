@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,12 +30,12 @@ using hx.strings.Strings;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class CharIterator {
-       
+
     var index = -1;
     var line = 0;
     var col = 0;
     var currChar = -1;
-    
+
     /**
      * <pre><code>
      * >>> CharIterator.fromString(null).hasNext()          == false
@@ -74,7 +74,7 @@ class CharIterator {
      * >>> CharIterator.fromInput(new haxe.io.StringInput("cat")).next().toString() == 'c'
      * >>> CharIterator.fromInput(new haxe.io.StringInput("はい")).next().toString() == 'は'
      * </code></pre>
-     * 
+     *
      * Read characters from an ASCII or Utf8-encoded input.
      */
     inline
@@ -82,7 +82,7 @@ class CharIterator {
         if (chars == null) return NullCharIterator.INSTANCE;
         return new InputCharIterator(chars);
     }
-    
+
     /**
      * <pre><code>
      * >>> CharIterator.fromIterator(null).hasNext()                                      == false
@@ -97,22 +97,22 @@ class CharIterator {
         if (chars == null) return NullCharIterator.INSTANCE;
         return new IteratorCharIterator(chars);
     }
-    
+
     public var pos(get, never):CharPos;
     inline function get_pos() return new CharPos(index, line, col);
 
     public function hasNext():Bool throw "Not implemented";
-    
+
     /**
      * Returns the next character from the input sequence.
-     * 
+     *
      * @throws haxe.io.Eof if no more characters are available
      */
     @:final
     public function next():Char {
         if (!hasNext())
             throw new Eof();
-            
+
         if (currChar == Char.LF || currChar < 0) {
             line++;
             col=0;
@@ -123,7 +123,7 @@ class CharIterator {
         currChar = getChar();
         return currChar;
     }
-    
+
     /**
      * @return the char at the current position
      */
@@ -133,9 +133,9 @@ class CharIterator {
 
 @:noDoc @:dox(hide)
 private class NullCharIterator extends CharIterator {
-    
+
     public static var INSTANCE = new NullCharIterator();
-    
+
     function new() {}
 
     override
@@ -146,7 +146,7 @@ private class NullCharIterator extends CharIterator {
 }
 
 @:noDoc @:dox(hide)
-private class ArrayCharIterator extends CharIterator {  
+private class ArrayCharIterator extends CharIterator {
     var chars:Array<Char>;
     var charsMaxIndex:Int;
 
@@ -161,7 +161,7 @@ private class ArrayCharIterator extends CharIterator {
     public function hasNext():Bool {
         return index < charsMaxIndex;
     }
-    
+
     override
     inline
     function getChar(): Char {
@@ -170,7 +170,7 @@ private class ArrayCharIterator extends CharIterator {
 }
 
 @:noDoc @:dox(hide)
-private class IteratorCharIterator extends CharIterator {  
+private class IteratorCharIterator extends CharIterator {
     var chars:Iterator<Char>;
 
     public function new(chars:Iterator<Char>) {
@@ -182,7 +182,7 @@ private class IteratorCharIterator extends CharIterator {
     public function hasNext():Bool {
         return chars.hasNext();
     }
-    
+
     override
     inline
     function getChar(): Char {
@@ -197,7 +197,7 @@ private class InputCharIterator extends CharIterator {
     var currCharIndex = -1;
     var nextChar:Char;
     var nextCharAvailable = TriState.UNKNOWN;
-    
+
     public function new(chars:Input) {
         this.input = chars;
     }
@@ -215,7 +215,7 @@ private class InputCharIterator extends CharIterator {
         }
         return nextCharAvailable == TRUE;
     }
-    
+
     override
     inline
     function getChar(): Char {
@@ -226,7 +226,7 @@ private class InputCharIterator extends CharIterator {
         }
         return currChar;
     }
-        
+
     /**
      * http://www.fileformat.info/info/unicode/utf8.htm
      * @throws exception if an unexpected byte was found
@@ -257,13 +257,13 @@ private class InputCharIterator extends CharIterator {
                 byte1 = Bits.clearBit(byte1, 5);
                 totalBytes++;
 
-                if (Bits.getBit(byte1, 4)) 
+                if (Bits.getBit(byte1, 4))
                     throw "Valid UTF-8 byte expected at position [$byteIndex] but found byte with value [$byte]!";
             }
         }
 
         var result:Int = (byte1 << 6*(totalBytes-1));
-        
+
         /*
          * read the second byte
          */
@@ -276,7 +276,7 @@ private class InputCharIterator extends CharIterator {
         if(isBit6Set) {
             var byte3 = readUtf8MultiSequenceByte();
             result += (byte3 << 6*(totalBytes-3));
-            
+
             /*
              * read the fourth byte
              */
@@ -285,31 +285,31 @@ private class InputCharIterator extends CharIterator {
                 result += (byte4 << 6*(totalBytes-4));
             }
         }
-        
+
         // UTF8-BOM marker http://unicode.org/faq/utf_bom.html#bom4
         if (index == 0 && result == 65279)
             return readUtf8Char();
 
         return result;
     }
-    
+
     inline
     function readUtf8MultiSequenceByte():Int {
         var byte = input.readByte();
         byteIndex++;
-        
-        if (!Bits.getBit(byte, 8)) 
+
+        if (!Bits.getBit(byte, 8))
             throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
 
-        if (Bits.getBit(byte, 7)) 
+        if (Bits.getBit(byte, 7))
             throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
-        
+
         return Bits.clearBit(byte, 8);
     }
 }
 
 @:noDoc @:dox(hide)
-private class StringCharIterator extends CharIterator {  
+private class StringCharIterator extends CharIterator {
     var chars:String;
     var charsMaxIndex:Int;
 
@@ -323,7 +323,7 @@ private class StringCharIterator extends CharIterator {
     public function hasNext():Bool {
         return index < charsMaxIndex;
     }
-    
+
     override
     inline
     function getChar(): Char {
