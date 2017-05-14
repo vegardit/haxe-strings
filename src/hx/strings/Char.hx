@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,7 @@ using hx.strings.Strings;
 
 /**
  * Represents a single character
- * 
+ *
  * <pre><code>
  * >>> Char.of(32)        == 32
  * >>> Char.of(32)        == Char.of(32)
@@ -34,16 +34,16 @@ using hx.strings.Strings;
  * >>> Char.of(32) + " "  == "  "
  * >>> " " + Char.of(32)  == "  "
  * </code></pre>
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 abstract Char(Int) from Int {
-    
+
     static var CHAR_CASE_MAPPER = new CharCaseMapper();
 
     /**
      * character code for backspace
-     */    
+     */
     public static inline var BACKSPACE:Char = 8;
 
     /**
@@ -60,37 +60,37 @@ abstract Char(Int) from Int {
      * character code for carriage return \r
      */
     public static inline var CR:Char = 13;
-    
+
     /**
      * character code for escape
      */
     public static inline var ESC:Char = 27;
-    
+
     /**
      * character code for space
      */
     public static inline var SPACE:Char = 32;
-    
+
     /**
      * character code for !
      */
     public static inline var EXCLAMATION_MARK:Char = 33;
-    
+
     /**
      * character code for "
      */
     public static inline var DOUBLE_QUOTE:Char = 34;
-    
+
     /**
      * character code for #
      */
     public static inline var HASH:Char = 35;
-    
+
     /**
      * character code for $
      */
     public static inline var DOLLAR:Char = 36;
-    
+
     /**
      * character code for &
      */
@@ -100,92 +100,92 @@ abstract Char(Int) from Int {
      * character code for '
      */
     public static inline var SINGLE_QUOTE:Char = 39;
-    
+
     /**
      * character code for (
      */
     public static inline var BRACKET_ROUND_LEFT:Char = 40;
-    
+
     /**
      * character code for )
      */
     public static inline var BRACKET_ROUND_RIGHT:Char = 41;
-    
+
     /**
      * character code for *
      */
     public static inline var ASTERISK:Char = 42;
-    
+
     /**
      * character code for +
      */
     public static inline var PLUS:Char = 43;
-    
+
     /**
      * character code for ,
      */
     public static inline var COMMA:Char = 44;
-    
+
     /**
      * character code for -
      */
     public static inline var MINUS:Char = 45;
-    
+
     /**
      * character code for .
      */
     public static inline var DOT:Char = 46;
-    
+
     /**
      * character code for /
      */
     public static inline var SLASH:Char = 47;
-    
+
     /**
      * character code for 0
      */
     public static inline var ZERO:Char = 48;
-    
+
     /**
      * character code for 1
      */
     public static inline var ONE:Char = 49;
-    
+
     /**
      * character code for 2
      */
     public static inline var TWO:Char = 50;
-    
+
     /**
      * character code for 3
      */
     public static inline var TRHEE:Char = 51;
-    
+
     /**
      * character code for 4
      */
     public static inline var FOUR:Char = 52;
-        
+
     /**
      * character code for 5
      */
     public static inline var FIVE:Char = 53;
-    
+
     /**
      * character code for 6
      */
     public static inline var SIX:Char = 54;
-    
+
     /**
      * character code for 7
      */
     public static inline var SEVEN:Char = 55;
-    
+
     /**
      * character code for 8
      */
     public static inline var EIGHT:Char = 56;
-        
+
     /**
      * character code for 9
      */
@@ -195,17 +195,17 @@ abstract Char(Int) from Int {
      * character code for :
      */
     public static inline var COLON:Char = 58;
-    
+
     /**
      * character code for ;
      */
     public static inline var SEMICOLON:Char = 59;
-    
+
     /**
      * character code for <
      */
     public static inline var LOWER_THAN:Char = 60;
-    
+
     /**
      * character code for =
      */
@@ -220,17 +220,17 @@ abstract Char(Int) from Int {
      * character code for ?
      */
     public static inline var QUESTION_MARK:Char = 63;
-    
+
     /**
      * character code for [
      */
     public static inline var BRACKET_SQUARE_LEFT:Char = 91;
-    
+
     /**
      * character code for \
      */
     public static inline var BACKSLASH:Char = 92;
-    
+
     /**
      * character code for ]
      */
@@ -245,22 +245,22 @@ abstract Char(Int) from Int {
      * character code for _
      */
     public static inline var UNDERSCORE:Char = 95;
-    
+
     /**
      * character code for {
      */
     public static inline var BRACKET_CURLY_LEFT:Char = 123;
-    
+
     /**
      * character code for |
      */
     public static inline var PIPE:Char = 124;
-    
+
     /**
      * character code for }
      */
     public static inline var BRACKET_CURLY_RIGHT:Char = 125;
-    
+
     @:from
     inline
     static function fromString(str:String):Char {
@@ -277,13 +277,13 @@ abstract Char(Int) from Int {
     static function op_plus_string(ch:Char, other:String):String {
         return ch.toString() + other;
     }
-    
+
     @:op(A + B)
     inline
     static function op_plus_string2(str:String, ch:Char):String {
         return str + ch.toString();
     }
-    
+
     @:op(A + B)
     inline
     static function op_plus(ch:Char, other:Char):Char {
@@ -292,39 +292,39 @@ abstract Char(Int) from Int {
 
     @:op(++A)
     static function op_plus1_pre(ch:Char):Char;
-    
+
     @:op(A++)
     static function op_plus1_post(ch:Char):Char;
 
     @:op(--A)
     static function op_minus1_pre(ch:Char):Char;
-    
+
     @:op(A--)
     static function op_minus1_post(ch:Char):Char;
-    
+
     @:op(A - B)
     static function op_minus(ch:Char, other:Char):Char;
-    
+
     @:op(A >= B)
     static function op_gt_or_equals(ch:Char, other:Char):Bool;
-    
+
     @:op(A <= B)
     static function op_lt_or_equals(ch:Char, other:Char):Bool;
-    
+
     @:op(A == B)
     static function op_equals(ch:Char, other:Char):Bool;
-    
+
     @:op(A > B)
     static function op_gt(ch:Char, other:Char):Bool;
 
     @:op(A < B)
     static function op_lt(ch:Char, other:Char):Bool;
-    
+
     /**
      * Tests if the character is ASCII 7 bit
-     * 
+     *
      * @return <code>true</code> if between 0 and 127 inclusive
-     * 
+     *
      * <pre><code>
      * >>> Char.of(  -1).isAscii() == false
      * >>> Char.of(   0).isAscii() == true
@@ -343,12 +343,12 @@ abstract Char(Int) from Int {
     public function isAscii():Bool {
         return this > -1 && this < 128;
     }
-    
+
     /**
      * Tests if the character is ASCII 7 bit alphabetic (A-Z, a-z).
-     * 
+     *
      * @return <code>true</code> if between 65 and 90 or 97 and 122 inclusive
-     * 
+     *
      * <pre><code>
      * >>> Char.of( " ").isAsciiAlpha() == false
      * >>> Char.of( "a").isAsciiAlpha() == true
@@ -369,12 +369,12 @@ abstract Char(Int) from Int {
     public function isAsciiAlpha():Bool {
         return (this > 64 && this < 91) || (this > 96 && this < 123);
     }
-    
+
     /**
      * Tests if the character is ASCII 7 bit alphanumeric (A-Z, a-z, 0-9).
-     * 
+     *
      * @return <code>true</code> if between 48 and 57, 65 and 90, or 97 and 122 inclusive
-     * 
+     *
      * <pre><code>
      * >>> Char.of( " ").isAsciiAlphanumeric() == false
      * >>> Char.of( "a").isAsciiAlphanumeric() == true
@@ -395,12 +395,12 @@ abstract Char(Int) from Int {
     public function isAsciiAlphanumeric():Bool {
         return isAsciiAlpha() || isDigit();
     }
-    
+
     /**
      * Tests if the character is ASCII 7 bit control.
-     * 
+     *
      * @return <code>true</code> if less than 32 or equal 127
-     * 
+     *
      * <pre><code>
      * >>> Char.of( " ").isAsciiControl() == false
      * >>> Char.of( "1").isAsciiControl() == false
@@ -419,12 +419,12 @@ abstract Char(Int) from Int {
     public function isAsciiControl():Bool {
         return (this > -1 && this < 32) || this == 127;
     }
-    
+
     /**
      * Tests if the character is ASCII 7 bit printable.
-     * 
+     *
      * @return <code>true</code> if between 32 and 126 inclusive
-     * 
+     *
      * <pre><code>
      * >>> Char.of(" ").isAsciiPrintable()   == true
      * >>> Char.of("1").isAsciiPrintable()   == true
@@ -444,12 +444,12 @@ abstract Char(Int) from Int {
     public function isAsciiPrintable():Bool {
         return this > 31 && this < 127;
     }
-    
+
     /**
      * Tests if the character is ASCII 7 bit numeric.
-     * 
+     *
      * @return <code>true</code> if between 48 and 57 inclusive
-     * 
+     *
      * <pre><code>
      * >>> Char.of("0").isDigit() == true
      * >>> Char.of("1").isDigit() == true
@@ -479,10 +479,10 @@ abstract Char(Int) from Int {
     public function isDigit():Bool {
         return this > 47 && this < 58;
     }
-    
+
     /**
      * @return <code>true</code> if <b>ch</b> represents the end-of-file (EOF) character.
-     * 
+     *
      * <pre><code>
      * >>> Char.of(14).isEOF() == false
      * </code></pre>
@@ -491,12 +491,12 @@ abstract Char(Int) from Int {
     public function isEOF():Bool {
         return StringTools.isEof(this);
     }
-    
+
     /**
      * Tests if <b>ch</b> represents a space character.
-     * 
+     *
      * A space character is considered to be a character if its character code is 32.
-     * 
+     *
      * <pre><code>
      * >>> Char.of(32).isSpace()   == true
      * >>> Char.of(" ").isSpace()  == true
@@ -505,19 +505,19 @@ abstract Char(Int) from Int {
      * >>> Char.of("\n").isSpace() == false
      * >>> Char.of("\r").isSpace() == false
      * </code></pre>
-     * 
+     *
      * @return <code>true</code> if the character is a space character.
      */
     inline
     public function isSpace():Bool {
         return this == SPACE;
     }
-    
+
     /**
      * Tests if the character is a UTF8 21 bit
-     * 
+     *
      * @return <code>true</code> if between 0 and 1114111(0x10ffff)inclusive
-     * 
+     *
      * <pre><code>
      * >>> Char.of(  -1).isUTF8()    == false
      * >>> Char.of(   0).isUTF8()    == true
@@ -538,12 +538,12 @@ abstract Char(Int) from Int {
     public function isUTF8():Bool {
         return this > -1 && this < 0x110000;
     }
-    
+
     /**
      * Tests if the character is a whitespace.
-     * 
+     *
      * A whitespace character is considered to be a character if its character code is 9,10,11,12,13 or 32.
-     * 
+     *
      * <pre><code>
      * >>> Char.of(32).isWhitespace()   == true
      * >>> Char.of(" ").isWhitespace()  == true
@@ -552,7 +552,7 @@ abstract Char(Int) from Int {
      * >>> Char.of("\n").isWhitespace() == true
      * >>> Char.of("\r").isWhitespace() == true
      * </code></pre>
-     * 
+     *
      * @return <code>true</code> if the character is a whitespace character.
      */
     inline
@@ -571,7 +571,7 @@ abstract Char(Int) from Int {
     public function isLowerCase():Bool {
         return CHAR_CASE_MAPPER.isLowerCase(this);
     }
-    
+
     /**
      * <pre><code>
      * >>> Char.of(" ").isUpperCase() == false
@@ -583,7 +583,7 @@ abstract Char(Int) from Int {
     public function isUpperCase():Bool {
         return CHAR_CASE_MAPPER.isUpperCase(this);
     }
-    
+
     /**
      * <pre><code>
      * >>> Char.of(" ").toLowerCase().toString() == " "
@@ -595,7 +595,7 @@ abstract Char(Int) from Int {
     public function toLowerCase():Char {
         return CHAR_CASE_MAPPER.toLowerCase(this);
     }
-    
+
     /**
      * <pre><code>
      * >>> Char.of(" ").toUpperCase().toString() == " "
@@ -607,7 +607,7 @@ abstract Char(Int) from Int {
     public function toUpperCase():Char {
         return CHAR_CASE_MAPPER.toUpperCase(this);
     }
-    
+
     /**
      * <pre><code>
      * >>> Char.of(14)         == 14
@@ -646,7 +646,7 @@ abstract Char(Int) from Int {
 private class CharCaseMapper {
     var mapU2L = new IntMap<Char>();
     var mapL2U = new IntMap<Char>();
-    
+
     function _addCaseMapping(lowerChar:Char, upperChar:Char) {
         // when multiple mappings exist we only use the first
         // upper for 0x69  (i) = 0x49 (I)
@@ -654,12 +654,12 @@ private class CharCaseMapper {
         if(!mapU2L.exists(upperChar)) mapU2L.set(upperChar, lowerChar);
         if(!mapL2U.exists(lowerChar)) mapL2U.set(lowerChar, upperChar);
     }
-    
+
     inline
     public function isLowerCase(ch:Char):Bool {
         return mapL2U.exists(ch);
     }
-    
+
     inline
     public function isUpperCase(ch:Char):Bool {
         return mapU2L.exists(ch);
@@ -670,13 +670,14 @@ private class CharCaseMapper {
         var lowerChar = mapU2L.get(ch);
         return lowerChar == null ? ch : lowerChar;
     }
-    
+
     inline
     public function toUpperCase(ch:Char):Char {
         var upperChar = mapL2U.get(ch);
         return upperChar == null ? ch : upperChar;
     }
 
+    inline
     public function new() {
         // https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_71/nls/rbagslowtoupmaptable.htm
         _addCaseMapping(0x0061, 0x0041);

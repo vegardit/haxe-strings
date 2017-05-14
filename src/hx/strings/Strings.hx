@@ -39,7 +39,7 @@ using hx.strings.Strings;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class Strings {
-   
+
     static var REGEX_ANSI_ESC = Pattern.compile(Char.ESC + "\\[[;\\d]*m", MATCH_ALL);
     static var REGEX_HTML_UNESCAPE = Pattern.compile("&(#\\d+|amp|nbsp|apos|lt|gt|quot);", MATCH_ALL);
     static var REGEX_SPLIT_LINES = Pattern.compile("\\r?\\n", MATCH_ALL);
@@ -80,7 +80,7 @@ class Strings {
             case INPUT: str;
         }
     }
-    
+
     /**
      * no bounds checking
      */
@@ -220,7 +220,7 @@ class Strings {
 
         if (effectiveState.isActive())
             sb.add("</span>");
-            
+
         return sb.toString();
     }
 
@@ -1228,7 +1228,7 @@ class Strings {
                 var currLen = 0;
                 while (leftChars[leftIdx + currLen] == rightChars[rightIdx + currLen]) {
                     currLen++;
-                    if (((leftIdx + currLen) >= leftLen) || ((rightIdx + currLen) >= rightLen)) 
+                    if (((leftIdx + currLen) >= leftLen) || ((rightIdx + currLen) >= rightLen))
                         break;
                 }
                 if (currLen > leftSubLen) {
@@ -2850,7 +2850,7 @@ class Strings {
             return str.substr(startAt, len);
         #elseif php
             return untyped __call__("mb_substr", str, startAt, len, 'UTF-8');
-        #else           
+        #else
             if (len < 0) {
                 if (startAt != 0)
                     return "";
@@ -2931,7 +2931,7 @@ class Strings {
         if (str == null)
             return null;
 
-        if (str == "" || searchFor.isEmpty()) 
+        if (str == "" || searchFor.isEmpty())
             return _getNotFoundDefault(str, notFoundDefault);
 
         var foundAt = str.indexOf(searchFor);
@@ -2958,7 +2958,7 @@ class Strings {
         if (str == null)
             return null;
 
-        if (str == "" || searchFor.isEmpty()) 
+        if (str == "" || searchFor.isEmpty())
             return _getNotFoundDefault(str, notFoundDefault);
 
         searchFor = searchFor.toLowerCase();
@@ -2991,7 +2991,7 @@ class Strings {
             return null;
 
         if (before == null) before = after;
-         
+
         if (str == "" || after.isEmpty() || before.isEmpty())
             return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3027,7 +3027,7 @@ class Strings {
             return null;
 
         if (before == null) before = after;
-         
+
         if (str == "" || after.isEmpty() || before.isEmpty())
             return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3038,7 +3038,7 @@ class Strings {
         var foundAfterAt = strLower.indexOf(after);
         if (foundAfterAt == POS_NOT_FOUND)
             return _getNotFoundDefault(str, notFoundDefault);
-            
+
         var foundBeforeAt = strLower.indexOf(before, foundAfterAt + after.length);
         if (foundBeforeAt == POS_NOT_FOUND)
             return _getNotFoundDefault(str, notFoundDefault);
@@ -3063,7 +3063,7 @@ class Strings {
         if (str == null)
             return null;
 
-        if (str == "" || searchFor.isEmpty()) 
+        if (str == "" || searchFor.isEmpty())
             return _getNotFoundDefault(str, notFoundDefault);
 
         var foundAt = str.lastIndexOf(searchFor);
@@ -3091,7 +3091,7 @@ class Strings {
         if (str == null)
             return null;
 
-        if (str == "" || searchFor.isEmpty()) 
+        if (str == "" || searchFor.isEmpty())
             return _getNotFoundDefault(str, notFoundDefault);
 
         searchFor = searchFor.toLowerCase();
@@ -3120,7 +3120,7 @@ class Strings {
         if (str == null)
             return null;
 
-        if (str == "" || searchFor.isEmpty()) 
+        if (str == "" || searchFor.isEmpty())
             return _getNotFoundDefault(str, notFoundDefault);
 
         var foundAt = str.indexOf(searchFor);
@@ -3156,7 +3156,7 @@ class Strings {
         var foundAt = str.toLowerCase().indexOf(searchFor);
         if (foundAt == POS_NOT_FOUND)
             return _getNotFoundDefault(str, notFoundDefault);
-            
+
         return str.substring(0, foundAt);
     }
 
@@ -3207,7 +3207,7 @@ class Strings {
         if (str == null)
             return null;
 
-        if (str == "" || searchFor.isEmpty()) 
+        if (str == "" || searchFor.isEmpty())
             return _getNotFoundDefault(str, notFoundDefault);
 
         searchFor = searchFor.toLowerCase();
@@ -3235,7 +3235,7 @@ class Strings {
      */
     inline
     public static function toBool(str:String):Bool {
-        if (str.isEmpty()) 
+        if (str.isEmpty())
             return false;
 
         return switch (str.toLowerCase()) {
@@ -3277,7 +3277,7 @@ class Strings {
     public static function toChar(charCode:Int):Char {
         return Char.of(charCode);
     }
-    
+
     /**
      * <pre><code>
      * >>> Strings.toCharIterator(null).hasNext()          == false
@@ -3580,7 +3580,7 @@ class Strings {
             return _splitAsciiWordsUnsafe(str).map(function(s) {
                 return s.toUpperCase8() == s ? s : s.toLowerCase8().toUpperCaseFirstChar();
             }).join(" ");
-            
+
         return _splitAsciiWordsUnsafe(str).map(function(s) {
             return s.toLowerCase8().toUpperCaseFirstChar();
         }).join(" ");
@@ -3940,7 +3940,7 @@ class Strings {
 
 /**
  * Represents a character position (not byte index) in a String.
- * 
+ *
  * First character is at index 0.
  */
 typedef CharIndex = Int;
@@ -3949,27 +3949,28 @@ typedef CharIndex = Int;
  * Represents a character position in a sequence including its line/column coordinates.
  */
 class CharPos {
-    
+
+    inline
     public function new(index:CharIndex, line:Int, col:Int) {
         this.index = index;
         this.line = line;
         this.col = col;
     }
-    
+
     /**
      * Character index in the character sequence.
      * <br>
      * First character is at position 0.
      */
     public var index(default, null):CharIndex = 0;
-    
+
     /**
      * Line number of the character in the sequence.
      * <br>
      * First line is 1.
      */
     public var line(default, null):Int = 0;
-    
+
     /**
      * Column number of the character in the sequence.
      * <br>
@@ -3982,20 +3983,21 @@ class CharPos {
  * Return value of hx.strings.Strings#diff(String, String)
  */
 class StringDiff {
-    
+
+    inline
     public function new() {
     }
-    
+
     /**
      * index where the strings start to differ
      */
     public var at:CharIndex;
-    
+
     /**
      * diff of the left string
      */
     public var left:String;
-    
+
     /**
      * diff of the right string
      */
@@ -4005,7 +4007,7 @@ class StringDiff {
 
 @:enum
 abstract StringNotFoundDefault(Int) {
-    
+
     /**
      * <code>null</code> shall be returned.
      */
@@ -4015,7 +4017,7 @@ abstract StringNotFoundDefault(Int) {
      * An empty string shall be returned.
      */
     var EMPTY = 2;
-    
+
     /**
      * The given input string shall be returned.
      */
@@ -4064,6 +4066,7 @@ class ANSIState {
     public var fgcolor:String;
     public var underline:Bool;
 
+    inline
     public function new(?copyFrom:ANSIState) {
         if (copyFrom == null)
             reset();

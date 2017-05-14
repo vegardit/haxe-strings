@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,14 +21,15 @@ using hx.strings.Strings;
 
 /**
  * A dictionary trainer with English language specific parsing behaviour.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @threadSafe
 class EnglishDictionaryTrainer extends AbstractDictionaryTrainer {
-  
+
     public static var INSTANCE(default, never) = new EnglishDictionaryTrainer();
-    
+
+    inline
     function new() {
     }
 
@@ -36,29 +37,29 @@ class EnglishDictionaryTrainer extends AbstractDictionaryTrainer {
     function isValidWordChar(ch:Char):Bool {
         return ch.isAsciiAlpha();
     }
-    
+
     function trainWord(dictionary:TrainableDictionary, word:StringBuilder, ignoreUnknownWords:Bool):Int {
         var w = word.toString();
         if (w == "I" || w == "O") { // only accept single char uppercase words 'I' and 'O'
-            if (ignoreUnknownWords && !dictionary.exists(w)) 
+            if (ignoreUnknownWords && !dictionary.exists(w))
                 return 0;
 
             dictionary.train(w);
             return 1;
         }
         w = w.toLowerCase8();
-        
+
         if (w.length == 1 && w != "a") { // only accept single char lowercase word 'a'
             // ignore
             return 0;
         }
-        if (ignoreUnknownWords && !dictionary.exists(w)) 
+        if (ignoreUnknownWords && !dictionary.exists(w))
             return 0;
-            
+
         dictionary.train(w);
         return 1;
     }
-    
+
     override
     public function trainWithString(dictionary:TrainableDictionary, content:String, ignoreUnknownWords:Bool = false):Int {
         if (dictionary == null) throw "[dictionary] must not be null!";
@@ -91,7 +92,7 @@ class EnglishDictionaryTrainer extends AbstractDictionaryTrainer {
                 }
             }
         }
-        
+
         if (currentWord.length > 0) {
             count += trainWord(dictionary, currentWord, ignoreUnknownWords);
         }

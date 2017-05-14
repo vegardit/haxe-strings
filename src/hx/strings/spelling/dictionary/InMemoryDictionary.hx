@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,7 @@ using hx.strings.Strings;
 
 /**
  * Hash map based dictionary.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class InMemoryDictionary implements TrainableDictionary {
@@ -36,21 +36,22 @@ class InMemoryDictionary implements TrainableDictionary {
      */
     var dict:StringMap<Int>;
     var dictSize:Int;
-    
+
+    inline
     public function new() {
         clear();
     }
-    
+
     public function clear():Void {
         dict = new StringMap<Int>();
         dictSize = 0;
     }
-    
+
     inline
     public function exists(word:String):Bool {
         return dict.exists(word);
     }
-    
+
     public function popularity(word:String):Int {
         var p = dict.get(word);
         return p == null ? 0 : p;
@@ -62,7 +63,7 @@ class InMemoryDictionary implements TrainableDictionary {
         if (p == 1) dictSize++;
         return p;
     }
-    
+
     public function remove(word:String):Bool {
         if (dict.remove(word)) {
             dictSize--;
@@ -75,9 +76,9 @@ class InMemoryDictionary implements TrainableDictionary {
     public function size():Int {
         return dictSize;
     }
-    
+
     public function trimTo(n:Int):Int {
-        if (dictSize <= n) 
+        if (dictSize <= n)
             return 0;
 
         var arr = [ for (word in dict.keys()) { word:word, popularity:dict.get(word) } ];
@@ -100,8 +101,8 @@ class InMemoryDictionary implements TrainableDictionary {
         if(autoClose)
             out.close();
     }
-    
-    #if sys   
+
+    #if sys
     /**
      * Exports all words and their popularity to the given file
      */
@@ -110,10 +111,10 @@ class InMemoryDictionary implements TrainableDictionary {
         trace('Exporting words to file [$filePath]...');
         exportWordsToOutput(sys.io.File.write(filePath));
     }
-    
+
     /**
      * Loads all words and their popularity from the given file
-     * 
+     *
      * @return number of loaded entries
      */
     public function loadWordsFromFile(filePath:String):Int {
@@ -124,7 +125,7 @@ class InMemoryDictionary implements TrainableDictionary {
 
     /**
      * Loads all words and their popularity from the given Haxe resource
-     * 
+     *
      * @return number of loaded entries
      */
     inline
@@ -132,10 +133,10 @@ class InMemoryDictionary implements TrainableDictionary {
         trace('Loading words from resource [$resourceName]...');
         return loadWordsFromInput(new BytesInput(Resource.getBytes(resourceName)));
     }
-    
+
     /**
      * Loads all words and their popularity from the given input stream
-     * 
+     *
      * @return number of loaded entries
      */
     public function loadWordsFromInput(input:Input, autoClose:Bool=true):Int {
@@ -170,11 +171,11 @@ class InMemoryDictionary implements TrainableDictionary {
         if (autoClose) input.close();
         return count;
     }
-    
+
     public function toString() {
         return 'InMemoryDictionary[words=$dictSize]';
     }
-    
+
     inline
     public function words():Iterator<String> {
         return dict.keys();

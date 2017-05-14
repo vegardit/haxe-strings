@@ -136,6 +136,7 @@ private class NullCharIterator extends CharIterator {
 
     public static var INSTANCE = new NullCharIterator();
 
+    inline
     function new() {}
 
     override
@@ -173,6 +174,7 @@ private class ArrayCharIterator extends CharIterator {
 private class IteratorCharIterator extends CharIterator {
     var chars:Iterator<Char>;
 
+    inline
     public function new(chars:Iterator<Char>) {
         this.chars = chars;
     }
@@ -198,6 +200,7 @@ private class InputCharIterator extends CharIterator {
     var nextChar:Char;
     var nextCharAvailable = TriState.UNKNOWN;
 
+    inline
     public function new(chars:Input) {
         this.input = chars;
     }
@@ -313,6 +316,7 @@ private class StringCharIterator extends CharIterator {
     var chars:String;
     var charsMaxIndex:Int;
 
+    inline
     public function new(chars:String) {
         this.chars = chars;
         charsMaxIndex = chars.length8() - 1;

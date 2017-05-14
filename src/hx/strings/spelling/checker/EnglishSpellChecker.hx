@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,14 +22,14 @@ using hx.strings.Strings;
 
 /**
  * Spell checker implementation with English language specific parsing behaviour.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class EnglishSpellChecker extends AbstractSpellChecker{
 
     /**
      * default instance that uses the pre-trained hx.strings.spelling.dictionary.EnglishDictionary
-     * 
+     *
      * <pre><code>
      * >>> EnglishSpellChecker.INSTANCE.correctWord("speling")  == "spelling"
      * >>> EnglishSpellChecker.INSTANCE.correctWord("SPELING")  == "spelling"
@@ -40,11 +40,12 @@ class EnglishSpellChecker extends AbstractSpellChecker{
      * </code></pre>
      */
     public static var INSTANCE(default, never) = new EnglishSpellChecker(EnglishDictionary.INSTANCE);
-    
+
+    inline
     public function new(dictionary:Dictionary) {
         super(dictionary, "abcdefghijklmnopqrstuvwxyz");
     }
-    
+
     override
     public function correctText(text:String, timeoutMS:Int = 1000):String {
         var result = new StringBuilder();
@@ -55,7 +56,7 @@ class EnglishSpellChecker extends AbstractSpellChecker{
         for (i in 0...len) {
             var ch:Char = chars[i];
             // treat a-z and 0-9 as characters of potential words to capture OCR errors like "m1nd" or "m0ther" or "1'll"
-            if (ch.isAsciiAlpha() || ch.isDigit()) { 
+            if (ch.isAsciiAlpha() || ch.isDigit()) {
                 currentWord.addChar(ch);
             } else if (currentWord.length > 0) {
                 if (ch == Char.SINGLE_QUOTE) {
@@ -81,13 +82,13 @@ class EnglishSpellChecker extends AbstractSpellChecker{
                 result.addChar(ch);
             }
         }
-        
+
         if (currentWord.length > 0) {
             result.add(correctWord(currentWord.toString(), timeoutMS));
         }
         return result.toString();
     }
-    
+
     override
     public function correctWord(word:String, timeoutMS:Int = 1000):String {
         if(dict.exists(word))
