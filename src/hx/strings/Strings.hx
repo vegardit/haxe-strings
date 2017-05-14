@@ -3962,21 +3962,21 @@ class CharPos {
      * <br>
      * First character is at position 0.
      */
-    public var index(default, null):CharIndex = 0;
+    public var index(default, null):CharIndex;
 
     /**
      * Line number of the character in the sequence.
      * <br>
      * First line is 1.
      */
-    public var line(default, null):Int = 0;
+    public var line(default, null):Int;
 
     /**
      * Column number of the character in the sequence.
      * <br>
      * First column is 1.
      */
-    public var col(default, null):Int = 0;
+    public var col(default, null):Int;
 }
 
 /**
