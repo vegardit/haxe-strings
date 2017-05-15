@@ -16,7 +16,7 @@
 package hx.strings.internal;
 
 import haxe.macro.*;
-
+Type
 /**
  * <b>IMPORTANT:</b> This class it not part of the API. Direct usage is discouraged.
  *
@@ -67,6 +67,12 @@ class Macros {
      * if(Macros.is(obj, (foo:Foo)) {
      *     foo.bar();
      * }
+     *
+     * // or
+     * if(Macros.is(obj, (foo:Foo<Int>)) {
+     *     foo.bar();
+     * }
+     *
      * </code></pre>
      *
      * Also works with abstract types in constrast to <code>Std.is()</code>.
@@ -75,8 +81,8 @@ class Macros {
     macro
     public static function is(value:Expr, assignableTo:Expr) {
         return switch assignableTo {
-            case macro ($i{targetVarName} : $targetVarType):
-                var targetTypeName:String = switch(ComplexTypeTools.toType(targetVarType)) {
+            case macro ($i{targetVarName}:$targetVarComplexType):
+                var targetTypeName:String = switch(ComplexTypeTools.toType(targetVarComplexType)) {
 
                     // if we target an abstract, resolve the underlying type because Std.is() does not support abstracts directly
                     case TAbstract(abstractTypeRef, params):
@@ -98,7 +104,7 @@ class Macros {
                         }
 
                     default:
-                        ComplexTypeTools.toString(targetVarType);
+                        ComplexTypeTools.toString(targetVarComplexType);
                 }
 
                 var idxGenerics = targetTypeName.indexOf('<', 1);
@@ -107,11 +113,11 @@ class Macros {
                 var targetTypeExpr = MacroStringTools.toFieldExpr(targetTypeName.split('.'));
 
                 macro @:mergeBlock {
-                    var $targetVarName:$targetVarType = Std.is($value, ${targetTypeExpr}) ? cast $value : null;
+                    var $targetVarName:$targetVarComplexType = Std.is($value, ${targetTypeExpr}) ? cast $value : null;
                     $i{targetVarName} != null;
                 }
             default:
-              Context.error('Unsupported expression. Expecting e.g. "(myvar: MyType)"', assignableTo.expr);
+              Context.error('Unsupported expression. Expecting e.g. "(myvar: MyType)"', assignableTo.pos);
         };
     }
 
