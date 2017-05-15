@@ -62,7 +62,7 @@ class Macros {
     }
 
     /**
-     * To be used like:
+     * Usage:
      * <pre><code>
      * if(Macros.is(obj, (foo:Foo)) {
      *     foo.bar();
@@ -75,7 +75,7 @@ class Macros {
     macro
     public static function is(value:Expr, assignableTo:Expr) {
         return switch assignableTo {
-            case macro ($i { targetVarName } : $targetVarType):
+            case macro ($i{targetVarName} : $targetVarType):
                 var targetTypeName:String = switch(ComplexTypeTools.toType(targetVarType)) {
 
                     // if we target an abstract, resolve the underlying type because Std.is() does not support abstracts directly
@@ -111,8 +111,71 @@ class Macros {
                     $i{targetVarName} != null;
                 }
             default:
-              throw 'Unsupported expression. Expecting e.g. "(myvar: MyType)"';
+              Context.error('Unsupported expression. Expecting e.g. "(myvar: MyType)"', assignableTo.expr);
         };
     }
 
+    /**
+     * Implements assignment destructuring, see https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+     *
+     * Usage:
+     * <pre><code>
+     * Macro.unpack([a,b,c] = ["1", "2", "3"]);
+     * trace(a);
+     *
+     * // or
+     * var list = ["1", "2", "3"];
+     * Macro.unpack([a,b,c] = list);
+     * trace(a);
+     * </code></pre>
+     */
+    macro
+    public static function unpack(e:Expr) {
+        var assignments = new Array<Expr>();
+
+        switch(e.expr) {
+            case EBinop(OpAssign, varsExpr, valuesExpr):
+                var varNames = new Array<String>();
+                switch varsExpr {
+                    case macro $a{varDecls}:
+                        for (varDecl in varDecls) {
+                            switch(varDecl) {
+                                case macro $i{varName}:
+                                    varNames.push(varName);
+                                default:
+                                    Context.error("Invalid variable name.", varDecl.pos);
+                            }
+                        }
+                    default:
+                        Context.error("Array of variable names expected.", varsExpr.pos);
+                }
+
+                var idx = -1;
+                switch valuesExpr {
+                    case macro $a{values}:
+                        for (varName in varNames) {
+                            var value = values[++idx];
+                            assignments.push(macro @:mergeBlock {
+                                var $varName=${value};
+                            });
+                      };
+
+                    case macro $i{refName}:
+                        for (varName in varNames) {
+                            idx++;
+                            assignments.push(macro @:mergeBlock {
+                                var $varName = $i{refName}[$v{idx}];
+                            });
+                        };
+
+                    default:
+                        Context.error("Expected a reference to a variable or an array.", valuesExpr.pos);
+                }
+
+            default:
+                Context.error("Assignment operator = is missing!", e.pos);
+        }
+
+        return macro @:mergeBlock $b{assignments};
+    }
 }
