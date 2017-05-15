@@ -39,6 +39,50 @@ class TestRunner extends DocTestRunner {
         super();
     }
 
+    public function testCharIterator():Void {
+        var it = CharIterator.fromString("1234567890", 4);
+        assertFalse(it.hasPrev());
+        try { it.prev(); fail(); } catch (e:Dynamic) { };
+
+        assertTrue(it.hasNext());
+        assertEquals(it.next(), Char.of("1"));
+        assertFalse(it.hasPrev());
+        try { it.prev(); fail(); } catch (e:Dynamic) { };
+
+        assertEquals(it.next(), Char.of("2"));
+        assertTrue(it.hasPrev());
+        assertEquals(it.prev(), Char.of("1"));
+        assertEquals(it.next(), Char.of("2"));
+        assertEquals(it.next(), Char.of("3"));
+        assertEquals(it.next(), Char.of("4"));
+        assertEquals(it.next(), Char.of("5"));
+        assertEquals(it.next(), Char.of("6"));
+        assertEquals(it.prev(), Char.of("5"));
+        assertEquals(it.prev(), Char.of("4"));
+        assertEquals(it.prev(), Char.of("3"));
+        assertEquals(it.prev(), Char.of("2"));
+        assertFalse(it.hasPrev());
+        assertEquals(it.next(), Char.of("3"));
+        assertEquals(it.next(), Char.of("4"));
+        assertEquals(it.next(), Char.of("5"));
+        assertEquals(it.next(), Char.of("6"));
+        assertEquals(it.next(), Char.of("7"));
+        assertEquals(it.next(), Char.of("8"));
+        assertEquals(it.prev(), Char.of("7"));
+        assertEquals(it.prev(), Char.of("6"));
+        assertEquals(it.prev(), Char.of("5"));
+        assertEquals(it.prev(), Char.of("4"));
+        assertFalse(it.hasPrev());
+        assertEquals(it.next(), Char.of("5"));
+        assertEquals(it.next(), Char.of("6"));
+        assertEquals(it.next(), Char.of("7"));
+        assertEquals(it.next(), Char.of("8"));
+        assertEquals(it.next(), Char.of("9"));
+        assertEquals(it.next(), Char.of("0"));
+        assertFalse(it.hasNext());
+        try { it.next(); fail(); } catch (e:Dynamic) { };
+    }
+
     public function testPattern():Void {
 
         {
@@ -49,7 +93,7 @@ class TestRunner extends DocTestRunner {
             assertEquals(m.matches(), true);
             assertEquals(m.matched(), "dog");
             assertEquals(m.matched(0), "dog");
-            try { m.matched(1);     fail(); } catch (e:Dynamic) {};
+            try { m.matched(1); fail(); } catch (e:Dynamic) {};
             assertEquals(m.map(function(m) return "cat"), "catcatcat");
         }
 

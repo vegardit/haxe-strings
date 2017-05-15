@@ -18,6 +18,7 @@ package hx.strings;
 import haxe.Utf8;
 import haxe.io.Eof;
 import haxe.io.Input;
+import hx.strings.internal.RingBuffer;
 
 import hx.strings.Strings.CharPos;
 import hx.strings.internal.AnyAsString;
@@ -31,11 +32,6 @@ using hx.strings.Strings;
  */
 class CharIterator {
 
-    var index = -1;
-    var line = 0;
-    var col = 0;
-    var currChar = -1;
-
     /**
      * <pre><code>
      * >>> CharIterator.fromString(null).hasNext()          == false
@@ -44,11 +40,13 @@ class CharIterator {
      * >>> CharIterator.fromString("cat").next().toString() == 'c'
      * >>> CharIterator.fromString("はい").next().toString() == 'は'
      * </code></pre>
+     *
+     * @param prevBufferSize number of characters the iterator can go backwards
      */
     inline
-    public static function fromString(chars:AnyAsString):CharIterator {
+    public static function fromString(chars:AnyAsString, prevBufferSize = 0):CharIterator {
         if (chars == null) return NullCharIterator.INSTANCE;
-        return new StringCharIterator(chars);
+        return new StringCharIterator(chars, prevBufferSize);
     }
 
     /**
@@ -59,14 +57,18 @@ class CharIterator {
      * >>> CharIterator.fromArray(Strings.toChars("cat")).next().toString() == 'c'
      * >>> CharIterator.fromArray(Strings.toChars("はい")).next().toString() == 'は'
      * </code></pre>
+     *
+     * @param prevBufferSize number of characters the iterator can go backwards
      */
     inline
-    public static function fromArray(chars:Array<Char>):CharIterator {
+    public static function fromArray(chars:Array<Char>, prevBufferSize = 0):CharIterator {
         if (chars == null) return NullCharIterator.INSTANCE;
-        return new ArrayCharIterator(chars);
+        return new ArrayCharIterator(chars, prevBufferSize);
     }
 
     /**
+     * Read characters from an ASCII or Utf8-encoded input.
+     *
      * <pre><code>
      * >>> CharIterator.fromInput(null).hasNext()          == false
      * >>> CharIterator.fromInput(new haxe.io.StringInput("")).hasNext()            == false
@@ -75,12 +77,12 @@ class CharIterator {
      * >>> CharIterator.fromInput(new haxe.io.StringInput("はい")).next().toString() == 'は'
      * </code></pre>
      *
-     * Read characters from an ASCII or Utf8-encoded input.
+     * @param prevBufferSize number of characters the iterator can go backwards
      */
     inline
-    public static function fromInput(chars:Input):CharIterator {
+    public static function fromInput(chars:Input, prevBufferSize = 0):CharIterator {
         if (chars == null) return NullCharIterator.INSTANCE;
-        return new InputCharIterator(chars);
+        return new InputCharIterator(chars, prevBufferSize);
     }
 
     /**
@@ -91,26 +93,92 @@ class CharIterator {
      * >>> CharIterator.fromIterator(Strings.toChars("cat").iterator()).next().toString() == 'c'
      * >>> CharIterator.fromIterator(Strings.toChars("はい").iterator()).next().toString() == 'は'
      * </code></pre>
+     *
+     * @param prevBufferSize number of characters the iterator can go backwards
      */
     inline
-    public static function fromIterator(chars:Iterator<Char>):CharIterator {
+    public static function fromIterator(chars:Iterator<Char>, prevBufferSize = 0):CharIterator {
         if (chars == null) return NullCharIterator.INSTANCE;
-        return new IteratorCharIterator(chars);
+        return new IteratorCharIterator(chars, prevBufferSize);
     }
+
+    var index = -1;
+    var line = 0;
+    var col = 0;
+    var currChar = -1;
+
+    var usePrevBuffer:Bool;
+    var prevBuffer:RingBuffer<CharWithPos>;
+    var prevBufferPrevIdx = -1;
+    var prevBufferNextIdx = -1;
 
     public var pos(get, never):CharPos;
     inline function get_pos() return new CharPos(index, line, col);
 
-    public function hasNext():Bool throw "Not implemented";
+    function new (prevBufferSize:Int) {
+        if (prevBufferSize > 0) {
+            usePrevBuffer = true;
+            prevBuffer = new RingBuffer<CharWithPos>(prevBufferSize + 1 /*currChar*/);
+        } else {
+            usePrevBuffer = false;
+        }
+    }
+
+    inline
+    public function hasPrev():Bool {
+        return prevBufferPrevIdx > -1;
+    }
 
     /**
-     * Returns the next character from the input sequence.
+     * Moves to the previous character in the input sequence and returns it.
+     *
+     * @throws haxe.io.Eof if no previous character is available
+     */
+    public function prev():Char {
+
+        if (isEOF())
+            throw new Eof();
+
+        var prevChar = prevBuffer[prevBufferPrevIdx];
+        currChar = prevChar.char;
+        index = prevChar.index;
+        line = prevChar.line;
+        col = prevChar.col;
+
+        prevBufferNextIdx = prevBufferPrevIdx + 1 < prevBuffer.length ? prevBufferPrevIdx + 1 : -1;
+        prevBufferPrevIdx--;
+        return currChar;
+    }
+
+    inline
+    public function hasNext():Bool {
+        if (prevBufferNextIdx > -1) {
+            return true;
+        }
+
+        return !isEOF();
+    }
+
+    /**
+     * Moves to the next character in the input sequence and returns it.
      *
      * @throws haxe.io.Eof if no more characters are available
      */
     @:final
     public function next():Char {
-        if (!hasNext())
+
+        if (prevBufferNextIdx > -1) {
+            var prevChar = prevBuffer[prevBufferNextIdx];
+            currChar = prevChar.char;
+            index = prevChar.index;
+            line = prevChar.line;
+            col = prevChar.col;
+            prevBufferPrevIdx = prevBufferNextIdx - 1;
+            prevBufferNextIdx = prevBufferNextIdx + 1 < prevBuffer.length ? prevBufferNextIdx + 1 : -1;
+            return currChar;
+        }
+
+        if (isEOF())
             throw new Eof();
 
         if (currChar == Char.LF || currChar < 0) {
@@ -121,6 +189,13 @@ class CharIterator {
         index++;
         col++;
         currChar = getChar();
+
+        if (usePrevBuffer) {
+            prevBuffer.add(new CharWithPos(currChar, index, col, line));
+            prevBufferPrevIdx = prevBuffer.length - 2;
+            prevBufferNextIdx = -1;
+        }
+
         return currChar;
     }
 
@@ -128,6 +203,20 @@ class CharIterator {
      * @return the char at the current position
      */
     function getChar():Char throw "Not implemented" ;
+
+    function isEOF():Bool throw "Not implemented";
+}
+
+
+@:noDoc @:dox(hide)
+private class CharWithPos extends CharPos {
+
+    public function new(char:Char, index:CharIndex, line:Int, col:Int) {
+         super(index, line, col);
+         this.char = char;
+    }
+
+    public var char(default, null):Char;
 }
 
 
@@ -136,13 +225,13 @@ private class NullCharIterator extends CharIterator {
 
     public static var INSTANCE = new NullCharIterator();
 
-    inline
-    function new() {}
+    function new() {
+        super(0);
+    }
 
     override
-    inline
-    public function hasNext():Bool {
-        return false;
+    function isEOF():Bool {
+        return true;
     }
 }
 
@@ -151,20 +240,18 @@ private class ArrayCharIterator extends CharIterator {
     var chars:Array<Char>;
     var charsMaxIndex:Int;
 
-    inline
-    public function new(chars:Array<Char>) {
+    public function new(chars:Array<Char>, prevBufferSize:Int) {
+        super(prevBufferSize);
         this.chars = chars;
         charsMaxIndex = chars.length -1;
     }
 
     override
-    inline
-    public function hasNext():Bool {
-        return index < charsMaxIndex;
+    function isEOF():Bool {
+        return index >= charsMaxIndex;
     }
 
     override
-    inline
     function getChar(): Char {
         return chars[index];
     }
@@ -174,19 +261,17 @@ private class ArrayCharIterator extends CharIterator {
 private class IteratorCharIterator extends CharIterator {
     var chars:Iterator<Char>;
 
-    inline
-    public function new(chars:Iterator<Char>) {
+    public function new(chars:Iterator<Char>, prevBufferSize:Int) {
+        super(prevBufferSize);
         this.chars = chars;
     }
 
     override
-    inline
-    public function hasNext():Bool {
-        return chars.hasNext();
+    function isEOF():Bool {
+        return !chars.hasNext();
     }
 
     override
-    inline
     function getChar(): Char {
         return chars.next();
     }
@@ -200,14 +285,13 @@ private class InputCharIterator extends CharIterator {
     var nextChar:Char;
     var nextCharAvailable = TriState.UNKNOWN;
 
-    inline
-    public function new(chars:Input) {
+    public function new(chars:Input, prevBufferSize:Int) {
+        super(prevBufferSize);
         this.input = chars;
     }
 
     override
-    inline
-    public function hasNext():Bool {
+    function isEOF():Bool {
         if (nextCharAvailable == UNKNOWN) {
             try {
                 nextChar = readUtf8Char();
@@ -216,11 +300,10 @@ private class InputCharIterator extends CharIterator {
                 nextCharAvailable = FALSE;
             }
         }
-        return nextCharAvailable == TRUE;
+        return nextCharAvailable != TRUE;
     }
 
     override
-    inline
     function getChar(): Char {
         if(index != currCharIndex) {
             currCharIndex = index;
@@ -316,20 +399,18 @@ private class StringCharIterator extends CharIterator {
     var chars:String;
     var charsMaxIndex:Int;
 
-    inline
-    public function new(chars:String) {
+    public function new(chars:String, prevBufferSize:Int) {
+        super(prevBufferSize);
         this.chars = chars;
         charsMaxIndex = chars.length8() - 1;
     }
 
     override
-    inline
-    public function hasNext():Bool {
-        return index < charsMaxIndex;
+    function isEOF():Bool {
+        return index >= charsMaxIndex;
     }
 
     override
-    inline
     function getChar(): Char {
         return Strings._charCodeAt8Unsafe(chars, index);
     }
