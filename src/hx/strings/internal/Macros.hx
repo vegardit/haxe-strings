@@ -120,16 +120,16 @@ class Macros {
      *
      * Usage:
      * <pre><code>
-     * Macro.unpack([a,b,c] = ["1", "2", "3"]);
+     * Macros.unpack([a,b,c] = ["1", "2", "3"]);
      * trace(a);
      *
      * // or
      * var list = ["1", "2", "3"];
-     * Macro.unpack([a,b,c] = list);
+     * Macros.unpack([a,b,c] = list);
      * trace(a);
      *
      * // or
-     * Macro.unpack([prefix,value] = str.split(":"));
+     * Macros.unpack([prefix,value] = str.split(":"));
      * trace(prefix);
      * </code></pre>
      */
