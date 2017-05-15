@@ -16,7 +16,7 @@
 package hx.strings.internal;
 
 import haxe.macro.*;
-Type
+
 /**
  * <b>IMPORTANT:</b> This class it not part of the API. Direct usage is discouraged.
  *
