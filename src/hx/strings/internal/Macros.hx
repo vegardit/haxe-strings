@@ -127,12 +127,15 @@ class Macros {
      * var list = ["1", "2", "3"];
      * Macro.unpack([a,b,c] = list);
      * trace(a);
+     *
+     * // or
+     * Macro.unpack([prefix,value] = str.split(":"));
+     * trace(prefix);
      * </code></pre>
      */
     macro
     public static function unpack(e:Expr) {
         var assignments = new Array<Expr>();
-
         switch(e.expr) {
             case EBinop(OpAssign, varsExpr, valuesExpr):
                 var varNames = new Array<String>();
@@ -151,8 +154,19 @@ class Macros {
                 }
 
                 var idx = -1;
-                switch valuesExpr {
-                    case macro $a{values}:
+                switch (valuesExpr.expr) {
+                    case ECall(_):
+                        assignments.push(macro @:mergeBlock {
+                            var __unpack_return_values = $valuesExpr;
+                        });
+                        for (varName in varNames) {
+                            idx++;
+                            assignments.push(macro @:mergeBlock {
+                                var $varName = __unpack_return_values[$v{idx}];
+                            });
+                        };
+
+                    case EArrayDecl(values):
                         for (varName in varNames) {
                             var value = values[++idx];
                             assignments.push(macro @:mergeBlock {
@@ -160,7 +174,7 @@ class Macros {
                             });
                       };
 
-                    case macro $i{refName}:
+                    case EConst(CIdent(refName)):
                         for (varName in varNames) {
                             idx++;
                             assignments.push(macro @:mergeBlock {
@@ -169,7 +183,7 @@ class Macros {
                         };
 
                     default:
-                        Context.error("Expected a reference to a variable or an array.", valuesExpr.pos);
+                        Context.error("Expected a variable reference, an array or a function call.", valuesExpr.pos);
                 }
 
             default:
