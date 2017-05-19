@@ -1344,7 +1344,7 @@ class Strings {
      * >>> Strings.htmlEncode(" 'dog' ")        == " 'dog' "
      * >>> Strings.htmlEncode(' "dog" ')        == ' "dog" '
      * >>> Strings.htmlEncode(" 'dog' ", true)  == " &#039;dog&#039; "
-     * >>> Strings.htmlEncode(' "dog" ', true)  == ' &quot;dog&quot; '
+     * >>> Strings.htmlEncode(' "dog" ', true)  == " &quot;dog&quot; "
      * >>> Strings.htmlEncode(" 'dog' ", false) == " 'dog' "
      * >>> Strings.htmlEncode(' "dog" ', false) == ' "dog" '
      * >>> Strings.htmlEncode(" 1 & 2 ")        == " 1 &amp; 2 "
@@ -1601,7 +1601,7 @@ class Strings {
         #if (java || flash || cs || python)
             return str.indexOf(searchFor, startAt);
         #elseif php
-            var index:Dynamic = untyped __call__("mb_strpos", str, searchFor, startAt, 'UTF-8');
+            var index:Dynamic = untyped __call__("mb_strpos", str, searchFor, startAt, "UTF-8");
             return index == false ? POS_NOT_FOUND : cast index;
         #else
             var strNeedsUTF8Workaround = str.length != strLen;
@@ -1920,7 +1920,7 @@ class Strings {
         #if (flash || java || cs || python)
             return str.length;
         #elseif php
-            return untyped __call__("mb_strlen", str, 'UTF-8');
+            return untyped __call__("mb_strlen", str, "UTF-8");
         #else
             return Utf8.length(str);
         #end
@@ -2849,7 +2849,7 @@ class Strings {
         #if (flash || java || cs || python)
             return str.substr(startAt, len);
         #elseif php
-            return untyped __call__("mb_substr", str, startAt, len, 'UTF-8');
+            return untyped __call__("mb_substr", str, startAt, len, "UTF-8");
         #else
             if (len < 0) {
                 if (startAt != 0)
@@ -2907,7 +2907,7 @@ class Strings {
                 endAt = tmp;
             }
             #if php
-                return untyped __call__("mb_substr", str, startAt, endAt - startAt, 'UTF-8');
+                return untyped __call__("mb_substr", str, startAt, endAt - startAt, "UTF-8");
             #else
                 return Utf8.sub(str, startAt, endAt - startAt);
             #end
@@ -3436,7 +3436,7 @@ class Strings {
             return str;
 
         #if php
-            return untyped __call__("mb_strtolower", str, 'UTF-8');
+            return untyped __call__("mb_strtolower", str, "UTF-8");
         #elseif (java || flash || cs || python)
             return str.toLowerCase();
         #else
@@ -3669,7 +3669,7 @@ class Strings {
             return str;
 
         #if php
-            return untyped __call__("mb_strtoupper", str, 'UTF-8');
+            return untyped __call__("mb_strtoupper", str, "UTF-8");
         #elseif (java || flash || cs || python)
             return str.toUpperCase();
         #else

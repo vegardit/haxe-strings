@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,9 +19,9 @@ using hx.strings.Strings;
 
 /**
  * Instances of this type represent SemVer 2.0 compliant versions.
- * 
+ *
  * See http://www.semver.org for terminology and constraints.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @immutable
@@ -42,22 +42,22 @@ abstract Version(VersionData) from VersionData to VersionData {
      */
     inline
     static var SEM_VER_SPEC = "SemVer 2.0.0";
-    
+
     inline
     static var SEP_IDENTIFIER = ".";
-    
+
     inline
     static var SEP_PRERELEASE = "-";
-    
+
     inline
     static var SEP_METADATA = "+";
-    
-    inline 
+
+    inline
     static var PATTERN_NUMBER_NO_LEADING_ZERO:String = "(0|[1-9]\\d*)";
 
     inline
     static var PATTERN_METADATA = '[0-9A-Za-z-]+(\\$SEP_IDENTIFIER[0-9A-Za-z-]+)*';
-    
+
     inline
     static var PATTERN_PRERELEASE = "" +
                           '($PATTERN_NUMBER_NO_LEADING_ZERO|[1-9a-zA-Z-][0-9a-zA-Z-]*)' + // first identifier
@@ -73,10 +73,10 @@ abstract Version(VersionData) from VersionData to VersionData {
     static var VALIDATOR_METADATA(default, never)   = Pattern.compile("^" + PATTERN_METADATA + "$");
     static var VALIDATOR_PRERELEASE(default, never) = Pattern.compile("^" + PATTERN_PRERELEASE + "$");
     static var VALIDATOR_VERSION(default, never)    = Pattern.compile("^" + PATTERN_VERSION + "$");
-    
+
     /**
      * Trims and parses the given string and returns a version instance.
-     * 
+     *
      * <pre><code>
      * >>> Version.of("1.2.3-alpha.1+exp.sha.141d2f7").major         == 1
      * >>> Version.of("1.2.3-alpha.1+exp.sha.141d2f7").minor         == 2
@@ -85,12 +85,12 @@ abstract Version(VersionData) from VersionData to VersionData {
      * >>> Version.of("1.2.3-alpha.1+exp.sha.141d2f7").buildMetadata == "exp.sha.141d2f7"
      * >>> Version.of("  1.2.3-alpha.1+exp.sha.141d2f7  ").major     == 1
      * >>> Version.of(null)     == null
-     * >>> Version.of("1")      throws      '[1] is not a valid SemVer 2.0.0 version string!'
-     * >>> Version.of("1.2")    throws    '[1.2] is not a valid SemVer 2.0.0 version string!'
-     * >>> Version.of("1.02.3") throws '[1.02.3] is not a valid SemVer 2.0.0 version string!'
-     * >>> Version.of("-1")     throws     '[-1] is not a valid SemVer 2.0.0 version string!'
+     * >>> Version.of("1")      throws      "[1] is not a valid SemVer 2.0.0 version string!"
+     * >>> Version.of("1.2")    throws    "[1.2] is not a valid SemVer 2.0.0 version string!"
+     * >>> Version.of("1.02.3") throws "[1.02.3] is not a valid SemVer 2.0.0 version string!"
+     * >>> Version.of("-1")     throws     "[-1] is not a valid SemVer 2.0.0 version string!"
      * </code></pre>
-     * 
+     *
      * @throws if <b>str</b> is not a valid SemVer.org version string.
      */
     @:from
@@ -114,7 +114,7 @@ abstract Version(VersionData) from VersionData to VersionData {
             var preRelease    = m.matched(4);
             var buildMetadata = m.matched(5);
         #end
-        
+
         return new Version(
             m.matched(1).toInt(),
             m.matched(2).toInt(),
@@ -123,7 +123,7 @@ abstract Version(VersionData) from VersionData to VersionData {
             buildMetadata
         );
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.isValid("1.0.0")       == true
@@ -137,14 +137,14 @@ abstract Version(VersionData) from VersionData to VersionData {
      * >>> Version.isValid("1.1")    == false
      * >>> Version.isValid("1.01.0") == false
      * </pre></code>
-     * 
+     *
      * @return <code>true</code> if <b>str</b> is a valid SemVer.org version string.
      */
     inline
     public static function isValid(str:String):Bool {
         return str.isBlank() ? false : VALIDATOR_VERSION.matcher(str).matches();
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.isValidPreRelease(null) == true
@@ -157,14 +157,14 @@ abstract Version(VersionData) from VersionData to VersionData {
      * >>> Version.isValidPreRelease("rc")       == true
      * >>> Version.isValidPreRelease("rc1")      == true
      * </pre></code>
-     * 
+     *
      * @return <code>true</code> if <b>str</b> complies with the SemVer.org specification for the pre-release part of a version string
      */
     inline
     public static function isValidPreRelease(str:String):Bool {
         return str.isEmpty() ? true : VALIDATOR_PRERELEASE.matcher(str).matches();
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.isValidBuildMetaData(null) == true
@@ -185,7 +185,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     /**
      * MUST be non-negative.
      * MUST NOT include leading zeros.
-     * 
+     *
      * <pre><code>
      * >>> Version.of("1.2.3"                        ).major == 1
      * >>> Version.of("1.2.3-alpha.1"                ).major == 1
@@ -198,11 +198,11 @@ abstract Version(VersionData) from VersionData to VersionData {
         case VersionEnum(maj, min, pat, pre, build): maj;
     }
 
-    
+
     /**
      * MUST be non-negative.
      * MUST NOT include leading zeros.
-     * 
+     *
      * <pre><code>
      * >>> Version.of("1.2.3"                        ).minor == 2
      * >>> Version.of("1.2.3-alpha.1"                ).minor == 2
@@ -214,11 +214,11 @@ abstract Version(VersionData) from VersionData to VersionData {
     inline function get_minor() return switch (this) {
         case VersionEnum(maj, min, pat, pre, build): min;
     }
-    
+
     /**
      * MUST be non-negative.
      * MUST NOT include leading zeros.
-     * 
+     *
      * <pre><code>
      * >>> Version.of("1.2.3"                        ).patch == 3
      * >>> Version.of("1.2.3-alpha.1"                ).patch == 3
@@ -234,9 +234,9 @@ abstract Version(VersionData) from VersionData to VersionData {
     /**
      * A series of dot (.) separated identifiers.
      * Identifiers MUST comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-].
-     * Identifiers MUST NOT be empty. 
-     * Numeric identifiers MUST NOT include leading zeroes. 
-     * 
+     * Identifiers MUST NOT be empty.
+     * Numeric identifiers MUST NOT include leading zeroes.
+     *
      * <pre><code>
      * >>> Version.of("1.2.3"                        ).preRelease == null
      * >>> Version.of("1.2.3-alpha.1"                ).preRelease == "alpha.1"
@@ -259,12 +259,12 @@ abstract Version(VersionData) from VersionData to VersionData {
      */
     public var isPreRelease(get, never):Bool;
     inline function get_isPreRelease() return preRelease != null;
-    
+
     /**
      * A series of dot (.) separated identifiers.
-     * Identifiers MUST comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. 
+     * Identifiers MUST comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-].
      * Identifiers MUST NOT be empty.
-     * 
+     *
      * <pre><code>
      * >>> Version.of("1.2.3"                        ).buildMetadata == null
      * >>> Version.of("1.2.3-alpha.1"                ).buildMetadata == null
@@ -295,11 +295,11 @@ abstract Version(VersionData) from VersionData to VersionData {
      * >>> new Version(1,2,3             ).toString() == "1.2.3"
      * >>> new Version(1,2,3, "rc"       ).toString() == "1.2.3-rc"
      * >>> new Version(1,2,3, "rc", "001").toString() == "1.2.3-rc+001"
-     * 
+     *
      * @param major non-negative integer
      * @param minor non-negative integer
      * @param patch non-negative integer
-     * @param preRelease A series of dot (.) separated non-empty identifiers containing only ASCII alphanumerics and hyphen. Numeric identifiers MUST NOT include leading zeroes. 
+     * @param preRelease A series of dot (.) separated non-empty identifiers containing only ASCII alphanumerics and hyphen. Numeric identifiers MUST NOT include leading zeroes.
      * @param buildMetadata A series of dot (.) separated non-empty identifiers containing only ASCII alphanumerics and hyphen.
      * </code></pre>
      */
@@ -308,10 +308,10 @@ abstract Version(VersionData) from VersionData to VersionData {
         if (minor < 0) throw '[$minor] is an invalid $SEM_VER_SPEC minor level.';
         if (patch < 0) throw '[$patch] is an invalid $SEM_VER_SPEC patch level.';
         if (!isValidPreRelease(preRelease)) throw '[$preRelease] is an invalid $SEM_VER_SPEC pre-release string.';
-        if (!isValidBuildMetaData(buildMetadata)) throw '[$buildMetadata] is an invalid $SEM_VER_SPEC metadata string.';    
+        if (!isValidBuildMetaData(buildMetadata)) throw '[$buildMetadata] is an invalid $SEM_VER_SPEC metadata string.';
         this = VersionEnum(major, minor, patch, preRelease.isEmpty() ? null : preRelease, buildMetadata.isEmpty() ? null : buildMetadata);
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.0.0"   ).compareTo(null) == 1
@@ -333,16 +333,16 @@ abstract Version(VersionData) from VersionData to VersionData {
      * >>> Version.of("1.0.0+2" ).compareTo(Version.of("1.0.0+1"), false) == 1
      * >>> Version.of("1.0.0+1" ).compareTo(Version.of("1.0.0+2"), false) == -1
      * </pre></code>
-     * 
+     *
      * @return 0 if both instances represent the same version. A positive value if this version is greater and a negative value if this version is lower.
      */
     public function compareTo(other:Version, ignoreBuildMetadata=true):Int {
-        if ((other:VersionData) == this) 
+        if ((other:VersionData) == this)
             return 0;
-            
-        if (other == null) 
+
+        if (other == null)
             return 1;
-        
+
         if (major > other.major) return 1000;
         if (major < other.major) return -1000;
         if (minor > other.minor) return 100;
@@ -353,9 +353,9 @@ abstract Version(VersionData) from VersionData to VersionData {
         if (isPreRelease) {
             if (!other.isPreRelease)
                 return -1;
-                
+
             if (preRelease != other.preRelease) {
-                
+
                 // chunk based comparison
                 var left = preRelease.split(SEP_IDENTIFIER);
                 var right = other.preRelease.split(SEP_IDENTIFIER);
@@ -363,7 +363,7 @@ abstract Version(VersionData) from VersionData to VersionData {
                 for (i in 0...count) {
                     var leftId = left[i];
                     var rightId = right[i];
-                    if (leftId == rightId) 
+                    if (leftId == rightId)
                         continue;
                     if (leftId.isDigits() && rightId.isDigits()) {
                         return leftId.toInt() < rightId.toInt() ? -1 : 1;
@@ -385,7 +385,7 @@ abstract Version(VersionData) from VersionData to VersionData {
 
         return 0;
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.0.0").equals(Version.of("1.0.0")) == true
@@ -395,10 +395,10 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function equals(other:Version, ignoreBuildMetadata=true) {
         return compareTo(other, ignoreBuildMetadata)  == 0;
     }
-    
+
     /**
      * See http://semver.org/#spec-item-8
-     * 
+     *
      * @return true if the major component of both versions is identical.
      */
     public function isCompatible(other:Version):Bool {
@@ -426,7 +426,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function isGreaterThan(other:Version, ignoreBuildMetadata=true):Bool {
         return compareTo(other, ignoreBuildMetadata) > 0;
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.0.0").isGreaterThanOrEqualTo(Version.of("1.0.0")) == true
@@ -437,7 +437,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function isGreaterThanOrEqualTo(other:Version, ignoreBuildMetadata=true):Bool {
         return compareTo(other, ignoreBuildMetadata) >= 0;
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.0.0").isLessThan(Version.of("1.0.0")) == false
@@ -456,7 +456,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function isLessThan(other:Version, ignoreBuildMetadata=true):Bool {
         return compareTo(other, ignoreBuildMetadata) < 0;
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.0.0").isLessThanOrEqualTo(Version.of("1.0.0")) == true
@@ -467,7 +467,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function isLessThanOrEqualTo(other:Version, ignoreBuildMetadata=true):Bool {
         return compareTo(other, ignoreBuildMetadata) <= 0;
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.2.3"     ).nextMajor().toString() == "2.0.0"
@@ -478,7 +478,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function nextMajor(keepBuildMetadata=false):Version {
         return VersionEnum(major + 1, 0, 0, null, keepBuildMetadata ? buildMetadata : null);
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.2.3"     ).nextMinor().toString() == "1.3.0"
@@ -489,7 +489,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function nextMinor(keepBuildMetadata=false):Version {
         return VersionEnum(major, minor + 1, 0, null, keepBuildMetadata ? buildMetadata : null);
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.2.3"     ).nextPatch().toString() == "1.2.4"
@@ -500,7 +500,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     public function nextPatch(keepBuildMetadata=false):Version {
         return VersionEnum(major, minor, patch + 1,null, keepBuildMetadata ? buildMetadata : null);
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.2.3-rc"      ).nextPreRelease().toString() == "1.2.3-rc.1"
@@ -509,7 +509,7 @@ abstract Version(VersionData) from VersionData to VersionData {
      * >>> Version.of("1.2.3-rc+2016" ).nextPreRelease().toString() == "1.2.3-rc.1"
      * >>> Version.of("1.2.3").nextPreRelease() throws '[1.2.3] is not a pre-release and therefore cannot be auto-incremented.'
      * </code></pre>
-     * 
+     *
      * @return a new version instance with an incremented pre-release part and the build metadata part being reset
      * @throws Exception if <code>preRelease</code> invalid pre-release was specified.
      */
@@ -531,7 +531,7 @@ abstract Version(VersionData) from VersionData to VersionData {
 
         return VersionEnum(major, minor, patch, nextPreRelease.isEmpty() ? preRelease + ".1" : nextPreRelease, keepBuildMetadata ? buildMetadata : null);
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.0.0"         ).toString() == "1.0.0"
@@ -543,7 +543,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     @:to
     public function toString():String {
         return
-            major + SEP_IDENTIFIER + minor + SEP_IDENTIFIER + patch + 
+            major + SEP_IDENTIFIER + minor + SEP_IDENTIFIER + patch +
             (preRelease == null ? "" : SEP_PRERELEASE + preRelease) +
             (buildMetadata == null ? "" : SEP_METADATA + buildMetadata);
     }
@@ -557,11 +557,11 @@ abstract Version(VersionData) from VersionData to VersionData {
      */
     public function withBuildMetadata(buildMetadata:String):Version {
         return switch (this) {
-          case VersionEnum(maj, min, pat, pre, build): 
-            build == buildMetadata ? this: VersionEnum(maj, min, pat, pre, buildMetadata.isEmpty() ? null : buildMetadata);              
+          case VersionEnum(maj, min, pat, pre, build):
+            build == buildMetadata ? this: VersionEnum(maj, min, pat, pre, buildMetadata.isEmpty() ? null : buildMetadata);
         }
     }
-    
+
     /**
      * <pre><code>
      * >>> Version.of("1.2.3-rc.1+001").withPreRelease("rc.2").toString() == "1.2.3-rc.2+001"
@@ -571,8 +571,8 @@ abstract Version(VersionData) from VersionData to VersionData {
      */
     public function withPreRelease(preRelease:String):Version {
         return switch (this) {
-          case VersionEnum(maj, min, pat, pre, build): 
-            pre == preRelease ? this : VersionEnum(maj, min, pat, preRelease.isEmpty() ? null : preRelease, build);              
+          case VersionEnum(maj, min, pat, pre, build):
+            pre == preRelease ? this : VersionEnum(maj, min, pat, preRelease.isEmpty() ? null : preRelease, build);
         }
     }
 }

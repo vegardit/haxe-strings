@@ -98,7 +98,7 @@ class Macros {
                                 path.push(p.name);
                                 if (p.sub != null)
                                     path.push(p.sub);
-                                path.join('.');
+                                path.join(".");
                             default:
                                 TypeTools.toString(abstractTypeRef.get().type);
                         }
@@ -107,10 +107,10 @@ class Macros {
                         ComplexTypeTools.toString(targetVarComplexType);
                 }
 
-                var idxGenerics = targetTypeName.indexOf('<', 1);
+                var idxGenerics = targetTypeName.indexOf("<", 1);
                 if(idxGenerics > -1)  targetTypeName = targetTypeName.substring(0, idxGenerics);
 
-                var targetTypeExpr = MacroStringTools.toFieldExpr(targetTypeName.split('.'));
+                var targetTypeExpr = MacroStringTools.toFieldExpr(targetTypeName.split("."));
 
                 macro @:mergeBlock {
                     var $targetVarName:$targetVarComplexType = Std.is($value, ${targetTypeExpr}) ? cast $value : null;

@@ -37,8 +37,8 @@ class CharIterator {
      * >>> CharIterator.fromString(null).hasNext()          == false
      * >>> CharIterator.fromString("").hasNext()            == false
      * >>> CharIterator.fromString("cat").hasNext()         == true
-     * >>> CharIterator.fromString("cat").next().toString() == 'c'
-     * >>> CharIterator.fromString("はい").next().toString() == 'は'
+     * >>> CharIterator.fromString("cat").next().toString() == "c"
+     * >>> CharIterator.fromString("はい").next().toString() == "は"
      * </code></pre>
      *
      * @param prevBufferSize number of characters the iterator can go backwards
@@ -54,8 +54,8 @@ class CharIterator {
      * >>> CharIterator.fromArray(null).hasNext()                           == false
      * >>> CharIterator.fromArray(Strings.toChars("")).hasNext()            == false
      * >>> CharIterator.fromArray(Strings.toChars("cat")).hasNext()         == true
-     * >>> CharIterator.fromArray(Strings.toChars("cat")).next().toString() == 'c'
-     * >>> CharIterator.fromArray(Strings.toChars("はい")).next().toString() == 'は'
+     * >>> CharIterator.fromArray(Strings.toChars("cat")).next().toString() == "c"
+     * >>> CharIterator.fromArray(Strings.toChars("はい")).next().toString() == "は"
      * </code></pre>
      *
      * @param prevBufferSize number of characters the iterator can go backwards
@@ -73,8 +73,8 @@ class CharIterator {
      * >>> CharIterator.fromInput(null).hasNext()          == false
      * >>> CharIterator.fromInput(new haxe.io.StringInput("")).hasNext()            == false
      * >>> CharIterator.fromInput(new haxe.io.StringInput("cat")).hasNext()         == true
-     * >>> CharIterator.fromInput(new haxe.io.StringInput("cat")).next().toString() == 'c'
-     * >>> CharIterator.fromInput(new haxe.io.StringInput("はい")).next().toString() == 'は'
+     * >>> CharIterator.fromInput(new haxe.io.StringInput("cat")).next().toString() == "c"
+     * >>> CharIterator.fromInput(new haxe.io.StringInput("はい")).next().toString() == "は"
      * </code></pre>
      *
      * @param prevBufferSize number of characters the iterator can go backwards
@@ -90,8 +90,8 @@ class CharIterator {
      * >>> CharIterator.fromIterator(null).hasNext()                                      == false
      * >>> CharIterator.fromIterator(Strings.toChars("").iterator()).hasNext()            == false
      * >>> CharIterator.fromIterator(Strings.toChars("cat").iterator()).hasNext()         == true
-     * >>> CharIterator.fromIterator(Strings.toChars("cat").iterator()).next().toString() == 'c'
-     * >>> CharIterator.fromIterator(Strings.toChars("はい").iterator()).next().toString() == 'は'
+     * >>> CharIterator.fromIterator(Strings.toChars("cat").iterator()).next().toString() == "c"
+     * >>> CharIterator.fromIterator(Strings.toChars("はい").iterator()).next().toString() == "は"
      * </code></pre>
      *
      * @param prevBufferSize number of characters the iterator can go backwards

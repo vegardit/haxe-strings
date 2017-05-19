@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,21 +21,21 @@ using hx.strings.Strings;
 
 /**
  * Thread-safe API for regex pattern matching backed by Haxe's EReg class.
- * 
+ *
  * UTF8 matching (EReg's 'u' flag) is enabled by default.
- * 
+ *
  * @see http://haxe.org/manual/std-regex.html
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @immutable
 @threadSafe
 class Pattern {
-    
+
     public var pattern(default, null):String;
     public var options(default, null):String;
     var ereg:EReg;
-    
+
     /**
      * @param pattern regular expression
      * @param options matching options
@@ -47,10 +47,10 @@ class Pattern {
         return new Pattern(pattern, switch(options.value) {
             case a(str): str.toLowerCase8().filterChars(function(ch) {
                     // remove unsupported flags
-                    return 
-                        ch == 'i' || ch == 'm' || ch == 'g'
+                    return
+                        ch == "i" || ch == "m" || ch == "g"
                         #if (cpp || flash || java || neko || php)
-                        || ch == 's'
+                        || ch == "s"
                         #end
                         ;
                 });
@@ -58,12 +58,12 @@ class Pattern {
             case c(arr): arr.filter(function (m) return m != null /* remove null enties */).join("");
         });
     }
-    
+
     function new(pattern:String, options:String) {
         this.pattern = pattern;
         this.options = options;
         this.ereg = new EReg(pattern, options);
-        
+
         // explicitly enable UTF8
         this.options += "u";
     }
@@ -72,7 +72,7 @@ class Pattern {
      * <pre><code>
      * >>> Pattern.compile(".*").matcher("a").matches() == true
      * </code></pre>
-     * 
+     *
      * @return a matcher (not thread-safe) that works on the given input string
      */
     inline
@@ -82,7 +82,7 @@ class Pattern {
 
     /**
      * Replaces all matches with <b>replaceWith</b>.
-     * 
+     *
      * <pre><code>
      * >>> Pattern.compile("[.]"     ).replace("a.b.c", ":") == "a:b.c"
      * >>> Pattern.compile("[.]", "g").replace("a.b.c", ":") == "a:b:c"
@@ -95,7 +95,7 @@ class Pattern {
 
     /**
      * Uses matches as separator to split the string.
-     * 
+     *
      * <pre><code>
      * >>> Pattern.compile("[.]"     ).split("a.b.c") == [ "a", "b.c" ]
      * >>> Pattern.compile("[.]", "g").split("a.b.c") == [ "a", "b", "c" ]
@@ -109,43 +109,43 @@ class Pattern {
 
 /**
  * Performs match operations on a string by interpreting a regular expression pattern.
- * 
+ *
  * Instances are created via the hx.strings.Pattern#matcher() function.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @notThreadSafe
 interface Matcher {
-        
+
     /**
      * Iterates over all matches and invokes the onMatch function for each match.
      */
     public function iterate(onMatch:Matcher -> Void):Void;
-    
+
     /**
      * Iterates over all matches and invokes the mapper function for each match.
-     * 
+     *
      * @return a string with all matches replaced by the mapper
      */
     public function map(mapper:Matcher -> String):String;
 
     /**
      * If no match attempt was made before Matcher#matches() will be excuted implicitly.
-     * 
+     *
      * @return the substring captured by the n-th group of the current match.
      *         If <b>n</b> is <code>0</code>, then returns the whole string of the current match.
-     * 
+     *
      * @throws an exception if no capturing group with the given index <b>n</b> exists
      */
     public function matched(n:Int = 0):String;
 
     /**
      * If no match attempt was made before Matcher#matches() will be excuted implicitly.
-     * 
+     *
      * @return the position of the current match
-     * 
+     *
      * @throws an exception if no match was found
-     * 
+     *
      * <pre><code>
      * >>> Pattern.compile("c").matcher("abcde").matchedPos() == { pos: 2, length: 1 }
      * </code></pre>
@@ -154,7 +154,7 @@ interface Matcher {
 
     /**
      * Attempts to match the string against the pattern.
-     * 
+     *
      * @return true if at least one match has been found
      *
      * <pre><code>
@@ -165,7 +165,7 @@ interface Matcher {
 
     /**
      * Attempts to match the given region of the string against the pattern.
-     * 
+     *
      * @return true if at least one match has been found
      *
      * <pre><code>
@@ -177,21 +177,21 @@ interface Matcher {
      * </code></pre>
      */
     public function matchesInRegion(pos:Int, len:Int=-1):Bool;
-    
+
     /**
      * Resets the matcher with the given input string
-     * 
+     *
      * <pre><code>
      * >>> Pattern.compile("b").matcher("abcb").reset("abCB").substringAfterMatch()  == "CB"
      * </code></pre>
-     * 
+     *
      * @return self reference
      */
     public function reset(str:String):Matcher;
-    
+
     /**
      * If no match attempt was made before Matcher#matches() will be excuted implicitly.
-     * 
+     *
      * @return the substring after the current match or "" if no match was found
      *
      * <pre><code>
@@ -201,10 +201,10 @@ interface Matcher {
      * </code></pre>
      */
     public function substringAfterMatch():String;
-    
+
     /**
      * If no match attempt was made before Matcher#matches() will be excuted implicitly.
-     * 
+     *
      * @return the substring before the current match or "" if no match was found
      *
      * <pre><code>
@@ -218,17 +218,17 @@ interface Matcher {
 
 /**
  * Options for compilation of regular expression patterns.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:enum
 abstract MatchingOption(String) {
-    
+
     /**
      * case insensitive matching
      */
     var IGNORE_CASE = "i";
-    
+
     /**
      * multiline matching, in the sense of that <code>^</code> and <code>$</code> represent the beginning and end of a line
      */
@@ -240,7 +240,7 @@ abstract MatchingOption(String) {
      */
     var DOTALL = "s";
     #end
-    
+
     /**
      * All map, split and replace operations are performed on all matches within the given string
      */
@@ -251,7 +251,7 @@ private class MatcherImpl implements Matcher {
     var isMatch:Null<Bool>;
     var ereg:EReg;
     var str:String;
-    
+
     public function new(ereg:EReg, pattern:String, options:String, str:String) {
         this.ereg = _cloneEReg(ereg, pattern, options);
         reset(str);
@@ -263,7 +263,7 @@ private class MatcherImpl implements Matcher {
         this.isMatch = null;
         return this;
     }
-    
+
     public function iterate(onMatch:Matcher -> Void):Void {
         var startAt = 0;
         while(ereg.matchSub(str, startAt)) {
@@ -271,11 +271,11 @@ private class MatcherImpl implements Matcher {
             var matchedPos = ereg.matchedPos();
             onMatch(this);
             startAt = matchedPos.pos + matchedPos.len;
-            
+
         }
         isMatch = false;
     }
-    
+
     public function map(mapper:Matcher -> String):String {
         return ereg.map(str, function(ereg) {
             isMatch = true;
@@ -286,16 +286,16 @@ private class MatcherImpl implements Matcher {
     public function matched(n:Int = 0):String {
         if(isMatch == null) matches();
         if(!isMatch) throw "No string matched";
-        
+
         var result = ereg.matched(n);
-        
+
         #if (cs || php) // workaround for targets with non-compliant implementation
             if(result == null) throw 'Group $n not found.';
         #end
-        
+
         return result;
     }
-    
+
     inline
     public function matches():Bool {
         return isMatch = ereg.match(str);
@@ -305,19 +305,19 @@ private class MatcherImpl implements Matcher {
     public function matchesInRegion(pos:Int, len:Int=-1):Bool {
         return isMatch = ereg.matchSub(str, pos, len);
     }
-    
+
     public function matchedPos(): { pos:Int, len:Int } {
         if(isMatch == null) matches();
         if(!isMatch) throw "No string matched";
         return ereg.matchedPos();
     }
-    
+
     public function substringAfterMatch():String {
         if(isMatch == null) matches();
         if(!isMatch) return "";
         return ereg.matchedRight();
     }
-    
+
     public function substringBeforeMatch():String {
         if(isMatch == null) matches();
         if(!isMatch) return "";
@@ -352,7 +352,7 @@ private class MatcherImpl implements Matcher {
             Reflect.setField(clone, "pattern", Reflect.field(from, "pattern"));
             Reflect.setField(clone, "global", Reflect.field(from, "global"));
         #else
-            // not reusing internal state on 
+            // not reusing internal state on
             // - untested targets
             // - targets where the compiled pattern and matcher not separated internally (js, flash)
             var clone = new EReg(pattern, options);
