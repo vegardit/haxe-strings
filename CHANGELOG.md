@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - function hx.strings.collection.StringArray#pushAll()
 - function hx.strings.StringBuilder#asOutput()
 - function hx.strings.Version#isCompatible()
+- parameter 'charsToRemove' to hx.strings.Strings#trim...() methods
 
 ### Changed
 - renamed hx.strings.collection.StringTreeMap to hx.strings.collection.SortedStringMap
@@ -25,12 +26,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ## [3.0.0] - 2017-03-27
 
 ### Added
-- parameter hx.strings.RandomStrings#randomUUIDv4(separator)
 - function hx.strings.Pattern.Matcher#reset(str)
-- parameter 'notFoundDefault' to hx.strings.Strings#substring...() methods
 - function hx.strings.StringBuilder#insert()
 - function hx.strings.StringBuilder#insertAll()
 - function hx.strings.StringBuilder#insertChar()
+- parameter hx.strings.RandomStrings#randomUUIDv4(separator)
+- parameter 'notFoundDefault' to hx.strings.Strings#substring...() methods
 
 ### Removed
 - function hx.strings.StringBuilder#prepend()
@@ -40,9 +41,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ### Changed
 - StringBuilder now uses C#'s native StringBuilder#clear()/#insert() methods
 
+
 ## [2.5.0] - 2017-03-03
 
 ### Added
+- type hx.strings.RandomStrings (#randomUUIDV4(), #randomDigits(), ...)
+- type hx.strings.String8
+- type hx.strings.collection.StringMaps
 - function hx.strings.Strings#containsOnly()
 - function hx.strings.Strings#compact()
 - function hx.strings.Strings#removeAfter()
@@ -50,9 +55,6 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - function hx.strings.Strings#removeBefore()
 - function hx.strings.Strings#removeFirst()
 - function hx.strings.Strings#randomSubstring()
-- type hx.strings.RandomStrings (#randomUUIDV4(), #randomDigits(), ...)
-- type hx.strings.String8
-- type hx.strings.collection.StringMaps
 - function hx.strings.collection.StringTreeMap#clone()
 - function hx.strings.collection.StringTreeMap#setAll()
 
@@ -81,9 +83,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ## [2.2.0] - 2017-01-02
 
 ### Added
+- type hx.strings.Version (Version parsing according SemVer.org 2.0 specification)
 - function hx.strings.Char#isAsciiAlphanumeric()
 - function hx.strings.Strings#indentLines()
-- type hx.strings.Version (Version parsing according SemVer.org 2.0 specification)
 
 
 ## [2.1.0] - 2016-08-21
@@ -154,7 +156,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - function hx.strings.Strings#startsWithAny()
 - function hx.strings.Strings#startsWithAnyIgnoreCase()
 - function hx.strings.Strings#toTitle()
-- algorithm parameter to hx.strings.Strings#hashCode()
+- parameter 'algorithm' to hx.strings.Strings#hashCode()
 
 ### Fixed
 - hx.strings.StringBuilder#addChar() with values between 128 and 255 didn't work on all platforms as expected

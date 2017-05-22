@@ -3692,6 +3692,7 @@ class Strings {
      * >>> Strings.toUpperCaseFirstChar("Dog") == "Dog"
      * >>> Strings.toUpperCaseFirstChar("кот") == "Кот"
      * </code></pre>
+     *
      */
     public static function toUpperCaseFirstChar(str:String):String {
         if (str.isEmpty())
@@ -3714,14 +3715,24 @@ class Strings {
      * >>> Strings.trim("\n\t\r")  == ""
      * >>> Strings.trim("  abc  ") == "abc"
      * >>> Strings.trim("  はい  ") == "はい"
+     * >>> Strings.trim("  000123000  ", "0 ") == "123"
      * </code></pre>
+     *
+     * @param charsToRemove if specified, these characters are removed instead of the default whitespace characters
      */
-    inline
-    public static function trim(str:String):String {
-        if (str == null)
+    public static function trim(str:String, ?charsToRemove:Either2<String, Array<Char>>):String {
+        if (str.isEmpty())
             return str;
 
-        return StringTools.trim(str);
+        if(charsToRemove == null)
+            return StringTools.trim(str);
+
+        var removableChars:Array<Char> = switch (charsToRemove.value) {
+            case a(str): str.toChars();
+            case b(chars): chars;
+        }
+
+        return trimLeft(trimRight(str, removableChars), removableChars);
     }
 
     /**
@@ -3734,14 +3745,36 @@ class Strings {
      * >>> Strings.trimRight("\n\t\r")  == ""
      * >>> Strings.trimRight("  abc  ") == "  abc"
      * >>> Strings.trimRight("  はい  ") == "  はい"
+     * >>> Strings.trimRight("  000123000  ", "0 ") == "  000123"
+     * >>> Strings.trimRight("1", "0 ")             == "1"
+     * >>> Strings.trimRight("0 ", "0 ")            == ""
      * </code></pre>
+     *
+     * @param charsToRemove if specified, these characters are removed instead of the default whitespace characters
      */
-    inline
-    public static function trimRight(str:String):String {
-        if (str == null)
+    public static function trimRight(str:String, ?charsToRemove:Either2<String, Array<Char>>):String {
+        if (str.isEmpty())
             return str;
 
-        return StringTools.rtrim(str);
+        if (charsToRemove == null)
+            return StringTools.rtrim(str);
+
+        var removableChars:Array<Char> = switch (charsToRemove.value) {
+            case a(str): str.toChars();
+            case b(chars): chars;
+        }
+
+        if (removableChars.length == 0)
+            return str;
+
+        var len = str.length8();
+        var i = len - 1;
+        while(i > -1 && removableChars.indexOf(str.charAt8(i)) > -1){
+            i--;
+        }
+        if(i < len - 1)
+            return str.substring8(0, i + 1);
+        return str;
     }
 
     /**
@@ -3754,14 +3787,36 @@ class Strings {
      * >>> Strings.trimLeft("\n\t\r")  == ""
      * >>> Strings.trimLeft("  abc  ") == "abc  "
      * >>> Strings.trimLeft("  はい  ") == "はい  "
+     * >>> Strings.trimLeft("  000123000  ", "0 ") == "123000  "
+     * >>> Strings.trimLeft("1", "0 ")             == "1"
+     * >>> Strings.trimLeft("0 ", "0 ")            == ""
      * </code></pre>
+     *
+     * @param charsToRemove if specified, these characters are removed instead of the default whitespace characters
      */
-    inline
-    public static function trimLeft(str:String):String {
+    public static function trimLeft(str:String, ?charsToRemove:Either2<String, Array<Char>>):String {
         if (str == null)
             return str;
 
-        return StringTools.ltrim(str);
+        if (charsToRemove == null)
+            return StringTools.ltrim(str);
+
+        var removableChars:Array<Char> = switch (charsToRemove.value) {
+            case a(str): str.toChars();
+            case b(chars): chars;
+        }
+
+        if (removableChars.length == 0)
+            return str;
+
+        var len = str.length8();
+        var i = 0;
+        while(i < len && removableChars.indexOf(str.charAt8(i)) > -1){
+            i++;
+        }
+        if(i > 0)
+            return str.substring8(i, len);
+        return str;
     }
 
     /**
@@ -3774,12 +3829,14 @@ class Strings {
      * >>> Strings.trimLines(" dog \n cat ")   == "dog\ncat"
      * >>> Strings.trimLines(" dog \r\n cat ") == "dog\ncat"
      * </code></pre>
+     *
+     * @param charsToRemove if specified, these characters are removed instead of the default whitespace characters
      */
-    public static function trimLines(str:String):String {
+    public static function trimLines(str:String, ?charsToRemove:Either2<String, Array<Char>>):String {
         if (str.isEmpty())
             return str;
 
-        return REGEX_SPLIT_LINES.split(str).map(function(line) return line.trim()).join(NEW_LINE_NIX);
+        return REGEX_SPLIT_LINES.split(str).map(function(line) return line.trim(charsToRemove)).join(NEW_LINE_NIX);
     }
 
     /**
