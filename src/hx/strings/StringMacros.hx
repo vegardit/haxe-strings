@@ -1,0 +1,82 @@
+/*
+ * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package hx.strings;
+
+import haxe.macro.*;
+
+/**
+ * @author Sebastian Thomschke, Vegard IT GmbH
+ */
+class StringMacros {
+
+    /**
+     * Returns the content of the multi-line comment between the methods invocation brackets ( and ).
+     * Variables with the notation ${varName} are not interpolated.
+     *
+     * E.g.
+     *
+     * <pre><code>
+     * var myString = StringMacros.multiline(/*
+     * This is a multi-line string wrapped in a comment.
+     * Special characters like ' or " don't need to be escaped.
+     * Variables ${blabla} are not interpolated.
+     * &#42;/
+     * </code></pre>
+     */
+    macro
+    public static function multiline(interpolate:Bool = false, trimLeft:Bool = true):ExprOf<String> {
+        var pos = Context.currentPos();
+
+        var posInfo = Context.getPosInfos(pos);
+        var str:String = sys.io.File.getContent(Context.resolvePath(posInfo.file)).substring(posInfo.min, posInfo.max);
+
+        var start = str.indexOf("/*");
+        if(start < 0) Context.error("Cannot find multi-line comment start marker '/*'.", pos);
+
+        var end = str.lastIndexOf("*/");
+        if(end < 0) Context.error("Cannot find multi-line comment end marker '*/'.", pos);
+        if(end < start) Context.error("Multi-line comment end marker most be placed after start marker.", pos);
+
+        var comment = str.substring(start + 2, end);
+
+        comment = Strings.trimRight(comment, "\t ");
+        comment = StringTools.replace(comment, "\r", "");
+        if (comment.length > 0 && comment.charCodeAt(0) == 10)
+            comment = comment.substr(1);
+
+        if(trimLeft) {
+            var lines:Array<String> = comment.split("\n");
+            var indent = 9999;
+            for (l in lines) {
+                for (i in 0...l.length) {
+                    if (l.charCodeAt(i) != 32) {
+                        if (i < indent) {
+                            indent = i;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (indent > 0) {
+                comment = [ for (l in lines) l.substr(indent) ].join("\n");
+            }
+        }
+        if (interpolate)
+            return MacroStringTools.formatString(comment, pos);
+
+        return macro @:pos(pos) $v{comment};
+    }
+}

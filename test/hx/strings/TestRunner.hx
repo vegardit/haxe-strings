@@ -21,6 +21,8 @@ import hx.strings.spelling.checker.*;
 import hx.strings.spelling.dictionary.*;
 import hx.strings.spelling.trainer.*;
 
+import hx.strings.StringMacros.multiline;
+
 using hx.strings.Strings;
 
 /**
@@ -35,9 +37,29 @@ class TestRunner extends DocTestRunner {
        runner.runAndExit();
     }
 
+
     function new() {
         super();
     }
+
+
+    public function testMultiline():Void {
+
+        assertEquals(multiline(/*foobar*/), "foobar");
+
+        var value = "foo";
+        assertEquals(multiline(/*${value}*/), "${value}");
+        assertEquals(multiline(true/*${value}*/), "foo");
+        assertEquals(multiline(true/*
+    ${value}
+    line2
+*/), "foo\nline2\n");
+        assertEquals(multiline(true, false/*
+    ${value}
+    line2
+*/), "    foo\n    line2\n");
+    }
+
 
     public function testCharIterator():Void {
         var it = CharIterator.fromString("1234567890", 4);
@@ -82,6 +104,7 @@ class TestRunner extends DocTestRunner {
         assertFalse(it.hasNext());
         try { it.next(); fail(); } catch (e:Dynamic) { };
     }
+
 
     public function testPattern():Void {
 
@@ -150,6 +173,7 @@ class TestRunner extends DocTestRunner {
         }
     }
 
+
     public function testVersion():Void {
 
         var v1:Version = "1.1.1";
@@ -205,7 +229,7 @@ class TestRunner extends DocTestRunner {
 
         var mapLen = 0;
         for (key in map.keys()) {
-                mapLen++;
+            mapLen++;
         }
         assertEquals(1, mapLen);
     }
