@@ -1,9 +1,10 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
-## [4.0.0] - 2017-05-xx
+## [4.0.0] - 2017-05-25
 
 ### Added
 - class hx.strings.CharIterator
@@ -23,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - renamed hx.strings.collection.StringTreeMap to hx.strings.collection.SortedStringMap
 - replaced hx.strings.CharPos abstract with hx.strings.Strings.CharIndex typedef
 - replaced hx.strings.collection.StringMaps class with hx.strings.collection.StringMap abstract
+
 
 ## [3.0.0] - 2017-03-27
 
