@@ -17,7 +17,7 @@
 
 ## <a name="what-is-it"></a>What is it?
 
-A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cross-platform UTF-8 string manipulation. 
+A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cross-platform UTF-8 string manipulation.
 It has been extensively unit tested (over 1,700 individual test cases) on the targets C++, C#, Flash, HashLink, Neko, Java, JavaScript, PHP, and Python.
 The library is self-containing meaning it has no dependencies to other haxe-libs.
 
@@ -60,7 +60,7 @@ class Test {
         6000.toChar().isAscii();     // returns false
         6000.toChar().isUTF8();      // returns true
         74.toHex();                  // returns "4A"
-        
+
         // all functions are null-safe:
         var nullString:String = null;
         nullString.isWhiteSpace();    // returns false
@@ -71,7 +71,7 @@ class Test {
         "кот".toUpperCase8();         // returns "КОТ"
         "кот".toUpperCaseFirstChar(); // returns "Кот"
         "はいはい".length8();          // returns 4
-        
+
         // ANSI escape sequence processing:
         "\x1B[1;33mHello World!\x1B[0m".ansiToHtml();  // returns '<span style="color:yellow;font-weight:bold;">Hello World!</span>'
         "\x1B[1mHello World!\x1B[0m".removeAnsi();     // returns "Hello World!"
@@ -96,7 +96,7 @@ class Test {
         "Cool String".hashCode();       // generate a platform specific hash code
         "Cool String".hashCode(CRC32);  // generate a hash code using CRC32
         "Cool String".hashCode(JAVA);   // generate a hash code using the Java hash algorithm
-        
+
         // cleanup:
         "/my/path/".removeLeading("/");       // returns "my/path/"
         "/my/path/".removeTrailing("/");      // returns "/my/path"
@@ -115,13 +115,13 @@ Example usage:
 ```haxe
 class Test {
     static function main() {
-        
+
        var str:String = "はいはい";  // create a string with UTF8 chars
        str.length;  // will return different values depending on the default UTF8 support of the target platform
-     
+
        var str8:String8 = str; // we assign the string to a variable of type String8 - because of the nature of Haxe`s abstract types this will not result in the creation of a new object instance
        str8.length;  // will return the correct character length on all platforms
-       
+
        str8.ellipsizeLeft(2); // the String8 type automatically has all utility string functions provided by the Strings class.
 }
 ```
@@ -143,8 +143,8 @@ import hx.strings.spelling.trainer.*;
 
 class Test {
     static function main() {
-        /* 
-         * first we use the English spell checker with a pre-trained dictionary 
+        /*
+         * first we use the English spell checker with a pre-trained dictionary
          * that is bundled with the library:
          */
         EnglishSpellChecker.INSTANCE.correctWord("speling");  // returns "spelling"
@@ -153,8 +153,8 @@ class Test {
         EnglishSpellChecker.INSTANCE.correctWord("spell1ng"); // returns "spelling"
         EnglishSpellChecker.INSTANCE.correctText("sometinG zEems realy vrong!") // returns "something seems really wrong!"
         EnglishSpellChecker.INSTANCE.suggestWords("absance"); // returns [ "absence", "advance", "balance" ]
-        
-        /* 
+
+        /*
          * let's check the pre-trained German spell checker
          */
         GermanSpellChecker.INSTANCE.correctWord("schreibweise");  // returns "Schreibweise"
@@ -176,11 +176,11 @@ class Test {
         // let's use the trained dictionary with a spell checker
         var mySpellChecker = new EnglishSpellChecker(myDict);
         mySpellChecker.INSTANCE.correctWord("speling");  // returns "spelling"
-        
+
         // since training a dictionary can be quite time consuming, we save
         // the analyzed words and their popularity/frequency to a file
         myDict.exportWordsToFile("myDict.txt");
-        
+
         // the word list can later be loaded using
         myDict.loadWordsFromFile("myDict.txt");
     }
@@ -204,13 +204,13 @@ The package [hx.strings.collection](https://github.com/vegardit/haxe-strings/blo
 
 2. [SortedStringSet](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/SortedStringSet.hx) is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
 
-3. [StringTreeMap](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/StringTreeMap.hx) is a map that is sorted by there keys (which are of type [String](http://api.haxe.org/String.html)).
+3. [SortedStringMap](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/SortedStringMap.hx) is a map that is sorted by there keys (which are of type [String](http://api.haxe.org/String.html)).
 
 
 ## <a name="paths-class"></a>The `Paths` utility class
 
-The [hx.strings.Paths](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Paths.hx) class provides utility methods for string manipulations related to local filesystem paths. 
-It can be seen as an improved and extended version of the built-in [haxe.io.Path](http://api.haxe.org/haxe/io/Path.html) class. 
+The [hx.strings.Paths](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Paths.hx) class provides utility methods for string manipulations related to local filesystem paths.
+It can be seen as an improved and extended version of the built-in [haxe.io.Path](http://api.haxe.org/haxe/io/Path.html) class.
 In contrast to functions provided by `haxe.io.Path`, there are no situations where the result of a function is unspecified.
 
 ```haxe
@@ -218,28 +218,28 @@ import hx.strings.Paths;
 
 class Test {
     static function main() {
-        
+
         Paths.addDirectorySeparator("/dir");      // returns "/dir/"
         Paths.addDirectorySeparator("C:\\dir");   // returns "C:\dir\"
         Paths.addDirectorySeparator("C:");        // returns "C:\"
         Paths.addDirectorySeparator("dir");       // returns "dir/"
         Paths.addDirectorySeparator("dir", WIN);  // returns "dir\"
-        
+
         Paths.basename("/dir/file.txt");      // returns "file.txt"
         Paths.basename("C:\\dir\\file.txt");  // returns "file.txt"
         Paths.basename("/dir//");             // returns "dir"
-        
+
         Paths.basenameWithoutExtension("/dir/file.txt");      // returns "file.txt"
         Paths.basenameWithoutExtension("C:\\dir\\file.txt");  // returns "file.txt"
         Paths.basenameWithoutExtension("/dir//");             // returns "dir"
         Paths.basenameWithoutExtension("/dir/..");            // returns ".."
-        
+
         Paths.dirname("C:\\Users\\Default\\Desktop\\");       // returns "C:\Users\Default"
-        
+
         Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 15); // returns "C:\...\Desktop"
 
         Paths.extension("dir.cfg/file.txt");  // returns "txt"
-        
+
         // use glob pattern matching:
         Paths.globToEreg("src/**/*.hx").match("src/haxe/strings/Char.hx");            // returns true
         Paths.globToEreg("assets/**/*.{js,css}").match("assets/theme/dark/dark.css"); // returns true
@@ -257,7 +257,7 @@ class Test {
         Paths.join("dir1\\..\\dir2", "dir3", NIX);      // returns "dir2/dir3"
         Paths.joinAll(["dir1\\dir2", "dir3", "dir4"]);  // returns "dir1\dir2\dir3\dir4"
         Paths.joinAll(["dir1/dir2", "dir3", "dir4"]);   // returns "dir1/dir2/dir3/dir4"
-        
+
         Paths.normalize("C:\\dir1\\..\\dir2\\");               // returns "C:\dir2"
         Paths.normalize("\\\\\\server.local\\a\\b\\..\\c\\");  // returns "\\server.local\a\c"
     }
@@ -274,22 +274,22 @@ import hx.strings.StringBuilder;
 
 class Test {
     static function main() {
-        
+
         // create a new instance with initial content
         var sb = new StringBuilder("def");
-        
+
         // insert / add some strings via fluent API calls
         sb.insert(0, "abc")
           .newLine()        // appends "\n"
           .add("ghi")
           .addChar(106);
-        
+
         sb.toString();  // returns "abcdef\nghij\n"
-        
+
         sb.clear();   // reset the internal state
-        
+
         sb.addAll(["a", 1, true, null]);
-        
+
         sb.toString();  // returns "a1truenull"
     }
 }
@@ -306,14 +306,14 @@ import hx.strings.ansi.Ansi;
 class Test {
     static function main() {
         var stdout = Sys.stdout();
-        
+
         stdout.writeString(Ansi.fg(RED));           // set the text foreground color to red
         stdout.writeString(Ansi.bg(WHITE));         // set the text background color to white
         stdout.writeString(Ansi.attr(BOLD));        // make the text bold
         stdout.writeString(Ansi.attr(RESET));       // reset all color or text attributes
         stdout.writeString(Ansi.clearScreen());     // clears the screen
         stdout.writeString(Ansi.cursor(MoveUp(2))); // moves the cursor 2 lines up
-        
+
         // now let's work with the fluent API:
         var writer = Ansi.writer(stdout); // supports StringBuf, haxe.io.Ouput and hx.strings.StringBuilder
         writer
@@ -329,7 +329,7 @@ class Test {
 
 ## <a name="random-strings"></a>Random string generation
 
-The `hx.strings.RandomStrings` class contains methods to generate different types of random strings, 
+The `hx.strings.RandomStrings` class contains methods to generate different types of random strings,
 e.g. UUIDs or alpha-numeric sequences.
 
 ```haxe
@@ -338,13 +338,13 @@ using hx.strings.Strings;
 
 class Test {
     static function main() {
-        
+
         RandomStrings.randomUUIDv4(); // generates a UUID according to RFC 4122 UUID Version 4, e.g. "f3cdf7a7-a179-464b-ae98-83f6659ae33f"
-        
+
         RandomStrings.randomDigits(4); // generates a 4-char numeric strings, e.g. "4832"
-        
+
         RandomStrings.randomAsciiAlphaNumeric(8); // generates a 8-char ascii alph numeric strings, e.g. "aZvDF34L"
-        
+
         RandomStrings.randomSubstring("abcdefghijlkmn", 4); // returns a random 4-char substring of the given string, e.g. "defg"
     }
 }
@@ -359,7 +359,7 @@ import hx.strings.Version;
 
 class Test {
     static function main() {
-        
+
         var ver:Version;
 
         ver = new Version(11, 2, 4);
@@ -370,7 +370,7 @@ class Test {
         ver.nextPatch().toString(); // returns '11.2.5'
         ver.nextMinor().toString(); // returns '11.3.0'
         ver.nextMajor().toString(); // returns '12.0.0'
-        
+
         ver = Version.of("11.2.4-alpha.2+exp.sha.141d2f7");
         ver.major;            // returns 11
         ver.minor;            // returns 2
@@ -378,18 +378,18 @@ class Test {
         ver.isPreRelease;     // returns true
         ver.preRelease;       // returns 'alpha.2'
         ver.buildMetadata;    // returns 'exp.sha.141d2f7'
-        ver.hasBuildMetadata; // returns true       
+        ver.hasBuildMetadata; // returns true
         ver.nextPreRelease().toString(); // returns "11.2.4-alpha.3"
-        
+
         var v1_0_0:Version = "1.0.0";
         var v1_0_1:Version = "1.0.1";
-        
+
         v1_0_0 < v1_0_1;       // returns true
         v1_0_1 >= v1_0_0;      // returns true
-        
+
         v1_0_1.isGreaterThan(v1_0_0); // returns true
         v1_0_1.isLessThan(Version.of("1.0.0"); // returns false
-        
+
         Version.isValid("foobar"); // returns false
     }
 }
@@ -428,7 +428,7 @@ haxelib git haxe-strings https://github.com/vegardit/haxe-strings master D:\haxe
     ```
     haxelib dev haxe-strings D:\haxe-projects\haxe-strings
     ```
-    
+
 ###  Using Subversion
 
 1. check-out the trunk
@@ -441,7 +441,7 @@ haxelib git haxe-strings https://github.com/vegardit/haxe-strings master D:\haxe
     haxelib dev haxe-strings D:\haxe-projects\haxe-strings
     ```
 
-    
+
 ## <a name="license"></a>License
 
 All files are released under the [Apache License 2.0](https://github.com/vegardit/haxe-strings/blob/master/LICENSE.txt).
