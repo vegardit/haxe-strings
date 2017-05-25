@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,12 +26,12 @@ class AnsiWriter<T> {
 
     public var out(get, null):T;
     inline function get_out():T return _out.out;
-    
+
     inline
     public function new(out:StringBuf_StringBuilder_or_Output<T>) {
         this._out = out;
     }
-        
+
     /**
      * sets the given text attribute
      */
@@ -39,7 +39,7 @@ class AnsiWriter<T> {
     public function attr(attr:AnsiTextAttribute) {
         return write(Ansi.attr(attr));
     }
-    
+
     /**
      * set the text background color
      */
@@ -68,7 +68,7 @@ class AnsiWriter<T> {
     public function cursor(cmd:AnsiCursor):AnsiWriter<T> {
         return write(Ansi.cursor(cmd));
     }
-    
+
     /**
      * set the text foreground color
      */
@@ -76,7 +76,7 @@ class AnsiWriter<T> {
     public function fg(color:AnsiColor):AnsiWriter<T> {
         return write(Ansi.fg(color));
     }
-    
+
     /**
      * flushes any buffered data
      */
@@ -85,7 +85,7 @@ class AnsiWriter<T> {
         _out.flush();
         return this;
     }
-    
+
     inline
     public function write(str:AnyAsString):AnsiWriter<T> {
         _out.write(str);
@@ -96,7 +96,7 @@ class AnsiWriter<T> {
 @:noCompletion
 @:noDoc @:dox(hide)
 @:forward
-abstract StringBuf_StringBuilder_or_Output<T>(AbstractStringWriter<T>) { 
+abstract StringBuf_StringBuilder_or_Output<T>(AbstractStringWriter<T>) {
 
     inline
     function new(writer:AbstractStringWriter<T>) {

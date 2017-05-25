@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,13 +22,13 @@ using hx.strings.Strings;
 
 /**
  * Utility functions to generate random strings.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class RandomStrings {
 
     static var DIGITS = "0123456789".toChars();
-    
+
     static function _genAsciiAlpha() {
         var chars = new Array<Char>();
         for (i in 65...92)
@@ -53,7 +53,7 @@ class RandomStrings {
     public static function randomAsciiAlpha(length:Int):String {
         return random(length, ASCII_ALPHA);
     }
-  
+
     /**
      * <pre><code>
      * >>> RandomStrings.randomAsciiAlphaNumeric(-1) throws "[count] must be positive value"
@@ -65,7 +65,7 @@ class RandomStrings {
     public static function randomAsciiAlphaNumeric(length:Int):String {
         return random(length, ASCII_ALPHA_NUMERIC);
     }
-    
+
     /**
      * <pre><code>
      * >>> RandomStrings.randomDigits(-1) throws "[count] must be positive value"
@@ -81,7 +81,7 @@ class RandomStrings {
 
     /**
      * Generates a random string based on the characters of the given string or character array.
-     * 
+     *
      * <pre><code>
      * >>> RandomStrings.random(0, "a")  == ""
      * >>> RandomStrings.random(4, "a")  == "aaaa"
@@ -119,7 +119,7 @@ class RandomStrings {
 
         return result.toString();
     }
-    
+
     /**
      * Returns a random substring from the given string.
      * <pre><code>
@@ -154,14 +154,14 @@ class RandomStrings {
     /**
      * Generates a Version 4 UUID, e.g. "dcdfd0b2-a5e8-4748-8333-58a5e420bc5e".
      * See https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
-     * 
+     *
      * <pre><code>
      * >>> RandomStrings.randomUUIDv4().length == 36
      * >>> Strings.containsOnly(RandomStrings.randomUUIDv4(),    "01234567890abcdef-") == true
      * >>> Strings.containsOnly(RandomStrings.randomUUIDv4(":"), "01234567890abcdef:") == true
      * >>> ~/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[ab89][a-f0-9]{3}-[a-f0-9]{12}/.match(RandomStrings.randomUUIDv4()) == true
      * </code></pre>
-     * 
+     *
      * @param separator string to separate the UUID parts, default is a dash -
      */
 	public static function randomUUIDv4(separator:String = "-"):String {
@@ -169,25 +169,25 @@ class RandomStrings {
         var variantByte = Math.floor(Math.random() * 16);
         variantByte = Bits.setBit(variantByte, 4); // set the 4th bit to 1
         variantByte = Bits.clearBit(variantByte, 3); // set the 3nd bit to 0
-        
+
         return (
             StringTools.hex(Math.floor(Math.random() * 65536), 4) + //
             StringTools.hex(Math.floor(Math.random() * 65536), 4) + //
-            
+
             separator + //
 
             StringTools.hex(Math.floor(Math.random() * 65536), 4) + //
-            
+
             separator + //
-            
+
             "4" + // Version 4 indicator
             StringTools.hex(Math.floor(Math.random() * 4096), 3) + //
-            
+
             separator + //
 
             StringTools.hex(variantByte) + //
             StringTools.hex(Math.floor(Math.random() * 4096), 3) + //
-            
+
             separator + //
 
             StringTools.hex(Math.floor(Math.random() * 65536), 4) + //

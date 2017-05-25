@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,18 +25,18 @@ using hx.strings.internal.Arrays;
 
 /**
  * Local filesystem path related string manipulation operations.
- * 
+ *
  * It provides more robust implementations of similar functions provided by haxe.io.Path.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class Paths {
-    
+
     /**
      * Unix-flavor directory separator (slash)
      */
     public static inline var DIRECTORY_SEPARATOR_NIX = "/";
-    
+
     /**
      * Windows directory separator (backslash)
      */
@@ -73,7 +73,7 @@ class Paths {
      * Unix-flavor path separator (:) used to separate paths in the PATH environment variable
      */
     public static inline var PATH_SEPARATOR_NIX = ":";
-    
+
     /**
      * Windows path separator (;) used to separate paths in the PATH environment variable
      */
@@ -111,22 +111,22 @@ class Paths {
                     #else
                         var path1 = Arrays.first(path);
                     #end
-                    
-                    if (path1 == null) 
+
+                    if (path1 == null)
                         return DIRECTORY_SEPARATOR_NIX;
 
                     if (path1.length8() == 2 && path1.charCodeAt8(0).isAsciiAlpha() && path1.charCodeAt8(1) == Char.COLON)
-                        return DIRECTORY_SEPARATOR_WIN;                            
+                        return DIRECTORY_SEPARATOR_WIN;
                 }
 
                 return DIRECTORY_SEPARATOR_NIX;
-                
+
             case OS:
                 DIRECTORY_SEPARATOR;
-                
+
             case NIX:
                 DIRECTORY_SEPARATOR_NIX;
-                
+
             case WIN:
                 DIRECTORY_SEPARATOR_WIN;
         }
@@ -156,7 +156,7 @@ class Paths {
 
         return path + dirSep;
     }
-    
+
     /**
      * <pre><code>
      * >>> Paths.basename("/dir/file.txt")     == "file.txt"
@@ -169,7 +169,7 @@ class Paths {
      * >>> Paths.basename("")                  == ""
      * >>> Paths.basename(null)                == null
      * </code></pre>
-     * 
+     *
      * @return the last part of the given path
      */
     public static function basename(path:String):String {
@@ -189,7 +189,7 @@ class Paths {
             return path.substring8(sepPos + 1);
         }
     }
-    
+
     /**
      * <pre><code>
      * >>> Paths.basenameWithoutExtension("/dir/file.txt")     == "file"
@@ -202,7 +202,7 @@ class Paths {
      * >>> Paths.basenameWithoutExtension("")                  == ""
      * >>> Paths.basenameWithoutExtension(null)                == null
      * </code></pre>
-     * 
+     *
      * @return the last part of the given path without it's name extension
      */
     public static function basenameWithoutExtension(path:String):String {
@@ -214,7 +214,7 @@ class Paths {
         var dotPos = basename.lastIndexOf8(EXTENSION_SEPARATOR);
         return dotPos == Strings.POS_NOT_FOUND ? basename : basename.substring8(0, dotPos);
     }
-    
+
     /**
      * <pre><code>
      * >>> Paths.dirname("C:\\Users\\Default\\Desktop\\") == "C:\\Users\\Default"
@@ -247,7 +247,7 @@ class Paths {
             return path.substring8(0, sepPos);
         }
     }
-    
+
     /**
      * <pre><code>
      * >>> Paths.ellipsize("C:\\Users\\Default\\Desktop\\", 15)             == "C:\\...\\Desktop"
@@ -263,7 +263,7 @@ class Paths {
      * >>> Paths.ellipsize(null, 0) == null
      * >>> Paths.ellipsize(null, 3) == null
      * </code></pre>
-     * 
+     *
      * @throws exception if maxLength < ellipsis.length
      */
     public static function ellipsize(path:String, maxLength:Int, startFromLeft:Bool = true, ellipsis:String = "..."):String {
@@ -277,7 +277,7 @@ class Paths {
 
         if (path.length8() <= maxLength)
             return path;
-        
+
         var ellipsisLen = ellipsis.length8();
         if (maxLength < ellipsisLen) throw '[maxLength] must not be smaller than ${ellipsisLen}';
 
@@ -292,18 +292,18 @@ class Paths {
         for (i in 0...pathParts.length) {
             var partToAdd = processLeftSide ? pathParts[leftPartsCount] : pathParts[pathParts.length - rightPartsCount - 1];
             var newTotalLength = leftPart.length + rightPart.length + ellipsisLen + partToAdd.length8() + dirSepLen;
-            
+
             if (newTotalLength > maxLength) {
                 break;
             }
-            
+
             if (processLeftSide) {
                 leftPart.add(partToAdd);
                 leftPart.add(dirSep);
                 leftPartsCount++;
-                
+
                 // handle special case of Windows network share \\server\folder
-                if ((i == 0 || i == 1) && partToAdd.isEmpty()) 
+                if ((i == 0 || i == 1) && partToAdd.isEmpty())
                     continue;
 
             } else {
@@ -316,7 +316,7 @@ class Paths {
 
         return leftPart + ellipsis + rightPart;
     }
-    
+
     /**
      * <pre><code>
      * >>> Paths.extension("file.txt")         == "txt"
@@ -325,23 +325,23 @@ class Paths {
      * >>> Paths.extension("dir.cfg/file.txt") == "txt"
      * >>> Paths.extension(null)               == null
      * </code></pre>
-     * 
+     *
      * @return dot extension of the given dir/file
      */
     public static function extension(path:String) {
-        if (path == null) 
+        if (path == null)
             return null;
-            
+
         var fileName = basename(path);
         var dotPos = fileName.lastIndexOf8(EXTENSION_SEPARATOR);
         if (dotPos == Strings.POS_NOT_FOUND)
             return "";
         return fileName.substr8(dotPos + 1);
     }
-    
+
     /**
      * Creates a regular expression EReg object from the given globbing/wildcard pattern.
-     * 
+     *
      * <pre><code>
      * >>> Paths.globToEReg("**"+"/file?.txt").match("aa/bb/file1.txt") == true
      * >>> Paths.globToEReg("*.txt").match("file.txt")           == true
@@ -353,7 +353,7 @@ class Paths {
      * >>> Paths.globToEReg("file[!0-9].txt").match("file1.txt") == false
      * >>> Paths.globToEReg("file[!0-9].txt").match("fileA.txt") == true
      * </code></pre>
-     * 
+     *
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
      * @return a EReg object
      */
@@ -361,10 +361,10 @@ class Paths {
     public static function globToEReg(globPattern:String, regexOptions:String = ""):EReg {
         return globToRegEx(globPattern).toEReg(regexOptions);
     }
-    
+
     /**
      * Creates a regular expression Pattern object from the given globbing/wildcard pattern.
-     * 
+     *
      * <pre><code>
      * >>> Paths.globToPattern("**"+"/file?.txt").matcher("aa/bb/file1.txt").matches() == true
      * >>> Paths.globToPattern("*.txt").matcher("file.txt").matches()           == true
@@ -376,7 +376,7 @@ class Paths {
      * >>> Paths.globToPattern("file[!0-9].txt").matcher("file1.txt").matches() == false
      * >>> Paths.globToPattern("file[!0-9].txt").matcher("fileA.txt").matches() == true
      * </code></pre>
-     * 
+     *
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
      * @return a hx.strings.Pattern object
      */
@@ -384,10 +384,10 @@ class Paths {
     public static function globToPattern(globPattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
         return globToRegEx(globPattern).toPattern(options);
     }
-    
+
     /**
      * Creates a regular expression pattern from the given globbing/wildcard pattern.
-     * 
+     *
      * <pre><code>
      * >>> Paths.globToRegEx("file")        == "^file$"
      * >>> Paths.globToRegEx("*.txt")       == "^[^\\\\^\\/]*\\.txt$"
@@ -398,7 +398,7 @@ class Paths {
      * >>> Paths.globToRegEx("")            == ""
      * >>> Paths.globToRegEx(null)          == null
      * </code></pre>
-     * 
+     *
      * @param globPattern Pattern in the Glob syntax style, see https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
      */
     public static function globToRegEx(globPattern:String):String {
@@ -469,7 +469,7 @@ class Paths {
                 case Char.ASTERISK:
                     if (chars[idx + 1] == Char.ASTERISK) { // **
                         if (chars[idx + 2] == Char.SLASH) { // **/
-                            if (chars[idx + 3] == Char.ASTERISK) { 
+                            if (chars[idx + 3] == Char.ASTERISK) {
                                 // "**/*" => ".*"
                                 sb.add(".*");
                                 idx += 3;
@@ -510,11 +510,11 @@ class Paths {
      * >>> Paths.isAbsolute("")                   == false
      * >>> Paths.isAbsolute(null)                 == false
      * </code></pre>
-     * 
+     *
      * @return true if the given path is a absolute, otherwise false
      */
     public static function isAbsolute(path:String):Bool {
-        if (path.isEmpty()) 
+        if (path.isEmpty())
             return false;
 
         if (path.startsWith("/") || path.startsWith("\\\\"))
@@ -528,7 +528,7 @@ class Paths {
 
     /**
      * Joins the given parts with a directory separator. Empty and blank parts are ignored.
-     * 
+     *
      * <pre><code>
      * >>> Paths.join("dir", "test.txt")              == "dir/test.txt"
      * >>> Paths.join("dir1\\..\\dir2", "dir3")       == "dir2\\dir3"
@@ -542,19 +542,19 @@ class Paths {
      * >>> Paths.join(null, null)        == null
      * >>> Paths.join(null, "")          == null
      * </code><pre>
-     * 
+     *
      * @param normalize if set to false no path normalization will be applied
-     * 
+     *
      * @return null if any null parts otherwise the elements concatenated with a directory separator
      */
     inline
     public static function join(part1:String, part2:String, sep:DirectorySeparatorType = AUTO, normalize = true):String {
         return joinAll([part1, part2], sep, normalize);
     }
-    
+
     /**
      * Joins the given parts with a directory separator. Empty and blank parts are ignored.
-     * 
+     *
      * <pre><code>
      * >>> Paths.joinAll(["dir1\\dir2", "dir3", "dir4"]) == "dir1\\dir2\\dir3\\dir4"
      * >>> Paths.joinAll(["dir1/dir2", "dir3",  "dir4"]) == "dir1/dir2/dir3/dir4"
@@ -566,13 +566,13 @@ class Paths {
      * >>> Paths.joinAll([null]) == null
      * >>> Paths.joinAll(null)   == null
      * </code><pre>
-     * 
+     *
      * @param normalize if set to false no path normalization will be applied
-     * 
+     *
      * @return null if any null parts otherwise the elements concatenated with a directory separator
      */
-    public static function joinAll(parts:Array<String>, sep:DirectorySeparatorType = AUTO, normalize = true):String {       
-        if (parts == null || parts.length == 0) 
+    public static function joinAll(parts:Array<String>, sep:DirectorySeparatorType = AUTO, normalize = true):String {
+        if (parts == null || parts.length == 0)
             return null;
 
         var filtered = [];
@@ -584,17 +584,17 @@ class Paths {
             return "";
 
         var path = filtered.join(_getSeparator(filtered, sep));
-        
+
         if (normalize) {
             path = Paths.normalize(path, sep, false);
         }
 
         return path;
     }
-    
+
     /**
      * <b>IMPORTANT:</b> If the path cannot be fully normalized, <code>null</code> is returned by default.
-     * 
+     *
      * <pre><code>
      * >>> Paths.normalize("C:\\dir1\\..\\dir2\\")              == "C:\\dir2"
      * >>> Paths.normalize("C:\\..\\foo\\")                     == null
@@ -611,13 +611,13 @@ class Paths {
      * >>> Paths.normalize("")                                  == ""
      * >>> Paths.normalize(null)                                == null
      * </code></pre>
-     * 
-     * @param strictMode if <code>true</code> (default) returns <code>null</code> in case full normalization 
+     *
+     * @param strictMode if <code>true</code> (default) returns <code>null</code> in case full normalization
      *                   is impossible otherwise returns the path normalized as far as possible
      * @return normalized version of the given path with trailing slashes are removed
      */
     public static function normalize(path:String, sep:DirectorySeparatorType = AUTO, strictMode = true):String {
-        if (path.isEmpty()) 
+        if (path.isEmpty())
             return path;
 
         var absolute = isAbsolute(path);
@@ -639,7 +639,7 @@ class Paths {
                     canGoUp = false;
                 }
                 if (canGoUp && resultParts.last == "..") {
-                    canGoUp = false; 
+                    canGoUp = false;
                 }
                 if(canGoUp) {
                     resultParts.pop();
@@ -664,17 +664,17 @@ abstract DirectorySeparatorType(Int) {
      * tries to determine the separator based on the input, uses slash as fallback
      */
     var AUTO = 0;
-    
+
     /**
      * use current operating system separator
      */
     var OS = 1;
-    
+
     /**
      * use Linux/Unix separator (slash)
      */
     var NIX = 2;
-    
+
     /**
      * use Windows separator (back slash)
      */

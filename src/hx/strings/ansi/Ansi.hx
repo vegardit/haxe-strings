@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +27,7 @@ import hx.strings.internal.AnyAsString;
  * https://en.wikipedia.org/wiki/ANSI_escape_code
  * http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/c327.html
  * http://ascii-table.com/ansi-escape-sequences.php
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class Ansi {
@@ -36,19 +36,19 @@ class Ansi {
      * ANSI escape sequence header
      */
     public static inline var ESC = "\x1B[";
-    
+
     /**
      * sets the given text attribute
      */
     inline
     public static function attr(attr:AnsiTextAttribute):String {
-        
+
         return ESC + (attr) + "m";
     }
-    
+
     /**
      * set the text background color
-     * 
+     *
      * <pre><code>
      * >>> Ansi.bg(RED) == "\x1B[41m"
      * </code></pre>
@@ -57,7 +57,7 @@ class Ansi {
     public static function bg(color:AnsiColor):String {
         return ESC + "4" + color + "m";
     }
-    
+
     /**
      * <pre><code>
      * >>> Ansi.cursor(MoveUp(5)) == "\x1B[5A"
@@ -95,7 +95,7 @@ class Ansi {
 
     /**
      * set the text foreground color
-     * 
+     *
      * <pre><code>
      * >>> Ansi.fg(RED) == "\x1B[31m"
      * </code></pre>
@@ -114,7 +114,7 @@ class Ansi {
      * >>> function(){var out=new StringBuilder();       return Ansi.writer(out).out == out;}() == true
      * >>> function(){var out=new haxe.io.BytesOutput(); return Ansi.writer(out).out == out;}() == true
      * </code></pre>
-     * 
+     *
      * @param out: StringBuf, haxe.io.Output or hx.strings.StringBuilder
      */
     inline

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,18 +19,18 @@ using hx.strings.Strings;
 
 #if !macro
 /**
- * Implemented as an abstract type over String. 
- * 
+ * Implemented as an abstract type over String.
+ *
  * All exposed methods are UTF-8 compatible and have consistent behavior across platforms.
- * 
+ *
  * The methods are auto generated based on the static methods provided by the `hx.strings.Strings` class.
- * 
+ *
  * Example usage:
  * <pre>
  * var str:String8 = "myString";
  * str.length();  // --> this is not the Haxe internal `length()` method but an implementation that with UTF-8 strings across platforms
  * </pre>
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:build(hx.strings.String8.String8Generator.generateMethods())
@@ -54,12 +54,12 @@ import haxe.macro.Type;
 @:noCompletion
 @:dox(hide)
 class String8Generator {
-    
+
     macro
     public static function generateMethods():Array<Field> {
         var contextFields = Context.getBuildFields();
         var contextPos = Context.currentPos();
-        
+
         var delegate:ClassType = switch(Context.getType("hx.strings.Strings")) {
             case TInst(t, _): t.get();
             default: Context.fatalError("hx.strings.Strings isn't a class.", Context.currentPos());
@@ -68,15 +68,15 @@ class String8Generator {
         for (delegateField in delegate.statics.get()) {
             if (!delegateField.isPublic)
                 continue;
-                
+
             if (delegateField.name == "length8")
                 continue;
 
             switch(delegateField.type) {
                 case TFun(args, ret):
-                    if (args.length == 0) 
+                    if (args.length == 0)
                         continue;
-                    
+
                     // ignore methods whose first argument doesn't take a string
                     switch(args[0].t) {
                         case TInst(t, params):
@@ -87,7 +87,7 @@ class String8Generator {
                                 continue;
                         default:
                     }
-                    
+
                     /*
                      * generate method args declaration of delegating method
                      */
@@ -121,7 +121,7 @@ class String8Generator {
                      */
                     var generatedGenericParams = new Array<TypeParamDecl>();
                     for (param in delegate.params) {
-                        generatedGenericParams.push({ 
+                        generatedGenericParams.push({
                             name: param.name
                         });
                     }
@@ -138,7 +138,7 @@ class String8Generator {
                         kind: FFun({
                             args: generatedArgs,
                             params: generatedGenericParams,
-                            ret: Context.toComplexType(ret), 
+                            ret: Context.toComplexType(ret),
                             expr: Context.parseInlineString("return Strings." + delegateName + "(" + delegateArgs.join(",") + ")", contextPos)
                         }),
                         pos: contextPos
@@ -150,6 +150,6 @@ class String8Generator {
 
         return contextFields;
     }
-    
+
 }
 #end

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,13 +27,13 @@ using hx.strings.Strings;
  * with additional functions such as <code>clear()</code>, <code>insert()</code>, <code>isEmpty()</code>
  * <br/>
  * This implementation tries to avoid the creation of intermediate String objects as much as possible.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class StringBuilder {
 
     var sb = new StringBuf();
-    
+
     #if !(java || cs)
     var pre:Array<String> = null;
     var len:Int = 0;
@@ -41,20 +41,20 @@ class StringBuilder {
 
     inline
     public function new(?initialContent:AnyAsString) {
-        if (initialContent != null) 
+        if (initialContent != null)
             add(initialContent);
     }
-    
+
     /**
      * <b>Important:</b> Invocation may result in temporary string object generation during invocation
      * on platforms except Java.
-     * 
+     *
      * <pre><code>
      * >>> new StringBuilder("").length                       == 0
      * >>> new StringBuilder("はい").add("は").add("い").length == 4
      * >>> new StringBuilder("ab").insert(0, "cd").insert(2, "はい").insertChar(1, 32).insertChar(4, 32).length == 8
      * </code></pre>
-     * 
+     *
      * @return the length of the string representation of all added items
      */
     public var length(get, null): Int;
@@ -67,14 +67,14 @@ class StringBuilder {
             return len;
         #end
     }
-    
+
     /**
      * <pre><code>
      * >>> new StringBuilder(null).add(null).toString() == "null"
      * >>> new StringBuilder("hi").add(null).toString() == "hinull"
      * >>> new StringBuilder("hi").add(1).toString()    == "hi1"
      * </code></pre>
-     * 
+     *
      * @return <code>this</code> for chained operations
      */
     inline
@@ -85,27 +85,27 @@ class StringBuilder {
         #end
         return this;
     }
-    
+
     /**
      * <pre><code>
      * >>> new StringBuilder("").addChar(223).toString()     == "ß"
      * >>> new StringBuilder("hi").addChar(12399).toString() == "hiは"
      * </code></pre>
-     * 
+     *
      * @return <code>this</code> for chained operations
      */
     #if java inline #end
-    public function addChar(ch:Char):StringBuilder {       
+    public function addChar(ch:Char):StringBuilder {
         #if (java || flash || cs || python)
             sb.addChar(ch);
         #else
             if (ch.isAscii()) {
                 sb.addChar(ch);
-            } 
+            }
             else
                 sb.add(ch.toString());
         #end
-        
+
         #if !(java || cs)
             len++;
         #end
@@ -121,21 +121,21 @@ class StringBuilder {
      */
     public function addAll(items:Array<AnyAsString>):StringBuilder {
         for (item in items) {
-            sb.add(item);    
+            sb.add(item);
             #if !(java || cs)
                 len += item.length8();
             #end
         }
         return this;
     }
-    
+
     /**
      * Resets the builders internal buffer
-     * 
+     *
      * <pre><code>
      * >>> new StringBuilder("hi").clear().add(1).toString() == "1"
      * </code></pre>
-     * 
+     *
      * @return <code>this</code> for chained operations
      */
     public function clear():StringBuilder {
@@ -150,35 +150,35 @@ class StringBuilder {
         #end
         return this;
     }
-    
+
     /**
      * <pre><code>
      * >>> new StringBuilder("").isEmpty()    == true
      * >>> new StringBuilder("cat").isEmpty() == false
      * </code></pre>
-     * 
+     *
      * @return <code>true</code> if no chars/strings have been added to the string builder yet
      */
     inline
     public function isEmpty():Bool {
         return length == 0;
     }
-    
+
     /**
      * adds the "\n" new line character
-     * 
+     *
      * @return <code>this</code> for chained operations
      */
     inline
     public function newLine():StringBuilder {
         sb.add(Strings.NEW_LINE_NIX);
-        
+
         #if !(java || cs)
             len ++;
         #end
         return this;
     }
-    
+
     /**
      * <pre><code>
      * >>> new StringBuilder("hi").insert(0, "はい").toString() == "はいhi"
@@ -192,19 +192,19 @@ class StringBuilder {
      * >>> new StringBuilder("hi").insert(0, "ho").insert(4, "はい").toString() == "hohiはい"
      * >>> new StringBuilder("hi").insert(3, " ").toString() throws "[pos] must not be greater than this.length"
      * </code></pre>
-     * 
+     *
      * @return <code>this</code> for chained operations
      * @throws if pos is out-of range (i.e. < 0 or > this.length)
      */
     public function insert(pos:CharIndex, item:AnyAsString):StringBuilder {
         if (pos < 0) throw "[pos] must not be negative";
         if (pos > this.length) throw "[pos] must not be greater than this.length";
-        
+
         if (pos == this.length) {
             add(item);
             return this;
         }
-        
+
         #if java
             untyped __java__("this.sb.b.insert(pos, item)");
         #elseif cs
@@ -216,7 +216,7 @@ class StringBuilder {
                 len += item.length8();
                 return this;
             }
-            
+
             // insert the item into the pre[] array if required
             var pre_len = 0;
             if (pre != null) {
@@ -239,7 +239,7 @@ class StringBuilder {
                     pre_len = next_pre_len;
                 }
             }
-            
+
             if (sb.length == 0) {
                 add(item);
                 return this;
@@ -268,19 +268,19 @@ class StringBuilder {
      * >>> new StringBuilder("hi").insert(0, "ho").insertChar(4, Char.of("は")).toString() == "hohiは"
      * >>> new StringBuilder("hi").insertChar(3, 32).toString() throws "[pos] must not be greater than this.length"
      * </code></pre>
-     * 
+     *
      * @return <code>this</code> for chained operations
      * @throws if pos is out-of range (i.e. < 0 or > this.length)
      */
     public function insertChar(pos:CharIndex, ch:Char):StringBuilder {
         if (pos < 0) throw "[pos] must not be negative";
         if (pos > this.length) throw "[pos] must not be greater than this.length";
-        
+
         if (pos == this.length) {
             addChar(ch);
             return this;
         }
-        
+
         #if java
             untyped __java__("this.sb.b.insert(pos, (char)ch)");
         #elseif cs
@@ -315,7 +315,7 @@ class StringBuilder {
                     pre_len = next_pre_len;
                 }
             }
-            
+
             if (sb.length == 0) {
                 addChar(ch);
                 return this;
@@ -329,20 +329,20 @@ class StringBuilder {
         #end
         return this;
     }
-    
+
     /**
      * <pre><code>
      * >>> new StringBuilder("hi").insertAll(0, [1,2]).toString() == "12hi"
      * >>> new StringBuilder("hi").insertAll(1, [1,2]).toString() == "h12i"
      * >>> new StringBuilder("hi").insertAll(2, [1,2]).toString() == "hi12"
      * </code></pre>
-     * 
+     *
      * @return <code>this</code> for chained operations
      */
     public function insertAll(pos:CharIndex, items:Array<AnyAsString>):StringBuilder {
         if (pos < 0) throw "[pos] must not be negative";
         if (pos > this.length) throw "[pos] must not be greater than this.length";
-        
+
         if (pos == this.length) {
             addAll(items);
             return this;
@@ -369,7 +369,7 @@ class StringBuilder {
                 }
                 return this;
             }
-            
+
             // insert the items into the pre[] array if required
             var pre_len = 0;
             if (pre != null) {
@@ -394,13 +394,13 @@ class StringBuilder {
                             var item = items[j];
                             pre.insert(i + 1, item);
                             len += item.length8();
-                        }                        
+                        }
                         return this;
                     }
                     pre_len = next_pre_len;
                 }
             }
-            
+
             if (sb.length == 0) {
                 for(item in items)
                     add(item);
@@ -418,18 +418,18 @@ class StringBuilder {
         #end
         return this;
     }
-    
+
     /**
      * <pre><code>
      * >>> function(){var sb=new StringBuilder("1"); var out=sb.asOutput(); out.writeByte(Char.TWO); out.writeString("3"); return sb.toString(); }() == "123"
      * </code></pre>
-     * 
+     *
      * @return a haxe.ui.Output wrapper object around this instance
      */
     public function asOutput():Output {
         return new OutputWrapper(this);
     }
-    
+
     /**
      * <pre><code>
      * >>> new StringBuilder().toString()     == ""
@@ -459,12 +459,12 @@ private class OutputWrapper extends Output {
 
     private var sb:StringBuilder;
     private var bo:BytesOutput;
-    
+
     inline
     public function new(sb:StringBuilder) {
         this.sb = sb;
     }
-    
+
     override
     public function flush() {
         if (bo != null && bo.length > 0) {
@@ -480,7 +480,7 @@ private class OutputWrapper extends Output {
 	}
 
     @:dox(hide)
-	override 
+	override
     function writeString(str:String) {
         flush();
 		sb.add(str);
