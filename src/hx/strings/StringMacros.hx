@@ -55,7 +55,7 @@ class StringMacros {
         var comment = str.substring(start + 2, end);
 
         comment = Strings.trimRight(comment, "\t ");
-        comment = StringTools.replace(comment, "\r", "");
+        comment = Strings.replaceAll(comment, "\r", "");
         if (comment.length > 0 && comment.charCodeAt(0) == 10)
             comment = comment.substr(1);
 
@@ -79,9 +79,11 @@ class StringMacros {
 
         if (Strings.isNotEmpty(interpolationPrefix) && Strings.contains(comment, interpolationPrefix)) {
             if (interpolationPrefix != "$") {
-                comment = StringTools.replace(comment, interpolationPrefix, "TO_BE_REPLACED");
-                comment = StringTools.replace(comment, "$", "$$");
-                comment = StringTools.replace(comment, "TO_BE_REPLACED", "$");
+                comment = Strings.replaceAll(comment, interpolationPrefix + interpolationPrefix, "THIS_IS_ESCAPED");
+                comment = Strings.replaceAll(comment, interpolationPrefix, "THIS_IS_TO_INTERPOLATE");
+                comment = Strings.replaceAll(comment, "$", "$$");
+                comment = Strings.replaceAll(comment, "THIS_IS_ESCAPED", Strings.replaceAll(interpolationPrefix, "$", "$$"));
+                comment = Strings.replaceAll(comment, "THIS_IS_TO_INTERPOLATE", "$");
             }
             return MacroStringTools.formatString(comment, pos);
         }
