@@ -35,9 +35,11 @@ class StringMacros {
      * Variables ${blabla} are not interpolated.
      * &#42;/
      * </code></pre>
+     *
+     * @param interpolationPrefix if set, e.g. to "$" Haxe variable interpolation for $var and ${var} be performed
      */
     macro
-    public static function multiline(interpolate:Bool = false, trimLeft:Bool = true):ExprOf<String> {
+    public static function multiline(interpolationPrefix:String = "", trimLeft:Bool = true):ExprOf<String> {
         var pos = Context.currentPos();
 
         var posInfo = Context.getPosInfos(pos);
@@ -74,8 +76,15 @@ class StringMacros {
                 comment = [ for (l in lines) l.substr(indent) ].join("\n");
             }
         }
-        if (interpolate)
+
+        if (Strings.isNotEmpty(interpolationPrefix) && Strings.contains(comment, interpolationPrefix)) {
+            if (interpolationPrefix != "$") {
+                comment = StringTools.replace(comment, interpolationPrefix, "TO_BE_REPLACED");
+                comment = StringTools.replace(comment, "$", "$$");
+                comment = StringTools.replace(comment, "TO_BE_REPLACED", "$");
+            }
             return MacroStringTools.formatString(comment, pos);
+        }
 
         return macro @:pos(pos) $v{comment};
     }

@@ -48,13 +48,17 @@ class TestRunner extends DocTestRunner {
         assertEquals(multiline(/*foobar*/), "foobar");
 
         var value = "foo";
-        assertEquals(multiline(/*${value}*/), "${value}");
-        assertEquals(multiline(true/*${value}*/), "foo");
-        assertEquals(multiline(true/*
+        assertEquals(multiline(      /*${value}*/),        "${value}");
+        assertEquals(multiline("$"  /*${value}*/),         "foo");
+        assertEquals(multiline("@"  /*@{value} ${bar}*/),  "foo ${bar}");
+        assertEquals(multiline("$$" /*$${value} ${bar}*/), "foo ${bar}");
+
+        assertEquals(multiline("$" /*
     ${value}
     line2
 */), "foo\nline2\n");
-        assertEquals(multiline(true, false/*
+
+        assertEquals(multiline("$", false/*
     ${value}
     line2
 */), "    foo\n    line2\n");
