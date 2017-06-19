@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,31 +21,31 @@ import hx.strings.Strings;
 
 /**
  * A map with sorted String keys.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:forward
 abstract SortedStringMap<V>(SortedStringMapImpl<V>) from SortedStringMapImpl<V> {
-    
+
     inline
     public function new(?comparator:String -> String -> Int) {
         this = new SortedStringMapImpl<V>(comparator);
     }
-    
+
     @:to
     function __toStringMap():StringMap<V> {
         return cast this;
     }
-    
-    @:arrayAccess 
-    @:noCompletion 
+
+    @:arrayAccess
+    @:noCompletion
     @:noDoc @:dox(hide)
     public inline function __arrayGet(key:String) {
       return this.get(key);
     }
 
-    @:arrayAccess 
-    @:noCompletion 
+    @:arrayAccess
+    @:noCompletion
     @:noDoc @:dox(hide)
     inline
     public function __arrayWrite(key:String, value:V):V {
@@ -60,6 +60,29 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
 
     var cmp:String -> String -> Int;
 
+
+    /**
+     * <b>IMPORTANT:</b> There is currently no native support for getting the size of a map,
+     * therefore this is emulated for now by using an iterator - which impacts performance.
+     *
+     * <pre><code>
+     * >>> new SortedStringMap<Int>().size == 0
+     * >>> function(){var m = new SortedStringMap<Int>(); m.set("1", 1); m.set("2", 1); return m.size; }() == 2
+     * </code></pre>
+     */
+    public var size(get, never):Int;
+    inline
+    function get_size():Int {
+        var count = 0;
+        var it = this.keys();
+        while (it.hasNext()) {
+            it.next();
+            count++;
+        }
+        return count;
+    }
+
+
     /**
      * @param comparator used for sorting the String keys. Default is the UTF8 supporting Strings#compare() method
      */
@@ -67,16 +90,16 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
         super();
         this.cmp = comparator == null ? Strings.compare : comparator;
     }
-    
-    @:arrayAccess 
-    @:noCompletion 
+
+    @:arrayAccess
+    @:noCompletion
     @:noDoc @:dox(hide)
     inline
     public function __arrayWrite(k:String, v:V):V {
         this.set(k, v);
         return v;
     }
-    
+
     /**
      * <pre><code>
      * >>> function(){var m = new SortedStringMap<Int>(); m.set("1", 1); m.clear(); return m.isEmpty(); }() == true
@@ -117,7 +140,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
     public function get(key:String):Null<V> {
         return super.get(key);
     }
-    
+
     /**
      * <pre><code>
      * >>> new SortedStringMap<Int>().isEmpty() == true
@@ -128,10 +151,10 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
     public function isEmpty():Bool {
         return !this.iterator().hasNext();
     }
-    
+
     /**
      * Copies all key-value pairs from the source map into this map.
-     * 
+     *
      * @param replace if true existing key-value pairs are replaced otherwise they will be skipped
      * @return the number of copied key-value pairs
      */

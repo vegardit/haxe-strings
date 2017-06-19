@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ## [?.?.?] - 2017-06-??
 ### Added
 - parameter 'interpolationPrefix' to hx.strings.StringMacros#multiline()
+- property hx.strings.collection.SortedStringMap#size
 
 
 ## [4.0.0] - 2017-05-25
