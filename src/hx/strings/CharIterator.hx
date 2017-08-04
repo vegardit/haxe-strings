@@ -344,7 +344,7 @@ private class InputCharIterator extends CharIterator {
                 totalBytes++;
 
                 if (Bits.getBit(byte1, 4))
-                    throw "Valid UTF-8 byte expected at position [$byteIndex] but found byte with value [$byte]!";
+                    throw 'Valid UTF-8 byte expected at position [$byteIndex] but found byte with value [$byte]!';
             }
         }
 
@@ -385,10 +385,10 @@ private class InputCharIterator extends CharIterator {
         byteIndex++;
 
         if (!Bits.getBit(byte, 8))
-            throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
+            throw 'Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!';
 
         if (Bits.getBit(byte, 7))
-            throw "Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!";
+            throw 'Valid UTF-8 multi-sequence byte expected at position [$byteIndex] but found byte with value [$byte]!';
 
         return Bits.clearBit(byte, 8);
     }

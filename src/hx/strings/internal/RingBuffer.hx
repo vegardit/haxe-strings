@@ -79,7 +79,7 @@ private class RingBufferImpl<V> {
 
     public function get(index:Int):V {
         if (index < 0 || index > bufferMaxIdx)
-            throw "[index] $index is out of bound";
+            throw '[index] $index is out of bound';
 
         var realIdx = bufferStartIdx + index;
         if (realIdx > bufferMaxIdx) {
