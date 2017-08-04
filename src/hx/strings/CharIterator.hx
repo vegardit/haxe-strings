@@ -344,7 +344,7 @@ private class InputCharIterator extends CharIterator {
                 totalBytes++;
 
                 if (Bits.getBit(byte1, 4))
-                    throw 'Valid UTF-8 byte expected at position [$byteIndex] but found byte with value [$byte]!';
+                    throw 'Valid UTF-8 byte expected at position [$byteIndex] but found byte with value [$byte1]!';
             }
         }
 
