@@ -83,6 +83,13 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
         __map = new StringMap<V>();
     }
 
+    #if (haxe_ver >= 4.0)
+    inline
+    public function copy():OrderedStringMapImpl<V> {
+        return this.clone();
+    }
+    #end
+
     /**
      * <pre><code>
      * >>> new OrderedStringMap<Int>().clone() != null

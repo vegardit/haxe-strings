@@ -9,6 +9,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - parameter 'interpolationPrefix' to hx.strings.StringMacros#multiline()
 - property hx.strings.collection.SortedStringMap#size
 
+### Fixed
+- Haxe 4.0 support
+
 
 ## [4.0.0] - 2017-05-25
 
