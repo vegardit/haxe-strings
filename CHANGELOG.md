@@ -4,13 +4,18 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
-## [?.?.?] - 2017-06-??
+## [5.0.0] - 2017-08-??
 ### Added
 - parameter 'interpolationPrefix' to hx.strings.StringMacros#multiline()
 - property hx.strings.collection.SortedStringMap#size
 
-### Fixed
-- Haxe 4.0 support
+### Changed
+- renamed hx.strings.collection.OrderedStringMap#clone() to #copy() for Haxe 4 compatiblity
+- renamed hx.strings.collection.StringMap#clone() to #copy() for Haxe 4 compatiblity
+- renamed hx.strings.collection.SortedStringMap#clone() to #copy() for Haxe 4 compatiblity
+
+### Removed
+- unused 'comparator' constructor parameter from hx.strings.collection.OrderedStringSet
 
 
 ## [4.0.0] - 2017-05-25

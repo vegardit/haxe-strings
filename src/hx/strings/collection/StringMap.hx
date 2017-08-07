@@ -75,17 +75,17 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
 
     /**
      * <pre><code>
-     * >>> new StringMap<Int>().clone() != null
+     * >>> new StringMap<Int>().copy() != null
      * </code></pre>
      */
-    public function clone():StringMap<V> {
+    public function copy():StringMap<V> {
 
         if (Macros.is(this, (m:SortedStringMap<V>))) {
-            return m.clone();
+            return m.copy();
         }
 
         if (Macros.is(this, (m:OrderedStringMap<V>))) {
-            return m.clone();
+            return m.copy();
         }
 
         var clone:StringMap<V> = new StringMap<V>();

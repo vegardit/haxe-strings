@@ -32,7 +32,7 @@ import hx.strings.internal.Either2;
 class OrderedStringSet<V> extends StringSet {
 
     inline
-    public function new(?initialItems:Either2<StringSet,Array<String>>, ?comparator:String -> String -> Int) {
+    public function new(?initialItems:Either2<StringSet,Array<String>>) {
         super(initialItems);
     }
 
