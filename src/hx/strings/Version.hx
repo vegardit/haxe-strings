@@ -103,10 +103,6 @@ abstract Version(VersionData) from VersionData to VersionData {
         if(!m.matches())
             throw '[$str] is not a valid $SEM_VER_SPEC version string!';
 
-        #if (php && haxe_ver < "3.4.0")
-            // workaround for "Undefined variable: __hx__spos"
-            untyped __php__("$__hx__spos = $GLOBALS['%s']->length;");
-        #end
         #if (cs || php)
             var preRelease    = try { m.matched(4); } catch (e:Dynamic) {  null; };
             var buildMetadata = try { m.matched(5); } catch (e:Dynamic) {  null; };

@@ -27,8 +27,8 @@ import haxe.macro.*;
 class Macros {
 
     static var __static_init = {
-        #if (php7 && haxe_ver <= "3.4.0")
-            throw 'For the PHP7 target a Haxe version newer than 3.4.0 is required because of bugs in the earlier PHP7 target implementation.';
+        #if (haxe_ver <= 3.4)
+            throw 'ERROR: As of haxe-strings 5.0.0, Haxe 3.4.0 or higher is required!';
         #end
     };
 
@@ -77,13 +77,14 @@ class Macros {
      *
      * Also works with abstract types in constrast to <code>Std.is()</code>.
      * Does not yet work with classes with private visiblity.
+     *
+     * Requires Haxe 3.3 or higher because of https://github.com/HaxeFoundation/haxe/issues/5249
      */
     macro
     public static function is(value:Expr, assignableTo:Expr) {
         return switch assignableTo {
             case macro ($i{targetVarName}:$targetVarComplexType):
                 var targetTypeName:String = switch(ComplexTypeTools.toType(targetVarComplexType)) {
-
                     // if we target an abstract, resolve the underlying type because Std.is() does not support abstracts directly
                     case TAbstract(abstractTypeRef, params):
 
