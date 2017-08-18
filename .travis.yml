@@ -1,0 +1,44 @@
+sudo: required
+dist: trusty
+
+language: haxe
+
+os:
+  - linux
+  - osx
+
+haxe:
+  - "3.2.1"
+  - "3.4.2"
+  - development
+
+env:
+  - HAXE_TARGET=cpp
+  - HAXE_TARGET=cs
+  - HAXE_TARGET=flash
+  - HAXE_TARGET=lua
+  - HAXE_TARGET=neko
+  - HAXE_TARGET=node
+  - HAXE_TARGET=php
+  - HAXE_TARGET=php7
+  - HAXE_TARGET=python
+  - HAXE_TARGET=js
+  - HAXE_TARGET=java
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - haxe: development
+  exclude:
+    - haxe: "3.2.1"
+      env: HAXE_TARGET=lua
+    - haxe: "3.2.1"
+      env: HAXE_TARGET=php7
+
+install:
+  - haxelib git travix https://github.com/back2dos/travix && pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml && popd
+  - haxelib run travix install
+  - haxelib install munit
+
+script:
+  - haxelib run travix $HAXE_TARGET

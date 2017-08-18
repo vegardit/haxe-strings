@@ -1,4 +1,5 @@
 # haxe-strings - [StringTools](http://api.haxe.org/StringTools.html) on steroids.
+[![Build Status](https://travis-ci.org/vegardit/haxe-strings.svg?branch=master)](https://travis-ci.org/vegardit/haxe-strings)
 
 1. [What is it?](#what-is-it)
 1. [The `Strings` utility class](#strings-class)

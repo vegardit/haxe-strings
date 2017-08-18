@@ -33,7 +33,7 @@
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
-    <!-- example: <compile path="..." /> -->
+    <compile path="test\hx\strings\TestRunner.hx" />
   </compileTargets>
   <!-- Assets to embed into the output SWF -->
   <library>
