@@ -33,6 +33,7 @@ install:
   - haxelib git travix https://github.com/back2dos/travix && pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml && popd
   - haxelib run travix install
   - haxelib install munit
+  - haxelib install haxe-doctest
 
 script:
   - haxelib run travix $HAXE_TARGET
