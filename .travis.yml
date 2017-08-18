@@ -8,7 +8,6 @@ os:
   - osx
 
 haxe:
-  - "3.2.1"
   - "3.4.2"
   - development
 
@@ -29,11 +28,6 @@ matrix:
   fast_finish: true
   allow_failures:
     - haxe: development
-  exclude:
-    - haxe: "3.2.1"
-      env: HAXE_TARGET=lua
-    - haxe: "3.2.1"
-      env: HAXE_TARGET=php7
 
 install:
   - haxelib git travix https://github.com/back2dos/travix && pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml && popd
