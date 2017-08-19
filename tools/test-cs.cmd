@@ -2,13 +2,19 @@
 set CDP=%~dp0
 
 echo Cleaning...
-if exist "%CDP%dump\php" rd /s /q "%CDP%dump\php"
-if exist "%CDP%..\target\php7" rd /s /q "%CDP%..\target\php7"
+if exist "%CDP%dump\cs" rd /s /q "%CDP%dump\cs"
+if exist "%CDP%..\target\cs" rd /s /q "%CDP%..\target\cs"
 
 haxelib list | findstr haxe-doctest >NUL
 if errorlevel 1 (
     echo Installing [haxe-doctest]...
     haxelib install haxe-doctest
+)
+
+haxelib list | findstr hxcs >NUL
+if errorlevel 1 (
+    echo Installing [hxcs]...
+    haxelib install hxcs
 )
 
 echo Compiling...
@@ -21,11 +27,10 @@ haxe -main hx.strings.TestRunner ^
   -dce full ^
   -debug ^
   -D dump=pretty ^
-  -D php7 ^
-  -php "target\php7"
+  -cs "%CDP%..\target\cs"
 set rc=%errorlevel%
 popd
 if not %rc% == 0 exit /b %rc%
 
 echo Testing...
-%PHP7_HOME%\php "%CDP%..\target\php7\index.php"
+mono "%CDP%..\target\cs\bin\TestRunner-Debug.exe"

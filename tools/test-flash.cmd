@@ -1,7 +1,9 @@
 @echo off
+set CDP=%~dp0
+
 echo Cleaning...
-if exist dump\flash rd /s /q dump\flash
-if exist target\flash rd /s /q target\flash
+if exist "%CDP%dump\flash" rd /s /q "%CDP%dump\flash"
+if exist "%CDP%..\target\flash" rd /s /q "%CDP%..\target\flash"
 
 haxelib list | findstr haxe-doctest >NUL
 if errorlevel 1 (
@@ -10,14 +12,32 @@ if errorlevel 1 (
 )
 
 echo Compiling...
+pushd .
+cd "%CDP%.."
 haxe -main hx.strings.TestRunner ^
--lib haxe-doctest ^
--cp src ^
--cp test ^
--dce full ^
--debug ^
--D dump=pretty ^
--swf target/flash/TestRunner.swf || goto :eof
+  -lib haxe-doctest ^
+  -cp "src" ^
+  -cp "test" ^
+  -dce full ^
+  -debug ^
+  -D dump=pretty ^
+  -swf-version 11.5 ^
+  -swf "target\flash\TestRunner.swf"
+set rc=%errorlevel%
+popd
+if not %rc% == 0 exit /b %rc%
+
+REM enable Flash logging
+(
+    echo ErrorReportingEnable=1
+    echo TraceOutputFileEnable=1
+) > "%HOME%\mm.cfg"
 
 echo Testing...
-flashplayer_24_sa_debug target/flash/TestRunner.swf
+flashplayer_24_sa_debug "%CDP%..\target\flash\TestRunner.swf"
+set exitCode=%errorlevel%
+
+REM printing log file
+type "%HOME%\AppData\Roaming\Macromedia\Flash Player\Logs\flashlog.txt"
+
+exit /b %exitCode%

@@ -1,7 +1,9 @@
 @echo off
+set CDP=%~dp0
+
 echo Cleaning...
-if exist dump\lua rd /s /q dump\lua
-if exist target\lua rd /s /q target\lua
+if exist "%CDP%dump\lua" rd /s /q "%CDP%dump\lua"
+if exist "%CDP%..\target\lua" rd /s /q "%CDP%..\target\lua"
 
 haxelib list | findstr haxe-doctest >NUL
 if errorlevel 1 (
@@ -10,15 +12,20 @@ if errorlevel 1 (
 )
 
 echo Compiling...
+pushd .
+cd "%CDP%.."
 haxe -main hx.strings.TestRunner ^
--lib haxe-doctest ^
--cp src ^
--cp test ^
--dce full ^
--debug ^
--D dump=pretty ^
--D luajit ^
--lua target/lua/TestRunner.lua || goto :eof
+  -lib haxe-doctest ^
+  -cp "src" ^
+  -cp "test" ^
+  -dce full ^
+  -debug ^
+  -D dump=pretty ^
+  -D luajit ^
+  -lua "target\lua\TestRunner.lua"
+set rc=%errorlevel%
+popd
+if not %rc% == 0 exit /b %rc%
 
 echo Testing...
-lua target/lua/TestRunner.lua
+lua "%CDP%..\target\lua\TestRunner.lua"

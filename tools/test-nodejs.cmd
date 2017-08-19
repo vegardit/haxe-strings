@@ -1,7 +1,9 @@
 @echo off
+set CDP=%~dp0
+
 echo Cleaning...
-if exist dump\js rd /s /q dump\js
-if exist target\js rd /s /q target\js
+if exist "%CDP%dump\js" rd /s /q "%CDP%dump\js"
+if exist "%CDP%..\target\js" rd /s /q "%CDP%..\target\js"
 
 haxelib list | findstr haxe-doctest >NUL
 if errorlevel 1 (
@@ -10,15 +12,20 @@ if errorlevel 1 (
 )
 
 echo Compiling...
+pushd .
+cd "%CDP%.."
 haxe -main hx.strings.TestRunner ^
--lib haxe-doctest ^
--cp src ^
--cp test ^
--dce full ^
--debug ^
--D dump=pretty ^
--D nodejs ^
--js target\js\TestRunner.js || goto :eof
+  -lib haxe-doctest ^
+  -cp "src" ^
+  -cp "test" ^
+  -dce full ^
+  -debug ^
+  -D dump=pretty ^
+  -D nodejs ^
+  -js "target\js\TestRunner.js"
+set rc=%errorlevel%
+popd
+if not %rc% == 0 exit /b %rc%
 
 echo Testing...
-node target\js\TestRunner.js
+node "%CDP%..\target\js\TestRunner.js"

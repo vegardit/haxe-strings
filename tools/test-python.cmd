@@ -1,7 +1,9 @@
 @echo off
+set CDP=%~dp0
+
 echo Cleaning...
-if exist dump\python rd /s /q dump\python
-if exist target\python rd /s /q target\python
+if exist "%CDP%dump\python" rd /s /q "%CDP%dump\python"
+if exist "%CDP%..\target\python" rd /s /q "%CDP%..\target\python"
 
 haxelib list | findstr haxe-doctest >NUL
 if errorlevel 1 (
@@ -10,14 +12,19 @@ if errorlevel 1 (
 )
 
 echo Compiling...
+pushd .
+cd "%CDP%.."
 haxe -main hx.strings.TestRunner ^
--lib haxe-doctest ^
--cp src ^
--cp test ^
--dce full ^
--debug ^
--D dump=pretty ^
--python target\python\TestRunner.py || goto :eof
+  -lib haxe-doctest ^
+  -cp "src" ^
+  -cp "test" ^
+  -dce full ^
+  -debug ^
+  -D dump=pretty ^
+  -python "target\python\TestRunner.py"
+set rc=%errorlevel%
+popd
+if not %rc% == 0 exit /b %rc%
 
 echo Testing...
-python target\python\TestRunner.py
+python "%CDP%..\target\python\TestRunner.py"
