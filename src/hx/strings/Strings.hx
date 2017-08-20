@@ -699,19 +699,19 @@ class Strings {
 
     /**
      * <pre><code>
-     * >>> Strings.compare("a", "b")     < 0
-     * >>> Strings.compare("b", "a")     > 0
+     * >>> Strings.compare("a", "b")      < 0
+     * >>> Strings.compare("b", "a")      > 0
      * TODO csharp https://github.com/HaxeFoundation/hxcs/issues/25
-     * >>> Strings.compare("a", "A")     > 0
-     * >>> Strings.compare("A", "a")     < 0
-     * >>> Strings.compare("a", "B")     > 0
-     * >>> Strings.compare("", null)     > 0
+     * >>> Strings.compare("a", "A")      > 0
+     * >>> Strings.compare("A", "a")      < 0
+     * >>> Strings.compare("a", "B")      > 0
+     * >>> Strings.compare("", null)      > 0
      * >>> Strings.compare("", "")       == 0
      * >>> Strings.compare(null, null)   == 0
-     * >>> Strings.compare(null, "")     < 0
-     * >>> Strings.compare("к--", "К--") > 0
-     * >>> Strings.compare("к--", "т--") < 0
-     * >>> Strings.compare("кот", "КОТ") > 0
+     * >>> Strings.compare(null, "")      < 0
+     * >>> Strings.compare("к--", "К--")  > 0
+     * >>> Strings.compare("к--", "т--")  < 0
+     * >>> Strings.compare("кот", "КОТ")  > 0
      * </core></pre>
      *
      * @return a positive value if `str > other`, negative value if `str < other`, 0 if `str == other`
@@ -733,17 +733,17 @@ class Strings {
 
     /**
      * <pre><code>
-     * >>> Strings.compareIgnoreCase("a", "b")     == -1
-     * >>> Strings.compareIgnoreCase("b", "a")     == 1
+     * >>> Strings.compareIgnoreCase("a", "b")      < 0
+     * >>> Strings.compareIgnoreCase("b", "a")      > 0
      * >>> Strings.compareIgnoreCase("a", "A")     == 0
      * >>> Strings.compareIgnoreCase("A", "a")     == 0
-     * >>> Strings.compareIgnoreCase("a", "B")     == -1
-     * >>> Strings.compareIgnoreCase("", null)     == 1
+     * >>> Strings.compareIgnoreCase("a", "B")      < 0
+     * >>> Strings.compareIgnoreCase("", null)      > 0
      * >>> Strings.compareIgnoreCase("", "")       == 0
      * >>> Strings.compareIgnoreCase(null, null)   == 0
-     * >>> Strings.compareIgnoreCase(null, "")     == -1
+     * >>> Strings.compareIgnoreCase(null, "")      < 0
      * >>> Strings.compareIgnoreCase("к--", "К--") == 0
-     * >>> Strings.compareIgnoreCase("к--", "т--") == -1
+     * >>> Strings.compareIgnoreCase("к--", "т--")  < 0
      * >>> Strings.compareIgnoreCase("кот", "КОТ") == 0
      * </core></pre>
      *
