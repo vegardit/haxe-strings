@@ -709,9 +709,9 @@ class Strings {
      * >>> Strings.compare("", "")       == 0
      * >>> Strings.compare(null, null)   == 0
      * >>> Strings.compare(null, "")     < 0
-     * >>> Strings.compare("к--", "К--") == 1
+     * >>> Strings.compare("к--", "К--") > 0
      * >>> Strings.compare("к--", "т--") < 0
-     * >>> Strings.compare("кот", "КОТ") == 1
+     * >>> Strings.compare("кот", "КОТ") > 0
      * </core></pre>
      *
      * @return a positive value if `str > other`, negative value if `str < other`, 0 if `str == other`
