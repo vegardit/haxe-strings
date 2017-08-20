@@ -3,3 +3,4 @@
 -main hx.strings.TestRunner
 -lib haxe-doctest
 -dce full
+-debug
