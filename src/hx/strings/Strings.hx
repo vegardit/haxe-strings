@@ -699,22 +699,22 @@ class Strings {
 
     /**
      * <pre><code>
-     * >>> Strings.compare("a", "b")     == -1
-     * >>> Strings.compare("b", "a")     == 1
+     * >>> Strings.compare("a", "b")     < 0
+     * >>> Strings.compare("b", "a")     > 0
      * TODO csharp https://github.com/HaxeFoundation/hxcs/issues/25
-     * >>> Strings.compare("a", "A")     == 1
-     * >>> Strings.compare("A", "a")     == -1
-     * >>> Strings.compare("a", "B")     == 1
-     * >>> Strings.compare("", null)     == 1
+     * >>> Strings.compare("a", "A")     > 0
+     * >>> Strings.compare("A", "a")     < 0
+     * >>> Strings.compare("a", "B")     > 0
+     * >>> Strings.compare("", null)     > 0
      * >>> Strings.compare("", "")       == 0
      * >>> Strings.compare(null, null)   == 0
-     * >>> Strings.compare(null, "")     == -1
+     * >>> Strings.compare(null, "")     < 0
      * >>> Strings.compare("к--", "К--") == 1
-     * >>> Strings.compare("к--", "т--") == -1
+     * >>> Strings.compare("к--", "т--") < 0
      * >>> Strings.compare("кот", "КОТ") == 1
      * </core></pre>
      *
-     * @return 1 if `str > other`, -1 if `str < other`, 0 if `str == other`
+     * @return a positive value if `str > other`, negative value if `str < other`, 0 if `str == other`
      */
     public static function compare(str:String, other:String):Int {
         if (str == null)
@@ -747,7 +747,7 @@ class Strings {
      * >>> Strings.compareIgnoreCase("кот", "КОТ") == 0
      * </core></pre>
      *
-     * @return 1 if `str > other`, -1 if `str < other`, 0 if `str == other`
+     * @return a positive value if `str > other`, negative value if `str < other`, 0 if `str == other`
      */
     public static function compareIgnoreCase(str:String, other:String):Int {
         if (str == null)
