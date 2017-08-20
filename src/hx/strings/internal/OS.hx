@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,7 @@ package hx.strings.internal;
 
 /**
  * <b>IMPORTANT:</b> This class it not part of the API. Direct usage is discouraged.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:noDoc @:dox(hide)
@@ -25,9 +25,9 @@ package hx.strings.internal;
 class OS {
 
     #if js
-    static var isNodeJS = untyped __js__("(typeof process !== 'undefined') && (process.release.name === 'node')");
+    static var isNodeJS = untyped __js__("(typeof process !== 'undefined') && (typeof process.release !== 'undefined') && (process.release.name === 'node')");
     #end
-    
+
     public static var isWindows(default, never):Bool = {
         #if flash
         var os = flash.system.Capabilities.os;
