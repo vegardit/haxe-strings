@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
+
 ## [5.0.0] - 2017-08-??
 
 ### Added
@@ -16,6 +17,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - renamed hx.strings.collection.OrderedStringMap#clone() to #copy() for Haxe 4 compatiblity
 - renamed hx.strings.collection.StringMap#clone() to #copy() for Haxe 4 compatiblity
 - renamed hx.strings.collection.SortedStringMap#clone() to #copy() for Haxe 4 compatiblity
+
+### Fixed
+- [flash] workaround for 'Cannot create Vector without knowing runtime type'
 
 ### Removed
 - unused 'comparator' constructor parameter from hx.strings.collection.OrderedStringSet

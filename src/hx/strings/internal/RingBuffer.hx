@@ -15,8 +15,6 @@
  */
 package hx.strings.internal;
 
-import haxe.ds.Vector;
-
 /**
  * <b>IMPORTANT:</b> This class it not part of the API. Direct usage is discouraged.
  *
@@ -46,7 +44,12 @@ abstract RingBuffer<V>(RingBufferImpl<V>) {
 @:noCompletion
 private class RingBufferImpl<V> {
 
-    var buffer:Vector<V>;
+    #if flash
+    // using Array instead of Vector as workaround for https://github.com/HaxeFoundation/haxe/issues/6529
+    var buffer:Array<V>;
+    #else
+    var buffer:haxe.ds.Vector<V>;
+    #end
     var bufferStartIdx = 0;
     var bufferEndIdx = -1;
     var bufferMaxIdx:Int;
@@ -58,7 +61,11 @@ private class RingBufferImpl<V> {
         if (size < 1)
             throw "[size] must be > 0";
 
-        buffer = new Vector<V>(size);
+        #if flash
+        buffer = [];
+        #else
+        buffer = new haxe.ds.Vector<V>(size);
+        #end
         this.size = size;
         bufferMaxIdx = size - 1;
     }
