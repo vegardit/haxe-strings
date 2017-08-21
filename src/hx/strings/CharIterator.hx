@@ -28,6 +28,7 @@ import hx.strings.internal.TriState;
 using hx.strings.Strings;
 
 /**
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class CharIterator {

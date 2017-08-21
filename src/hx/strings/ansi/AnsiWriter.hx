@@ -18,6 +18,7 @@ package hx.strings.ansi;
 import hx.strings.internal.AnyAsString;
 
 /**
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class AnsiWriter<T> {

@@ -16,6 +16,7 @@
 package hx.strings.ansi;
 
 /**
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 enum AnsiCursor {

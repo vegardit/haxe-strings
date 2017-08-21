@@ -16,10 +16,11 @@
 package hx.strings.internal;
 
 /**
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:forward(concat, filter, iterator, indexOf, join, lastIndexOf, length, toString)
-class ReadOnlyArray<T>(Array<T>) from Array<T> {
+abstract ReadOnlyArray<T>(Array<T>) from Array<T> {
 
     @:arrayAccess
     inline function get(i:Int):T return this[i];

@@ -18,6 +18,7 @@ package hx.strings;
 import haxe.macro.*;
 
 /**
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class StringMacros {
