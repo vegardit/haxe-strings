@@ -1,6 +1,6 @@
 @echo off
 REM @author Sebastian Thomschke, Vegard IT GmbH
-REM 
+REM
 REM generates API documentation using dox
 
 setlocal
@@ -48,6 +48,7 @@ if %errorlevel% neq 0 (
 
 if exist "%TARGET%\site" (
     echo Cleaning %TARGET%\site...
+    del "%TARGET%\doc.xml"
     rd /s /q "%TARGET%\site"
 )
 
@@ -64,7 +65,7 @@ haxelib run dox ^
  -D themeColor 0x00658F ^
  -D version "%PROJECT_VERSION%" ^
  -D website "%OWNER%" ^
- -ex "^%OWNER:.=\.%\.internal" ^
+ -ex "^%TOP_LEVEL_PACKAGE:.=\.%\.internal" ^
  -i "%TARGET%\doc.xml" ^
  -o "%TARGET%\site"
 

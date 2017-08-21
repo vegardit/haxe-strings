@@ -1416,7 +1416,7 @@ class Strings {
      * >>> Strings.insertAt("cat",  4, "dog") throws "Absolute value of [pos] must be <= str.length"
      * </code></pre>
      *
-     * @throws if the absolute value of insertAt is greater than str.length
+     * @throws exception if the absolute value of insertAt is greater than str.length
      */
     public static function insertAt(str:String, pos:CharIndex, insertion:AnyAsString):String {
         if (str == null)
@@ -2135,7 +2135,7 @@ class Strings {
      * >>> Strings.removeAt("dogcat", -9, 1) throws "[pos] must be smaller than -1 * str.length"
      * </code></pre>
      *
-     * @throws if the <b>pos</b> is smaller than `-1 * str.length`
+     * @throws exception the <b>pos</b> is smaller than `-1 * str.length`
      */
     public static function removeAt(str:String, pos:CharIndex, length:Int):String {
         if (str.isEmpty() || length < 1)
@@ -2674,7 +2674,7 @@ class Strings {
      * >>> Strings.splitEvery("dog",  0) throws "[count] must be greater than 0"
      * >>> Strings.splitEvery("dog", -1) throws "[count] must be greater than 0"
      *
-     * @throws if length < 1
+     * @throws exception if length < 1
      */
     public static function splitEvery(str:String, count:Int):Array<String> {
         if (str == null)
@@ -3995,12 +3995,14 @@ class Strings {
     }
 }
 
+
 /**
  * Represents a character position (not byte index) in a String.
  *
  * First character is at index 0.
  */
 typedef CharIndex = Int;
+
 
 /**
  * Represents a character position in a sequence including its line/column coordinates.
@@ -4036,6 +4038,7 @@ class CharPos {
     public var col(default, null):Int;
 }
 
+
 /**
  * Return value of hx.strings.Strings#diff(String, String)
  */
@@ -4062,6 +4065,9 @@ class StringDiff {
 }
 
 
+/**
+ * Specifies the default value to be used if a given substring was not found in a string operation
+ */
 @:enum
 abstract StringNotFoundDefault(Int) {
 
@@ -4080,6 +4086,7 @@ abstract StringNotFoundDefault(Int) {
      */
     var INPUT = 3;
 }
+
 
 /**
  * https://defuse.ca/checksums.htm
@@ -4114,6 +4121,7 @@ enum HashCodeAlgorithm {
      */
     SDBM;
 }
+
 
 @:noDoc @:dox(hide)
 class ANSIState {

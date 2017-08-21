@@ -135,7 +135,7 @@ interface Matcher {
      * @return the substring captured by the n-th group of the current match.
      *         If <b>n</b> is <code>0</code>, then returns the whole string of the current match.
      *
-     * @throws an exception if no capturing group with the given index <b>n</b> exists
+     * @throws exception if no capturing group with the given index <b>n</b> exists
      */
     public function matched(n:Int = 0):String;
 
@@ -144,7 +144,7 @@ interface Matcher {
      *
      * @return the position of the current match
      *
-     * @throws an exception if no match was found
+     * @throws exception if no match was found
      *
      * <pre><code>
      * >>> Pattern.compile("c").matcher("abcde").matchedPos() == { pos: 2, length: 1 }
