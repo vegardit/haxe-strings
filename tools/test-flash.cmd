@@ -21,6 +21,8 @@ haxe -main hx.strings.TestRunner ^
   -dce full ^
   -debug ^
   -D dump=pretty ^
+  -D no-swf-compress ^
+  -D swf-script-timeout=180 ^
   -swf-version 11.5 ^
   -swf "target\flash\TestRunner.swf"
 set rc=%errorlevel%
@@ -34,7 +36,7 @@ REM enable Flash logging
 ) > "%HOME%\mm.cfg"
 
 echo Testing...
-flashplayer_24_sa_debug "%CDP%..\target\flash\TestRunner.swf"
+flashplayer_27_sa_debug "%CDP%..\target\flash\TestRunner.swf"
 set exitCode=%errorlevel%
 
 REM printing log file
