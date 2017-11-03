@@ -2321,7 +2321,7 @@ class Strings {
 
         #if php
             #if (haxe_ver < 4)
-                return untyped __call__("strip_tags", );
+                return untyped __call__("strip_tags", xml);
             #else
                 return php.Syntax.code("strip_tags({0})", xml);
             #end
