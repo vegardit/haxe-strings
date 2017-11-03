@@ -264,7 +264,11 @@ class Strings {
             return null;
 
         #if php
-            return untyped __call__("base64_encode", plain);
+            #if (haxe_ver < 4)
+                return untyped __call__("base64_encode", plain);
+            #else
+                return php.Syntax.code("base64_encode({0})", plain);
+            #end
         #else
             return Base64.encode(plain.toBytes());
         #end
@@ -284,7 +288,11 @@ class Strings {
             return null;
 
         #if php
-            return untyped __call__("base64_decode", encoded);
+            #if (haxe_ver < 4)
+                return untyped __call__("base64_decode", encoded);
+            #else
+                return php.Syntax.code("base64_decode({0})", encoded);
+            #end
         #else
             return Base64.decode(encoded).toString();
         #end
@@ -1601,7 +1609,12 @@ class Strings {
         #if (java || flash || cs || python)
             return str.indexOf(searchFor, startAt);
         #elseif php
-            var index:Dynamic = untyped __call__("mb_strpos", str, searchFor, startAt, "UTF-8");
+            #if (haxe_ver < 4)
+                var index:Dynamic = untyped __call__("mb_strpos", str, searchFor, startAt, "UTF-8");
+            #else
+                var index:Dynamic = php.Syntax.code("mb_strpos({0},{1},{2},{3})", str, searchFor, startAt, "UTF-8");
+            #end
+
             return index == false ? POS_NOT_FOUND : cast index;
         #else
             var strNeedsUTF8Workaround = str.length != strLen;
@@ -1667,7 +1680,11 @@ class Strings {
     #if php inline #end
     public static function isDigits(str:String):Bool {
         #if php
-            return untyped __call__("ctype_digit", str);
+            #if (haxe_ver < 4)
+                return untyped __call__("ctype_digit", str);
+            #else
+                return php.Syntax.code("ctype_digit({0})", str);
+            #end
         #else
             if (str.isEmpty())
                 return false;
@@ -1920,7 +1937,11 @@ class Strings {
         #if (flash || java || cs || python)
             return str.length;
         #elseif php
-            return untyped __call__("mb_strlen", str, "UTF-8");
+            #if (haxe_ver < 4)
+                return untyped __call__("mb_strlen", str, "UTF-8");
+            #else
+                return php.Syntax.code("mb_strlen({0}, {1})", str, "UTF-8");
+            #end
         #else
             return Utf8.length(str);
         #end
@@ -2299,7 +2320,11 @@ class Strings {
             return xml;
 
         #if php
-            return untyped __call__("strip_tags", xml);
+            #if (haxe_ver < 4)
+                return untyped __call__("strip_tags", );
+            #else
+                return php.Syntax.code("strip_tags({0})", xml);
+            #end
         #else
             return REGEX_REMOVE_XML_TAGS.replace(xml, "");
         #end
@@ -2849,7 +2874,11 @@ class Strings {
         #if (flash || java || cs || python)
             return str.substr(startAt, len);
         #elseif php
-            return untyped __call__("mb_substr", str, startAt, len, "UTF-8");
+            #if (haxe_ver < 4)
+                return untyped __call__("mb_substr", str, startAt, len, "UTF-8");
+            #else
+                return php.Syntax.code("mb_substr({0}, {1}, {2}, {3})", str, startAt, len, "UTF-8");
+            #end
         #else
             if (len < 0) {
                 if (startAt != 0)
@@ -2907,7 +2936,11 @@ class Strings {
                 endAt = tmp;
             }
             #if php
-                return untyped __call__("mb_substr", str, startAt, endAt - startAt, "UTF-8");
+                #if (haxe_ver < 4)
+                    return untyped __call__("mb_substr", str, startAt, endAt - startAt, "UTF-8");
+                #else
+                    return php.Syntax.code("mb_substr({0}, {1}, {2}, {3})", str, startAt, endAt - startAt, "UTF-8");
+                #end
             #else
                 return Utf8.sub(str, startAt, endAt - startAt);
             #end
@@ -3436,7 +3469,11 @@ class Strings {
             return str;
 
         #if php
-            return untyped __call__("mb_strtolower", str, "UTF-8");
+            #if (haxe_ver < 4)
+                return untyped __call__("mb_strtolower", str, "UTF-8");
+            #else
+                return php.Syntax.code("mb_strtolower({0}, {1})", str, "UTF-8");
+            #end
         #elseif (java || flash || cs || python)
             return str.toLowerCase();
         #else
@@ -3669,7 +3706,11 @@ class Strings {
             return str;
 
         #if php
-            return untyped __call__("mb_strtoupper", str, "UTF-8");
+            #if (haxe_ver < 4)
+                return untyped __call__("mb_strtoupper", str, "UTF-8");
+            #else
+                return php.Syntax.code("mb_strtoupper({0}, {1})", str, "UTF-8");
+            #end
         #elseif (java || flash || cs || python)
             return str.toUpperCase();
         #else
@@ -3910,7 +3951,11 @@ class Strings {
             return str;
 
         #if php
-            return untyped __call__("rawurldecode", str);
+            #if (haxe_ver < 4)
+                return untyped __call__("rawurldecode", str);
+            #else
+                return php.Syntax.code("rawurldecode({0})", str);
+            #end
         #else
             return StringTools.urlDecode(str);
         #end
@@ -3932,7 +3977,11 @@ class Strings {
             return str;
 
         #if php
-            return untyped __call__("rawurlencode", str);
+            #if (haxe_ver < 4)
+                return untyped __call__("rawurlencode", str);
+            #else
+                return php.Syntax.code("rawurlencode({0})", str);
+            #end
         #else
             return StringTools.urlEncode(str);
         #end

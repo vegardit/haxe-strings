@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
 
-## [5.0.0] - 2017-08-??
+## [5.0.0] - 2017-11-??
 
 ### Added
 - parameter 'interpolationPrefix' to hx.strings.StringMacros#multiline()
@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - renamed hx.strings.collection.OrderedStringMap#clone() to #copy() for Haxe 4 compatiblity
 - renamed hx.strings.collection.StringMap#clone() to #copy() for Haxe 4 compatiblity
 - renamed hx.strings.collection.SortedStringMap#clone() to #copy() for Haxe 4 compatiblity
+- use php.Syntax.code instead of "untyped __call__" for Haxe 4 compatiblity
 
 ### Fixed
 - [flash] workaround for 'Cannot create Vector without knowing runtime type'
