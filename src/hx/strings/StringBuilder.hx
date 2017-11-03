@@ -471,18 +471,18 @@ private class OutputWrapper extends Output {
             sb.add(bo.getBytes().toString());
             bo == null;
         }
-	}
+    }
 
     override
-  	public function writeByte(c:Int):Void {
-		if (bo == null) bo = new BytesOutput();
+      public function writeByte(c:Int):Void {
+        if (bo == null) bo = new BytesOutput();
         bo.writeByte(c);
-	}
+    }
 
     @:dox(hide)
-	override
+    override
     function writeString(str:String) {
         flush();
-		sb.add(str);
-	}
+        sb.add(str);
+    }
 }
