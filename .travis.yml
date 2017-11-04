@@ -29,7 +29,11 @@ matrix:
   allow_failures:
     - haxe: development
     - env: HAXE_TARGET=cs
+    - env: HAXE_TARGET=flash
     - env: HAXE_TARGET=lua
+  exclude:
+    - haxe: development
+      os: osx
 
 install:
   - haxelib install haxe-doctest

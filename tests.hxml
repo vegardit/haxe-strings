@@ -4,4 +4,4 @@
 -lib haxe-doctest
 -dce full
 -debug
--D swf-script-timeout=180
+-D swf-script-timeout=360
