@@ -21,6 +21,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ### Fixed
 - [flash] workaround for 'Cannot create Vector without knowing runtime type'
+- String8.String8Generator is broken
+
 
 ### Removed
 - unused 'comparator' constructor parameter from hx.strings.collection.OrderedStringSet

@@ -179,6 +179,13 @@ class TestRunner extends DocTestRunner {
     }
 
 
+    public function testString8():Void {
+        var str:String8 = "test";
+        assertTrue(str.endsWith("est"));
+        assertTrue(str.startsWith("tes"));
+    }
+
+
     public function testVersion():Void {
 
         var v1:Version = "1.1.1";

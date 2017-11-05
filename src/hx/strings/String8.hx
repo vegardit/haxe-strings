@@ -60,12 +60,12 @@ class String8Generator {
         var contextFields = Context.getBuildFields();
         var contextPos = Context.currentPos();
 
-        var delegate:ClassType = switch(Context.getType("hx.strings.Strings")) {
+        var delegateClass:ClassType = switch(Context.getType("hx.strings.Strings")) {
             case TInst(t, _): t.get();
-            default: Context.fatalError("hx.strings.Strings isn't a class.", Context.currentPos());
+            default: Context.fatalError("hx.strings.Strings isn't a class.", contextPos);
         }
 
-        for (delegateField in delegate.statics.get()) {
+        for (delegateField in delegateClass.statics.get()) {
             if (!delegateField.isPublic)
                 continue;
 
@@ -93,17 +93,31 @@ class String8Generator {
                      */
                     var delegateTFunc:TFunc = delegateField.expr() == null ? null : switch(delegateField.expr().expr) {
                        case TFunction(func): func;
-                       default: Context.fatalError("Should never be reached.", Context.currentPos ());
+                       default: Context.fatalError("Should never be reached.", contextPos);
                     };
                     var generatedArgs = new Array<FunctionArg>();
                     var delegateArgs = ["this"];
                     for (i in 1...args.length) {
                         var defaultValue = delegateTFunc == null ? null : switch(delegateTFunc.args[i].value) {
-                            case TBool(b): Context.makeExpr(b, contextPos);
-                            case TInt(i): Context.makeExpr(i, contextPos);
-                            case TString(s): Context.makeExpr(s, contextPos);
-                            case TFloat(f): Context.makeExpr(f, contextPos);
-                            case TNull: Context.makeExpr(null, contextPos);
+                            case TBool(val):   Context.makeExpr(val, contextPos);
+                            case TString(val): Context.makeExpr(val, contextPos);
+                            case TFloat(val):  Context.makeExpr(val, contextPos);
+                            case TNull:        Context.makeExpr(null, contextPos);
+                            case TInt(val):
+                                switch(delegateTFunc.args[i].v.t) {
+                                    case TAbstract(t, params):
+                                        if (t.toString() == "hx.strings.StringNotFoundDefault") {
+                                            switch(val) {
+                                                case 1: macro { StringNotFoundDefault.NULL; };
+                                                case 2: macro { StringNotFoundDefault.EMPTY; };
+                                                case 3: macro { StringNotFoundDefault.INPUT; };
+                                                default: null;
+                                            }
+                                        } else
+                                            Context.makeExpr(val, contextPos);
+                                    default:
+                                        Context.makeExpr(val, contextPos);
+                                }
                             default: null;
                         }
                         var arg = args[i];
@@ -120,7 +134,7 @@ class String8Generator {
                      * generate generic type declaration of delegating method
                      */
                     var generatedGenericParams = new Array<TypeParamDecl>();
-                    for (param in delegate.params) {
+                    for (param in delegateField.params) {
                         generatedGenericParams.push({
                             name: param.name
                         });
@@ -129,11 +143,11 @@ class String8Generator {
                     /*
                      * generate full declaration of delegating method
                      */
-                    var delegateName = delegate.name;
+                    var delegateName = delegateField.name;
                     contextFields.push({
                         name: delegateName.endsWith("8") ? delegateName.substringBeforeLast("8") : delegateName,
-                        doc: delegate.doc,
-                        meta: delegate.meta.get(),
+                        doc: delegateField.doc,
+                        meta: delegateField.meta.get(),
                         access: [APublic, AInline],
                         kind: FFun({
                             args: generatedArgs,
