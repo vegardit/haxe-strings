@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com/).
 
 
-## [5.0.0] - 2017-11-??
+## [5.0.0] - 2017-11-05
 
 ### Added
 - parameter 'interpolationPrefix' to hx.strings.StringMacros#multiline()
