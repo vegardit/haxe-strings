@@ -1,12 +1,12 @@
 @echo off
 REM @author Sebastian Thomschke, Vegard IT GmbH
 REM
-REM generates API documentation using dox
+REM generates API documentation using dox at <project_root>\target\site
 
 setlocal
 
 set TOP_LEVEL_PACKAGE=hx.strings
-set OWNER=http://vegardit.com
+set OWNER=https://vegardit.com
 
 REM cd into project root
 pushd .
