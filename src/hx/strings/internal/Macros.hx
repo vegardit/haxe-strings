@@ -54,7 +54,7 @@ class Macros {
                 }
             }
         }
-        trace('Embedding file [$filePath] as resource with name [$resourceName]...');
+        trace('[INFO] Embedding file [$filePath] as resource with name [$resourceName]...');
         Context.addResource(resourceName, sys.io.File.getBytes(filePath));
 
         // return a no-op expression

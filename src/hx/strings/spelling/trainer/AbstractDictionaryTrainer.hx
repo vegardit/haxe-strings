@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,18 +26,18 @@ using hx.strings.Strings;
 
 /**
  * Partially implemented dictionary trainer class that provides shared functionality to subclasses.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:abstract
 @threadSafe
 class AbstractDictionaryTrainer implements DictionaryTrainer {
-    
+
     var vocabular:StringMap<Bool>;
-    
+
     #if sys
     public function trainWithFile(dictionary:TrainableDictionary, filePath:String, ignoreUnknownWords:Bool = false):Int {
-        trace('Training with file [$filePath]...');
+        trace('[INFO] Training with file [$filePath]...');
         return trainWithInput(dictionary, sys.io.File.read(filePath), ignoreUnknownWords);
     }
     #end
@@ -56,17 +56,17 @@ class AbstractDictionaryTrainer implements DictionaryTrainer {
             // expected --> https://github.com/HaxeFoundation/haxe/issues/5418
             if(autoClose) input.close();
         } catch (ex:Dynamic) {
-            trace('Exception while parsing line #$lineNo [$line]');
+            trace('[ERROR] Exception while parsing line #$lineNo [$line]');
             #if neko neko.Lib.rethrow #else throw #end (ex);
             if(autoClose) input.close();
         }
         return count;
     }
-    
+
     public function trainWithResource(dictionary:TrainableDictionary, resourceName:String, ignoreUnknownWords:Bool = false):Int {
         trace('Training with resource [$resourceName]...');
         return trainWithInput(dictionary, new BytesInput(Resource.getBytes(resourceName)), ignoreUnknownWords);
     }
-    
+
     public function trainWithString(dictionary:TrainableDictionary, content:String, ignoreUnknownWords:Bool = false):Int throw "Not implemented";
 }

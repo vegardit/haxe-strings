@@ -157,6 +157,10 @@ class String8Generator {
                         }),
                         pos: contextPos
                     });
+
+                    #if debug
+                    trace('[DEBUG] Generated String8#$delegateName(${delegateArgs.slice(1).join(", ")})');
+                    #end
                 default:
                     continue;
             }

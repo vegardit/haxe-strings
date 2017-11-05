@@ -108,7 +108,7 @@ class InMemoryDictionary implements TrainableDictionary {
      */
     inline
     public function exportWordsToFile(filePath:String):Void {
-        trace('Exporting words to file [$filePath]...');
+        trace('[INFO] Exporting words to file [$filePath]...');
         exportWordsToOutput(sys.io.File.write(filePath));
     }
 
@@ -118,7 +118,7 @@ class InMemoryDictionary implements TrainableDictionary {
      * @return number of loaded entries
      */
     public function loadWordsFromFile(filePath:String):Int {
-        trace('Loading words from file [$filePath]...');
+        trace('[INFO] Loading words from file [$filePath]...');
         return loadWordsFromInput(sys.io.File.read(filePath));
     }
     #end
@@ -130,7 +130,7 @@ class InMemoryDictionary implements TrainableDictionary {
      */
     inline
     public function loadWordsFromResource(resourceName:String):Int {
-        trace('Loading words from resource [$resourceName]...');
+        trace('[INFO] Loading words from resource [$resourceName]...');
         return loadWordsFromInput(new BytesInput(Resource.getBytes(resourceName)));
     }
 
