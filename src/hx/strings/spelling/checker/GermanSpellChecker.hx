@@ -1,17 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.spelling.checker;
 
@@ -23,14 +12,14 @@ using hx.strings.Strings;
 
 /**
  * Spell checker implementation with German language specific parsing behaviour.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class GermanSpellChecker extends AbstractSpellChecker{
 
     /**
      * default instance that uses the pre-trained hx.strings.spelling.dictionary.GermanDictionary
-     * 
+     *
      * <pre><code>
      * >>> GermanSpellChecker.INSTANCE.correctWord("schreibweise")  == "Schreibweise"
      * >>> GermanSpellChecker.INSTANCE.correctWord("Schreibwiese")  == "Schreibweise"
@@ -42,15 +31,15 @@ class GermanSpellChecker extends AbstractSpellChecker{
      * </code></pre>
      */
     public static var INSTANCE(default, never) = new GermanSpellChecker(GermanDictionary.INSTANCE);
-    
+
     var alphabetUpper:Array<Char>;
-    
+
     public function new(dictionary:Dictionary) {
         super(dictionary, "abcdefghijklmnopqrstuvwxyzäöüß");
-        
+
         alphabetUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ".toChars();
     }
-    
+
     override
     public function correctText(text:String, timeoutMS:Int = 1000):String {
         var result = new StringBuilder();
@@ -61,7 +50,7 @@ class GermanSpellChecker extends AbstractSpellChecker{
         for (i in 0...len) {
             var ch:Char = chars[i];
             // treat a-z and 0-9 as characters of potential words to capture OCR errors like "me1n" or "M0ntag"
-            if (ch.isAsciiAlpha() || ch.isDigit() || ch == "ä" || ch == "ö" || ch == "ü" || ch == "Ä" || ch == "Ö" || ch == "Ü" || ch == "ß") { 
+            if (ch.isAsciiAlpha() || ch.isDigit() || ch == "ä" || ch == "ö" || ch == "ü" || ch == "Ä" || ch == "Ö" || ch == "Ü" || ch == "ß") {
                 currentWord.addChar(ch);
             } else if (currentWord.length > 0) {
                 result.add(correctWord(currentWord.toString(), timeoutMS));
@@ -71,13 +60,13 @@ class GermanSpellChecker extends AbstractSpellChecker{
                 result.addChar(ch);
             }
         }
-        
+
         if (currentWord.length > 0) {
             result.add(correctWord(currentWord.toString(), timeoutMS));
         }
         return result.toString();
     }
-    
+
     override
     public function correctWord(word:String, timeoutMS:Int = 1000):String {
         if(dict.exists(word))
@@ -98,7 +87,7 @@ class GermanSpellChecker extends AbstractSpellChecker{
             wordUmlaute = "Ü" + wordUmlaute.substr8(2);
 
         if(dict.exists(wordUmlaute))
-            return wordUmlaute;        
+            return wordUmlaute;
 
         if (word.isUpperCase()) { // special handling for all uppercase words
             var wordLower = word.toLowerCase8();
@@ -110,18 +99,18 @@ class GermanSpellChecker extends AbstractSpellChecker{
             }
             return pCapitalized > pLower ? wordFirstCharUpper : wordLower;
         }
-        
+
         return super.correctWord(word, timeoutMS);
     }
-    
+
     override
     function generateEdits(word:String, timeoutAt:Float):Array<String> {
         var edits = super.generateEdits(word, timeoutAt);
-                
+
         // add 1st char upper case variation
         for (upper in alphabetUpper) {
             edits.push(upper + word.substr8(1));
         }
         return edits;
-    }    
+    }
 }

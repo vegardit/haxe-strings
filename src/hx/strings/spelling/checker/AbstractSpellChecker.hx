@@ -1,17 +1,6 @@
 /*
  * Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.spelling.checker;
 
@@ -24,7 +13,7 @@ using hx.strings.Strings;
 
 /**
  * Partially implemented spell checker class that provides shared functionality to subclasses.
- * 
+ *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:abstract
@@ -42,9 +31,9 @@ class AbstractSpellChecker implements SpellChecker {
         this.dict = dictionary;
         this.alphabet = Arrays.unique(alphabet.toChars());
     }
-    
+
     public function correctText(text:String, timeoutMS:Int = 500):String throw "Not implemented";
-    
+
     public function correctWord(word:String, timeoutMS:Int = 500):String {
         var timeoutAt = haxe.Timer.stamp() + (timeoutMS / 1000);
 
@@ -53,7 +42,7 @@ class AbstractSpellChecker implements SpellChecker {
 
         var candidate:String = null;
         var candidatePopularity:Int = 0;
-        
+
         var edits = generateEdits(word, timeoutAt);
 
         for (edit in edits) {
@@ -63,11 +52,11 @@ class AbstractSpellChecker implements SpellChecker {
                 candidatePopularity = editPopularity;
             }
         }
-        if (candidate != null) 
+        if (candidate != null)
             return candidate;
 
         if (timeoutAt < Timer.stamp()) return word;
-        
+
         // check for words that are 2 edits away from the given input word
         for (edit in edits) {
             if (timeoutAt < Timer.stamp()) break;
@@ -82,7 +71,7 @@ class AbstractSpellChecker implements SpellChecker {
         }
         return candidate == null ? word : candidate;
     }
-    
+
     /**
      * @return the a list of word variations that are 1 character edit away from the given input string
      */
@@ -96,7 +85,7 @@ class AbstractSpellChecker implements SpellChecker {
 
             // generate a word variation by switching the order of two characters
             edits.push(word.substring8(0, i) + word.substring8(i + 1, i + 2) + word.substring8(i, i + 1) + word.substring8(i + 2));
-        
+
             for (char in alphabet) {
                 // generate a word variation by replacing one character
                 edits.push(word.substring8(0, i) + char + word.substring8(i + 1));
@@ -109,12 +98,12 @@ class AbstractSpellChecker implements SpellChecker {
         }
         return edits;
     }
-    
+
     public function suggestWords(word:String, max:Int = 3, timeoutMS:Int = 1000):Array<String> {
         var timeoutAt = haxe.Timer.stamp() + (timeoutMS / 1000);
-        
+
         var candidates = new Array<{word:String, popularity:Int}>();
-        
+
         var edits = generateEdits(word, timeoutAt);
         for (edit in edits) {
             var editPopularity = dict.popularity(edit);
@@ -127,14 +116,14 @@ class AbstractSpellChecker implements SpellChecker {
 
         if (result.length < max) {
             candidates = new Array<{word:String, popularity:Int}>();
-            
+
             // check for words that are 2 edits away from the given input word
-            
+
             var edit2s = new StringSet();
             for (edit in edits) {
                 for (edit2 in generateEdits(edit, timeoutAt)) {
                     // short cut
-                    if (result.indexOf(edit2) > -1 || edit2s.contains(edit2)) 
+                    if (result.indexOf(edit2) > -1 || edit2s.contains(edit2))
                         continue;
                     edit2s.add(edit2);
                     var edit2Popularity = dict.popularity(edit2);
