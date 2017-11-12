@@ -33,4 +33,4 @@ popd
 if not %rc% == 0 exit /b %rc%
 
 echo Testing...
-lua "%CDP%..\target\lua\TestRunner.lua"
+lua "%~dp0..\target\lua\TestRunner.lua"
