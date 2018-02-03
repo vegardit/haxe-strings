@@ -8,7 +8,7 @@ os:
   - osx
 
 haxe:
-  - "3.4.4"
+  - "3.4.5"
   - development
 
 env:
