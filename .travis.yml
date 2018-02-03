@@ -28,9 +28,9 @@ matrix:
   fast_finish: true
   allow_failures:
     - haxe: development
-    - env: HAXE_TARGET=cs
+    - env: HAXE_TARGET=cs      # see https://github.com/HaxeFoundation/hxcs/issues/25
     - env: HAXE_TARGET=flash
-    - env: HAXE_TARGET=lua
+    - env: HAXE_TARGET=lua     # too many local variables, see https://github.com/HaxeFoundation/haxe/issues/5243
   exclude:
     - haxe: development
       os: osx
