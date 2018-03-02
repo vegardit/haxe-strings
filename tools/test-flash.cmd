@@ -1,5 +1,5 @@
 @echo off
-REM Copyright (c) 2016-2017 Vegard IT GmbH, http://vegardit.com
+REM Copyright (c) 2016-2018 Vegard IT GmbH, http://vegardit.com
 REM SPDX-License-Identifier: Apache-2.0
 REM Author: Sebastian Thomschke, Vegard IT GmbH
 
@@ -42,9 +42,9 @@ REM enable Flash logging
 
 echo Testing...
 flashplayer_27_sa_debug "%~dp0..\target\flash\TestRunner.swf"
-set exitCode=%errorlevel%
+set rc=%errorlevel%
 
 REM printing log file
 type "%HOME%\AppData\Roaming\Macromedia\Flash Player\Logs\flashlog.txt"
 
-exit /b %exitCode%
+exit /b %rc%
