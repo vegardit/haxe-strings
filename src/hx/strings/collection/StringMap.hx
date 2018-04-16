@@ -69,11 +69,13 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
      */
     public function copy():StringMap<V> {
 
-        if (Macros.is(this, (m:SortedStringMap<V>))) {
+        if (Std.is(this, SortedStringMap)) {
+            var m:SortedStringMap<V> = cast this;
             return m.copy();
         }
 
-        if (Macros.is(this, (m:OrderedStringMap<V>))) {
+        if (Std.is(this, OrderedStringMap)) {
+            var m:OrderedStringMap<V> = cast this;
             return m.copy();
         }
 
