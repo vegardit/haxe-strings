@@ -31,14 +31,19 @@ matrix:
     - env: HAXE_TARGET=cs      # see https://github.com/HaxeFoundation/hxcs/issues/25
     - env: HAXE_TARGET=flash   # see https://github.com/travis-ci/travis-ci/issues/8481
     - env: HAXE_TARGET=lua     # too many local variables, see https://github.com/HaxeFoundation/haxe/issues/5243
+    - os: osx
   exclude:
     - haxe: development
       os: osx
 
 install:
+  #- haxelib git tink_io https://github.com/haxetink/tink_io pure
+  #- haxelib git tink_cli https://github.com/haxetink/tink_cli pure
+  #- haxelib git travix https://github.com/back2dos/travix && pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml && popd
+  #- haxelib run travix install
+  - haxelib dev haxe-strings .
   - haxelib install haxe-doctest
-  - haxelib git travix https://github.com/back2dos/travix && pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml && popd
-  - haxelib run travix install
+  - haxelib install travix
 
 script:
   - haxelib run travix $HAXE_TARGET
