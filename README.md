@@ -22,12 +22,16 @@
 ## <a name="what-is-it"></a>What is it?
 
 A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cross-platform UTF-8 string manipulation.
-It has been extensively unit tested (over 1,700 individual test cases) on the targets C++, C#, Flash, HashLink, Neko, Java, JavaScript, Lua, PHP, and Python.
-The library is self-containing meaning it has no dependencies to other haxe-libs and is compatible with Haxe 3.4.0 or higher.
 
-The classes are under the package `hx.strings`.
+All classes are located in the package `hx.strings` or below.
 
-**Important:** When targeting PHP ensure the [php_mbstring](http://php.net/manual/en/book.mbstring.php) extension is enabled in the `php.ini` file. This extension is required for proper UTF-8 support.
+The library has been extensively unit tested (over 1,800 individual test cases) on the targets C++, C#, Flash, HashLink,
+Java, JavaScript (Node.js and PhantomJS), Neko, PHP 5, PHP 7 and Python 3.
+
+Requires Haxe 3.4 or higher.
+
+**Note:**
+* When targeting PHP ensure the [php_mbstring](http://php.net/manual/en/book.mbstring.php) extension is enabled in the `php.ini` file. This extension is required for proper UTF-8 support.
 
 
 ## <a name="strings-class"></a>The `Strings` utility class

@@ -18,7 +18,7 @@ using hx.strings.Strings;
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:build(hx.doctest.DocTestGenerator.generateDocTests("src", ".*\\.hx$"))
-@:keep
+@:keep // prevent DCEing of manually created testXYZ() methods
 class TestRunner extends DocTestRunner {
 
     public static function main() {

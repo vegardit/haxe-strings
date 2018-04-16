@@ -1881,7 +1881,7 @@ class Strings {
             if (!strNeedsUTF8Workaround && !searchForNeedsUTF8Workaround) {
                 return str.lastIndexOf(searchFor, startAt);
             }
-        #end
+            #end
 
             if (searchForNeedsUTF8Workaround && !strNeedsUTF8Workaround)
                 // won't find UTF8 chars in non-UTF8 string
@@ -2553,6 +2553,7 @@ class Strings {
      * >>> Strings.split8("a.b.c", "", 3)      == [ "a", ".", "b.c" ]
      * >>> Strings.split8("a.b.c", "", 9)      == [ "a", ".", "b", ".", "c" ]
      * >>> Strings.split8("a.b.c", ".")        == [ "a", "b", "c" ]
+     * >>> Strings.split8("a...c", ".")        == [ "a", "", "", "c" ]
      * >>> Strings.split8("a.b,c", [".", ","]) == [ "a", "b", "c" ]
      * >>> Strings.split8("a.b.c", ".", 2)     == [ "a", "b.c" ]
      * >>> Strings.split8(".a.b.c.", ".")      == [ "", "a", "b", "c", "" ]
@@ -3476,13 +3477,14 @@ class Strings {
 
     /**
      * Lowercase the first character of the given string.
+     * Does not change the case of other characters.
      *
      * <pre><code>
      * >>> Strings.toLowerCaseFirstChar(null)  == null
      * >>> Strings.toLowerCaseFirstChar(""  )  == ""
      * >>> Strings.toLowerCaseFirstChar("0")   == "0"
-     * >>> Strings.toLowerCaseFirstChar("Dog") == "dog"
-     * >>> Strings.toLowerCaseFirstChar("dog") == "dog"
+     * >>> Strings.toLowerCaseFirstChar("DoG") == "doG"
+     * >>> Strings.toLowerCaseFirstChar("doG") == "doG"
      * >>> Strings.toLowerCaseFirstChar("Кот") == "кот"
      * </code></pre>
      */
@@ -3713,13 +3715,14 @@ class Strings {
 
     /**
      * Uppercase the first character of the given string.
+     * Does not change the case of other characters.
      *
      * <pre><code>
      * >>> Strings.toUpperCaseFirstChar(null)  == null
      * >>> Strings.toUpperCaseFirstChar(""  )  == ""
      * >>> Strings.toUpperCaseFirstChar("0")   == "0"
-     * >>> Strings.toUpperCaseFirstChar("dog") == "Dog"
-     * >>> Strings.toUpperCaseFirstChar("Dog") == "Dog"
+     * >>> Strings.toUpperCaseFirstChar("doG") == "DoG"
+     * >>> Strings.toUpperCaseFirstChar("DoG") == "DoG"
      * >>> Strings.toUpperCaseFirstChar("кот") == "Кот"
      * </code></pre>
      *
