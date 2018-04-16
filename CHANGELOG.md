@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ### Changed
 - replaced license header by "SPDX-License-Identifier: Apache-2.0"
-- StringMap is now usuable in Macro mode
+- StringMap is now usable in Macro mode
 
 ## [5.0.0] - 2017-11-05
 
