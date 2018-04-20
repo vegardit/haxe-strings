@@ -6,9 +6,17 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+
+## [5.0.1] - 2018-04-20
+
 ### Changed
 - replaced license header by "SPDX-License-Identifier: Apache-2.0"
 - StringMap is now usable in Macro mode
+- deprecated hx.strings.Paths
+
+### Fixed
+- OS.isWindows does not work with Node.js
+
 
 ## [5.0.0] - 2017-11-05
 
