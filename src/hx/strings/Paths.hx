@@ -18,7 +18,9 @@ using hx.strings.internal.Arrays;
  * It provides more robust implementations of similar functions provided by haxe.io.Path.
  *
  * @author Sebastian Thomschke, Vegard IT GmbH
+ * @deprecated use `hx.files.Path` of the `haxe-files` haxelib instead
  */
+@:deprecated
 class Paths {
 
     /**
