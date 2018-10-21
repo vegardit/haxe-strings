@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+### Fixed
+- make Pattern, OrderedStringMap, StringBuilder compatible with Haxe 4 Preview 5
+
 
 ## [5.0.1] - 2018-04-20
 

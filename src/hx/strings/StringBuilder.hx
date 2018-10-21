@@ -470,7 +470,11 @@ private class OutputWrapper extends Output {
 
     @:dox(hide)
     override
+    #if (haxe_ver >= 4.0)
+    function writeString(str:String, ?encoding:haxe.io.Encoding) {
+    #else
     function writeString(str:String) {
+    #end
         flush();
         sb.add(str);
     }

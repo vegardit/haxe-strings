@@ -43,7 +43,7 @@ class Pattern {
                         #end
                         ;
                 });
-            case b(opt): opt.toString();
+            case b(opt): Std.string(opt);
             case c(arr): arr.filter(function (m) return m != null /* remove null enties */).join("");
         });
     }
