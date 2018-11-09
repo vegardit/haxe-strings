@@ -81,8 +81,20 @@ class Test {
         "はいはい".length8();          // returns 4
 
         // ANSI escape sequence processing:
-        "\x1B[1;33mHello World!\x1B[0m".ansiToHtml();  // returns '<span style="color:yellow;font-weight:bold;">Hello World!</span>'
-        "\x1B[1mHello World!\x1B[0m".removeAnsi();     // returns "Hello World!"
+        "\x1B[1;33mHello World!\x1B[0m".ansiToHtml();            // returns '<span style="color:yellow;font-weight:bold;">Hello World!</span>'
+        "\x1B[1;33mHello World!\x1B[0m".ansiToHtml(CssClasses);  // returns '<span class="ansi_fg_yellow ansi_bold">Hello World!</span>'
+        "\x1B[1mHello World!\x1B[0m".removeAnsi();               // returns "Hello World!"
+
+        // It is also possible to fully customize the css class names used using a callback:
+        "\x1B[1;33mHello World!\x1B[0m".ansiToHtml(CallbackToCssClasses(function(st:hx.strings.ANSIState):String {
+            var a : Array<String> = [];
+            if (st.fgcolor != null) a.push("someprefix_fg_" + st.fgcolor + "_somesuffix");
+            if (st.bgcolor != null) a.push("someprefix_bg_" + st.fgcolor);
+            if (st.bold)            a.push("someprefix_bold");
+            if (st.underline)       a.push("someprefix_underline");
+            if (st.blink)           a.push("someprefix_blink");
+            return a.join(" ");
+         })));  // returns '<span class="ansi_fg_yellow ansi_bold">Hello World!</span>'
 
         // case formatting:
         "look at me".toUpperCamel();       // returns "LookAtMe"
