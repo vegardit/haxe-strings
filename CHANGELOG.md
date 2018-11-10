@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+## [5.1.0] - 2018-11-10
+
+### Added
+- renderMethod parameter to Strings#ansiToHtml() (thanks to https://github.com/emugel)
+
 ### Fixed
 - make Pattern, OrderedStringMap, StringBuilder compatible with Haxe 4 Preview 5
 
