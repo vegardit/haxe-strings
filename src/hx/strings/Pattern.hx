@@ -70,7 +70,8 @@ class Pattern {
     }
 
     /**
-     * Replaces all matches with <b>replaceWith</b>.
+     * If <b>MatchingOption.MATCH_ALL</b> was specified, replaces all matches with <b>replaceWith</b>.
+     * Otherwise only the first match.
      *
      * <pre><code>
      * >>> Pattern.compile("[.]"     ).replace("a.b.c", ":") == "a:b.c"
