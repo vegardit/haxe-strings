@@ -135,19 +135,18 @@ class Strings {
     }
 
     /**
-     * This method can transform some ansi markup to html.
-     * They are currently 2 available AnsiToHtmlMethod (see the enum definition):
-     *  1. the default is StyleAttributes, which will transform to linear 
-     *     style attribute such as <span style=\"color:yellow\;">content</span>. This
-     *     will not necessitate any css styling.
-     *  2. the next value is CssClasses, which will use AnsiState.defaultCallbackToCssClasses().
-     *     It will convert to names such as <span class="ansi_fg_red ansi_bold"></span>, where 
-     *     "red" is the ansi color. The css classes used by default are
-     *     .ansi_fg_<color>, .ansi_bg_<color>, .ansi_bold, .ansi_blink,
-     *     .ansi_underline.
-     *  3. the full customization alternative is to use CallbackToCssClasses(cb), 
-     *     which takes a callback AnsiState->String. The returned string is 
-     *     the css class name.
+     * Transforms an ANSI escape sequence to HTML markup.
+     *
+     * There are currently three different render methods available:
+     *
+     *  1. <b>StyleAttributes (the default):</b> transforms to linear style attribute such as <pre><span style=\"color:yellow\;">content</span></pre>.
+     *
+     *  2. <b>CssClasses:</b> Uses <b>AnsiState#defaultCssClassesCallback()</b> which converts to CSS classes named such as
+     *     <span class="ansi_fg_red ansi_bold"></span>, where "red" is the ANSI color.
+     *     The CSS classes used by default are .ansi_fg_<color>, .ansi_bg_<color>, .ansi_bold, .ansi_blink, .ansi_underline.
+     *
+     *  3. <b>CssClassesCallback(cb):</b> allows full customization via a custom callback AnsiState->String.
+     *     The returned string is the CSS class name applied for the given AnsiState.
      *
      * <pre><code>
      * >>> Strings.ansiToHtml(null)                                  == null
@@ -160,27 +159,27 @@ class Strings {
      * </code></pre>
      */
     public static function ansiToHtml(
-        str           : String,
-        ?initialState : ANSIState,
-        method        : AnsiToHtmlMethod    = null
+        str          :String,
+        ?renderMethod:AnsiToHtmlRenderMethod,
+        ?initialState:AnsiState
     ):String {
 
         if (isEmpty(str))
             return str;
 
-        if (method == null) method = StyleAttributes;
-        var sStyleOrClass = switch(method) {
-            case StyleAttributes          : "style";
-            case CssClasses               : "class";
-            case CallbackToCssClasses(cb) : "class";
+        if (renderMethod == null) renderMethod = StyleAttributes;
+        var styleOrClassAttribute = switch(renderMethod) {
+            case StyleAttributes        : "style";
+            case CssClasses             : "class";
+            case CssClassesCallback(cb) : "class";
         }
 
         var sb = new StringBuilder();
 
         if (initialState != null && initialState.isActive())
-            sb.add('<span $sStyleOrClass=\"').add(initialState.toCSS(method)).add("\">");
+            sb.add('<span $styleOrClassAttribute=\"').add(initialState.toCSS(renderMethod)).add("\">");
 
-        var effectiveState = new ANSIState(initialState);
+        var effectiveState = new AnsiState(initialState);
         var strLenMinus1 = str.length8() - 1;
         var i = -1;
         var lookAhead = new StringBuilder();
@@ -189,7 +188,7 @@ class Strings {
             var ch:Char = str._charCodeAt8Unsafe(i);
             if (ch == Char.ESC && i < strLenMinus1 && str._charCodeAt8Unsafe(i + 1) == 91 /*[*/) { // is beginning of ANSI Escape Sequence?
                 lookAhead.clear();
-                var currentState = new ANSIState(effectiveState);
+                var currentState = new AnsiState(effectiveState);
                 var currentGraphicModeParam = 0;
                 var isValidEscapeSequence = false;
                 i += 1;
@@ -216,7 +215,7 @@ class Strings {
                             if (effectiveState.isActive())
                                 sb.add("</span>");
                             if (currentState.isActive())
-                                sb.add('<span $sStyleOrClass=\"').add(currentState.toCSS(method)).add("\">");
+                                sb.add('<span $styleOrClassAttribute=\"').add(currentState.toCSS(renderMethod)).add("\">");
                             effectiveState = currentState;
                             isValidEscapeSequence = true;
                             break; // break out of the while loop
@@ -4190,14 +4189,14 @@ enum HashCodeAlgorithm {
     SDBM;
 }
 
-enum AnsiToHtmlMethod {
+enum AnsiToHtmlRenderMethod {
     StyleAttributes;
     CssClasses;
-    CallbackToCssClasses(cb:ANSIState->String);
+    CssClassesCallback(func:AnsiState->String);
 }
 
 @:noDoc @:dox(hide)
-class ANSIState {
+class AnsiState {
     public var bgcolor:String;
     public var blink:Bool;
     public var bold:Bool;
@@ -4205,7 +4204,7 @@ class ANSIState {
     public var underline:Bool;
 
     inline
-    public function new(?copyFrom:ANSIState) {
+    public function new(?copyFrom:AnsiState) {
         if (copyFrom == null)
             reset();
         else
@@ -4224,7 +4223,7 @@ class ANSIState {
         blink = false;
     }
 
-    public function copyFrom(other:ANSIState) {
+    public function copyFrom(other:AnsiState) {
         fgcolor = other.fgcolor;
         bgcolor = other.bgcolor;
         bold = other.bold;
@@ -4257,11 +4256,11 @@ class ANSIState {
         }
     }
 
-    public function toCSS(method:AnsiToHtmlMethod=null):String {
-        if (method == null) method = StyleAttributes;
+    public function toCSS(renderMethod:AnsiToHtmlRenderMethod):String {
         if (isActive()) {
             var sb = new StringBuilder();
-            switch (method) {
+            if (renderMethod == null) renderMethod = AnsiToHtmlRenderMethod.StyleAttributes;
+            switch (renderMethod) {
                 case StyleAttributes:
                     if (fgcolor != null)
                         sb.add("color:").add(fgcolor).add(";");
@@ -4275,10 +4274,10 @@ class ANSIState {
                         sb.add("text-decoration:blink;");
 
                 case CssClasses:
-                    sb.add(ANSIState.defaultCallbackToCssClasses(this));
+                    sb.add(AnsiState.defaultCssClassesCallback(this));
 
-                case CallbackToCssClasses(cb):
-                    sb.add(cb(this));
+                case CssClassesCallback(func):
+                    sb.add(func(this));
             }
             return sb.toString();
         }
@@ -4286,28 +4285,29 @@ class ANSIState {
     }
 
     /**
-     * This is the default implementation and an example of a custom callback to transform 
-     * ansi state to CSS classes, as opposed to mere inline style attributes.
+     * This is the default implementation and an example of a custom callback to transform ANSI states to CSS classes.
      *
-     * In your <head></head> section, you would then need some definition like
-     * this:
+     * In the HEAD section of your HTML file, appropriate definitions of the CSS classes are required, e.g.:
+     * <code>
      *   <style>
-     *     .ansi_fg_red { color: #ff4422; }
-     *     .ansi_bg_red { background-color: #ff4422; }
-     *     .ansi_bold { font-weight: bold; }
+     *     .ansi_bold      { font-weight: bold; }
      *     .ansi_underline { text-decoration: underline; }
-     *     .ansi_blink {}
+     *     .ansi_blink     { text-decoration: blink; }
+     *     .ansi_fg_red    { color: red; }
+     *     .ansi_bg_red    { background-color: red; }
+     *     .ansi_fg_blue   { color: blue; }
+     *     .ansi_bg_blue   { background-color: blue; }
+     *     // .. and so on
      *   </style>
-     *   An so on (not only red would need to be declared)
+     * </code>
      */
-    public static function defaultCallbackToCssClasses(st:ANSIState):String {
-        var a : Array<String> = [];     // array of classes
-        if (st.fgcolor != null) a.push("ansi_fg_" + st.fgcolor);      // e.g.  "ansi_fg_red"
-        if (st.bgcolor != null) a.push("ansi_bg_" + st.bgcolor);      // e.g.  "ansi_bg_red"
-        if (st.bold)            a.push("ansi_bold");
-        if (st.underline)       a.push("ansi_underline");
-        if (st.blink)           a.push("ansi_blink");
-        return a.join(" ");             // return "class1 class2 class3"
+    public static function defaultCssClassesCallback(state:AnsiState):String {
+        var classes:Array<String> = [];
+        if (state.fgcolor != null) classes.push("ansi_fg_" + state.fgcolor); // e.g. "ansi_fg_red"
+        if (state.bgcolor != null) classes.push("ansi_bg_" + state.bgcolor); // e.g. "ansi_bg_red"
+        if (state.bold)            classes.push("ansi_bold");
+        if (state.underline)       classes.push("ansi_underline");
+        if (state.blink)           classes.push("ansi_blink");
+        return classes.join(" "); // return "class1 class2 class3"
     }
 }
-
