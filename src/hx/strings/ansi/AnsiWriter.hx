@@ -4,7 +4,7 @@
  */
 package hx.strings.ansi;
 
-import hx.strings.internal.AnyAsString;
+import hx.strings.AnyAsString;
 
 /**
  *
@@ -129,4 +129,3 @@ private class StringBuilderStringWriter<T:StringBuilder> extends AbstractStringW
         #end
     }
 }
-

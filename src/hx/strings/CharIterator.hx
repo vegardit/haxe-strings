@@ -4,14 +4,11 @@
  */
 package hx.strings;
 
-import haxe.Utf8;
 import haxe.io.Eof;
 import haxe.io.Input;
-import hx.strings.internal.RingBuffer;
-
 import hx.strings.Strings.CharPos;
-import hx.strings.internal.AnyAsString;
 import hx.strings.internal.Bits;
+import hx.strings.internal.RingBuffer;
 import hx.strings.internal.TriState;
 
 using hx.strings.Strings;
@@ -405,4 +402,3 @@ private class StringCharIterator extends CharIterator {
         return Strings._charCodeAt8Unsafe(chars, index);
     }
 }
-

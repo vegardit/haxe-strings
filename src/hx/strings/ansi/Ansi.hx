@@ -4,13 +4,10 @@
  */
 package hx.strings.ansi;
 
-import haxe.io.Output;
-
-import hx.strings.StringBuilder;
 import hx.strings.ansi.AnsiColor;
 import hx.strings.ansi.AnsiTextAttribute;
 import hx.strings.ansi.AnsiWriter.StringBuf_StringBuilder_or_Output;
-import hx.strings.internal.AnyAsString;
+
 
 /**
  * https://en.wikipedia.org/wiki/ANSI_escape_code
@@ -111,4 +108,3 @@ class Ansi {
         return new AnsiWriter(out);
     }
 }
-

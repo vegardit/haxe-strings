@@ -7,8 +7,6 @@ package hx.strings;
 import haxe.io.BytesOutput;
 import haxe.io.Output;
 
-import hx.strings.internal.AnyAsString;
-
 using hx.strings.Strings;
 
 /**

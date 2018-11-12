@@ -4,11 +4,10 @@
  */
 package hx.strings.collection;
 
-import haxe.Constraints.IMap;
-
+import hx.strings.AnyAsString;
 import hx.strings.collection.StringMap;
-import hx.strings.internal.AnyAsString;
 import hx.strings.internal.Either2;
+
 
 /**
  * haxe.ds.StringMap backed set implementation.

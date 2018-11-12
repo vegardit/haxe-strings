@@ -87,6 +87,7 @@ class String8Generator {
                     var generatedArgs = new Array<FunctionArg>();
                     var delegateArgs = ["this"];
                     for (i in 1...args.length) {
+                        // TODO delegateTFunc.args[i].value is in Haxe 3 TConstant and in Haxe 4.Preview5 TypedExpr
                         var defaultValue = delegateTFunc == null ? null : switch(delegateTFunc.args[i].value) {
                             case TBool(val):   Context.makeExpr(val, contextPos);
                             case TString(val): Context.makeExpr(val, contextPos);
