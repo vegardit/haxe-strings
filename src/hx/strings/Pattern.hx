@@ -84,6 +84,20 @@ class Pattern {
     }
 
     /**
+     * If <b>MatchingOption.MATCH_ALL</b> was specified, removes all matches.
+     * Otherwise only the first match.
+     *
+     * <pre><code>
+     * >>> Pattern.compile("[.]"     ).remove("a.b.c") == "ab.c"
+     * >>> Pattern.compile("[.]", "g").remove("a.b.c") == "abc"
+     * </code></pre>
+     */
+    inline
+    public function remove(str:String):String {
+        return ereg.replace(str, "");
+    }
+
+    /**
      * Uses matches as separator to split the string.
      *
      * <pre><code>
@@ -350,4 +364,3 @@ private class MatcherImpl implements Matcher {
         return clone;
     }
 }
-
