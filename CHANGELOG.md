@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+### Added
+- method Pattern#remove()
+- type hx.strings.AnyAsString
+
+### Fixed
+- OS.isWindows does not work with PhantomJS
+
+
 ## [5.1.0] - 2018-11-10
 
 ### Added
