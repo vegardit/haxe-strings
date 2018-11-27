@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+
+## [5.2.0] - 2018-11-27
+
 ### Added
 - method Pattern#remove()
 - type hx.strings.AnyAsString
