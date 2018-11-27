@@ -3,20 +3,7 @@ REM Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
 REM SPDX-License-Identifier: Apache-2.0
 REM Author: Sebastian Thomschke, Vegard IT GmbH
 
-pushd .
-
-REM cd into project root
-cd %~dp0..
-
-echo Cleaning...
-if exist dump\js rd /s /q dump\js
-if exist target\js rd /s /q target\js
-
-haxelib list | findstr haxe-doctest >NUL
-if errorlevel 1 (
-    echo Installing [haxe-doctest]...
-    haxelib install haxe-doctest
-)
+call %~dp0_test-prepare.cmd js
 
 echo Compiling...
 haxe -main hx.strings.TestRunner ^
@@ -31,5 +18,8 @@ set rc=%errorlevel%
 popd
 if not %rc% == 0 exit /b %rc%
 
-echo Testing...
-phantomjs "%~dp0..\target\js\TestRunner.js"
+:: echo Testing [Direct Execution]...
+:: phantomjs "%~dp0..\target\js\TestRunner.js"
+
+echo Testing [Execution in WegPage Context]...
+phantomjs "%~dp0phantomJS\phantom.js"
