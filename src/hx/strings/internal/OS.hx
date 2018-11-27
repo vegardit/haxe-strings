@@ -21,7 +21,6 @@ class OS {
         #if flash
         var os = flash.system.Capabilities.os;
         #elseif js
-        trace(js.Browser.navigator.platform);
         var os = isNodeJS ? untyped __js__("process.platform") : js.Browser.navigator.platform;
         #else
         var os = Sys.systemName();

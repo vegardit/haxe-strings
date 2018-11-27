@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+## [5.2.1] - 2018-11-27
+
+### Fixed
+- "ReferenceError: window is not defined" on node.js
 
 ## [5.2.0] - 2018-11-27
 
