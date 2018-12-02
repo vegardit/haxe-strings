@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+### Fixed
+- Workaround for [Haxe Issue 5336](https://github.com/HaxeFoundation/haxe/issues/5336) "Utf8.compare() for CS treats upper-/lowercase chars differently than other platforms"
+
 ## [5.2.1] - 2018-11-27
 
 ### Fixed

@@ -748,6 +748,10 @@ class Strings {
         #if neko
             // TODO https://github.com/HaxeFoundation/haxe/issues/5308
             return str > other ? 1 : (str == other ? 0 : -1);
+        #elseif cs
+            // TODO https://github.com/HaxeFoundation/haxe/issues/5336
+            //      https://github.com/HaxeFoundation/haxe/pull/7562
+            return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
         #else
             return Utf8.compare(str, other);
         #end
@@ -784,6 +788,10 @@ class Strings {
         #if neko
         // TODO https://github.com/HaxeFoundation/haxe/issues/5308
         return str > other ? 1 : (str == other ? 0 : -1);
+        #elseif cs
+            // TODO https://github.com/HaxeFoundation/haxe/issues/5336
+            //      https://github.com/HaxeFoundation/haxe/pull/7562
+            return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
         #else
         return Utf8.compare(str, other);
         #end
