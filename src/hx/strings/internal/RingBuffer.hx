@@ -10,7 +10,7 @@ package hx.strings.internal;
  * @author Sebastian Thomschke, Vegard IT GmbH
  *
  * <pre><code>
- * >>> function(){var b = new RingBuffer<String>(2); b.add("a"); b.add("b"); b.add("c"); return b.toArray(); }() == [ "b", "c" ]
+ * >>> ({var b = new RingBuffer<String>(2); b.add("a"); b.add("b"); b.add("c"); b; }).toArray() == [ "b", "c" ]
  * </code></pre>
  */
 @:forward

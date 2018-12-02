@@ -63,7 +63,7 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
 
     /**
      * <pre><code>
-     * >>> function(){var m = new OrderedStringMap<Int>(); m.set("1", 1); m.clear(); return m.isEmpty(); }() == true
+     * >>> ({var m = new OrderedStringMap<Int>(); m.set("1", 1); m.clear(); m; }).isEmpty() == true
      * </code></pre>
      */
     inline
@@ -93,7 +93,7 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
 
     /**
      * <pre><code>
-     * >>> function(){var m = new OrderedStringMap<Int>(); m.set("1", 10); return m["1"]; }() == 10
+     * >>> ({var m = new OrderedStringMap<Int>(); m.set("1", 10); m["1"]; }) == 10
      * </code></pre>
      */
     inline
@@ -104,7 +104,7 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
     /**
      * <pre><code>
      * >>> new OrderedStringMap<Int>().isEmpty() == true
-     * >>> function(){var m = new OrderedStringMap<Int>(); m.set("1", 1); return m.isEmpty(); }() == false
+     * >>> ({var m = new OrderedStringMap<Int>(); m.set("1", 1); m; }).isEmpty() == false
      * </code></pre>
      */
     inline

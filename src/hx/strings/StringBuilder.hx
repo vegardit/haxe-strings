@@ -408,7 +408,7 @@ class StringBuilder {
 
     /**
      * <pre><code>
-     * >>> function(){var sb=new StringBuilder("1"); var out=sb.asOutput(); out.writeByte(Char.TWO); out.writeString("3"); return sb.toString(); }() == "123"
+     * >>> ({var sb=new StringBuilder("1"); var out=sb.asOutput(); out.writeByte(Char.TWO); out.writeString("3"); sb; }).toString() == "123"
      * </code></pre>
      *
      * @return a haxe.ui.Output wrapper object around this instance

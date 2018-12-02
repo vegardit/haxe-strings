@@ -96,9 +96,9 @@ class Ansi {
      * >>> Ansi.writer(new StringBuf()          ).fg(GREEN).attr(ITALIC).write("Hello").attr(RESET).out.toString()            == "\x1B[32m\x1B[3mHello\x1B[0m"
      * >>> Ansi.writer(new StringBuilder()      ).fg(GREEN).attr(ITALIC).write("Hello").attr(RESET).out.toString()            == "\x1B[32m\x1B[3mHello\x1B[0m"
      * >>> Ansi.writer(new haxe.io.BytesOutput()).fg(GREEN).attr(ITALIC).write("Hello").attr(RESET).out.getBytes().toString() == "\x1B[32m\x1B[3mHello\x1B[0m"
-     * >>> function(){var out=new StringBuf();           return Ansi.writer(out).out == out;}() == true
-     * >>> function(){var out=new StringBuilder();       return Ansi.writer(out).out == out;}() == true
-     * >>> function(){var out=new haxe.io.BytesOutput(); return Ansi.writer(out).out == out;}() == true
+     * >>> ({var out=new StringBuf();           Ansi.writer(out).out == out;}) == true
+     * >>> ({var out=new StringBuilder();       Ansi.writer(out).out == out;}) == true
+     * >>> ({var out=new haxe.io.BytesOutput(); Ansi.writer(out).out == out;}) == true
      * </code></pre>
      *
      * @param out: StringBuf, haxe.io.Output or hx.strings.StringBuilder

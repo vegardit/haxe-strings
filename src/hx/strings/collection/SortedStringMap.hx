@@ -56,7 +56,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
      *
      * <pre><code>
      * >>> new SortedStringMap<Int>().size == 0
-     * >>> function(){var m = new SortedStringMap<Int>(); m.set("1", 1); m.set("2", 1); return m.size; }() == 2
+     * >>> ({var m = new SortedStringMap<Int>(); m.set("1", 1); m.set("2", 1); m; }).size == 2
      * </code></pre>
      */
     public var size(get, never):Int;
@@ -91,7 +91,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
 
     /**
      * <pre><code>
-     * >>> function(){var m = new SortedStringMap<Int>(); m.set("1", 1); m.clear(); return m.isEmpty(); }() == true
+     * >>> ({var m = new SortedStringMap<Int>(); m.set("1", 1); m.clear(); m; }).isEmpty() == true
      * </code></pre>
      */
     inline
@@ -122,7 +122,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
 
     /**
      * <pre><code>
-     * >>> function(){var m = new SortedStringMap<Int>(); m.set("1", 10); return m["1"]; }() == 10
+     * >>> ({var m = new SortedStringMap<Int>(); m.set("1", 10); m["1"]; }) == 10
      * </code></pre>
      */
     @:arrayAccess
@@ -134,7 +134,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
     /**
      * <pre><code>
      * >>> new SortedStringMap<Int>().isEmpty() == true
-     * >>> function(){var m = new SortedStringMap<Int>(); m.set("1", 1); return m.isEmpty(); }() == false
+     * >>> ({var m = new SortedStringMap<Int>(); m.set("1", 1); m; }).isEmpty() == false
      * </code></pre>
      */
     inline

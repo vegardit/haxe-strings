@@ -6,10 +6,10 @@ package hx.strings;
 
 /**
  * <pre><code>
- * >>> function(){var str:AnyAsString = 1;      return str; }() == "1"
- * >>> function(){var str:AnyAsString = true;   return str; }() == "true"
- * >>> function(){var str:AnyAsString = "cat";  return str; }() == "cat"
- * >>> function(){var str:AnyAsString = [1, 2]; return str; }() == "[1,2]"
+ * >>> (function(){var str:AnyAsString = 1;      return str; })() == "1"
+ * >>> (function(){var str:AnyAsString = true;   return str; })() == "true"
+ * >>> (function(){var str:AnyAsString = "cat";  return str; })() == "cat"
+ * >>> (function(){var str:AnyAsString = [1, 2]; return str; })() == "[1,2]"
  * </code></pre>
  *
  * @author Sebastian Thomschke, Vegard IT GmbH

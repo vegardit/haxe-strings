@@ -11,7 +11,7 @@ import hx.strings.internal.Either2;
  *
  * <pre><code>
  * >>> new StringArray().length == 0
- * >>> function(){var a:StringArray = ["a", "b"]; return a;}().length == 2
+ * >>> ({var a:StringArray = ["a", "b"]; a;}).length == 2
  * </code></pre>
  *
  * @author Sebastian Thomschke, Vegard IT GmbH
@@ -65,7 +65,7 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
     /**
      * <pre><code>
      * >>> new StringArray().isEmpty() == true
-     * >>> function(){var a:StringArray = ["a", "b"]; return a.isEmpty();}()  == false
+     * >>> ({var a:StringArray = ["a", "b"]; a.isEmpty();})  == false
      * </code></pre>
      */
     inline
@@ -75,7 +75,7 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
 
     /**
      * <pre><code>
-     * >>> function(){var a:StringArray = ["a", "b"]; a.clear(); return a;}().length == 0
+     * >>> ({var a:StringArray = ["a", "b"]; a.clear(); a;}).length == 0
      * </code></pre>
      */
     inline
@@ -102,7 +102,7 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
 
     /**
      * <pre><code>
-     * >>> function(){var a:StringArray = ["b", "a"]; a.sortAscending(); return a;}() == ["a", "b"]
+     * >>> ({var a:StringArray = ["b", "a"]; a.sortAscending(); a;}) == ["a", "b"]
      * </code></pre>
      */
     inline
@@ -112,7 +112,7 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
 
     /**
      * <pre><code>
-     * >>> function(){var a:StringArray = ["a", "b"]; a.sortDescending(); return a;}() == ["b", "a"]
+     * >>> ({var a:StringArray = ["a", "b"]; a.sortDescending(); a;}) == ["b", "a"]
      * </code></pre>
      */
     inline

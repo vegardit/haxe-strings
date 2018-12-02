@@ -47,7 +47,7 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
      *
      * <pre><code>
      * >>> new StringMap<Int>().size == 0
-     * >>> function(){var m = new StringMap<Int>(); m.set("1", 1); m.set("2", 1); return m.size; }() == 2
+     * >>> ({var m = new StringMap<Int>(); m.set("1", 1); m.set("2", 1); m; }).size == 2
      * </code></pre>
      */
     public var size(get, never):Int;
@@ -100,7 +100,7 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
     /**
      * <pre><code>
      * >>> new StringMap<Int>().isEmpty() == true
-     * >>> function(){var m = new StringMap<Int>(); m.set("1", 1); return m.isEmpty(); }() == false
+     * >>> ({var m = new StringMap<Int>(); m.set("1", 1); m; }).isEmpty() == false
      * </code></pre>
      */
     inline
