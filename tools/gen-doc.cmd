@@ -53,7 +53,7 @@ if exist target\site (
 )
 
 echo Analyzing source code...
-haxe -cp src --no-output -D doc-gen xml target\doc.xml --macro include('%TOP_LEVEL_PACKAGE%') || goto :eof
+haxe -cp src --no-output -D doc-gen -xml target\doc.xml --macro include('%TOP_LEVEL_PACKAGE%') || goto :eof
 
 REM https://github.com/HaxeFoundation/dox/wiki/Commandline-arguments-overview
 echo Generating HTML files...
