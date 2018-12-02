@@ -6,13 +6,7 @@ REM Author: Sebastian Thomschke, Vegard IT GmbH
 call %~dp0_test-prepare.cmd flash
 
 echo Compiling...
-haxe -main hx.strings.TestRunner ^
-  -lib haxe-doctest ^
-  -cp src ^
-  -cp test ^
-  -dce full ^
-  -debug ^
-  -D dump=pretty ^
+haxe %~dp0..\tests.hxml ^
   -D no-swf-compress ^
   -D swf-script-timeout=180 ^
   -swf-version 11.5 ^
