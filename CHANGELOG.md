@@ -6,10 +6,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+
+## [5.2.2] - 2018-12-17
+
 ### Fixed
 - Workaround for [Haxe Issue 5336](https://github.com/HaxeFoundation/haxe/issues/5336) "Utf8.compare() for CS treats upper-/lowercase chars differently than other platforms"
 - String8 abstract does not work Haxe 4
-
 
 ## [5.2.1] - 2018-11-27
 
