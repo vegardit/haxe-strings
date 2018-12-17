@@ -51,14 +51,7 @@ class Strings {
     /**
      * operating system specific line separator
      */
-    #if cpp
-        // TODO workaround for https://github.com/HaxeFoundation/hxcpp/issues/483
-        // TODO workaround for https://github.com/HaxeFoundation/haxe/issues/5358
-        public static var NEW_LINE(get, never):String;
-        static function get_NEW_LINE():String return OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
-    #else
-        public static var NEW_LINE(default, never):String = OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
-    #end
+    public static var NEW_LINE(default, never):String = OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
 
     inline
     private static function _getNotFoundDefault(str:String, notFoundDefault:StringNotFoundDefault):String {
