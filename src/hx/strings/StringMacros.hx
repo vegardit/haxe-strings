@@ -42,12 +42,15 @@ class StringMacros {
         if(end < 0) Context.error("Cannot find multi-line comment end marker '*/'.", pos);
         if(end < start) Context.error("Multi-line comment end marker most be placed after start marker.", pos);
 
-        var comment = str.substring(start + 2, end);
+        var comment:String = str.substring(start + 2, end);
 
         comment = Strings.trimRight(comment, "\t ");
         comment = Strings.replaceAll(comment, "\r", "");
-        if (comment.length > 0 && comment.charCodeAt(0) == 10)
-            comment = comment.substr(1);
+
+        if (Strings.startsWith(comment, Strings.NEW_LINE_WIN))
+            comment = comment.substr(Strings.NEW_LINE_WIN.length);
+        else if (Strings.startsWith(comment, Strings.NEW_LINE_NIX))
+            comment = comment.substr(Strings.NEW_LINE_NIX.length);
 
         if(trimLeft) {
             var lines:Array<String> = comment.split("\n");
@@ -66,6 +69,9 @@ class StringMacros {
                 comment = [ for (l in lines) l.substr(indent) ].join("\n");
             }
         }
+
+        if (Strings.endsWith(comment, "\n"))
+            comment = comment.substring(0, comment.length - 1);
 
         if (Strings.isNotEmpty(interpolationPrefix) && Strings.contains(comment, interpolationPrefix)) {
             if (interpolationPrefix != "$") {
