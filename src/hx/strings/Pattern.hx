@@ -151,7 +151,7 @@ interface Matcher {
      * @throws exception if no match was found
      *
      * <pre><code>
-     * >>> Pattern.compile("c").matcher("abcde").matchedPos() == { pos: 2, length: 1 }
+     * >>> Pattern.compile("c").matcher("abcde").matchedPos() == { pos: 2, len: 1 }
      * </code></pre>
      */
     public function matchedPos(): { pos:Int, len:Int };
