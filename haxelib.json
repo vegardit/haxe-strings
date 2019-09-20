@@ -9,6 +9,6 @@
         "vegardit"
     ],
     "releasenote": "See https://github.com/vegardit/haxe-strings/blob/master/CHANGELOG.md",
-    "version": "5.2.2",
+    "version": "5.2.3",
     "dependencies": { }
 }

@@ -6,8 +6,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+## [5.2.3] - 2019-09-20
+
 ### Fixed
 - fixes for Haxe 4 RC5
+
 
 ## [5.2.2] - 2018-12-17
 
