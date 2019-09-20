@@ -68,24 +68,12 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
      * </code></pre>
      */
     public function copy():StringMap<V> {
-        if (Std.is(this,
-           #if java
-           SortedStringMap.SortedStringMapImpl
-           #else
-           SortedStringMap
-           #end
-        )) {
+        if (Std.is(this, SortedStringMap.SortedStringMapImpl)) {
             var m:SortedStringMap<V> = cast this;
             return m.copy();
         }
 
-        if (Std.is(this,
-           #if java
-           OrderedStringMap.OrderedStringMapImpl
-           #else
-           OrderedStringMap
-           #end
-        )) {
+        if (Std.is(this, OrderedStringMap.OrderedStringMapImpl)) {
             var m:OrderedStringMap<V> = cast this;
             return m.copy();
         }

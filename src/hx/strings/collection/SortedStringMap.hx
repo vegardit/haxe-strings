@@ -94,10 +94,12 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
      * >>> ({var m = new SortedStringMap<Int>(); m.set("1", 1); m.clear(); m; }).isEmpty() == true
      * </code></pre>
      */
+    #if (haxe_ver < 4.0)
     inline
     public function clear():Void {
         root = null;
     }
+    #end
 
     /**
      * <pre><code>

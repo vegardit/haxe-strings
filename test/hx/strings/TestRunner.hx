@@ -6,6 +6,9 @@ package hx.strings;
 
 import hx.doctest.DocTestRunner;
 import hx.strings.Pattern;
+import hx.strings.collection.OrderedStringMap;
+import hx.strings.collection.SortedStringMap;
+import hx.strings.collection.StringMap;
 import hx.strings.spelling.checker.*;
 import hx.strings.spelling.dictionary.*;
 import hx.strings.spelling.trainer.*;
@@ -245,5 +248,15 @@ class TestRunner extends DocTestRunner {
             mapLen++;
         }
         assertEquals(1, mapLen);
+    }
+
+    public function testStringMapCopy() {
+        var ssm:StringMap<String> = new SortedStringMap<String>();
+        assertTrue(Std.is(ssm, SortedStringMapImpl));
+        assertTrue(Std.is(ssm.copy(), SortedStringMapImpl));
+
+        var osm:OrderedStringMap<String> = new OrderedStringMap<String>();
+        assertTrue(Std.is(osm, OrderedStringMapImpl));
+        assertTrue(Std.is(osm.copy(), OrderedStringMapImpl));
     }
 }

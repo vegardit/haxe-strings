@@ -332,7 +332,7 @@ private class MatcherImpl implements Matcher {
 
         // partially copy internal state (if possible) to reuse the inner pre-compiled pattern instance
         // and avoid expensive reparsing of the pattern string
-        #if (neko || lua || cpp || hl)
+        #if (neko || lua || cpp)
             var clone = Type.createEmptyInstance(EReg);
             Reflect.setField(clone, "r", Reflect.field(from, "r"));
             Reflect.setField(clone, "global", Reflect.field(from, "global"));
@@ -359,6 +359,7 @@ private class MatcherImpl implements Matcher {
             // not reusing internal state on
             // - untested targets
             // - targets where the compiled pattern and matcher not separated internally (js, flash)
+            // - targets where cloning results in runtime errors (hl)
             var clone = new EReg(pattern, options);
         #end
         return clone;

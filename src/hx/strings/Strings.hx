@@ -1383,7 +1383,11 @@ class Strings {
         var sb = new StringBuilder();
         var isFirstSpace = true;
         for (i in 0...str.length8()) {
+            #if (haxe_ver >= 4.0)
+            var ch:Char = str._charCodeAt8Unsafe(i);
+            #else
             var ch:Int /*fails with Char for some reason*/ = str._charCodeAt8Unsafe(i);
+            #end
             switch (ch) {
                 case Char.SPACE:
                     if (isFirstSpace) {
@@ -1411,7 +1415,11 @@ class Strings {
 
                 default:
                     if (ch > 127)
+                    #if (haxe_ver >= 4)
+                        sb.add("&#").add(ch.toInt()).add(";");
+                    #else
                         sb.add('&#$ch;');
+                    #end
                     else
                         sb.addChar(ch);
             }
