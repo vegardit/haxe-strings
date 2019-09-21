@@ -3485,6 +3485,8 @@ class Strings {
      * >>> Strings.toLowerCase8("DoG") == "dog"
      * >>> Strings.toLowerCase8("dog") == "dog"
      * >>> Strings.toLowerCase8("КОТ") == "кот"
+     * >>> Strings.toLowerCase8("ФЫА") == "фыа"
+     * >>> Strings.toLowerCase8("ЙЦУ") == "йцу"
      * >>> Strings.toLowerCase8("はい") == "はい"
      * </code></pre>
      */
@@ -3723,6 +3725,8 @@ class Strings {
      * >>> Strings.toUpperCase8("dOg") == "DOG"
      * >>> Strings.toUpperCase8("DOG") == "DOG"
      * >>> Strings.toUpperCase8("кот") == "КОТ"
+     * >>> Strings.toUpperCase8("фыа") == "ФЫА"
+     * >>> Strings.toUpperCase8("йцу") == "ЙЦУ"
      * >>> Strings.toUpperCase8("はい") == "はい"
      * </code></pre>
      */
