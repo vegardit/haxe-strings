@@ -1,5 +1,5 @@
 @echo off
-REM Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+REM Copyright (c) 2016-2019 Vegard IT GmbH, https://vegardit.com
 REM SPDX-License-Identifier: Apache-2.0
 REM Author: Sebastian Thomschke, Vegard IT GmbH
 
@@ -24,9 +24,14 @@ REM enable Flash logging
 REM add the flash target directory as trusted source to prevent "Only trusted local files may cause the Flash Player to exit."
 call :normalize_path %~dp0..\target
 set target_dir_absolute=%RETVAL%
+set "fptrust_dir=%HOME%\AppData\Roaming\Macromedia\Flash Player\#Security\FlashPlayerTrust"
+REM https://stackoverflow.com/questions/905226/what-is-equivalent-to-linux-mkdir-p-in-windows
+setlocal enableextensions
+if not exist "%fptrust_dir%" ( md "%fptrust_dir%" )
+endlocal
 (
     echo %target_dir_absolute%\flash
-) > "%HOME%\AppData\Roaming\Macromedia\Flash Player\#Security\FlashPlayerTrust\HaxeDoctest.cfg"
+) > "%fptrust_dir%\HaxeDoctest.cfg"
 
 echo Testing...
 for /f "delims=" %%A in ('where flashplayer_*_sa_debug.exe') do set "flashplayer_path=%%A"

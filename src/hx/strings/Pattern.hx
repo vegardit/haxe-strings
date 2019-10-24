@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2019 Vegard IT GmbH, https://vegardit.com
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings;
@@ -238,7 +238,7 @@ abstract MatchingOption(String) {
      */
     var MULTILINE = "m";
 
-    #if (cpp || flash || java || neko || php)
+    #if !(cs || (js && !nodejs))
     /**
      * the dot <code>.</code> will also match new lines
      */

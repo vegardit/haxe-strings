@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2019 Vegard IT GmbH, https://vegardit.com
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings;
@@ -20,7 +20,7 @@ using hx.strings.Strings;
 /**
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-@:build(hx.doctest.DocTestGenerator.generateDocTests())
+//@:build(hx.doctest.DocTestGenerator.generateDocTests())
 @:keep // prevent DCEing of manually created testXYZ() methods
 class TestRunner extends DocTestRunner {
 
@@ -180,6 +180,23 @@ class TestRunner extends DocTestRunner {
             m.iterate(function(m) matches.push(m.matched()));
             assertEquals(matches, ["dog", "dog"]);
         }
+    }
+
+
+    public function testPatternDOTALL():Void {
+        {
+            var p:Pattern = Pattern.compile(".+");
+            var m:Matcher = p.matcher("foo\nbar");
+            assertEquals("foo", m.matched(0));
+        }
+
+        #if !(cs || (js && !nodejs))
+        {
+            var p:Pattern = Pattern.compile(".+", [DOTALL]);
+            var m:Matcher = p.matcher("foo\nbar");
+            assertEquals("foo\nbar", m.matched(0));
+        }
+        #end
     }
 
 

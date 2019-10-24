@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+
+### Changed
+- enable Pattern.MatchingOption#DOTALL option for HL, Lua, NodeJS, Python targets
+
+
 ## [5.2.3] - 2019-09-20
 
 ### Fixed
