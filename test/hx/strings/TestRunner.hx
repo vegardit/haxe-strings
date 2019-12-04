@@ -20,7 +20,7 @@ using hx.strings.Strings;
 /**
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-//@:build(hx.doctest.DocTestGenerator.generateDocTests())
+@:build(hx.doctest.DocTestGenerator.generateDocTests())
 @:keep // prevent DCEing of manually created testXYZ() methods
 class TestRunner extends DocTestRunner {
 

@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ### Changed
 - enable Pattern.MatchingOption#DOTALL option for HL, Lua, NodeJS, Python targets
+- reduce usage of deprecated haxe.Utf8 class
 
 
 ## [5.2.3] - 2019-09-20

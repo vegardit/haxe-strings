@@ -69,7 +69,7 @@ class Strings {
     @:allow(hx.strings.CharIterator)
     #if !lua inline #end
     private static function _charCodeAt8Unsafe(str:String, pos:CharIndex):Char {
-        #if (flash || java || cs || python)
+        #if native_utf8
             return str.charCodeAt(pos);
         #else
             return Utf8.charCodeAt(str, pos);
@@ -329,7 +329,7 @@ class Strings {
         if (str.isEmpty() || pos < 0 || pos >= str.length8())
             return resultIfOutOfBound;
 
-        #if (java || flash || cs || python)
+        #if native_utf8
             return str.charAt(pos);
         #else
             return Utf8.sub(str, pos, 1);
@@ -738,13 +738,15 @@ class Strings {
         if (other == null)
             return str == null ? 0 : 1;
 
-        #if neko
-            // TODO https://github.com/HaxeFoundation/haxe/issues/5308
+        #if native_utf8
             return str > other ? 1 : (str == other ? 0 : -1);
         #elseif cs
             // TODO https://github.com/HaxeFoundation/haxe/issues/5336
             //      https://github.com/HaxeFoundation/haxe/pull/7562
             return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
+        #elseif (neko && (haxe_ver < 4))
+            // TODO https://github.com/HaxeFoundation/haxe/issues/5308
+            return str > other ? 1 : (str == other ? 0 : -1);
         #else
             return Utf8.compare(str, other);
         #end
@@ -778,15 +780,17 @@ class Strings {
         str = str.toLowerCase8();
         other = other.toLowerCase8();
 
-        #if neko
-        // TODO https://github.com/HaxeFoundation/haxe/issues/5308
-        return str > other ? 1 : (str == other ? 0 : -1);
+        #if native_utf8
+            return str > other ? 1 : (str == other ? 0 : -1);
         #elseif cs
             // TODO https://github.com/HaxeFoundation/haxe/issues/5336
             //      https://github.com/HaxeFoundation/haxe/pull/7562
             return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
+        #elseif (neko && (haxe_ver < 4))
+            // TODO https://github.com/HaxeFoundation/haxe/issues/5308
+            return str > other ? 1 : (str == other ? 0 : -1);
         #else
-        return Utf8.compare(str, other);
+            return Utf8.compare(str, other);
         #end
     }
 
@@ -1383,7 +1387,7 @@ class Strings {
         var sb = new StringBuilder();
         var isFirstSpace = true;
         for (i in 0...str.length8()) {
-            #if (haxe_ver >= 4.0)
+            #if (haxe_ver >= 4)
             var ch:Char = str._charCodeAt8Unsafe(i);
             #else
             var ch:Int /*fails with Char for some reason*/ = str._charCodeAt8Unsafe(i);
@@ -1629,7 +1633,7 @@ class Strings {
         if (startAt >= strLen)
             return POS_NOT_FOUND;
 
-        #if (java || flash || cs || python)
+        #if native_utf8
             return str.indexOf(searchFor, startAt);
         #elseif php
             #if (haxe_ver < 4)
@@ -1957,7 +1961,7 @@ class Strings {
         if (str == null)
             return 0;
 
-        #if (flash || java || cs || python)
+        #if native_utf8
             return str.length;
         #elseif php
             #if (haxe_ver < 4)
@@ -2613,20 +2617,28 @@ class Strings {
         if (separators.length == 0)
             return null;
 
-        #if (flash || java || cs || python)
+        #if native_utf8
             if (maxParts <= 0 && separators.length == 1)
                 return str.split(separators[0]);
         #end
 
+        inline function sub(str:String, pos:Int, len:Int) {
+            #if native_utf8
+                return str.substr(pos, len);
+            #else
+                return Utf8.sub(str, pos, len);
+            #end
+        }
+
         if (separators.indexOf("") > -1) {
             if (maxParts <= 0)
-                return [ for (i in 0...strLen) Utf8.sub(str, i, 1) ];
+                return [ for (i in 0...strLen) sub(str, i, 1) ];
 
             if (maxParts > strLen)
                 maxParts = strLen;
             maxParts--;
-            var result = [ for (i in 0...maxParts) Utf8.sub(str, i, 1) ];
-            result.push(Utf8.sub(str, maxParts, strLen - maxParts));
+            var result = [ for (i in 0...maxParts) sub(str, i, 1) ];
+            result.push(sub(str, maxParts, strLen - maxParts));
             return result;
         }
 
@@ -2648,10 +2660,10 @@ class Strings {
             }
             resultCount++;
             if (foundAt == POS_NOT_FOUND || resultCount == maxParts) {
-                result.push(Utf8.sub(str, lastFoundAt, strLen - lastFoundAt));
+                result.push(sub(str, lastFoundAt, strLen - lastFoundAt));
                 break;
             }
-            result.push(Utf8.sub(str, lastFoundAt, foundAt - lastFoundAt));
+            result.push(sub(str, lastFoundAt, foundAt - lastFoundAt));
             lastFoundAt = foundAt + separatorLen;
         }
         return result;
@@ -2895,7 +2907,7 @@ class Strings {
             if (startAt < 0) startAt = 0;
         }
 
-        #if (flash || java || cs || python)
+        #if native_utf8
             return str.substr(startAt, len);
         #elseif php
             #if (haxe_ver < 4)
@@ -2949,7 +2961,7 @@ class Strings {
         if (endAt == null)
             endAt = str.length8();
 
-        #if (flash || java || cs || python)
+        #if native_utf8
             return str.substring(startAt, endAt);
         #else
             if (startAt < 0) startAt = 0;
@@ -3500,7 +3512,7 @@ class Strings {
             #else
                 return php.Syntax.code("mb_strtolower({0}, {1})", str, "UTF-8");
             #end
-        #elseif (java || flash || cs || python)
+        #elseif native_utf8
             return str.toLowerCase();
         #else
             var sb = new StringBuilder();

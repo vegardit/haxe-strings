@@ -21,6 +21,28 @@ class Macros {
         #end
     };
 
+    macro
+    public static function addDefines() {
+        var def = Context.getDefines();
+
+        if (def.exists("cs") ||
+            def.exists("flash") ||
+            def.exists("hl") ||
+            def.exists("java") ||
+            def.exists("js") ||
+            def.exists("python")
+        ) {
+            trace("[INFO] Setting compiler define 'native_utf8'.");
+            Compiler.define("native_utf8");
+        }
+
+        if (def.exists("java") && !def.exists("jvm")) {
+            trace("[INFO] Setting compiler define 'java_src'.");
+            Compiler.define("java_src");
+        }
+        return macro {}
+    }
+
     /**
      * Embeds the given file as resource.
      *

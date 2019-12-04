@@ -1,5 +1,5 @@
 @echo off
-REM Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+REM Copyright (c) 2016-2019 Vegard IT GmbH, https://vegardit.com
 REM SPDX-License-Identifier: Apache-2.0
 REM Author: Sebastian Thomschke, Vegard IT GmbH
 
@@ -62,7 +62,7 @@ if exist target\haxelib-upload.zip (
     del target\haxelib-upload.zip
 )
 echo Building haxelib release...
-zip target\haxelib-upload.zip src haxelib.json LICENSE.txt CONTRIBUTING.md README.md -r -9 || goto :eof
+zip target\haxelib-upload.zip src extraParams.hxml haxelib.json LICENSE.txt CONTRIBUTING.md README.md -r -9 || goto :eof
 
 REM create github release https://developer.github.com/v3/repos/releases/#create-a-release
 echo Creating GitHub release https://github.com/%REPO_NAME%/releases/tag/v%PROJECT_VERSION%...
