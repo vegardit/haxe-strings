@@ -738,12 +738,12 @@ class Strings {
         if (other == null)
             return str == null ? 0 : 1;
 
-        #if native_utf8
-            return str > other ? 1 : (str == other ? 0 : -1);
-        #elseif cs
+        #if cs
             // TODO https://github.com/HaxeFoundation/haxe/issues/5336
             //      https://github.com/HaxeFoundation/haxe/pull/7562
             return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
+        #elseif native_utf8
+            return str > other ? 1 : (str == other ? 0 : -1);
         #elseif (neko && (haxe_ver < 4))
             // TODO https://github.com/HaxeFoundation/haxe/issues/5308
             return str > other ? 1 : (str == other ? 0 : -1);
@@ -780,12 +780,12 @@ class Strings {
         str = str.toLowerCase8();
         other = other.toLowerCase8();
 
-        #if native_utf8
-            return str > other ? 1 : (str == other ? 0 : -1);
-        #elseif cs
+        #if cs
             // TODO https://github.com/HaxeFoundation/haxe/issues/5336
             //      https://github.com/HaxeFoundation/haxe/pull/7562
             return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
+        #elseif native_utf8
+            return str > other ? 1 : (str == other ? 0 : -1);
         #elseif (neko && (haxe_ver < 4))
             // TODO https://github.com/HaxeFoundation/haxe/issues/5308
             return str > other ? 1 : (str == other ? 0 : -1);
