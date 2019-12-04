@@ -939,11 +939,16 @@ class Strings {
      * >>> Strings.endsWith("はい", "は")     == false
      * </code></pre>
      */
-    inline
     public static function endsWith(searchIn:String, searchFor:String):Bool {
         if (searchIn == null || searchFor == null)
             return false;
 
+        #if (cpp && (haxe_ver >= 4))
+            // TODO StringTools.endsWith doesn't work with UTF8 chars on Haxe4+CPP
+            var searchInLen = searchIn.length;
+            var searchForLen = searchFor.length;
+            return searchInLen >= searchForLen && searchIn.indexOf(searchFor, searchInLen - searchForLen) > POS_NOT_FOUND;
+        #end
         return StringTools.endsWith(searchIn, searchFor);
     }
 
@@ -966,7 +971,7 @@ class Strings {
             return false;
 
         for (candidate in searchFor) {
-            if (candidate != null && StringTools.endsWith(searchIn, candidate))
+            if (candidate != null && endsWith(searchIn, candidate))
                 return true;
         }
         return false;
@@ -992,7 +997,7 @@ class Strings {
 
         searchIn = searchIn.toLowerCase8();
         for (candidate in searchFor) {
-            if (candidate != null && StringTools.endsWith(searchIn, candidate.toLowerCase8()))
+            if (candidate != null && endsWith(searchIn, candidate.toLowerCase8()))
                 return true;
         }
         return false;
@@ -1015,7 +1020,7 @@ class Strings {
         if (searchIn == null || searchFor == null)
             return false;
 
-        return StringTools.endsWith(searchIn.toLowerCase(), searchFor.toLowerCase());
+        return endsWith(searchIn.toLowerCase(), searchFor.toLowerCase());
     }
 
     /**
@@ -2793,8 +2798,13 @@ class Strings {
         if (searchIn == null || searchFor == null)
             return false;
 
-        if (searchFor.isEmpty())
+        if (searchFor.isEmpty() || searchIn == searchFor)
             return true;
+
+        #if (cpp && (haxe_ver >= 4))
+            // TODO StringTools.startsWith doesn't work with UTF8 chars on Haxe4+CPP
+            return (searchIn.length >= searchFor.length && searchIn.lastIndexOf(searchFor, 0) == 0);
+        #end
 
         return StringTools.startsWith(searchIn, searchFor);
     }
@@ -2818,7 +2828,7 @@ class Strings {
             return false;
 
         for (candidate in searchFor) {
-            if (candidate != null && StringTools.startsWith(searchIn, candidate))
+            if (candidate != null && startsWith(searchIn, candidate))
                 return true;
         }
         return false;
@@ -2845,7 +2855,7 @@ class Strings {
 
         searchIn = searchIn.toLowerCase8();
         for (candidate in searchFor) {
-            if (candidate != null && StringTools.startsWith(searchIn, candidate.toLowerCase8()))
+            if (candidate != null && startsWith(searchIn, candidate.toLowerCase8()))
                 return true;
         }
         return false;
@@ -2868,7 +2878,7 @@ class Strings {
         if (searchFor.isEmpty())
             return true;
 
-        return StringTools.startsWith(searchIn.toLowerCase(), searchFor.toLowerCase());
+        return startsWith(searchIn.toLowerCase(), searchFor.toLowerCase());
     }
 
     /**

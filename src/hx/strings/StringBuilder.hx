@@ -66,6 +66,10 @@ class StringBuilder {
      */
     inline
     public function add(item:AnyAsString):StringBuilder {
+        #if (cpp && (haxe_ver > 4))
+            //TODO AnyAsString.fromAny() is not invoked for 'null' values on Haxe4+CPP for some reason
+            if (item == null) item = "null";
+        #end
         sb.add(item);
         #if !(java || cs)
             len += item.length8();
