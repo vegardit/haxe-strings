@@ -29,6 +29,8 @@ matrix:
   allow_failures:
     - haxe 3.4.7
       HAXE_TARGET=cs
+    - haxe 4.0.3
+      HAXE_TARGET=cpp          # see https://github.com/HaxeFoundation/haxe/issues/9007
     - haxe: development
     - env: HAXE_TARGET=flash   # see https://github.com/travis-ci/travis-ci/issues/8481
     - env: HAXE_TARGET=lua     # too many local variables, see https://github.com/HaxeFoundation/haxe/issues/5243
