@@ -15,7 +15,7 @@ using hx.strings.Strings;
  *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-class GermanSpellChecker extends AbstractSpellChecker{
+class GermanSpellChecker extends AbstractSpellChecker {
 
     /**
      * default instance that uses the pre-trained hx.strings.spelling.dictionary.GermanDictionary
@@ -34,11 +34,32 @@ class GermanSpellChecker extends AbstractSpellChecker{
 
     var alphabetUpper:Array<Char>;
 
+
     public function new(dictionary:Dictionary) {
         super(dictionary, "abcdefghijklmnopqrstuvwxyzäöüß");
 
         alphabetUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ".toChars();
     }
+
+
+    function replaceUmlaute(word:String):String {
+        // replace oe with ö, ae with ä and ue with ü
+        var word = word.replaceAll("oe", "ö")
+            .replaceAll("ae", "ä")
+            .replaceAll("ue", "ü")
+            .replaceAll("OE", "Ö")
+            .replaceAll("AE", "Ä")
+            .replaceAll("UE", "Ü");
+        if (word.startsWith("Oe"))
+            word = "Ö" + word.substr8(2);
+        else if (word.startsWith("Ae"))
+            word = "Ä" + word.substr8(2);
+        else if (word.startsWith("Ue"))
+            word = "Ü" + word.substr8(2);
+
+        return word;
+    }
+
 
     override
     public function correctText(text:String, timeoutMS:Int = 1000):String {
@@ -67,27 +88,15 @@ class GermanSpellChecker extends AbstractSpellChecker{
         return result.toString();
     }
 
+
     override
     public function correctWord(word:String, timeoutMS:Int = 1000):String {
         if(dict.exists(word))
             return word;
 
-        // replace oe with ö, ae with ä and ue with ü
-        var wordUmlaute = word.replaceAll("oe", "ö")
-            .replaceAll("ae", "ä")
-            .replaceAll("ue", "ü")
-            .replaceAll("OE", "Ö")
-            .replaceAll("AE", "Ä")
-            .replaceAll("UE", "Ü");
-        if (wordUmlaute.startsWith("Oe"))
-            wordUmlaute = "Ö" + wordUmlaute.substr8(2);
-        else if (wordUmlaute.startsWith("Ae"))
-            wordUmlaute = "Ä" + wordUmlaute.substr8(2);
-        else if (wordUmlaute.startsWith("Ue"))
-            wordUmlaute = "Ü" + wordUmlaute.substr8(2);
-
-        if(dict.exists(wordUmlaute))
-            return wordUmlaute;
+        var wordWithUmlaute = replaceUmlaute(word);
+        if(dict.exists(wordWithUmlaute))
+            return wordWithUmlaute;
 
         if (word.isUpperCase()) { // special handling for all uppercase words
             var wordLower = word.toLowerCase8();
@@ -102,6 +111,18 @@ class GermanSpellChecker extends AbstractSpellChecker{
 
         return super.correctWord(word, timeoutMS);
     }
+
+
+    override
+    public function suggestWords(word:String, max:Int = 3, timeoutMS:Int = 1000):Array<String> {
+        if(!dict.exists(word)) {
+            var wordWithUmlaute = replaceUmlaute(word);
+            if(dict.exists(wordWithUmlaute))
+                return super.suggestWords(wordWithUmlaute, max, timeoutMS);
+        }
+        return super.suggestWords(word, max, timeoutMS);
+    }
+
 
     override
     function generateEdits(word:String, timeoutAt:Float):Array<String> {
