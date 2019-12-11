@@ -59,7 +59,7 @@ class Ansi {
             case MoveRight(columns): Ansi.ESC + columns + "C";
             case MoveLeft(columns): Ansi.ESC + columns + "D";
             case SavePos: Ansi.ESC + "s";
-            case RestorePos: Ansi.ESC + "s";
+            case RestorePos: Ansi.ESC + "u";
         }
     }
 
