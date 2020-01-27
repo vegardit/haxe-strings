@@ -71,7 +71,6 @@ class Test {
 
         // all functions are null-safe:
         var nullString:String = null;
-        nullString.isWhiteSpace();    // returns false
         nullString.length8();         // returns 0
         nullString.contains("cat");   // returns false
 
