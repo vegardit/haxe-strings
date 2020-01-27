@@ -71,7 +71,6 @@ class Test {
 
         // all functions are null-safe:
         var nullString:String = null;
-        nullString.isWhiteSpace();    // returns false
         nullString.length8();         // returns 0
         nullString.contains("cat");   // returns false
 
@@ -86,7 +85,7 @@ class Test {
         "\x1B[1mHello World!\x1B[0m".removeAnsi();               // returns "Hello World!"
 
         // It is also possible to fully customize the css class names used using a callback:
-        "\x1B[1;33mHello World!\x1B[0m".ansiToHtml(CallbackToCssClasses(function(st:hx.strings.ANSIState):String {
+        "\x1B[1;33mHello World!\x1B[0m".ansiToHtml(CssClassesCallback(function(st:hx.strings.AnsiState):String {
             var a : Array<String> = [];
             if (st.fgcolor != null) a.push("someprefix_fg_" + st.fgcolor + "_somesuffix");
             if (st.bgcolor != null) a.push("someprefix_bg_" + st.fgcolor);
