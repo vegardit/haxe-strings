@@ -1,8 +1,9 @@
 # haxe-strings - [StringTools](http://api.haxe.org/StringTools.html) on steroids.
 
-[![Build Status](https://travis-ci.org/vegardit/haxe-strings.svg?branch=master)](https://travis-ci.org/vegardit/haxe-strings)
+[![Build Status](https://travis-ci.com/vegardit/haxe-strings.svg?branch=master)](https://travis-ci.com/vegardit/haxe-strings)
 [![Release](https://img.shields.io/github/release/vegardit/haxe-strings.svg)](http://lib.haxe.org/p/haxe-strings)
 [![License](https://img.shields.io/github/license/vegardit/haxe-strings.svg?label=license)](#license)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 1. [What is it?](#what-is-it)
 1. [The `Strings` utility class](#strings-class)
@@ -463,4 +464,4 @@ haxelib git haxe-strings https://github.com/vegardit/haxe-strings master D:\haxe
 
 ## <a name="license"></a>License
 
-All files are released under the [Apache License 2.0](https://github.com/vegardit/haxe-strings/blob/master/LICENSE.txt).
+All files are released under the [Apache License 2.0](LICENSE.txt).

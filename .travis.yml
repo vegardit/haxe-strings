@@ -1,4 +1,4 @@
-dist: xenial
+dist: bionic
 
 language: haxe
 
@@ -6,9 +6,12 @@ os:
   - linux
   - osx
 
+git:
+  depth: 2
+
 haxe:
   - "3.4.7"
-  - "4.0.3"
+  - "4.0.5"
   - development
 
 env:
@@ -27,7 +30,7 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-    - haxe: 4.0.3
+    - haxe: 4.0.5
       env: HAXE_TARGET=cpp     # see https://github.com/HaxeFoundation/haxe/issues/9007
     - haxe: development
     - env: HAXE_TARGET=flash   # see https://github.com/travis-ci/travis-ci/issues/8481
