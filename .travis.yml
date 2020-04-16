@@ -17,15 +17,17 @@ haxe:
 env:
   - HAXE_TARGET=cpp
   - HAXE_TARGET=cs
+  - HAXE_TARGET=eval
   - HAXE_TARGET=flash
+  - HAXE_TARGET=java
+  - HAXE_TARGET=js
+  - HAXE_TARGET=jvm
   - HAXE_TARGET=lua
   - HAXE_TARGET=neko
   - HAXE_TARGET=node
   - HAXE_TARGET=php
   - HAXE_TARGET=php7
   - HAXE_TARGET=python
-  - HAXE_TARGET=js
-  - HAXE_TARGET=java
 
 matrix:
   fast_finish: true
@@ -33,10 +35,16 @@ matrix:
     - haxe: 4.0.5
       env: HAXE_TARGET=cpp     # see https://github.com/HaxeFoundation/haxe/issues/9007
     - haxe: development
+    - env: HAXE_TARGET=eval
     - env: HAXE_TARGET=flash   # see https://github.com/travis-ci/travis-ci/issues/8481
+    - env: HAXE_TARGET=jvm
     - env: HAXE_TARGET=lua     # too many local variables, see https://github.com/HaxeFoundation/haxe/issues/5243
     - os: osx
   exclude:
+    - haxe: 3.4.7
+      env: HAXE_TARGET=eval
+    - haxe: 3.4.7
+      env: HAXE_TARGET=jvm
     - haxe: 3.4.7
       os: osx
     - haxe: development
