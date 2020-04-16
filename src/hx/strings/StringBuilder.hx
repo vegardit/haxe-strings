@@ -21,7 +21,7 @@ class StringBuilder {
 
     var sb = new StringBuf();
 
-    #if !(java || cs)
+    #if !(java_src || cs)
     var pre:Array<String> = null;
     var len:Int = 0;
     #end
@@ -48,7 +48,7 @@ class StringBuilder {
 
     inline
     function get_length():Int {
-        #if (java || cs)
+        #if (java_src || cs)
             return sb.length;
         #else
             return len;
@@ -71,7 +71,7 @@ class StringBuilder {
             if (item == null) item = "null";
         #end
         sb.add(item);
-        #if !(java || cs)
+        #if !(java_src || cs)
             len += item.length8();
         #end
         return this;
@@ -97,7 +97,7 @@ class StringBuilder {
                 sb.add(ch.toString());
         #end
 
-        #if !(java || cs)
+        #if !(java_src || cs)
             len++;
         #end
         return this;
@@ -113,7 +113,7 @@ class StringBuilder {
     public function addAll(items:Array<AnyAsString>):StringBuilder {
         for (item in items) {
             sb.add(item);
-            #if !(java || cs)
+            #if !(java_src || cs)
                 len += item.length8();
             #end
         }
@@ -130,7 +130,7 @@ class StringBuilder {
      * @return <code>this</code> for chained operations
      */
     public function clear():StringBuilder {
-        #if java
+        #if java_src
             untyped __java__("this.sb.b.setLength(0)");
         #elseif cs
             untyped __cs__("this.sb.b.Clear()");
@@ -164,7 +164,7 @@ class StringBuilder {
     public function newLine():StringBuilder {
         sb.add(Strings.NEW_LINE_NIX);
 
-        #if !(java || cs)
+        #if !(java_src || cs)
             len ++;
         #end
         return this;
@@ -196,7 +196,7 @@ class StringBuilder {
             return this;
         }
 
-        #if java
+        #if java_src
             untyped __java__("this.sb.b.insert(pos, item)");
         #elseif cs
             untyped __cs__("this.sb.b.Insert(pos, item)");
@@ -272,7 +272,7 @@ class StringBuilder {
             return this;
         }
 
-        #if java
+        #if java_src
             untyped __java__("this.sb.b.insert(pos, (char)ch)");
         #elseif cs
             untyped __cs__("this.sb.b.Insert(pos, (System.Char)ch)");
@@ -339,11 +339,11 @@ class StringBuilder {
             return this;
         }
 
-        #if (java || cs)
+        #if (java_src || cs)
             var i = items.length;
             while (i-- > 0) {
                 var item = items[i];
-                #if java
+                #if java_src
                     untyped __java__("this.sb.b.insert(pos, item)");
                 #else
                     untyped __cs__("this.sb.b.Insert(pos, item)");
@@ -431,9 +431,9 @@ class StringBuilder {
      *
      * @return a new string object representing the builder's content
      */
-    #if java inline #end
+    #if java_src inline #end
     public function toString():String {
-        #if (java || cs)
+        #if (java_src || cs)
             return sb.toString();
         #else
             if (pre == null)

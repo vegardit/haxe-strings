@@ -1318,14 +1318,18 @@ class Strings {
                 hc;
 
             default: // PLATFORM SPECIFIC
-                #if java
-                untyped __java__("str.hashCode()");
+                #if macro
+                    Crc32.make(str.toBytes());
+                #elseif jvm
+                    (cast(str, java.lang.Object)).hashCode();
+                #elseif java
+                    untyped __java__("str.hashCode()");
                 #elseif cs
-                untyped __cs__("str.GetHashCode()");
+                    untyped __cs__("str.GetHashCode()");
                 #elseif python
-                untyped hash(str);
+                    untyped hash(str);
                 #else
-                Crc32.make(str.toBytes());
+                    Crc32.make(str.toBytes());
                 #end
         }
     }
