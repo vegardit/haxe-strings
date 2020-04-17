@@ -343,7 +343,7 @@ class StringBuilder {
       }
 
       #if (java_src || cs)
-         final i = items.length;
+         var i = items.length;
          while (i-- > 0) {
             final item = items[i];
             #if java_src
