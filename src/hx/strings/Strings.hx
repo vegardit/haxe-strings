@@ -5,6 +5,11 @@
 package hx.strings;
 
 import haxe.Int32;
+#if neko
+import neko.Utf8;
+#else
+import haxe.Utf8;
+#end
 import haxe.crypto.Adler32;
 import haxe.crypto.Base64;
 import haxe.crypto.Crc32;
@@ -73,7 +78,7 @@ class Strings {
       #if target.unicode
          return str.charCodeAt(pos);
       #else
-         return haxe.Utf8.charCodeAt(str, pos);
+         return Utf8.charCodeAt(str, pos);
       #end
    }
 
@@ -329,7 +334,7 @@ class Strings {
       #if target.unicode
          return str.charAt(pos);
       #else
-         return haxe.Utf8.sub(str, pos, 1);
+         return Utf8.sub(str, pos, 1);
       #end
    }
 
@@ -745,7 +750,7 @@ class Strings {
       #if target.unicode
          return str > other ? 1 : (str == other ? 0 : -1);
       #else
-         return haxe.Utf8.compare(str, other);
+         return Utf8.compare(str, other);
       #end
    }
 
@@ -781,7 +786,7 @@ class Strings {
       #if target.unicode
          return str > other ? 1 : (str == other ? 0 : -1);
       #else
-         return haxe.Utf8.compare(str, other);
+         return Utf8.compare(str, other);
       #end
    }
 
@@ -1961,7 +1966,7 @@ class Strings {
       #if target.unicode
          return str.length;
       #else
-         return haxe.Utf8.length(str);
+         return Utf8.length(str);
       #end
    }
 
@@ -2634,7 +2639,7 @@ class Strings {
          #if target.unicode
             return str.substr(pos, len);
          #else
-            return haxe.Utf8.sub(str, pos, len);
+            return Utf8.sub(str, pos, len);
          #end
       }
 
@@ -2933,7 +2938,7 @@ class Strings {
                return "";
          }
 
-         return haxe.Utf8.sub(str, startAt, len);
+         return Utf8.sub(str, startAt, len);
       #end
    }
 
@@ -2981,7 +2986,7 @@ class Strings {
             startAt = endAt;
             endAt = tmp;
          }
-         return haxe.Utf8.sub(str, startAt, endAt - startAt);
+         return Utf8.sub(str, startAt, endAt - startAt);
       #end
    }
 

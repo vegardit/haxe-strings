@@ -5,6 +5,11 @@
 package hx.strings;
 
 import haxe.ds.IntMap;
+#if neko
+import neko.Utf8;
+#else
+import haxe.Utf8;
+#end
 
 using hx.strings.Strings;
 
@@ -626,9 +631,9 @@ abstract Char(Int) from Int {
    #else
    public function toString():String {
       if (this > 127) {
-         final ch8 = new haxe.Utf8();
-         ch8.addChar(this);
-         return ch8.toString();
+         final utf8 = new Utf8();
+         utf8.addChar(this);
+         return utf8.toString();
       }
       return String.fromCharCode(this);
    }
