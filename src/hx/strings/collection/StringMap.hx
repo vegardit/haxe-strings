@@ -80,9 +80,8 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
       }
 
       final clone:StringMap<V> = new StringMap<V>();
-      for (k in this.keys()) {
-         clone.set(k, this.get(k));
-      }
+      for (k => v in this)
+         clone.set(k, v);
       return clone;
    }
 
@@ -114,14 +113,14 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
 
       var count = 0;
       if(replace) {
-         for (k in items.keys()) {
-            this.set(k, items.get(k));
+         for (k => v in items) {
+            this.set(k, v);
             count++;
          }
       } else {
-         for (k in items.keys()) {
+         for (k => v in items) {
             if(!this.exists(k)) {
-               this.set(k, items.get(k));
+               this.set(k, v);
                count++;
             }
          }

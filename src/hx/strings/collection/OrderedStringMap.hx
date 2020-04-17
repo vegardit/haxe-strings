@@ -83,8 +83,8 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
    inline
    public function copy():OrderedStringMapImpl<V> {
       final clone = new OrderedStringMapImpl<V>();
-      for (k in this.keys())
-         clone.set(k, this.get(k));
+      for (k => v in this)
+         clone.set(k, v);
       return clone;
    }
 
@@ -152,11 +152,13 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
 
    public function toString() : String {
       final sb = new StringBuilder("{");
-      final it = keys();
-      for(key in it) {
-         sb.add(key).add(" => ").add(get(key));
-         if(it.hasNext())
+      var isFirst = true;
+      for(key => v in this) {
+         if(isFirst)
+            isFirst = false;
+         else
             sb.add(", ");
+         sb.add(key).add(" => ").add(v);
       }
       sb.add("}");
       return sb.toString();

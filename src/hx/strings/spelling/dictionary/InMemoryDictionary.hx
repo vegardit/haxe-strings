@@ -76,8 +76,8 @@ class InMemoryDictionary implements TrainableDictionary {
       if (dictSize <= n)
          return 0;
 
-      final arr = [ for (word in dict.keys()) { word:word, popularity:dict.get(word) } ];
-      arr.sort(function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
+      final arr = [for (word => popularity in dict) {word:word, popularity:popularity}];
+      arr.sort((a, b) -> a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
       final removables = arr.slice(n);
       for (r in removables)
          remove(r.word);
@@ -89,7 +89,7 @@ class InMemoryDictionary implements TrainableDictionary {
     * Exports all words and their popularity to the given output stream
     */
    public function exportWordsToOutput(out:Output, autoClose:Bool=true):Void {
-      final words = [ for (word in dict.keys()) word ];
+      final words = [for (word in dict.keys()) word];
       words.sort(Strings.compare);
 
       for (word in words)

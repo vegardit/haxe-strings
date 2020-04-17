@@ -118,5 +118,5 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
     */
    inline
    public function sortDescending():Void
-      this.sort(function(s1:String, s2:String) return -1 * Strings.compare(s1, s2));
+      this.sort((s1, s2) -> -1 * Strings.compare(s1, s2));
 }

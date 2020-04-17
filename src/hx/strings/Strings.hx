@@ -1096,7 +1096,7 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      return str.toChars().filter(filter).map(function (ch) return ch.toString() ).join("");
+      return str.toChars().filter(filter).map((ch) -> ch.toString()).join("");
    }
 
 
@@ -1204,7 +1204,7 @@ class Strings {
       final leftChars = left.toChars();
       final rightChars = right.toChars();
 
-      final min = function(a:Int, b:Int) return a > b ? b : a;
+      final min = (a:Int, b:Int) -> a > b ? b : a;
 
       for (rightIdx in 1...rightLen + 1) {
          final rightChar = rightChars[rightIdx - 1];
@@ -2620,7 +2620,7 @@ class Strings {
       if (strLen == 0)
          return [];
 
-      final separators = separator.filter(function(s) return s != null);
+      final separators = separator.filter((s) -> s != null);
       if (separators.length == 0)
          return null;
 
@@ -2717,7 +2717,7 @@ class Strings {
          pos.push(p);
       }
 
-      pos.sort(function(a, b) return a < b ? -1 : a > b ? 1 : 0);
+      pos.sort((a, b) -> a < b ? -1 : a > b ? 1 : 0);
 
       final result = new Array<String>();
 
@@ -3621,7 +3621,7 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      return _splitAsciiWordsUnsafe(str).map(function(s) return s.toLowerCase8()).join("-");
+      return _splitAsciiWordsUnsafe(str).map((s) -> s.toLowerCase8()).join("-");
    }
 
 
@@ -3647,7 +3647,7 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      return _splitAsciiWordsUnsafe(str).map(function(s) return s.toLowerCase8()).join("_");
+      return _splitAsciiWordsUnsafe(str).map((s) -> s.toLowerCase8()).join("_");
    }
 
    /**
@@ -3672,13 +3672,13 @@ class Strings {
          return str;
 
       if(keepUppercasedWords)
-         return _splitAsciiWordsUnsafe(str).map(function(s) {
-            return s.toUpperCase8() == s ? s : s.toLowerCase8().toUpperCaseFirstChar();
-         }).join(" ");
+         return _splitAsciiWordsUnsafe(str)
+            .map((s) -> s.toUpperCase8() == s ? s : s.toLowerCase8().toUpperCaseFirstChar())
+            .join(" ");
 
-      return _splitAsciiWordsUnsafe(str).map(function(s) {
-         return s.toLowerCase8().toUpperCaseFirstChar();
-      }).join(" ");
+      return _splitAsciiWordsUnsafe(str)
+         .map((s) -> s.toLowerCase8().toUpperCaseFirstChar())
+         .join(" ");
    }
 
 
@@ -3730,7 +3730,7 @@ class Strings {
       if (str.isEmpty())
           return str;
 
-      return _splitAsciiWordsUnsafe(str).map(function(s) return s.toUpperCase8()).join("_");
+      return _splitAsciiWordsUnsafe(str).map((s) -> s.toUpperCase8()).join("_");
    }
 
 
@@ -3940,7 +3940,7 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      return REGEX_SPLIT_LINES.split(str).map(function(line) return line.trim(charsToRemove)).join(NEW_LINE_NIX);
+      return REGEX_SPLIT_LINES.split(str).map((line) -> line.trim(charsToRemove)).join(NEW_LINE_NIX);
    }
 
 

@@ -116,7 +116,7 @@ class AbstractSpellChecker implements SpellChecker {
             candidates.push({word:edit,popularity:editPopularity});
       }
 
-      candidates.sort(function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
+      candidates.sort((a, b) -> a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
       final result = Arrays.unique([for (candidate in candidates) candidate.word]);
 
       if (result.length < max) {
@@ -135,7 +135,7 @@ class AbstractSpellChecker implements SpellChecker {
                   candidates.push({word:edit2,popularity:edit2Popularity});
             }
          }
-         candidates.sort(function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
+         candidates.sort((a, b) -> a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
          for (candidate in candidates) {
             if(result.length < max)
                result.push(candidate.word);

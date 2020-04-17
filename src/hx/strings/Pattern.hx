@@ -35,17 +35,15 @@ class Pattern {
          return new Pattern(pattern, "");
 
       return new Pattern(pattern, switch(options.value) {
-         case a(str): str.toLowerCase8().filterChars(function(ch) {
+         case a(str): str.toLowerCase8()
             // remove unsupported flags
-            return
-               ch == "i" || ch == "m" || ch == "g"
+            .filterChars((ch) -> ch == "i" || ch == "m" || ch == "g"
                #if (cpp || flash || java || neko || php)
-               || ch == "s"
+                  || ch == "s"
                #end
-               ;
-            });
+            );
          case b(opt): Std.string(opt);
-         case c(arr): arr.filter(function (m) return m != null /* remove null enties */).join("");
+         case c(arr): arr.filter((m) -> m != null /* remove null enties */).join("");
       });
    }
 

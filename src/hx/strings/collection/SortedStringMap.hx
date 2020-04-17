@@ -105,8 +105,8 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
    override
    public function copy():SortedStringMapImpl<V> {
       final clone = new SortedStringMapImpl<V>();
-      for (k in this.keys())
-         clone.set(k, this.get(k));
+      for (k => v in this)
+         clone.set(k, v);
       return clone;
    }
 
