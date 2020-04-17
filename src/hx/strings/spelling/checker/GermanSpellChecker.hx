@@ -26,7 +26,10 @@ class GermanSpellChecker extends AbstractSpellChecker {
     * >>> GermanSpellChecker.INSTANCE.correctWord("SCHREIBWEISE")  == "Schreibweise"
     * >>> GermanSpellChecker.INSTANCE.correctWord("SCHRIBWEISE")   == "Schreibweise"
     * >>> GermanSpellChecker.INSTANCE.correctWord("Schre1bweise")  == "Schreibweise"
+    #if !cpp
+    // TODO see https://github.com/HaxeFoundation/haxe/issues/9007
     * >>> GermanSpellChecker.INSTANCE.correctText("etwaz kohmische Aepfel ligen vör der Thür", 3000) == "etwas komische Äpfel liegen vor der Tür"
+    #end
     * >>> GermanSpellChecker.INSTANCE.suggestWords("Sistem", 3, 3000) == [ "System", "Sitte", "Sitten" ]
     * </code></pre>
     */
