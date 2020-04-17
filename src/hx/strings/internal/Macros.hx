@@ -16,8 +16,8 @@ import haxe.macro.*;
 class Macros {
 
    static var __static_init = {
-      #if (haxe_ver <= 3.4)
-         throw 'ERROR: As of haxe-strings 5.0.0, Haxe 3.4.0 or higher is required!';
+      #if (haxe_ver <= 4)
+         throw 'ERROR: As of haxe-strings 6.0.0, Haxe 4.x or higher is required!';
       #end
    };
 

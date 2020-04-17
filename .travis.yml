@@ -10,7 +10,6 @@ git:
   depth: 2
 
 haxe:
-  - "3.4.7"
   - "4.0.5"
   - development
 
@@ -41,12 +40,6 @@ matrix:
     - env: HAXE_TARGET=lua     # too many local variables, see https://github.com/HaxeFoundation/haxe/issues/5243
     - os: osx
   exclude:
-    - haxe: 3.4.7
-      env: HAXE_TARGET=eval
-    - haxe: 3.4.7
-      env: HAXE_TARGET=jvm
-    - haxe: 3.4.7
-      os: osx
     - haxe: development
       os: osx
 

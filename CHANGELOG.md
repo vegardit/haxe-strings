@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+### Changed
+- minimum required Haxe version is now 4.x
 
 ### Fixed
 - [PR#5](https://github.com/vegardit/haxe-strings/pull/5) `Ansi.cursor(RestorePos)` performs saves position instead of restoring it
@@ -76,7 +78,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - property hx.strings.collection.SortedStringMap#size
 
 ### Changed
-- minium required haxe Version is now 3.4.0
+- minimum required Haxe version is now 3.4.x
 - removed workarounds for Haxe 3.2 and lower
 - renamed hx.strings.collection.OrderedStringMap#clone() to #copy() for Haxe 4 compatiblity
 - renamed hx.strings.collection.StringMap#clone() to #copy() for Haxe 4 compatiblity
