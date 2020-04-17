@@ -43,6 +43,12 @@ abstract SortedStringMap<V>(SortedStringMapImpl<V>) from SortedStringMapImpl<V> 
    }
 }
 
+
+/**
+ * <pre><code>
+ * >>> ({var m = new SortedStringMap<Int>(); m.set("1", 1); m.clear(); m; }).isEmpty() == true
+ * </code></pre>
+ */
 @:noDoc @:dox(hide)
 @:noCompletion
 class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Constraints.IMap<String,V> {
@@ -93,28 +99,17 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
 
    /**
     * <pre><code>
-    * >>> ({var m = new SortedStringMap<Int>(); m.set("1", 1); m.clear(); m; }).isEmpty() == true
-    * </code></pre>
-    */
-   #if (haxe_ver < 4.0)
-   inline
-   public function clear():Void
-      root = null;
-   #end
-
-   /**
-    * <pre><code>
     * >>> new SortedStringMap<Int>().copy() != null
     * </code></pre>
     */
-   inline
-   #if (haxe_ver >= 4.0) override #end
+   override
    public function copy():SortedStringMapImpl<V> {
       var clone = new SortedStringMapImpl<V>();
       for (k in this.keys())
          clone.set(k, this.get(k));
       return clone;
    }
+
 
    inline
    override

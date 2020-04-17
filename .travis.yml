@@ -24,7 +24,6 @@ env:
   - HAXE_TARGET=lua
   - HAXE_TARGET=neko
   - HAXE_TARGET=node
-  - HAXE_TARGET=php
   - HAXE_TARGET=php7
   - HAXE_TARGET=python
 

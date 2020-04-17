@@ -124,11 +124,9 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
       return __keys.iterator();
 
 
-   #if (haxe_ver >= 4.0)
    inline
    public function keyValueIterator():KeyValueIterator<String, V>
       return new haxe.iterators.MapKeyValueIterator(this);
-   #end
 
 
    public function remove(key:String):Bool {

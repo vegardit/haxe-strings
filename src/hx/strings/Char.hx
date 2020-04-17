@@ -628,12 +628,7 @@ abstract Char(Int) from Int {
    public function toString():String {
       if (this > 127) {
          #if php
-            #if (haxe_ver < 4)
-               var ch:Int = this;
-               return untyped __php__("mb_convert_encoding(pack('N', $ch), 'UTF-8', 'UCS-4BE')");
-            #else
-               return php.Syntax.code("mb_convert_encoding(pack('N', {0}), 'UTF-8', 'UCS-4BE')", this);
-            #end
+            return php.Syntax.code("mb_convert_encoding(pack('N', {0}), 'UTF-8', 'UCS-4BE')", this);
          #else
             var ch8 = new Utf8();
             ch8.addChar(this);

@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ### Changed
 - minimum required Haxe version is now 4.x
+- removed support for old PHP5 target
 
 ### Fixed
 - [PR#5](https://github.com/vegardit/haxe-strings/pull/5) `Ansi.cursor(RestorePos)` performs saves position instead of restoring it

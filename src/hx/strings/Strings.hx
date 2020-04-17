@@ -276,11 +276,7 @@ class Strings {
          return null;
 
       #if php
-         #if (haxe_ver < 4)
-            return untyped __call__("base64_encode", plain);
-         #else
-            return php.Syntax.code("base64_encode({0})", plain);
-         #end
+         return php.Syntax.code("base64_encode({0})", plain);
       #else
          return Base64.encode(plain.toBytes());
       #end
@@ -301,11 +297,7 @@ class Strings {
          return null;
 
       #if php
-         #if (haxe_ver < 4)
-            return untyped __call__("base64_decode", encoded);
-         #else
-            return php.Syntax.code("base64_decode({0})", encoded);
-         #end
+         return php.Syntax.code("base64_decode({0})", encoded);
       #else
          return Base64.decode(encoded).toString();
       #end
@@ -758,9 +750,6 @@ class Strings {
          return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
       #elseif native_utf8
          return str > other ? 1 : (str == other ? 0 : -1);
-      #elseif (neko && (haxe_ver < 4))
-         // TODO https://github.com/HaxeFoundation/haxe/issues/5308
-         return str > other ? 1 : (str == other ? 0 : -1);
       #else
          return Utf8.compare(str, other);
       #end
@@ -800,9 +789,6 @@ class Strings {
          //      https://github.com/HaxeFoundation/haxe/pull/7562
          return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
       #elseif native_utf8
-         return str > other ? 1 : (str == other ? 0 : -1);
-      #elseif (neko && (haxe_ver < 4))
-         // TODO https://github.com/HaxeFoundation/haxe/issues/5308
          return str > other ? 1 : (str == other ? 0 : -1);
       #else
          return Utf8.compare(str, other);
@@ -963,7 +949,7 @@ class Strings {
       if (searchIn == null || searchFor == null)
          return false;
 
-      #if (cpp && (haxe_ver >= 4))
+      #if cpp
          // TODO StringTools.endsWith doesn't work with UTF8 chars on Haxe4+CPP
          var searchInLen = searchIn.length;
          var searchForLen = searchFor.length;
@@ -1424,11 +1410,7 @@ class Strings {
       var sb = new StringBuilder();
       var isFirstSpace = true;
       for (i in 0...str.length8()) {
-         #if (haxe_ver >= 4)
          var ch:Char = str._charCodeAt8Unsafe(i);
-         #else
-         var ch:Int /*fails with Char for some reason*/ = str._charCodeAt8Unsafe(i);
-         #end
          switch (ch) {
             case Char.SPACE:
                if (isFirstSpace) {
@@ -1455,11 +1437,7 @@ class Strings {
 
             default:
                if (ch > 127)
-               #if (haxe_ver >= 4)
                   sb.add("&#").add(ch.toInt()).add(";");
-               #else
-                  sb.add('&#$ch;');
-               #end
                else
                   sb.addChar(ch);
          }
@@ -1675,12 +1653,7 @@ class Strings {
       #if native_utf8
          return str.indexOf(searchFor, startAt);
       #elseif php
-         #if (haxe_ver < 4)
-            var index:Dynamic = untyped __call__("mb_strpos", str, searchFor, startAt, "UTF-8");
-         #else
-            var index:Dynamic = php.Syntax.code("mb_strpos({0},{1},{2},{3})", str, searchFor, startAt, "UTF-8");
-         #end
-
+         var index:Dynamic = php.Syntax.code("mb_strpos({0},{1},{2},{3})", str, searchFor, startAt, "UTF-8");
          return index == false ? POS_NOT_FOUND : cast index;
       #else
          var strNeedsUTF8Workaround = str.length != strLen;
@@ -1746,11 +1719,7 @@ class Strings {
    #if php inline #end
    public static function isDigits(str:String):Bool {
       #if php
-         #if (haxe_ver < 4)
-            return untyped __call__("ctype_digit", str);
-         #else
-            return php.Syntax.code("ctype_digit({0})", str);
-         #end
+         return php.Syntax.code("ctype_digit({0})", str);
       #else
          if (str.isEmpty())
             return false;
@@ -2005,11 +1974,7 @@ class Strings {
       #if native_utf8
          return str.length;
       #elseif php
-          #if (haxe_ver < 4)
-            return untyped __call__("mb_strlen", str, "UTF-8");
-          #else
-            return php.Syntax.code("mb_strlen({0}, {1})", str, "UTF-8");
-          #end
+         return php.Syntax.code("mb_strlen({0}, {1})", str, "UTF-8");
       #else
          return Utf8.length(str);
       #end
@@ -2399,14 +2364,10 @@ class Strings {
          return xml;
 
       #if php
-         #if (haxe_ver < 4)
-            return untyped __call__("strip_tags", xml);
-         #else
-            return php.Syntax.code("strip_tags({0})", xml);
-         #end
-       #else
+         return php.Syntax.code("strip_tags({0})", xml);
+      #else
          return REGEX_REMOVE_XML_TAGS.replace(xml, "");
-       #end
+      #end
    }
 
 
@@ -2857,7 +2818,7 @@ class Strings {
       if (searchFor.isEmpty() || searchIn == searchFor)
          return true;
 
-      #if (cpp && (haxe_ver >= 4))
+      #if cpp
          // TODO StringTools.startsWith doesn't work with UTF8 chars on Haxe4+CPP
          return (searchIn.length >= searchFor.length && searchIn.lastIndexOf(searchFor, 0) == 0);
       #end
@@ -2978,11 +2939,7 @@ class Strings {
       #if native_utf8
          return str.substr(startAt, len);
       #elseif php
-         #if (haxe_ver < 4)
-            return untyped __call__("mb_substr", str, startAt, len, "UTF-8");
-         #else
-            return php.Syntax.code("mb_substr({0}, {1}, {2}, {3})", str, startAt, len, "UTF-8");
-         #end
+         return php.Syntax.code("mb_substr({0}, {1}, {2}, {3})", str, startAt, len, "UTF-8");
       #else
          if (len < 0) {
             if (startAt != 0)
@@ -3041,11 +2998,7 @@ class Strings {
             endAt = tmp;
          }
          #if php
-            #if (haxe_ver < 4)
-               return untyped __call__("mb_substr", str, startAt, endAt - startAt, "UTF-8");
-            #else
-               return php.Syntax.code("mb_substr({0}, {1}, {2}, {3})", str, startAt, endAt - startAt, "UTF-8");
-            #end
+            return php.Syntax.code("mb_substr({0}, {1}, {2}, {3})", str, startAt, endAt - startAt, "UTF-8");
          #else
             return Utf8.sub(str, startAt, endAt - startAt);
          #end
@@ -3594,11 +3547,7 @@ class Strings {
          return str;
 
       #if php
-         #if (haxe_ver < 4)
-            return untyped __call__("mb_strtolower", str, "UTF-8");
-         #else
-            return php.Syntax.code("mb_strtolower({0}, {1})", str, "UTF-8");
-         #end
+         return php.Syntax.code("mb_strtolower({0}, {1})", str, "UTF-8");
       #elseif native_utf8
          return str.toLowerCase();
       #else
@@ -3840,11 +3789,7 @@ class Strings {
          return str;
 
       #if php
-         #if (haxe_ver < 4)
-            return untyped __call__("mb_strtoupper", str, "UTF-8");
-         #else
-            return php.Syntax.code("mb_strtoupper({0}, {1})", str, "UTF-8");
-         #end
+         return php.Syntax.code("mb_strtoupper({0}, {1})", str, "UTF-8");
       #elseif (java || flash || cs || python)
          return str.toUpperCase();
       #else
@@ -4090,11 +4035,7 @@ class Strings {
          return str;
 
       #if php
-         #if (haxe_ver < 4)
-            return untyped __call__("rawurldecode", str);
-         #else
-            return php.Syntax.code("rawurldecode({0})", str);
-         #end
+         return php.Syntax.code("rawurldecode({0})", str);
       #else
          return StringTools.urlDecode(str);
       #end
@@ -4116,11 +4057,7 @@ class Strings {
          return str;
 
       #if php
-         #if (haxe_ver < 4)
-            return untyped __call__("rawurlencode", str);
-         #else
-            return php.Syntax.code("rawurlencode({0})", str);
-         #end
+         return php.Syntax.code("rawurlencode({0})", str);
       #else
          return StringTools.urlEncode(str);
        #end

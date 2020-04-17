@@ -65,7 +65,7 @@ class StringBuilder {
     * @return <code>this</code> for chained operations
     */
    public function add(item:AnyAsString):StringBuilder {
-      #if (cpp && (haxe_ver > 4))
+      #if cpp
          //TODO AnyAsString.fromAny() is not invoked for 'null' values on Haxe4+CPP for some reason
          if (item == null) item = "null";
       #end
@@ -479,13 +479,8 @@ private class OutputWrapper extends Output {
 
    @:dox(hide)
    override
-   #if (haxe_ver >= 4.0)
    function writeString(str:String, ?encoding:haxe.io.Encoding) {
-   #else
-   function writeString(str:String) {
-   #end
       flush();
       sb.add(str);
    }
 }
-

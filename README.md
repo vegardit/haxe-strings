@@ -27,7 +27,7 @@ A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cro
 All classes are located in the package `hx.strings` or below.
 
 The library has been extensively unit tested (over 1,800 individual test cases) on the targets C++, C#, Flash, HashLink,
-Java, JavaScript (Node.js and PhantomJS), Neko, PHP 5, PHP 7 and Python 3.
+Java, JavaScript (Node.js and PhantomJS), Neko, PHP 7 and Python 3.
 
 **Note:**
 * When targeting PHP ensure the [php_mbstring](http://php.net/manual/en/book.mbstring.php) extension is enabled in the `php.ini` file. This extension is required for proper UTF-8 support.

@@ -87,16 +87,11 @@ class String8Generator {
                var delegateArgs = ["this"];
                for (i in 1...args.length) {
                   var defaultValue = delegateTFunc == null ? null :
-                     #if (haxe_ver < 4)
-                     // delegateTFunc.args[i].value in Haxe 3 is TConstant
-                     switch(delegateTFunc.args[i].value) {
-                     #else
                      // delegateTFunc.args[i].value in Haxe 4 Preview 5 is TypedExpr
                      delegateTFunc.args[i].value == null ? null :
                      switch(delegateTFunc.args[i].value.expr) {
                         case TConst(constant):
                            switch(constant) {
-                     #end
                               case TBool(val):   Context.makeExpr(val, contextPos);
                               case TString(val): Context.makeExpr(val, contextPos);
                               case TFloat(val):  Context.makeExpr(val, contextPos);
@@ -117,13 +112,9 @@ class String8Generator {
                                        Context.makeExpr(val, contextPos);
                                  }
                                default: null;
-                     #if (haxe_ver >= 4)
                            }
                         default: null;
-                     }
-                     #else
-                     }
-                     #end
+                     };
                   var arg = args[i];
                   generatedArgs.push({
                      name: arg.name,

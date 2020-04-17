@@ -19,6 +19,10 @@ class Macros {
       #if (haxe_ver <= 4)
          throw 'ERROR: As of haxe-strings 6.0.0, Haxe 4.x or higher is required!';
       #end
+
+      #if (php && !php7)
+          throw 'ERROR: As of haxe-strings 6.0.0, for PHP the php7 target is required!';
+      #end
    };
 
 
