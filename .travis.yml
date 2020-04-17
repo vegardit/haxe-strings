@@ -9,6 +9,10 @@ os:
 git:
   depth: 2
 
+cache:
+  directories:
+    - $HOME/haxe
+
 haxe:
   - "4.0.5"
   - development
@@ -16,11 +20,11 @@ haxe:
 env:
   - HAXE_TARGET=cpp
   - HAXE_TARGET=cs
-  - HAXE_TARGET=eval
+  - HAXE_TARGET="interp -D eval-stack"
   - HAXE_TARGET=flash
   - HAXE_TARGET=java
+  - HAXE_TARGET="java -D jvm"
   - HAXE_TARGET=js
-  - HAXE_TARGET=jvm
   - HAXE_TARGET=lua
   - HAXE_TARGET=neko
   - HAXE_TARGET=node
@@ -33,9 +37,9 @@ matrix:
     - haxe: 4.0.5
       env: HAXE_TARGET=cpp     # see https://github.com/HaxeFoundation/haxe/issues/9007
     - haxe: development
-    - env: HAXE_TARGET=eval
+    - env: HAXE_TARGET="interp -D eval-stack"
     - env: HAXE_TARGET=flash   # see https://github.com/travis-ci/travis-ci/issues/8481
-    - env: HAXE_TARGET=jvm
+    - env: HAXE_TARGET="java -D jvm"
     - env: HAXE_TARGET=lua     # too many local variables, see https://github.com/HaxeFoundation/haxe/issues/5243
     - os: osx
   exclude:
