@@ -622,17 +622,13 @@ abstract Char(Int) from Int {
    #if target.unicode
    inline
    public function toString():String
-        return String.fromCharCode(this);
+      return String.fromCharCode(this);
    #else
    public function toString():String {
       if (this > 127) {
-         #if php
-            return php.Syntax.code("mb_convert_encoding(pack('N', {0}), 'UTF-8', 'UCS-4BE')", this);
-         #else
-            final ch8 = new haxe.Utf8();
-            ch8.addChar(this);
-            return ch8.toString();
-         #end
+         final ch8 = new haxe.Utf8();
+         ch8.addChar(this);
+         return ch8.toString();
       }
       return String.fromCharCode(this);
    }

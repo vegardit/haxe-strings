@@ -5,7 +5,6 @@
 package hx.strings;
 
 import haxe.Int32;
-import haxe.Utf8;
 import haxe.crypto.Adler32;
 import haxe.crypto.Base64;
 import haxe.crypto.Crc32;
@@ -74,7 +73,7 @@ class Strings {
       #if target.unicode
          return str.charCodeAt(pos);
       #else
-         return Utf8.charCodeAt(str, pos);
+         return haxe.Utf8.charCodeAt(str, pos);
       #end
    }
 
@@ -330,7 +329,7 @@ class Strings {
       #if target.unicode
          return str.charAt(pos);
       #else
-         return Utf8.sub(str, pos, 1);
+         return haxe.Utf8.sub(str, pos, 1);
       #end
    }
 
@@ -746,7 +745,7 @@ class Strings {
       #if target.unicode
          return str > other ? 1 : (str == other ? 0 : -1);
       #else
-         return Utf8.compare(str, other);
+         return haxe.Utf8.compare(str, other);
       #end
    }
 
@@ -782,7 +781,7 @@ class Strings {
       #if target.unicode
          return str > other ? 1 : (str == other ? 0 : -1);
       #else
-         return Utf8.compare(str, other);
+         return haxe.Utf8.compare(str, other);
       #end
    }
 
@@ -1643,9 +1642,6 @@ class Strings {
 
       #if target.unicode
          return str.indexOf(searchFor, startAt);
-      #elseif php
-         final index:Dynamic = php.Syntax.code("mb_strpos({0},{1},{2},{3})", str, searchFor, startAt, "UTF-8");
-         return index == false ? POS_NOT_FOUND : cast index;
       #else
          final strNeedsUTF8Workaround = str.length != strLen;
          final searchForNeedsUTF8Workaround = searchFor.length != searchForLen;
@@ -1964,10 +1960,8 @@ class Strings {
 
       #if target.unicode
          return str.length;
-      #elseif php
-         return php.Syntax.code("mb_strlen({0}, {1})", str, "UTF-8");
       #else
-         return Utf8.length(str);
+         return haxe.Utf8.length(str);
       #end
    }
 
@@ -2635,11 +2629,12 @@ class Strings {
             return str.split(separators[0]);
       #end
 
-      inline function sub(str:String, pos:Int, len:Int) {
+      inline
+      function sub(str:String, pos:Int, len:Int) {
          #if target.unicode
             return str.substr(pos, len);
          #else
-            return Utf8.sub(str, pos, len);
+            return haxe.Utf8.sub(str, pos, len);
          #end
       }
 
@@ -2929,8 +2924,6 @@ class Strings {
 
       #if target.unicode
          return str.substr(startAt, len);
-      #elseif php
-         return php.Syntax.code("mb_substr({0}, {1}, {2}, {3})", str, startAt, len, "UTF-8");
       #else
          if (len < 0) {
             if (startAt != 0)
@@ -2940,7 +2933,7 @@ class Strings {
                return "";
          }
 
-         return Utf8.sub(str, startAt, len);
+         return haxe.Utf8.sub(str, startAt, len);
       #end
    }
 
@@ -2988,11 +2981,7 @@ class Strings {
             startAt = endAt;
             endAt = tmp;
          }
-         #if php
-            return php.Syntax.code("mb_substr({0}, {1}, {2}, {3})", str, startAt, endAt - startAt, "UTF-8");
-         #else
-            return Utf8.sub(str, startAt, endAt - startAt);
-         #end
+         return haxe.Utf8.sub(str, startAt, endAt - startAt);
       #end
    }
 
