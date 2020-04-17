@@ -722,7 +722,6 @@ class Strings {
     * <pre><code>
     * >>> Strings.compare("a", "b")      < 0
     * >>> Strings.compare("b", "a")      > 0
-    * TODO csharp https://github.com/HaxeFoundation/hxcs/issues/25
     * >>> Strings.compare("a", "A")      > 0
     * >>> Strings.compare("A", "a")      < 0
     * >>> Strings.compare("a", "B")      > 0
@@ -744,11 +743,7 @@ class Strings {
       if (other == null)
          return str == null ? 0 : 1;
 
-      #if cs
-         // TODO https://github.com/HaxeFoundation/haxe/issues/5336
-         //      https://github.com/HaxeFoundation/haxe/pull/7562
-         return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
-      #elseif native_utf8
+      #if native_utf8
          return str > other ? 1 : (str == other ? 0 : -1);
       #else
          return Utf8.compare(str, other);
@@ -784,11 +779,7 @@ class Strings {
       str = str.toLowerCase8();
       other = other.toLowerCase8();
 
-      #if cs
-         // TODO https://github.com/HaxeFoundation/haxe/issues/5336
-         //      https://github.com/HaxeFoundation/haxe/pull/7562
-         return untyped __cs__("string.CompareOrdinal({0}, {1})", str, other);
-      #elseif native_utf8
+      #if native_utf8
          return str > other ? 1 : (str == other ? 0 : -1);
       #else
          return Utf8.compare(str, other);
