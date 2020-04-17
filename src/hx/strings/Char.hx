@@ -4,7 +4,6 @@
  */
 package hx.strings;
 
-import haxe.Utf8;
 import haxe.ds.IntMap;
 
 using hx.strings.Strings;
@@ -630,7 +629,7 @@ abstract Char(Int) from Int {
          #if php
             return php.Syntax.code("mb_convert_encoding(pack('N', {0}), 'UTF-8', 'UCS-4BE')", this);
          #else
-            var ch8 = new Utf8();
+            var ch8 = new haxe.Utf8();
             ch8.addChar(this);
             return ch8.toString();
          #end
