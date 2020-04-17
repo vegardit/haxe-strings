@@ -107,7 +107,7 @@ class CharIterator {
    inline function get_pos() return new CharPos(index, line, col);
 
 
-   function new (prevBufferSize:Int) {
+   function new(prevBufferSize:Int) {
       if (prevBufferSize > 0) {
          usePrevBuffer = true;
          prevBuffer = new RingBuffer<CharWithPos>(prevBufferSize + 1 /*currChar*/);
@@ -130,7 +130,7 @@ class CharIterator {
       if (isEOF())
          throw new Eof();
 
-      var prevChar = prevBuffer[prevBufferPrevIdx];
+      final prevChar = prevBuffer[prevBufferPrevIdx];
       currChar = prevChar.char;
       index = prevChar.index;
       line = prevChar.line;
@@ -198,20 +198,19 @@ class CharIterator {
 
 @:noDoc @:dox(hide)
 private class CharWithPos extends CharPos {
+   public final char:Char;
 
    public function new(char:Char, index:CharIndex, line:Int, col:Int) {
       super(index, line, col);
       this.char = char;
    }
-
-   public var char(default, null):Char;
 }
 
 
 @:noDoc @:dox(hide)
 private class NullCharIterator extends CharIterator {
 
-   public static var INSTANCE = new NullCharIterator();
+   public static final INSTANCE = new NullCharIterator();
 
    inline
    function new()
@@ -226,8 +225,8 @@ private class NullCharIterator extends CharIterator {
 
 @:noDoc @:dox(hide)
 private class ArrayCharIterator extends CharIterator {
-   var chars:Array<Char>;
-   var charsMaxIndex:Int;
+   final chars:Array<Char>;
+   final charsMaxIndex:Int;
 
 
    public function new(chars:Array<Char>, prevBufferSize:Int) {
@@ -250,7 +249,7 @@ private class ArrayCharIterator extends CharIterator {
 
 @:noDoc @:dox(hide)
 private class IteratorCharIterator extends CharIterator {
-   var chars:Iterator<Char>;
+   final chars:Iterator<Char>;
 
 
    public function new(chars:Iterator<Char>, prevBufferSize:Int) {
@@ -272,7 +271,7 @@ private class IteratorCharIterator extends CharIterator {
 @:noDoc @:dox(hide)
 private class InputCharIterator extends CharIterator {
    var byteIndex = 0;
-   var input:Input;
+   final input:Input;
    var currCharIndex = -1;
    var nextChar:Char;
    var nextCharAvailable = TriState.UNKNOWN;
@@ -326,7 +325,7 @@ private class InputCharIterator extends CharIterator {
       byte1 = Bits.clearBit(byte1, 7);
       var totalBytes = 2;
 
-      var isBit6Set = Bits.getBit(byte1, 6);
+      final isBit6Set = Bits.getBit(byte1, 6);
       var isBit5Set = false;
       if(isBit6Set) {
          byte1 = Bits.clearBit(byte1, 6);
@@ -347,21 +346,21 @@ private class InputCharIterator extends CharIterator {
        /*
        * read the second byte
        */
-      var byte2 = readUtf8MultiSequenceByte();
+      final byte2 = readUtf8MultiSequenceByte();
       result += (byte2 << 6*(totalBytes-2));
 
       /*
        * read the third byte
        */
       if(isBit6Set) {
-          var byte3 = readUtf8MultiSequenceByte();
+          final byte3 = readUtf8MultiSequenceByte();
           result += (byte3 << 6*(totalBytes-3));
 
          /*
           * read the fourth byte
           */
          if(isBit5Set) {
-            var byte4 = readUtf8MultiSequenceByte();
+            final byte4 = readUtf8MultiSequenceByte();
             result += (byte4 << 6*(totalBytes-4));
          }
       }
@@ -376,7 +375,7 @@ private class InputCharIterator extends CharIterator {
 
    inline
    function readUtf8MultiSequenceByte():Int {
-      var byte = input.readByte();
+      final byte = input.readByte();
       byteIndex++;
 
       if (!Bits.getBit(byte, 8))
@@ -392,8 +391,8 @@ private class InputCharIterator extends CharIterator {
 
 @:noDoc @:dox(hide)
 private class StringCharIterator extends CharIterator {
-   var chars:String;
-   var charsMaxIndex:Int;
+   final chars:String;
+   final charsMaxIndex:Int;
 
 
    public function new(chars:String, prevBufferSize:Int) {

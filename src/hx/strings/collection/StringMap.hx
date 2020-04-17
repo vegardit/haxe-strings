@@ -54,7 +54,7 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
    inline
    function get_size():Int {
       var count = 0;
-      var it = this.keys();
+      final it = this.keys();
       while (it.hasNext()) {
          it.next();
          count++;
@@ -70,16 +70,16 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
     */
    public function copy():StringMap<V> {
       if (Std.is(this, SortedStringMap.SortedStringMapImpl)) {
-         var m:SortedStringMap<V> = cast this;
+         final m:SortedStringMap<V> = cast this;
          return m.copy();
       }
 
       if (Std.is(this, OrderedStringMap.OrderedStringMapImpl)) {
-         var m:OrderedStringMap<V> = cast this;
+         final m:OrderedStringMap<V> = cast this;
          return m.copy();
       }
 
-      var clone:StringMap<V> = new StringMap<V>();
+      final clone:StringMap<V> = new StringMap<V>();
       for (k in this.keys()) {
          clone.set(k, this.get(k));
       }

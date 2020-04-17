@@ -28,30 +28,30 @@ using hx.strings.Strings;
  */
 class Strings {
 
-   static var REGEX_ANSI_ESC = Pattern.compile(Char.ESC + "\\[[;\\d]*m", MATCH_ALL);
-   static var REGEX_HTML_UNESCAPE = Pattern.compile("&(#\\d+|amp|nbsp|apos|lt|gt|quot);", MATCH_ALL);
-   static var REGEX_SPLIT_LINES = Pattern.compile("\\r?\\n", MATCH_ALL);
+   static final REGEX_ANSI_ESC = Pattern.compile(Char.ESC + "\\[[;\\d]*m", MATCH_ALL);
+   static final REGEX_HTML_UNESCAPE = Pattern.compile("&(#\\d+|amp|nbsp|apos|lt|gt|quot);", MATCH_ALL);
+   static final REGEX_SPLIT_LINES = Pattern.compile("\\r?\\n", MATCH_ALL);
 
    #if !php
-   static var REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
+   static final REGEX_REMOVE_XML_TAGS = Pattern.compile("<[!a-zA-Z\\/][^>]*>", MATCH_ALL);
    #end
 
-   public static inline var POS_NOT_FOUND:CharIndex = -1;
+   public static inline final POS_NOT_FOUND:CharIndex = -1;
 
    /**
     * Unix line separator (LF)
     */
-   public static inline var NEW_LINE_NIX = "\n";
+   public static inline final NEW_LINE_NIX = "\n";
 
    /**
     * Windows line separator (CR + LF)
     */
-   public static inline var NEW_LINE_WIN = "\r\n";
+   public static inline final NEW_LINE_WIN = "\r\n";
 
    /**
     * operating system specific line separator
     */
-   public static var NEW_LINE(default, never):String = OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
+   public static final NEW_LINE = OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
 
 
    inline
@@ -71,7 +71,7 @@ class Strings {
    @:allow(hx.strings.CharIterator)
    #if !lua inline #end
    private static function _charCodeAt8Unsafe(str:String, pos:CharIndex):Char {
-      #if native_utf8
+      #if target.unicode
          return str.charCodeAt(pos);
       #else
          return Utf8.charCodeAt(str, pos);
@@ -83,17 +83,17 @@ class Strings {
     * no bounds checking
     */
    private static function _splitAsciiWordsUnsafe(str:String) {
-      var words = new Array<String>();
-      var currentWord = new StringBuilder();
+      final words = new Array<String>();
+      final currentWord = new StringBuilder();
 
-      var chars = str.toChars();
+      final chars = str.toChars();
 
-      var len = chars.length;
-      var lastIndex = len - 1;
+      final len = chars.length;
+      final lastIndex = len - 1;
       for (i in 0...len) {
-         var ch = chars[i];
+         final ch = chars[i];
          if (ch.isAsciiAlpha()) {
-            var chNext = i < lastIndex ? chars[i + 1] : -1;
+            final chNext = i < lastIndex ? chars[i + 1] : -1;
             currentWord.addChar(ch);
             if (chNext.isDigit()) {
                words.push(currentWord.toString());
@@ -113,7 +113,7 @@ class Strings {
             }
          } else if (ch.isDigit()) {
             currentWord.addChar(ch);
-            var chNext = i < lastIndex ? chars[i + 1] : -1;
+            final chNext = i < lastIndex ? chars[i + 1] : -1;
             if (!chNext.isDigit()) {
                words.push(currentWord.toString());
                currentWord.clear();
@@ -164,33 +164,33 @@ class Strings {
          return str;
 
       if (renderMethod == null) renderMethod = StyleAttributes;
-      var styleOrClassAttribute = switch(renderMethod) {
+      final styleOrClassAttribute = switch(renderMethod) {
          case StyleAttributes        : "style";
          case CssClasses             : "class";
          case CssClassesCallback(cb) : "class";
       }
 
-      var sb = new StringBuilder();
+      final sb = new StringBuilder();
 
       if (initialState != null && initialState.isActive())
          sb.add('<span $styleOrClassAttribute=\"').add(initialState.toCSS(renderMethod)).add("\">");
 
       var effectiveState = new AnsiState(initialState);
-      var strLenMinus1 = str.length8() - 1;
+      final strLenMinus1 = str.length8() - 1;
       var i = -1;
-      var lookAhead = new StringBuilder();
+      final lookAhead = new StringBuilder();
       while (i < strLenMinus1) {
          i++;
-         var ch:Char = str._charCodeAt8Unsafe(i);
+         final ch:Char = str._charCodeAt8Unsafe(i);
          if (ch == Char.ESC && i < strLenMinus1 && str._charCodeAt8Unsafe(i + 1) == 91 /*[*/) { // is beginning of ANSI Escape Sequence?
             lookAhead.clear();
-            var currentState = new AnsiState(effectiveState);
+            final currentState = new AnsiState(effectiveState);
             var currentGraphicModeParam = 0;
             var isValidEscapeSequence = false;
             i += 1;
             while (i < strLenMinus1) {
                i++;
-               var ch2:Char = str._charCodeAt8Unsafe(i);
+               final ch2:Char = str._charCodeAt8Unsafe(i);
                lookAhead.addChar(ch2);
                switch (ch2) {
                   case 48: currentGraphicModeParam = currentGraphicModeParam * 10 + 0;
@@ -327,7 +327,7 @@ class Strings {
    public static function charAt8(str:String, pos:CharIndex, resultIfOutOfBound = ""):String {
       if (str.isEmpty() || pos < 0 || pos >= str.length8())
          return resultIfOutOfBound;
-      #if native_utf8
+      #if target.unicode
          return str.charAt(pos);
       #else
          return Utf8.sub(str, pos, 1);
@@ -362,7 +362,7 @@ class Strings {
     */
    inline
    public static function charCodeAt8(str:String, pos:CharIndex, resultIfOutOfBound:Char = -1):Char {
-      var strLen = str.length8();
+      final strLen = str.length8();
       if (strLen == 0 || pos < 0 || pos >= strLen)
          return resultIfOutOfBound;
 
@@ -385,7 +385,7 @@ class Strings {
       if (str.isEmpty())
           return str;
 
-      var sb = new StringBuilder();
+      final sb = new StringBuilder();
       var needWhiteSpace = false;
       for (char in str.toChars()) {
          if (char.isWhitespace()) {
@@ -449,7 +449,7 @@ class Strings {
       if (allowedChars == null)
          return false;
 
-      var allowedCharsArray:Array<Char> = switch (allowedChars.value) {
+      final allowedCharsArray:Array<Char> = switch (allowedChars.value) {
          case a(str): str.toChars();
          case b(chars): chars;
       }
@@ -743,7 +743,7 @@ class Strings {
       if (other == null)
          return str == null ? 0 : 1;
 
-      #if native_utf8
+      #if target.unicode
          return str > other ? 1 : (str == other ? 0 : -1);
       #else
          return Utf8.compare(str, other);
@@ -779,7 +779,7 @@ class Strings {
       str = str.toLowerCase8();
       other = other.toLowerCase8();
 
-      #if native_utf8
+      #if target.unicode
          return str > other ? 1 : (str == other ? 0 : -1);
       #else
          return Utf8.compare(str, other);
@@ -800,7 +800,7 @@ class Strings {
     * </code></pre>
     */
    public static function diff(left:String, right:String):StringDiff {
-      var diff = new StringDiff();
+      final diff = new StringDiff();
       diff.at = diffAt(left, right);
       diff.left = left.substr8(diff.at);
       diff.right = right.substr8(diff.at);
@@ -829,13 +829,13 @@ class Strings {
       if (str.equals(other))
          return POS_NOT_FOUND;
 
-      var strLen = str.length8();
-      var otherLen = other.length8();
+      final strLen = str.length8();
+      final otherLen = other.length8();
 
       if (strLen == 0 || otherLen == 0)
          return 0;
 
-      var checkLen = strLen > otherLen ? otherLen : strLen;
+      final checkLen = strLen > otherLen ? otherLen : strLen;
 
       for (i in 0...checkLen)
          if (str._charCodeAt8Unsafe(i) != other._charCodeAt8Unsafe(i))
@@ -862,7 +862,7 @@ class Strings {
       if (str.length8() <= maxLength)
          return str;
 
-      var ellipsisLen = ellipsis.length8();
+      final ellipsisLen = ellipsis.length8();
       if (maxLength < ellipsisLen) throw '[maxLength] must not be smaller than ${ellipsisLen}';
 
       return ellipsis + str.right(maxLength - ellipsisLen);
@@ -884,16 +884,16 @@ class Strings {
     * @throws exception if maxLength < ellipsis.length
     */
    public static function ellipsizeMiddle(str:String, maxLength:Int, ellipsis:String = "..."):String {
-      var strLen = str.length8();
+      final strLen = str.length8();
       if (strLen <= maxLength)
          return str;
 
-      var ellipsisLen = ellipsis.length8();
+      final ellipsisLen = ellipsis.length8();
       if (maxLength < ellipsisLen) throw '[maxLength] must not be smaller than ${ellipsisLen}';
 
-      var maxStrLen = maxLength - ellipsisLen;
-      var leftLen = Math.round(maxStrLen / 2);
-      var rightLen = maxStrLen - leftLen;
+      final maxStrLen = maxLength - ellipsisLen;
+      final leftLen = Math.round(maxStrLen / 2);
+      final rightLen = maxStrLen - leftLen;
 
       return str.left(leftLen) + ellipsis + str.right(rightLen);
    }
@@ -917,7 +917,7 @@ class Strings {
       if (str.length8() <= maxLength)
          return str;
 
-      var ellipsisLen = ellipsis.length8();
+      final ellipsisLen = ellipsis.length8();
       if (maxLength < ellipsisLen) throw '[maxLength] must not be smaller than ${ellipsisLen}';
 
       return str.left(maxLength - ellipsisLen) + ellipsis;
@@ -942,8 +942,8 @@ class Strings {
 
       #if cpp
          // TODO StringTools.endsWith doesn't work with UTF8 chars on Haxe4+CPP
-         var searchInLen = searchIn.length;
-         var searchForLen = searchFor.length;
+         final searchInLen = searchIn.length;
+         final searchForLen = searchFor.length;
          return searchInLen >= searchForLen && searchIn.indexOf(searchFor, searchInLen - searchForLen) > POS_NOT_FOUND;
       #end
       return StringTools.endsWith(searchIn, searchFor);
@@ -1129,17 +1129,17 @@ class Strings {
       left = left.toLowerCase8();
       right = right.toLowerCase8();
 
-      var leftChars = left.toChars();
-      var rightChars = right.toChars();
+      final leftChars = left.toChars();
+      final rightChars = right.toChars();
       var leftLastMatchAt = -100;
       var rightLastMatchAt = -100;
 
       var score = 0;
 
       for (leftIdx in 0...leftChars.length) {
-         var leftChar = leftChars[leftIdx];
+         final leftChar = leftChars[leftIdx];
          for (rightIdx in (rightLastMatchAt > -1 ? rightLastMatchAt + 1 : 0)...rightChars.length) {
-            var rightChar = rightChars[rightIdx];
+            final rightChar = rightChars[rightIdx];
             if (leftChar == rightChar) {
                score++;
                if ((leftLastMatchAt == leftIdx - 1) && (rightLastMatchAt == rightIdx - 1))
@@ -1186,10 +1186,10 @@ class Strings {
 
       if (leftLen > rightLen) {
          // swap the input strings to consume less memory
-         var tmp = left;
+         final tmp = left;
          left = right;
          right = tmp;
-         var tmpLen = leftLen;
+         final tmpLen = leftLen;
          leftLen = rightLen;
          rightLen = tmpLen;
       }
@@ -1202,22 +1202,22 @@ class Strings {
          costs.push(0);
       }
 
-      var leftChars = left.toChars();
-      var rightChars = right.toChars();
+      final leftChars = left.toChars();
+      final rightChars = right.toChars();
 
-      var min = function(a:Int, b:Int) return a > b ? b : a;
+      final min = function(a:Int, b:Int) return a > b ? b : a;
 
       for (rightIdx in 1...rightLen + 1) {
-         var rightChar = rightChars[rightIdx - 1];
+         final rightChar = rightChars[rightIdx - 1];
          costs[0] = rightIdx;
 
          for (leftIdx in 1...leftLen + 1) {
-            var leftIdxMinus1 = leftIdx - 1;
-            var cost = leftChars[leftIdxMinus1] == rightChar ? 0 : 1;
+            final leftIdxMinus1 = leftIdx - 1;
+            final cost = leftChars[leftIdxMinus1] == rightChar ? 0 : 1;
             costs[leftIdx] = min(min(costs[leftIdxMinus1] + 1, prevCosts[leftIdx] + 1), prevCosts[leftIdxMinus1] + cost);
          }
 
-         var tmp = prevCosts;
+         final tmp = prevCosts;
          prevCosts = costs;
          costs = tmp;
       }
@@ -1245,14 +1245,14 @@ class Strings {
       if (left == null || right == null)
          return null;
 
-      var leftLen = left.length8();
-      var rightLen = right.length8();
+      final leftLen = left.length8();
+      final rightLen = right.length8();
 
       if (leftLen == 0 || rightLen == 0)
          return "";
 
-      var leftChars = left.toChars();
-      var rightChars = right.toChars();
+      final leftChars = left.toChars();
+      final rightChars = right.toChars();
 
       var leftSubStartAt = 0;
       var leftSubLen = 0;
@@ -1362,7 +1362,7 @@ class Strings {
          return str;
 
       return REGEX_HTML_UNESCAPE.matcher(str).map(function(m:Matcher):String {
-         var match:String = m.matched();
+         final match:String = m.matched();
          return switch (match) {
             case "&amp;":  "&";
             case "&apos;": "'";
@@ -1398,10 +1398,10 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      var sb = new StringBuilder();
+      final sb = new StringBuilder();
       var isFirstSpace = true;
       for (i in 0...str.length8()) {
-         var ch:Char = str._charCodeAt8Unsafe(i);
+         final ch:Char = str._charCodeAt8Unsafe(i);
          switch (ch) {
             case Char.SPACE:
                if (isFirstSpace) {
@@ -1463,7 +1463,7 @@ class Strings {
       if (str == null)
          return null;
 
-      var strLen = str.length8();
+      final strLen = str.length8();
       pos = pos < 0 ? strLen + pos : pos;
 
       if (pos < 0 || pos > strLen)
@@ -1558,7 +1558,7 @@ class Strings {
          return str;
 
       var isFirstLine = true;
-      var sb = new StringBuilder();
+      final sb = new StringBuilder();
       for (line in REGEX_SPLIT_LINES.split(str)) {
          if (isFirstLine)
             isFirstLine = false;
@@ -1620,8 +1620,8 @@ class Strings {
       if (str == null || searchFor == null)
          return POS_NOT_FOUND;
 
-      var strLen = str.length8();
-      var searchForLen = searchFor.length8();
+      final strLen = str.length8();
+      final searchForLen = searchFor.length8();
 
       // handling negative startAt
       if (startAt < 0)
@@ -1641,14 +1641,14 @@ class Strings {
       if (startAt >= strLen)
          return POS_NOT_FOUND;
 
-      #if native_utf8
+      #if target.unicode
          return str.indexOf(searchFor, startAt);
       #elseif php
-         var index:Dynamic = php.Syntax.code("mb_strpos({0},{1},{2},{3})", str, searchFor, startAt, "UTF-8");
+         final index:Dynamic = php.Syntax.code("mb_strpos({0},{1},{2},{3})", str, searchFor, startAt, "UTF-8");
          return index == false ? POS_NOT_FOUND : cast index;
       #else
-         var strNeedsUTF8Workaround = str.length != strLen;
-         var searchForNeedsUTF8Workaround = searchFor.length != searchForLen;
+         final strNeedsUTF8Workaround = str.length != strLen;
+         final searchForNeedsUTF8Workaround = searchFor.length != searchForLen;
 
          // delegate to native lastIndexOf() if either no UTF8 chars are present or the current platform uses UTF8 encoding by default
          if (!strNeedsUTF8Workaround && !searchForNeedsUTF8Workaround)
@@ -1658,11 +1658,11 @@ class Strings {
             // won't find UTF8 chars in non-UTF8 string
             return POS_NOT_FOUND;
 
-         var searchForChars = [ for (i in 0...searchForLen) searchFor._charCodeAt8Unsafe(i) ];
+         final searchForChars = [ for (i in 0...searchForLen) searchFor._charCodeAt8Unsafe(i) ];
 
          var searchForPosToCheck = 0;
          for (strPos in startAt...strLen) {
-            var strCh = str.charCodeAt8(strPos);
+            final strCh = str.charCodeAt8(strPos);
             if (strCh == searchForChars[searchForPosToCheck]) {
                searchForPosToCheck++;
                if (searchForPosToCheck == searchForLen)
@@ -1887,8 +1887,8 @@ class Strings {
       if (str == null || searchFor == null)
          return POS_NOT_FOUND;
 
-      var strLen = str.length8();
-      var searchForLen = searchFor.length8();
+      final strLen = str.length8();
+      final searchForLen = searchFor.length8();
       // assign default value
       if (startAt == null)
          startAt = strLen;
@@ -1913,8 +1913,8 @@ class Strings {
       #if (java || flash)
          return str.lastIndexOf(searchFor, startAt);
       #else
-         var strNeedsUTF8Workaround = str.length != strLen;
-         var searchForNeedsUTF8Workaround = searchFor.length != searchForLen;
+         final strNeedsUTF8Workaround = str.length != strLen;
+         final searchForNeedsUTF8Workaround = searchFor.length != searchForLen;
 
          #if !(python || cs)
          // delegate to native lastIndexOf() if either no UTF8 chars are present or the current platform uses UTF8 encoding by default
@@ -1926,14 +1926,14 @@ class Strings {
             // won't find UTF8 chars in non-UTF8 string
             return POS_NOT_FOUND;
 
-         var searchForChars = searchFor.toChars();
+         final searchForChars = searchFor.toChars();
          startAt += searchForLen - 1;
 
          var searchForPosToCheck = searchForLen - 1;
          var strPos:CharIndex = strLen;
          while (strPos-- > 0) {
             if (strPos > startAt) continue;
-            var strCh = str._charCodeAt8Unsafe(strPos);
+            final strCh = str._charCodeAt8Unsafe(strPos);
 
             if (strCh == searchForChars[searchForPosToCheck]) {
                if (searchForPosToCheck == 0)
@@ -1962,7 +1962,7 @@ class Strings {
       if (str == null)
          return 0;
 
-      #if native_utf8
+      #if target.unicode
          return str.length;
       #elseif php
          return php.Syntax.code("mb_strlen({0}, {1})", str, "UTF-8");
@@ -2022,11 +2022,11 @@ class Strings {
       if (padStr.isEmpty())
          padStr = " ";
 
-      var sb = [ str ];
-      var padLen = padStr.length8();
+      final sb = [ str ];
+      final padLen = padStr.length8();
       while (strLen < targetLength) {
          sb.unshift(padStr);
-          strLen += padLen;
+         strLen += padLen;
       }
 
       if (canOverflow)
@@ -2193,7 +2193,7 @@ class Strings {
        if (str.isEmpty() || length < 1)
            return str;
 
-       var strLen = str.length8();
+       final strLen = str.length8();
        pos = pos < 0 ? strLen + pos : pos;
 
        if (pos < 0)
@@ -2524,7 +2524,7 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      var chars:Array<String> = str.split8("");
+      final chars:Array<String> = str.split8("");
       chars.reverse();
       return chars.join("");
    }
@@ -2578,8 +2578,8 @@ class Strings {
       if (padStr.isEmpty())
          padStr = " ";
 
-      var padLen = padStr.length8();
-      var sb = new StringBuilder(str);
+      final padLen = padStr.length8();
+      final sb = new StringBuilder(str);
       while (strLen < targetLength) {
          sb.add(padStr);
          strLen += padLen;
@@ -2621,22 +2621,22 @@ class Strings {
       if (str == null || separator == null)
          return null;
 
-      var strLen = str.length8();
+      final strLen = str.length8();
 
       if (strLen == 0)
          return [];
 
-      var separators = separator.filter(function(s) return s != null);
+      final separators = separator.filter(function(s) return s != null);
       if (separators.length == 0)
          return null;
 
-      #if native_utf8
+      #if target.unicode
          if (maxParts <= 0 && separators.length == 1)
             return str.split(separators[0]);
       #end
 
       inline function sub(str:String, pos:Int, len:Int) {
-         #if native_utf8
+         #if target.unicode
             return str.substr(pos, len);
          #else
             return Utf8.sub(str, pos, len);
@@ -2650,20 +2650,20 @@ class Strings {
          if (maxParts > strLen)
             maxParts = strLen;
          maxParts--;
-         var result = [ for (i in 0...maxParts) sub(str, i, 1) ];
+         final result = [ for (i in 0...maxParts) sub(str, i, 1) ];
          result.push(sub(str, maxParts, strLen - maxParts));
          return result;
       }
 
-      var separatorsLengths = [ for (sep in separators) sep.length8() ];
+      final separatorsLengths = [ for (sep in separators) sep.length8() ];
       var lastFoundAt = 0;
-      var result = [];
+      final result = [];
       var resultCount = 0;
       while (true) {
          var separatorLen:Int = 0;
          var foundAt = POS_NOT_FOUND;
          for (i in 0...separators.length) {
-            var sepFoundAt = str.indexOf8(separators[i], lastFoundAt);
+            final sepFoundAt = str.indexOf8(separators[i], lastFoundAt);
             if (sepFoundAt != POS_NOT_FOUND) {
                if (foundAt == POS_NOT_FOUND || sepFoundAt < foundAt) {
                   foundAt = sepFoundAt;
@@ -2706,12 +2706,12 @@ class Strings {
       if (splitPos == null || splitPos.length == 0)
          return [str];
 
-      var strLen = str.length8();
+      final strLen = str.length8();
       if (strLen == 0)
          return [str];
 
       // remove dups, out-of-bound positions and calculate absolute position of negative values
-      var pos = new Array<CharIndex>();
+      final pos = new Array<CharIndex>();
       for (p in splitPos) {
          if (p < 0)
             p = strLen + p;
@@ -2724,16 +2724,16 @@ class Strings {
 
       pos.sort(function(a, b) return a < b ? -1 : a > b ? 1 : 0);
 
-      var result = new Array<String>();
+      final result = new Array<String>();
 
       var lastPos = 0;
       for (p in pos) {
-         var chunk = str.substring8(lastPos, p);
+         final chunk = str.substring8(lastPos, p);
          if (chunk.isNotEmpty())
             result.push(chunk);
          lastPos = p;
       }
-      var chunk = str.substring8(lastPos);
+      final chunk = str.substring8(lastPos);
       if (chunk.isNotEmpty())
          result.push(chunk);
       return result;
@@ -2759,14 +2759,14 @@ class Strings {
       if (count < 1)
          throw "[count] must be greater than 0";
 
-      var strLen = str.length8();
+      final strLen = str.length8();
       if (strLen == 0 || count >= strLen)
          return [str];
 
-      var result = new Array<String>();
+      final result = new Array<String>();
       var pos = 0;
       while (true) {
-         var chunk = str.substr8(pos, count);
+         final chunk = str.substr8(pos, count);
          pos += count;
          if (chunk.isEmpty())
             break;
@@ -2927,7 +2927,7 @@ class Strings {
          if (startAt < 0) startAt = 0;
       }
 
-      #if native_utf8
+      #if target.unicode
          return str.substr(startAt, len);
       #elseif php
          return php.Syntax.code("mb_substr({0}, {1}, {2}, {3})", str, startAt, len, "UTF-8");
@@ -2978,13 +2978,13 @@ class Strings {
       if (endAt == null)
          endAt = str.length8();
 
-      #if native_utf8
+      #if target.unicode
          return str.substring(startAt, endAt);
       #else
          if (startAt < 0) startAt = 0;
          if (endAt < 0) endAt = 0;
          if (startAt > endAt) {
-            var tmp = startAt;
+            final tmp = startAt;
             startAt = endAt;
             endAt = tmp;
          }
@@ -3017,7 +3017,7 @@ class Strings {
       if (str == "" || searchFor.isEmpty())
          return _getNotFoundDefault(str, notFoundDefault);
 
-      var foundAt = str.indexOf(searchFor);
+      final foundAt = str.indexOf(searchFor);
       if (foundAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3047,7 +3047,7 @@ class Strings {
 
       searchFor = searchFor.toLowerCase();
 
-      var foundAt = str.toLowerCase().indexOf(searchFor);
+      final foundAt = str.toLowerCase().indexOf(searchFor);
       if (foundAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3080,11 +3080,11 @@ class Strings {
       if (str == "" || after.isEmpty() || before.isEmpty())
          return _getNotFoundDefault(str, notFoundDefault);
 
-      var foundAfterAt = str.indexOf(after);
+      final foundAfterAt = str.indexOf(after);
       if (foundAfterAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
-      var foundBeforeAt = str.indexOf(before, foundAfterAt + after.length);
+      final foundBeforeAt = str.indexOf(before, foundAfterAt + after.length);
       if (foundBeforeAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3117,15 +3117,15 @@ class Strings {
       if (str == "" || after.isEmpty() || before.isEmpty())
          return _getNotFoundDefault(str, notFoundDefault);
 
-      var strLower = str.toLowerCase8();
+      final strLower = str.toLowerCase8();
       after = after.toLowerCase8();
       before = before.toLowerCase8();
 
-      var foundAfterAt = strLower.indexOf(after);
+      final foundAfterAt = strLower.indexOf(after);
       if (foundAfterAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
-      var foundBeforeAt = strLower.indexOf(before, foundAfterAt + after.length);
+      final foundBeforeAt = strLower.indexOf(before, foundAfterAt + after.length);
       if (foundBeforeAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3153,7 +3153,7 @@ class Strings {
       if (str == "" || searchFor.isEmpty())
          return _getNotFoundDefault(str, notFoundDefault);
 
-      var foundAt = str.lastIndexOf(searchFor);
+      final foundAt = str.lastIndexOf(searchFor);
       if (foundAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3184,7 +3184,7 @@ class Strings {
 
       searchFor = searchFor.toLowerCase();
 
-      var foundAt = str.toLowerCase().lastIndexOf(searchFor);
+      final foundAt = str.toLowerCase().lastIndexOf(searchFor);
       if (foundAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3212,7 +3212,7 @@ class Strings {
       if (str == "" || searchFor.isEmpty())
          return _getNotFoundDefault(str, notFoundDefault);
 
-      var foundAt = str.indexOf(searchFor);
+      final foundAt = str.indexOf(searchFor);
       if (foundAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3243,7 +3243,7 @@ class Strings {
 
       searchFor = searchFor.toLowerCase();
 
-      var foundAt = str.toLowerCase().indexOf(searchFor);
+      final foundAt = str.toLowerCase().indexOf(searchFor);
       if (foundAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3273,7 +3273,7 @@ class Strings {
       if (str == "" || searchFor.isEmpty())
          return _getNotFoundDefault(str, notFoundDefault);
 
-      var foundAt = str.lastIndexOf(searchFor);
+      final foundAt = str.lastIndexOf(searchFor);
       if (foundAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3304,7 +3304,7 @@ class Strings {
 
       searchFor = searchFor.toLowerCase();
 
-      var foundAt = str.toLowerCase().lastIndexOf(searchFor);
+      final foundAt = str.toLowerCase().lastIndexOf(searchFor);
       if (foundAt == POS_NOT_FOUND)
          return _getNotFoundDefault(str, notFoundDefault);
 
@@ -3401,7 +3401,7 @@ class Strings {
       if (str == null)
          return null;
 
-      var strLen = str.length8();
+      final strLen = str.length8();
 
       if (strLen == 0)
          return [];
@@ -3459,7 +3459,7 @@ class Strings {
     */
    inline
    public static function toFloat(str:String, ifUnparseable:Null<Float>=null):Null<Float> {
-      var result = Std.parseFloat(str);
+      final result = Std.parseFloat(str);
       if (Math.isNaN(result))
          return ifUnparseable;
       return result;
@@ -3485,7 +3485,7 @@ class Strings {
     * @return the hexadecimal representation of <b>num</b>
     */
    public static function toHex(num:Int, minDigits:Int = 0, upperCase:Bool = true):String {
-      var hexed = StringTools.hex(num, 0);
+      final hexed = StringTools.hex(num, 0);
       if (!upperCase)
           return hexed.toLowerCase();
       if (hexed.length >= minDigits)
@@ -3511,7 +3511,7 @@ class Strings {
     */
    inline
    public static function toInt(str:String, ifUnparseable:Null<Int>=null):Null<Int> {
-      var result = Std.parseInt(str);
+      final result = Std.parseInt(str);
       if (result == null)
          return ifUnparseable;
       return result;
@@ -3539,10 +3539,10 @@ class Strings {
 
       #if php
          return php.Syntax.code("mb_strtolower({0}, {1})", str, "UTF-8");
-      #elseif native_utf8
+      #elseif target.unicode
          return str.toLowerCase();
       #else
-         var sb = new StringBuilder();
+         final sb = new StringBuilder();
          for (i in 0...str.length8())
             sb.addChar(str._charCodeAt8Unsafe(i).toLowerCase());
          return sb.toString();
@@ -3567,7 +3567,7 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      var firstChar = str._charCodeAt8Unsafe(0).toLowerCase();
+      final firstChar = str._charCodeAt8Unsafe(0).toLowerCase();
 
       if (str.length == 1)
          return firstChar;
@@ -3599,7 +3599,7 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      var sb = new StringBuilder();
+      final sb = new StringBuilder();
       if (keepUppercasedWords)
          for (word in _splitAsciiWordsUnsafe(str))
             sb.add(word.toUpperCaseFirstChar());
@@ -3712,7 +3712,7 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      var sb = new StringBuilder();
+      final sb = new StringBuilder();
       if (keepUppercasedWords)
          for (word in _splitAsciiWordsUnsafe(str))
             sb.add(word.toUpperCaseFirstChar());
@@ -3784,7 +3784,7 @@ class Strings {
       #elseif (java || flash || cs || python)
          return str.toUpperCase();
       #else
-         var sb = new StringBuilder();
+         final sb = new StringBuilder();
          for (i in 0...str.length8())
              sb.addChar(str._charCodeAt8Unsafe(i).toUpperCase());
          return sb.toString();
@@ -3810,7 +3810,7 @@ class Strings {
       if (str.isEmpty())
          return str;
 
-      var firstChar = str._charCodeAt8Unsafe(0).toUpperCase();
+      final firstChar = str._charCodeAt8Unsafe(0).toUpperCase();
 
       if (str.length == 1)
          return firstChar;
@@ -3840,7 +3840,7 @@ class Strings {
       if(charsToRemove == null)
          return StringTools.trim(str);
 
-      var removableChars:Array<Char> = switch (charsToRemove.value) {
+      final removableChars:Array<Char> = switch (charsToRemove.value) {
          case a(str): str.toChars();
          case b(chars): chars;
       }
@@ -3873,7 +3873,7 @@ class Strings {
       if (charsToRemove == null)
          return StringTools.rtrim(str);
 
-      var removableChars:Array<Char> = switch (charsToRemove.value) {
+      final removableChars:Array<Char> = switch (charsToRemove.value) {
          case a(str): str.toChars();
          case b(chars): chars;
       }
@@ -3881,7 +3881,7 @@ class Strings {
       if (removableChars.length == 0)
          return str;
 
-      var len = str.length8();
+      final len = str.length8();
       var i = len - 1;
       while(i > -1 && removableChars.indexOf(str.charAt8(i)) > -1)
          i--;
@@ -3915,7 +3915,7 @@ class Strings {
       if (charsToRemove == null)
          return StringTools.ltrim(str);
 
-      var removableChars:Array<Char> = switch (charsToRemove.value) {
+      final removableChars:Array<Char> = switch (charsToRemove.value) {
          case a(str): str.toChars();
          case b(chars): chars;
       }
@@ -3923,10 +3923,11 @@ class Strings {
       if (removableChars.length == 0)
          return str;
 
-      var len = str.length8();
+      final len = str.length8();
       var i = 0;
       while(i < len && removableChars.indexOf(str.charAt8(i)) > -1)
          i++;
+
       if(i > 0)
          return str.substring8(i, len);
       return str;
@@ -3968,7 +3969,7 @@ class Strings {
       if (str == null)
          return null;
 
-      var trimmed = str.trim();
+      final trimmed = str.trim();
 
       if (trimmed.isEmpty())
          return null;
@@ -3988,7 +3989,7 @@ class Strings {
     */
    inline
    public static function trimToEmpty(str:String):String {
-      var trimmed = str.trim();
+      final trimmed = str.trim();
 
       if (trimmed.isEmpty())
          return "";
@@ -4071,7 +4072,7 @@ class Strings {
       if (str.length8() <= maxLineLength || maxLineLength < 1)
          return str;
 
-      var sb = new StringBuilder();
+      final sb = new StringBuilder();
       var wordChars:Array<Char> = [];
       var currLineLength = 0;
       for (ch in str.toChars()) {
@@ -4189,17 +4190,17 @@ abstract StringNotFoundDefault(Int) {
    /**
     * <code>null</code> shall be returned.
     */
-   var NULL = 1;
+   final NULL = 1;
 
    /**
     * An empty string shall be returned.
     */
-   var EMPTY = 2;
+   final EMPTY = 2;
 
    /**
     * The given input string shall be returned.
     */
-   var INPUT = 3;
+   final INPUT = 3;
 }
 
 
@@ -4313,7 +4314,7 @@ class AnsiState {
 
    public function toCSS(renderMethod:AnsiToHtmlRenderMethod):String {
       if (isActive()) {
-         var sb = new StringBuilder();
+         final sb = new StringBuilder();
          if (renderMethod == null) renderMethod = AnsiToHtmlRenderMethod.StyleAttributes;
          switch (renderMethod) {
             case StyleAttributes:
@@ -4358,7 +4359,7 @@ class AnsiState {
     * </code>
     */
    public static function defaultCssClassesCallback(state:AnsiState):String {
-      var classes:Array<String> = [];
+      final classes:Array<String> = [];
       if (state.fgcolor != null) classes.push("ansi_fg_" + state.fgcolor); // e.g. "ansi_fg_red"
       if (state.bgcolor != null) classes.push("ansi_bg_" + state.bgcolor); // e.g. "ansi_bg_red"
       if (state.bold)            classes.push("ansi_bold");

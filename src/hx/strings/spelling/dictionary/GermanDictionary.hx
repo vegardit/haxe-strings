@@ -22,7 +22,7 @@ import hx.strings.internal.Macros;
  */
 class GermanDictionary extends InMemoryDictionary {
 
-   public static var INSTANCE(default, never) = new GermanDictionary();
+   public static final INSTANCE = new GermanDictionary();
 
    public function new() {
       super();

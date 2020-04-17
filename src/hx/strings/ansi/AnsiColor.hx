@@ -10,14 +10,14 @@ package hx.strings.ansi;
  */
 @:enum
 abstract AnsiColor(Int) {
-   var BLACK = 0;
-   var RED = 1;
-   var GREEN = 2;
-   var YELLOW = 3;
-   var BLUE = 4;
-   var MAGENTA = 5;
-   var CYAN = 6;
-   var WHITE = 7;
-   var DEFAULT = 9;
+   final BLACK = 0;
+   final RED = 1;
+   final GREEN = 2;
+   final YELLOW = 3;
+   final BLUE = 4;
+   final MAGENTA = 5;
+   final CYAN = 6;
+   final WHITE = 7;
+   final DEFAULT = 9;
 }
 

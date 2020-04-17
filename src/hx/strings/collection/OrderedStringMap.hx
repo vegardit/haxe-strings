@@ -42,13 +42,14 @@ abstract OrderedStringMap<V>(OrderedStringMapImpl<V>) from OrderedStringMapImpl<
    }
 }
 
+
 @:noDoc @:dox(hide)
 @:noCompletion
 class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
 
    @:allow(hx.strings.collection.ValueIterator)
    var __keys:Array<String>;
-   var __map:StringMap<V>;
+   final __map = new StringMap<V>();
 
 
    public var size(get, never):Int;
@@ -70,7 +71,7 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
    inline
    public function clear():Void {
       __keys = new Array<String>();
-      __map = new StringMap<V>();
+      __map.clear();
    }
 
 
@@ -81,7 +82,7 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
     */
    inline
    public function copy():OrderedStringMapImpl<V> {
-      var clone = new OrderedStringMapImpl<V>();
+      final clone = new OrderedStringMapImpl<V>();
       for (k in this.keys())
          clone.set(k, this.get(k));
       return clone;
@@ -142,7 +143,7 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
     * Sets the value for the given key. Does not change the position of the key in case it existed already.
     */
    public function set(key:String, value:V):Void {
-      var isNew = !__map.exists(key);
+      final isNew = !__map.exists(key);
       __map.set(key, value);
       if (isNew)
          __keys.push(key);
@@ -150,8 +151,8 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
 
 
    public function toString() : String {
-      var sb = new StringBuilder("{");
-      var it = keys();
+      final sb = new StringBuilder("{");
+      final it = keys();
       for(key in it) {
          sb.add(key).add(" => ").add(get(key));
          if(it.hasNext())
@@ -165,7 +166,7 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
 
 private class ValueIterator<V> {
 
-   var map:OrderedStringMap<V>;
+   final map:OrderedStringMap<V>;
    var pos = -1;
 
 

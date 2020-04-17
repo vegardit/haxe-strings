@@ -21,7 +21,7 @@ class Ansi {
    /**
     * ANSI escape sequence header
     */
-   public static inline var ESC = "\x1B[";
+   public static inline final ESC = "\x1B[";
 
 
    /**

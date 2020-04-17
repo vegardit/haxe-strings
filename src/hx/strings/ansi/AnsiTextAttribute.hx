@@ -15,58 +15,58 @@ abstract AnsiTextAttribute(Int) {
    /**
     * All colors/text-attributes off
     */
-   var RESET = 0;
+   final RESET = 0;
 
-   var INTENSITY_BOLD = 1;
-
-   /**
-    * Not widely supported.
-    */
-   var INTENSITY_FAINT = 2;
+   final INTENSITY_BOLD = 1;
 
    /**
     * Not widely supported.
     */
-   var ITALIC = 3;
-
-   var UNDERLINE_SINGLE = 4;
-
-   var BLINK_SLOW = 5;
+   final INTENSITY_FAINT = 2;
 
    /**
     * Not widely supported.
     */
-   var BLINK_FAST = 6;
+   final ITALIC = 3;
 
-   var NEGATIVE = 7;
+   final UNDERLINE_SINGLE = 4;
 
-   /**
-    * Not widely supported.
-    */
-   var HIDDEN = 8;
+   final BLINK_SLOW = 5;
 
    /**
     * Not widely supported.
     */
-   var STRIKETHROUGH = 9;
+   final BLINK_FAST = 6;
+
+   final NEGATIVE = 7;
 
    /**
     * Not widely supported.
     */
-   var UNDERLINE_DOUBLE = 21;
+   final HIDDEN = 8;
 
-   var INTENSITY_OFF = 22;
+   /**
+    * Not widely supported.
+    */
+   final STRIKETHROUGH = 9;
 
-   var ITALIC_OFF = 23;
+   /**
+    * Not widely supported.
+    */
+   final UNDERLINE_DOUBLE = 21;
 
-   var UNDERLINE_OFF = 24;
+   final INTENSITY_OFF = 22;
 
-   var BLINK_OFF = 25;
+   final ITALIC_OFF = 23;
 
-   var NEGATIVE_OFF = 27;
+   final UNDERLINE_OFF = 24;
 
-   var HIDDEN_OFF = 28;
+   final BLINK_OFF = 25;
 
-   var STRIKTHROUGH_OFF = 29;
+   final NEGATIVE_OFF = 27;
+
+   final HIDDEN_OFF = 28;
+
+   final STRIKTHROUGH_OFF = 29;
 }
 

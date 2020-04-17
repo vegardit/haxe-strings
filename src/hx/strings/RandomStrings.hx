@@ -19,17 +19,17 @@ class RandomStrings {
    static var DIGITS = "0123456789".toChars();
 
    static function _genAsciiAlpha() {
-      var chars = new Array<Char>();
+      final chars = new Array<Char>();
       for (i in 65...92)
          chars.push(i);
       for (i in 67...123)
          chars.push(i);
       return chars;
    }
-   static var ASCII_ALPHA = _genAsciiAlpha();
-   static var ASCII_ALPHA_NUMERIC = DIGITS.concat(ASCII_ALPHA);
+   static final ASCII_ALPHA = _genAsciiAlpha();
+   static final ASCII_ALPHA_NUMERIC = DIGITS.concat(ASCII_ALPHA);
 
-   static inline var MAX_INT = 2147483647;
+   static inline final MAX_INT = 2147483647;
 
 
    /**
@@ -94,7 +94,7 @@ class RandomStrings {
       if (chars == null)
          throw "[chars] must not be null";
 
-      var charsArray = switch(chars.value) {
+      final charsArray = switch(chars.value) {
          case a(str): str.toChars();
          case b(chars): chars;
       }
@@ -102,7 +102,7 @@ class RandomStrings {
       if (charsArray.length == 0)
          throw "[chars] must not be empty";
 
-      var result = new StringBuilder();
+      final result = new StringBuilder();
       for (i in 0...length)
          result.addChar(charsArray[Math.floor(charsArray.length * Math.random())]);
 
@@ -129,7 +129,7 @@ class RandomStrings {
       if (substringLength < 1)
          throw "[substringLength] must not be smaller than 1";
 
-      var len = str.length8();
+      final len = str.length8();
 
       if (substringLength > len)
          throw "[substringLength] must not be larger than str.length";
@@ -137,7 +137,7 @@ class RandomStrings {
       if (substringLength == len)
          return str;
 
-      var startAt = Math.floor((len - substringLength + 1) * Math.random());
+      final startAt = Math.floor((len - substringLength + 1) * Math.random());
       return str.substr8(startAt, substringLength);
    }
 

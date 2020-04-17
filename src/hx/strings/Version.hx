@@ -30,38 +30,38 @@ abstract Version(VersionData) from VersionData to VersionData {
     * Version of the SemVer.org specification implemented by this class.
     */
    inline
-   static var SEM_VER_SPEC = "SemVer 2.0.0";
+   static final SEM_VER_SPEC = "SemVer 2.0.0";
 
    inline
-   static var SEP_IDENTIFIER = ".";
+   static final SEP_IDENTIFIER = ".";
 
    inline
-   static var SEP_PRERELEASE = "-";
+   static final SEP_PRERELEASE = "-";
 
    inline
-   static var SEP_METADATA = "+";
+   static final SEP_METADATA = "+";
 
    inline
-   static var PATTERN_NUMBER_NO_LEADING_ZERO:String = "(0|[1-9]\\d*)";
+   static final PATTERN_NUMBER_NO_LEADING_ZERO:String = "(0|[1-9]\\d*)";
 
    inline
-   static var PATTERN_METADATA = '[0-9A-Za-z-]+(\\$SEP_IDENTIFIER[0-9A-Za-z-]+)*';
+   static final PATTERN_METADATA = '[0-9A-Za-z-]+(\\$SEP_IDENTIFIER[0-9A-Za-z-]+)*';
 
    inline
-   static var PATTERN_PRERELEASE = "" +
+   static final PATTERN_PRERELEASE = "" +
       '($PATTERN_NUMBER_NO_LEADING_ZERO|[1-9a-zA-Z-][0-9a-zA-Z-]*)' + // first identifier
       '(\\$SEP_IDENTIFIER($PATTERN_NUMBER_NO_LEADING_ZERO|[1-9a-zA-Z-][0-9a-zA-Z-]*))*'; // remaining identifiers
 
-   static var PATTERN_VERSION(default, never) = "" +
+   static final PATTERN_VERSION = "" +
       '$PATTERN_NUMBER_NO_LEADING_ZERO\\$SEP_IDENTIFIER' + // MAJOR
       '$PATTERN_NUMBER_NO_LEADING_ZERO\\$SEP_IDENTIFIER' + // MINOR
       '$PATTERN_NUMBER_NO_LEADING_ZERO' + // PATCH
       '(?:\\$SEP_PRERELEASE(' + PATTERN_PRERELEASE.replaceAll("(", "(?:") + "))?" +
       '(?:\\$SEP_METADATA('   + PATTERN_METADATA  .replaceAll("(", "(?:") + "))?";
 
-   static var VALIDATOR_METADATA(default, never)   = Pattern.compile("^" + PATTERN_METADATA + "$");
-   static var VALIDATOR_PRERELEASE(default, never) = Pattern.compile("^" + PATTERN_PRERELEASE + "$");
-   static var VALIDATOR_VERSION(default, never)    = Pattern.compile("^" + PATTERN_VERSION + "$");
+   static final VALIDATOR_METADATA   = Pattern.compile("^" + PATTERN_METADATA + "$");
+   static final VALIDATOR_PRERELEASE = Pattern.compile("^" + PATTERN_PRERELEASE + "$");
+   static final VALIDATOR_VERSION    = Pattern.compile("^" + PATTERN_VERSION + "$");
 
 
    /**
@@ -88,17 +88,17 @@ abstract Version(VersionData) from VersionData to VersionData {
       if(str == null)
          return null;
 
-      var m = VALIDATOR_VERSION.matcher(str.trim());
+      final m = VALIDATOR_VERSION.matcher(str.trim());
 
       if(!m.matches())
          throw '[$str] is not a valid $SEM_VER_SPEC version string!';
 
       #if (cs || php)
-         var preRelease    = try { m.matched(4); } catch (e:Dynamic) {  null; };
-         var buildMetadata = try { m.matched(5); } catch (e:Dynamic) {  null; };
+         final preRelease    = try { m.matched(4); } catch (e:Dynamic) {  null; };
+         final buildMetadata = try { m.matched(5); } catch (e:Dynamic) {  null; };
       #else
-         var preRelease    = m.matched(4);
-         var buildMetadata = m.matched(5);
+         final preRelease    = m.matched(4);
+         final buildMetadata = m.matched(5);
       #end
 
       return new Version(
@@ -346,12 +346,12 @@ abstract Version(VersionData) from VersionData to VersionData {
          if (preRelease != other.preRelease) {
 
             // chunk based comparison
-            var left = preRelease.split(SEP_IDENTIFIER);
-            var right = other.preRelease.split(SEP_IDENTIFIER);
-            var count = left.length < right.length ? left.length : right.length;
+            final left = preRelease.split(SEP_IDENTIFIER);
+            final right = other.preRelease.split(SEP_IDENTIFIER);
+            final count = left.length < right.length ? left.length : right.length;
             for (i in 0...count) {
-               var leftId = left[i];
-               var rightId = right[i];
+               final leftId = left[i];
+               final rightId = right[i];
                if (leftId == rightId)
                   continue;
                if (leftId.isDigits() && rightId.isDigits())
@@ -505,13 +505,13 @@ abstract Version(VersionData) from VersionData to VersionData {
     */
    public function nextPreRelease(keepBuildMetadata=false):Version {
       if (!isPreRelease) {
-         var thisAsVersion:Version = this;
+         final thisAsVersion:Version = this;
          throw '[$thisAsVersion] is not a pre-release and therefore cannot be auto-incremented.';
       }
-      var ids = preRelease.split(".");
+      final ids = preRelease.split(".");
       var nextPreRelease = "";
       for (i in -ids.length...0) {
-         var id = ids[-(i+1)];
+         final id = ids[-(i+1)];
          if (id.isDigits()) {
             ids[-(i+1)] = Strings.toString(id.toInt() + 1);
             nextPreRelease = ids.join(".");

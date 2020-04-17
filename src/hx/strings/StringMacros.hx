@@ -30,15 +30,15 @@ class StringMacros {
      */
     macro
     public static function multiline(interpolationPrefix:String = "", trimLeft:Bool = true):ExprOf<String> {
-        var pos = Context.currentPos();
+        final pos = Context.currentPos();
 
-        var posInfo = Context.getPosInfos(pos);
-        var str:String = sys.io.File.getContent(Context.resolvePath(posInfo.file)).substring(posInfo.min, posInfo.max);
+        final posInfo = Context.getPosInfos(pos);
+        final str:String = sys.io.File.getContent(Context.resolvePath(posInfo.file)).substring(posInfo.min, posInfo.max);
 
-        var start = str.indexOf("/*");
+        final start = str.indexOf("/*");
         if(start < 0) Context.error("Cannot find multi-line comment start marker '/*'.", pos);
 
-        var end = str.lastIndexOf("*/");
+        final end = str.lastIndexOf("*/");
         if(end < 0) Context.error("Cannot find multi-line comment end marker '*/'.", pos);
         if(end < start) Context.error("Multi-line comment end marker most be placed after start marker.", pos);
 
@@ -53,7 +53,7 @@ class StringMacros {
             comment = comment.substr(Strings.NEW_LINE_NIX.length);
 
         if(trimLeft) {
-            var lines:Array<String> = comment.split("\n");
+            final lines:Array<String> = comment.split("\n");
             var indent = 9999;
             for (l in lines) {
                 for (i in 0...l.length) {

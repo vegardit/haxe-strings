@@ -30,9 +30,9 @@ class GermanSpellChecker extends AbstractSpellChecker {
     * >>> GermanSpellChecker.INSTANCE.suggestWords("Sistem", 3, 3000) == [ "System", "Sitte", "Sitten" ]
     * </code></pre>
     */
-   public static var INSTANCE(default, never) = new GermanSpellChecker(GermanDictionary.INSTANCE);
+   public static final INSTANCE = new GermanSpellChecker(GermanDictionary.INSTANCE);
 
-   var alphabetUpper:Array<Char>;
+   final alphabetUpper:Array<Char>;
 
 
    public function new(dictionary:Dictionary) {
@@ -44,7 +44,7 @@ class GermanSpellChecker extends AbstractSpellChecker {
 
    function replaceUmlaute(word:String):String {
       // replace oe with ö, ae with ä and ue with ü
-      var word = word.replaceAll("oe", "ö")
+      final word = word.replaceAll("oe", "ö")
          .replaceAll("ae", "ä")
          .replaceAll("ue", "ü")
          .replaceAll("OE", "Ö")
@@ -66,13 +66,13 @@ class GermanSpellChecker extends AbstractSpellChecker {
 
    override
    public function correctText(text:String, timeoutMS:Int = 1000):String {
-      var result = new StringBuilder();
-      var currentWord = new StringBuilder();
+      final result = new StringBuilder();
+      final currentWord = new StringBuilder();
 
-      var chars = text.toChars();
-      var len = chars.length;
+      final chars = text.toChars();
+      final len = chars.length;
       for (i in 0...len) {
-         var ch:Char = chars[i];
+         final ch:Char = chars[i];
          // treat a-z and 0-9 as characters of potential words to capture OCR errors like "me1n" or "M0ntag"
          if (ch.isAsciiAlpha() || ch.isDigit() || ch == "ä" || ch == "ö" || ch == "ü" || ch == "Ä" || ch == "Ö" || ch == "Ü" || ch == "ß") {
             currentWord.addChar(ch);
@@ -85,9 +85,9 @@ class GermanSpellChecker extends AbstractSpellChecker {
          }
       }
 
-      if (currentWord.length > 0) {
+      if (currentWord.length > 0)
          result.add(correctWord(currentWord.toString(), timeoutMS));
-      }
+
       return result.toString();
    }
 
@@ -97,15 +97,15 @@ class GermanSpellChecker extends AbstractSpellChecker {
       if(dict.exists(word))
          return word;
 
-      var wordWithUmlaute = replaceUmlaute(word);
+      final wordWithUmlaute = replaceUmlaute(word);
       if(dict.exists(wordWithUmlaute))
          return wordWithUmlaute;
 
       if (word.isUpperCase()) { // special handling for all uppercase words
          var wordLower = word.toLowerCase8();
-         var wordFirstCharUpper = wordLower.toUpperCaseFirstChar();
-         var pLower = dict.popularity(wordLower);
-         var pCapitalized = dict.popularity(wordFirstCharUpper);
+         final wordFirstCharUpper = wordLower.toUpperCaseFirstChar();
+         final pLower = dict.popularity(wordLower);
+         final pCapitalized = dict.popularity(wordFirstCharUpper);
          if (pLower == 0 && pCapitalized == 0)
             return super.correctWord(wordFirstCharUpper, timeoutMS);
          return pCapitalized > pLower ? wordFirstCharUpper : wordLower;
@@ -118,7 +118,7 @@ class GermanSpellChecker extends AbstractSpellChecker {
    override
    public function suggestWords(word:String, max:Int = 3, timeoutMS:Int = 1000):Array<String> {
       if(!dict.exists(word)) {
-         var wordWithUmlaute = replaceUmlaute(word);
+         final wordWithUmlaute = replaceUmlaute(word);
          if(dict.exists(wordWithUmlaute))
             return super.suggestWords(wordWithUmlaute, max, timeoutMS);
       }
@@ -128,7 +128,7 @@ class GermanSpellChecker extends AbstractSpellChecker {
 
    override
    function generateEdits(word:String, timeoutAt:Float):Array<String> {
-      var edits = super.generateEdits(word, timeoutAt);
+      final edits = super.generateEdits(word, timeoutAt);
 
       // add 1st char upper case variation
       for (upper in alphabetUpper)

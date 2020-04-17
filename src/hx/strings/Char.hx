@@ -27,227 +27,227 @@ using hx.strings.Strings;
  */
 abstract Char(Int) from Int {
 
-   static var CHAR_CASE_MAPPER = new CharCaseMapper();
+   static final CHAR_CASE_MAPPER = new CharCaseMapper();
 
    /**
     * character code for backspace
     */
-   public static inline var BACKSPACE:Char = 8;
+   public static inline final BACKSPACE:Char = 8;
 
    /**
     * character code for tab
     */
-   public static inline var TAB:Char = 9;
+   public static inline final TAB:Char = 9;
 
    /**
     * character code for line feed \n
     */
-   public static inline var LF:Char = 10;
+   public static inline final LF:Char = 10;
 
    /**
     * character code for carriage return \r
     */
-   public static inline var CR:Char = 13;
+   public static inline final CR:Char = 13;
 
    /**
     * character code for escape
     */
-   public static inline var ESC:Char = 27;
+   public static inline final ESC:Char = 27;
 
    /**
     * character code for space
     */
-   public static inline var SPACE:Char = 32;
+   public static inline final SPACE:Char = 32;
 
    /**
     * character code for !
     */
-   public static inline var EXCLAMATION_MARK:Char = 33;
+   public static inline final EXCLAMATION_MARK:Char = 33;
 
    /**
     * character code for "
     */
-   public static inline var DOUBLE_QUOTE:Char = 34;
+   public static inline final DOUBLE_QUOTE:Char = 34;
 
    /**
     * character code for #
     */
-   public static inline var HASH:Char = 35;
+   public static inline final HASH:Char = 35;
 
    /**
     * character code for $
     */
-   public static inline var DOLLAR:Char = 36;
+   public static inline final DOLLAR:Char = 36;
 
    /**
     * character code for &
     */
-   public static inline var AMPERSAND:Char = 38;
+   public static inline final AMPERSAND:Char = 38;
 
    /**
     * character code for '
     */
-   public static inline var SINGLE_QUOTE:Char = 39;
+   public static inline final SINGLE_QUOTE:Char = 39;
 
    /**
     * character code for (
     */
-   public static inline var BRACKET_ROUND_LEFT:Char = 40;
+   public static inline final BRACKET_ROUND_LEFT:Char = 40;
 
    /**
     * character code for )
     */
-   public static inline var BRACKET_ROUND_RIGHT:Char = 41;
+   public static inline final BRACKET_ROUND_RIGHT:Char = 41;
 
    /**
     * character code for *
     */
-   public static inline var ASTERISK:Char = 42;
+   public static inline final ASTERISK:Char = 42;
 
    /**
     * character code for +
     */
-   public static inline var PLUS:Char = 43;
+   public static inline final PLUS:Char = 43;
 
    /**
     * character code for ,
     */
-   public static inline var COMMA:Char = 44;
+   public static inline final COMMA:Char = 44;
 
    /**
     * character code for -
     */
-   public static inline var MINUS:Char = 45;
+   public static inline final MINUS:Char = 45;
 
    /**
     * character code for .
     */
-   public static inline var DOT:Char = 46;
+   public static inline final DOT:Char = 46;
 
    /**
     * character code for /
     */
-   public static inline var SLASH:Char = 47;
+   public static inline final SLASH:Char = 47;
 
    /**
     * character code for 0
     */
-   public static inline var ZERO:Char = 48;
+   public static inline final ZERO:Char = 48;
 
    /**
     * character code for 1
     */
-   public static inline var ONE:Char = 49;
+   public static inline final ONE:Char = 49;
 
    /**
     * character code for 2
     */
-   public static inline var TWO:Char = 50;
+   public static inline final TWO:Char = 50;
 
    /**
     * character code for 3
     */
-   public static inline var TRHEE:Char = 51;
+   public static inline final TRHEE:Char = 51;
 
    /**
     * character code for 4
     */
-   public static inline var FOUR:Char = 52;
+   public static inline final FOUR:Char = 52;
 
    /**
     * character code for 5
     */
-   public static inline var FIVE:Char = 53;
+   public static inline final FIVE:Char = 53;
 
    /**
     * character code for 6
     */
-   public static inline var SIX:Char = 54;
+   public static inline final SIX:Char = 54;
 
    /**
     * character code for 7
     */
-   public static inline var SEVEN:Char = 55;
+   public static inline final SEVEN:Char = 55;
 
    /**
     * character code for 8
     */
-   public static inline var EIGHT:Char = 56;
+   public static inline final EIGHT:Char = 56;
 
    /**
     * character code for 9
     */
-   public static inline var NINE:Char = 57;
+   public static inline final NINE:Char = 57;
 
    /**
     * character code for :
     */
-   public static inline var COLON:Char = 58;
+   public static inline final COLON:Char = 58;
 
    /**
     * character code for ;
     */
-   public static inline var SEMICOLON:Char = 59;
+   public static inline final SEMICOLON:Char = 59;
 
    /**
     * character code for <
     */
-   public static inline var LOWER_THAN:Char = 60;
+   public static inline final LOWER_THAN:Char = 60;
 
    /**
     * character code for =
     */
-   public static inline var EQUALS:Char = 61;
+   public static inline final EQUALS:Char = 61;
 
    /**
     * character code for >
     */
-   public static inline var GREATER_THAN:Char = 62;
+   public static inline final GREATER_THAN:Char = 62;
 
    /**
     * character code for ?
     */
-   public static inline var QUESTION_MARK:Char = 63;
+   public static inline final QUESTION_MARK:Char = 63;
 
    /**
     * character code for [
     */
-   public static inline var BRACKET_SQUARE_LEFT:Char = 91;
+   public static inline final BRACKET_SQUARE_LEFT:Char = 91;
 
    /**
     * character code for \
     */
-   public static inline var BACKSLASH:Char = 92;
+   public static inline final BACKSLASH:Char = 92;
 
    /**
     * character code for ]
     */
-   public static inline var BRACKET_SQUARE_RIGHT:Char = 93;
+   public static inline final BRACKET_SQUARE_RIGHT:Char = 93;
 
    /**
     * character code for ^
     */
-   public static inline var CARET:Char = 94;
+   public static inline final CARET:Char = 94;
 
    /**
     * character code for _
     */
-   public static inline var UNDERSCORE:Char = 95;
+   public static inline final UNDERSCORE:Char = 95;
 
    /**
     * character code for {
     */
-   public static inline var BRACKET_CURLY_LEFT:Char = 123;
+   public static inline final BRACKET_CURLY_LEFT:Char = 123;
 
    /**
     * character code for |
     */
-   public static inline var PIPE:Char = 124;
+   public static inline final PIPE:Char = 124;
 
    /**
     * character code for }
     */
-   public static inline var BRACKET_CURLY_RIGHT:Char = 125;
+   public static inline final BRACKET_CURLY_RIGHT:Char = 125;
 
 
     @:from
@@ -619,7 +619,7 @@ abstract Char(Int) from Int {
     * </code></pre>
     */
    @:to
-   #if native_utf8
+   #if target.unicode
    inline
    public function toString():String
         return String.fromCharCode(this);
@@ -629,7 +629,7 @@ abstract Char(Int) from Int {
          #if php
             return php.Syntax.code("mb_convert_encoding(pack('N', {0}), 'UTF-8', 'UCS-4BE')", this);
          #else
-            var ch8 = new haxe.Utf8();
+            final ch8 = new haxe.Utf8();
             ch8.addChar(this);
             return ch8.toString();
          #end
@@ -641,8 +641,8 @@ abstract Char(Int) from Int {
 
 
 private class CharCaseMapper {
-   var mapU2L = new IntMap<Char>();
-   var mapL2U = new IntMap<Char>();
+   final mapU2L = new IntMap<Char>();
+   final mapL2U = new IntMap<Char>();
 
 
    function _addCaseMapping(lowerChar:Char, upperChar:Char) {
@@ -665,14 +665,14 @@ private class CharCaseMapper {
 
    inline
    public function toLowerCase(ch:Char):Char {
-      var lowerChar = mapU2L.get(ch);
+      final lowerChar = mapU2L.get(ch);
       return lowerChar == null ? ch : lowerChar;
    }
 
 
    inline
    public function toUpperCase(ch:Char):Char {
-      var upperChar = mapL2U.get(ch);
+      final upperChar = mapL2U.get(ch);
       return upperChar == null ? ch : upperChar;
    }
 

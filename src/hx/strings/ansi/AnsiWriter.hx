@@ -11,7 +11,7 @@ import hx.strings.AnyAsString;
  */
 class AnsiWriter<T> {
 
-   var _out:StringBuf_StringBuilder_or_Output<T>;
+   final _out:StringBuf_StringBuilder_or_Output<T>;
    public var out(get, null):T;
    inline function get_out():T return _out.out;
 
@@ -109,23 +109,43 @@ private class AbstractStringWriter<T> {
 
 @:noDoc @:dox(hide)
 private class OutputStringWriter<T:haxe.io.Output> extends AbstractStringWriter<T> {
-   inline public function new(out:T) this.out = out;
-   override public function flush() out.flush();
-   override public function write(str:String) out.writeString(str);
+
+   inline
+   public function new(out:T)
+      this.out = out;
+
+   override
+   public function flush()
+      out.flush();
+
+   override
+   public function write(str:String)
+      out.writeString(str);
 }
 
 
 @:noDoc @:dox(hide)
 private class StringBufStringWriter<T:StringBuf> extends AbstractStringWriter<T> {
-   inline public function new(out:T) this.out = out;
-   override public function write(str:String) out.add(str);
+
+   inline
+   public function new(out:T)
+      this.out = out;
+
+   override
+   public function write(str:String)
+      out.add(str);
 }
 
 
 @:noDoc @:dox(hide)
 private class StringBuilderStringWriter<T:StringBuilder> extends AbstractStringWriter<T> {
-   inline public function new(out:T) this.out = out;
-   override public function write(str:String) {
+
+   inline
+   public function new(out:T)
+      this.out = out;
+
+   override
+   public function write(str:String) {
       #if (cs||java)
          cast(out, StringBuilder).add(str);
       #else

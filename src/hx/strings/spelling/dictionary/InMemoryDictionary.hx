@@ -23,17 +23,17 @@ class InMemoryDictionary implements TrainableDictionary {
    /**
     * key = word, value = popularity score
     */
-   var dict:StringMap<Int>;
-   var dictSize:Int;
+   final dict = new StringMap<Int>();
+   var dictSize = 0;
 
 
    inline
-   public function new()
-      clear();
+   public function new() {
+   }
 
 
    public function clear():Void {
-      dict = new StringMap<Int>();
+      dict.clear();
       dictSize = 0;
    }
 
@@ -44,15 +44,16 @@ class InMemoryDictionary implements TrainableDictionary {
 
 
    public function popularity(word:String):Int {
-      var p = dict.get(word);
+      final p = dict.get(word);
       return p == null ? 0 : p;
    }
 
 
    public function train(word:String):Int {
-      var p = popularity(word) + 1;
+      final p = popularity(word) + 1;
       dict.set(word, p);
-      if (p == 1) dictSize++;
+      if (p == 1)
+         dictSize++;
       return p;
    }
 
@@ -75,9 +76,9 @@ class InMemoryDictionary implements TrainableDictionary {
       if (dictSize <= n)
          return 0;
 
-      var arr = [ for (word in dict.keys()) { word:word, popularity:dict.get(word) } ];
+      final arr = [ for (word in dict.keys()) { word:word, popularity:dict.get(word) } ];
       arr.sort(function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
-      var removables = arr.slice(n);
+      final removables = arr.slice(n);
       for (r in removables)
          remove(r.word);
       return removables.length;
@@ -88,7 +89,7 @@ class InMemoryDictionary implements TrainableDictionary {
     * Exports all words and their popularity to the given output stream
     */
    public function exportWordsToOutput(out:Output, autoClose:Bool=true):Void {
-      var words = [ for (word in dict.keys()) word ];
+      final words = [ for (word in dict.keys()) word ];
       words.sort(Strings.compare);
 
       for (word in words)
@@ -149,8 +150,8 @@ class InMemoryDictionary implements TrainableDictionary {
                trace('[WARN] Skipping line #$lineNo which misses the colon (:) separator');
                continue;
             }
-            var word = line.substringBeforeLast(":");
-            var popularity = line.substringAfterLast(":").toInt(0);
+            final word = line.substringBeforeLast(":");
+            final popularity = line.substringAfterLast(":").toInt(0);
             if (popularity < 1) {
                trace('[WARN] Skipping line #$lineNo with popularity < 1');
                continue;
@@ -170,8 +171,10 @@ class InMemoryDictionary implements TrainableDictionary {
       return count;
    }
 
+
    public function toString()
       return 'InMemoryDictionary[words=$dictSize]';
+
 
 
    inline

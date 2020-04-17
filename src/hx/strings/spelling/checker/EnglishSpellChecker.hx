@@ -28,7 +28,8 @@ class EnglishSpellChecker extends AbstractSpellChecker{
     * >>> EnglishSpellChecker.INSTANCE.suggestWords("absance", 3, 3000) == [ "absence", "advance", "balance" ]
     * </code></pre>
     */
-   public static var INSTANCE(default, never) = new EnglishSpellChecker(EnglishDictionary.INSTANCE);
+   public static final INSTANCE = new EnglishSpellChecker(EnglishDictionary.INSTANCE);
+
 
    inline
    public function new(dictionary:Dictionary)
@@ -37,11 +38,11 @@ class EnglishSpellChecker extends AbstractSpellChecker{
 
    override
    public function correctText(text:String, timeoutMS:Int = 1000):String {
-      var result = new StringBuilder();
-      var currentWord = new StringBuilder();
+      final result = new StringBuilder();
+      final currentWord = new StringBuilder();
 
-      var chars = text.toChars();
-      var len = chars.length;
+      final chars = text.toChars();
+      final len = chars.length;
       for (i in 0...len) {
          var ch:Char = chars[i];
          // treat a-z and 0-9 as characters of potential words to capture OCR errors like "m1nd" or "m0ther" or "1'll"
@@ -49,14 +50,17 @@ class EnglishSpellChecker extends AbstractSpellChecker{
             currentWord.addChar(ch);
          } else if (currentWord.length > 0) {
             if (ch == Char.SINGLE_QUOTE) {
-               var chNext:Char = i < len - 1 ? chars[i + 1] : -1;
-               var chNextNext:Char = i < len - 2 ? chars[i + 2] : -1;
+               final chNext:Char = i < len - 1 ? chars[i + 1] : -1;
+               final chNextNext:Char = i < len - 2 ? chars[i + 2] : -1;
+
                // handle "don't" / "can't"
                if (chNext == 116 /*t*/ && !chNextNext.isAsciiAlpha()) {
                   currentWord.addChar(ch);
+
                // handle "we'll"
                } else if (chNext == 108 /*l*/ && chNextNext == 108 /*l*/) {
                   currentWord.addChar(ch);
+
                } else {
                   result.add(correctWord(currentWord.toString(), timeoutMS));
                   currentWord.clear();
@@ -84,11 +88,11 @@ class EnglishSpellChecker extends AbstractSpellChecker{
       if(dict.exists(word))
          return word;
 
-      var wordLower = word.toLowerCase8();
+      final wordLower = word.toLowerCase8();
       if (dict.exists(wordLower))
          return wordLower;
 
-      var result = super.correctWord(wordLower, timeoutMS);
+      final result = super.correctWord(wordLower, timeoutMS);
       return result == wordLower ? word : result;
    }
 }

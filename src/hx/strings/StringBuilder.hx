@@ -212,16 +212,16 @@ class StringBuilder {
          // insert the item into the pre[] array if required
          var pre_len = 0;
          if (pre != null) {
-            var i = pre.length;
+            final i = pre.length;
             for(i in 0...pre.length) {
-               var next_pre_len = pre_len + pre[i].length8();
+               final next_pre_len = pre_len + pre[i].length8();
                if (next_pre_len == pos) {
                   pre.insert(i + 1, item);
                   len += item.length8();
                   return this;
                }
                if (next_pre_len > pos) {
-                  var preSplitted = pre[i].splitAt(pos - pre_len);
+                  final preSplitted = pre[i].splitAt(pos - pre_len);
                   pre[i] = preSplitted[0];
                   pre.insert(i + 1, item);
                   pre.insert(i + 2, preSplitted[1]);
@@ -237,7 +237,7 @@ class StringBuilder {
              return this;
          }
 
-         var sbSplitted = sb.toString().splitAt(pos - pre_len);
+         final sbSplitted = sb.toString().splitAt(pos - pre_len);
          sb = new StringBuf();
          sb.add(sbSplitted[0]);
          sb.add(item);
@@ -289,16 +289,16 @@ class StringBuilder {
          // insert the char into the pre[] array if required
          var pre_len = 0;
          if (pre != null) {
-            var i = pre.length;
+            final i = pre.length;
             for(i in 0...pre.length) {
-               var next_pre_len = pre_len + pre[i].length8();
+               final next_pre_len = pre_len + pre[i].length8();
                if (next_pre_len == pos) {
                   pre.insert(i + 1, ch);
                   len++;
                   return this;
                }
                if (next_pre_len > pos) {
-                  var preSplitted = pre[i].splitAt(pos - pre_len);
+                  final preSplitted = pre[i].splitAt(pos - pre_len);
                   pre[i] = preSplitted[0];
                   pre.insert(i + 1, ch);
                   pre.insert(i + 2, preSplitted[1]);
@@ -314,7 +314,7 @@ class StringBuilder {
             return this;
          }
 
-         var sbSplitted = sb.toString().splitAt(pos - pre_len);
+         final sbSplitted = sb.toString().splitAt(pos - pre_len);
          sb = new StringBuf();
          sb.add(sbSplitted[0]);
          addChar(ch);
@@ -343,9 +343,9 @@ class StringBuilder {
       }
 
       #if (java_src || cs)
-         var i = items.length;
+         final i = items.length;
          while (i-- > 0) {
-            var item = items[i];
+            final item = items[i];
             #if java_src
                untyped __java__("this.sb.b.insert(pos, item)");
             #else
@@ -357,7 +357,7 @@ class StringBuilder {
             if (pre == null) pre = [];
             var i = items.length;
             while (i-- > 0) {
-               var item = items[i];
+               final item = items[i];
                pre.unshift(item);
                len += item.length8();
             }
@@ -367,25 +367,25 @@ class StringBuilder {
          // insert the items into the pre[] array if required
          var pre_len = 0;
          if (pre != null) {
-            var i = pre.length;
+            final i = pre.length;
             for(i in 0...pre.length) {
-               var next_pre_len = pre_len + pre[i].length8();
+               final next_pre_len = pre_len + pre[i].length8();
                if (next_pre_len == pos) {
                   var j = items.length;
                   while (j-- > 0) {
-                     var item = items[j];
+                     final item = items[j];
                      pre.insert(i + 1, item);
                      len += item.length8();
                   }
                   return this;
                }
                if (next_pre_len > pos) {
-                  var preSplitted = pre[i].splitAt(pos - pre_len);
+                  final preSplitted = pre[i].splitAt(pos - pre_len);
                   pre[i] = preSplitted[0];
                   pre.insert(i + 1, preSplitted[1]);
                   var j = items.length;
                   while (j-- > 0) {
-                     var item = items[j];
+                     final item = items[j];
                      pre.insert(i + 1, item);
                      len += item.length8();
                   }
@@ -401,7 +401,7 @@ class StringBuilder {
             return this;
          }
 
-         var sbSplitted = sb.toString().splitAt(pos - pre_len);
+         final sbSplitted = sb.toString().splitAt(pos - pre_len);
          sb = new StringBuf();
          sb.add(sbSplitted[0]);
          for (item in items) {
@@ -416,7 +416,7 @@ class StringBuilder {
 
    /**
     * <pre><code>
-    * >>> ({var sb=new StringBuilder("1"); var out=sb.asOutput(); out.writeByte(Char.TWO); out.writeString("3"); sb; }).toString() == "123"
+    * >>> ({var sb=new StringBuilder("1"); final out=sb.asOutput(); out.writeByte(Char.TWO); out.writeString("3"); sb; }).toString() == "123"
     * </code></pre>
     *
     * @return a haxe.ui.Output wrapper object around this instance
@@ -442,7 +442,7 @@ class StringBuilder {
       #else
          if (pre == null)
             return sb.toString();
-         var str = pre.join("") + sb.toString();
+         final str = pre.join("") + sb.toString();
          clear();
          add(str);
          return str;
@@ -453,7 +453,7 @@ class StringBuilder {
 
 private class OutputWrapper extends Output {
 
-   private var sb:StringBuilder;
+   private final sb:StringBuilder;
    private var bo:BytesOutput;
 
    inline

@@ -28,18 +28,7 @@ class Macros {
 
    macro
    public static function addDefines() {
-      var def = Context.getDefines();
-
-      if (def.exists("cs") ||
-         def.exists("flash") ||
-         def.exists("hl") ||
-         def.exists("java") ||
-         def.exists("js") ||
-         def.exists("python")
-      ) {
-         trace("[INFO] Setting compiler define 'native_utf8'.");
-         Compiler.define("native_utf8");
-      }
+      final def = Context.getDefines();
 
       if (def.exists("java") && !def.exists("jvm")) {
          trace("[INFO] Setting compiler define 'java_src'.");
@@ -64,7 +53,7 @@ class Macros {
 
       if (!sys.FileSystem.exists(filePath)) {
          for (cp in Context.getClassPath()) {
-            var path = cp + filePath;
+            final path = cp + filePath;
             if (sys.FileSystem.exists(path)) {
                filePath = path;
                break;
@@ -125,7 +114,7 @@ class Macros {
                   ComplexTypeTools.toString(targetVarComplexType);
             }
 
-            var idxGenerics = targetTypeName.indexOf("<", 1);
+            final idxGenerics = targetTypeName.indexOf("<", 1);
             if(idxGenerics > -1)  targetTypeName = targetTypeName.substring(0, idxGenerics);
 
             var targetTypeExpr = MacroStringTools.toFieldExpr(targetTypeName.split("."));
@@ -161,10 +150,10 @@ class Macros {
     */
    macro
    public static function unpack(e:Expr) {
-      var assignments = new Array<Expr>();
+      final assignments = new Array<Expr>();
       switch(e.expr) {
          case EBinop(OpAssign, varsExpr, valuesExpr):
-            var varNames = new Array<String>();
+            final varNames = new Array<String>();
             switch varsExpr {
                case macro $a{varDecls}:
                   for (varDecl in varDecls) {
@@ -183,7 +172,7 @@ class Macros {
             switch (valuesExpr.expr) {
                case ECall(_):
                   assignments.push(macro @:mergeBlock {
-                     var __unpack_return_values = $valuesExpr;
+                     final __unpack_return_values = $valuesExpr;
                   });
                   for (varName in varNames) {
                      idx++;
@@ -194,9 +183,9 @@ class Macros {
 
                case EArrayDecl(values):
                   for (varName in varNames) {
-                     var value = values[++idx];
+                     final value = values[++idx];
                      assignments.push(macro @:mergeBlock {
-                        var $varName=${value};
+                        final $varName=${value};
                      });
                   };
 
@@ -204,7 +193,7 @@ class Macros {
                   for (varName in varNames) {
                      idx++;
                      assignments.push(macro @:mergeBlock {
-                        var $varName = $i{refName}[$v{idx}];
+                        final $varName = $i{refName}[$v{idx}];
                      });
                   };
 

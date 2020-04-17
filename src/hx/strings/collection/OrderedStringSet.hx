@@ -27,6 +27,6 @@ class OrderedStringSet<V> extends StringSet {
 
    inline
    override
-   public function clear():Void
+   public function _initMap():Void
       map = new OrderedStringMap<Bool>();
 }

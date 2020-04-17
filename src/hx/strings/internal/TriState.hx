@@ -11,7 +11,7 @@ package hx.strings.internal;
  */
 @:enum
 abstract TriState(Null<Bool>) from Null<Bool> to Null<Bool> {
-   var TRUE = true;
-   var FALSE = false;
-   var UNKNOWN = null;
+   final TRUE = true;
+   final FALSE = false;
+   final UNKNOWN = null;
 }

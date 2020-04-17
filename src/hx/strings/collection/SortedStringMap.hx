@@ -53,7 +53,7 @@ abstract SortedStringMap<V>(SortedStringMapImpl<V>) from SortedStringMapImpl<V> 
 @:noCompletion
 class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Constraints.IMap<String,V> {
 
-   var cmp:String -> String -> Int;
+   final cmp:String -> String -> Int;
 
 
    /**
@@ -69,7 +69,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
    inline
    function get_size():Int {
       var count = 0;
-      var it = this.keys();
+      final it = this.keys();
       while (it.hasNext()) {
          it.next();
          count++;
@@ -104,7 +104,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
     */
    override
    public function copy():SortedStringMapImpl<V> {
-      var clone = new SortedStringMapImpl<V>();
+      final clone = new SortedStringMapImpl<V>();
       for (k in this.keys())
          clone.set(k, this.get(k));
       return clone;
@@ -147,7 +147,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
     */
    inline
    public function setAll(source:StringMap<V>, replace:Bool = true):Int {
-      var m:StringMap<V> = this;
+      final m:StringMap<V> = this;
       return m.setAll(source, replace);
    }
 }

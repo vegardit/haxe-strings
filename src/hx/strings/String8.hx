@@ -45,10 +45,10 @@ class String8Generator {
 
    macro
    public static function generateMethods():Array<Field> {
-      var contextFields = Context.getBuildFields();
-      var contextPos = Context.currentPos();
+      final contextFields = Context.getBuildFields();
+      final contextPos = Context.currentPos();
 
-      var delegateClass:ClassType = switch(Context.getType("hx.strings.Strings")) {
+      final delegateClass:ClassType = switch(Context.getType("hx.strings.Strings")) {
          case TInst(t, _): t.get();
          default: Context.fatalError("hx.strings.Strings isn't a class.", contextPos);
       }
@@ -79,14 +79,14 @@ class String8Generator {
                /*
                 * generate method args declaration of delegating method
                 */
-               var delegateTFunc:TFunc = delegateField.expr() == null ? null : switch(delegateField.expr().expr) {
+               final delegateTFunc:TFunc = delegateField.expr() == null ? null : switch(delegateField.expr().expr) {
                   case TFunction(func): func;
                   default: Context.fatalError("Should never be reached.", contextPos);
                };
-               var generatedArgs = new Array<FunctionArg>();
-               var delegateArgs = ["this"];
+               final generatedArgs = new Array<FunctionArg>();
+               final delegateArgs = ["this"];
                for (i in 1...args.length) {
-                  var defaultValue = delegateTFunc == null ? null :
+                  final defaultValue = delegateTFunc == null ? null :
                      // delegateTFunc.args[i].value in Haxe 4 Preview 5 is TypedExpr
                      delegateTFunc.args[i].value == null ? null :
                      switch(delegateTFunc.args[i].value.expr) {
@@ -115,7 +115,7 @@ class String8Generator {
                            }
                         default: null;
                      };
-                  var arg = args[i];
+                  final arg = args[i];
                   generatedArgs.push({
                      name: arg.name,
                      opt: arg.opt,
@@ -128,7 +128,7 @@ class String8Generator {
                /*
                 * generate generic type declaration of delegating method
                 */
-               var generatedGenericParams = new Array<TypeParamDecl>();
+               final generatedGenericParams = new Array<TypeParamDecl>();
                for (param in delegateField.params) {
                   generatedGenericParams.push({name: param.name});
                }
@@ -136,7 +136,7 @@ class String8Generator {
                /*
                 * generate full declaration of delegating method
                 */
-               var delegateName = delegateField.name;
+               final delegateName = delegateField.name;
                contextFields.push({
                   name: delegateName.endsWith("8") ? delegateName.substringBeforeLast("8") : delegateName,
                   doc: delegateField.doc,

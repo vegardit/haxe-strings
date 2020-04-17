@@ -17,11 +17,14 @@ package hx.strings;
 @:noDoc @:dox(hide)
 @:noCompletion
 abstract AnyAsString(String) from String to String {
-   @:from
-   inline
-   static function fromBool(value:Bool):AnyAsString return value ? "true" : "false";
 
    @:from
    inline
-   static function fromAny(value:Dynamic):AnyAsString return Std.string(value);
+   static function fromBool(value:Bool):AnyAsString
+      return value ? "true" : "false";
+
+   @:from
+   inline
+   static function fromAny(value:Dynamic):AnyAsString
+      return Std.string(value);
 }

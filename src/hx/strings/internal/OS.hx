@@ -14,16 +14,16 @@ package hx.strings.internal;
 class OS {
 
    #if js
-   static var isNodeJS = untyped __js__("(typeof process !== 'undefined') && (typeof process.release !== 'undefined') && (process.release.name === 'node')");
+   static final isNodeJS = untyped __js__("(typeof process !== 'undefined') && (typeof process.release !== 'undefined') && (process.release.name === 'node')");
    #end
 
    public static var isWindows(default, never):Bool = {
       #if flash
-      var os = flash.system.Capabilities.os;
+      final os = flash.system.Capabilities.os;
       #elseif js
-      var os = isNodeJS ? untyped __js__("process.platform") : js.Browser.navigator.platform;
+      final os = isNodeJS ? untyped __js__("process.platform") : js.Browser.navigator.platform;
       #else
-      var os = Sys.systemName();
+      final os = Sys.systemName();
       #end
       ~/win/i.match(os);
    }

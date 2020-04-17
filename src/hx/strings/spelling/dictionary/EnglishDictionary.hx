@@ -17,7 +17,7 @@ import hx.strings.internal.Macros;
  */
 class EnglishDictionary extends InMemoryDictionary {
 
-   public static var INSTANCE(default, never) = new EnglishDictionary();
+   public static final INSTANCE = new EnglishDictionary();
 
 
    public function new() {

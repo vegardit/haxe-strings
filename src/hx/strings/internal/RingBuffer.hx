@@ -34,9 +34,9 @@ private class RingBufferImpl<V> {
 
    #if flash
    // using Array instead of Vector as workaround for https://github.com/HaxeFoundation/haxe/issues/6529
-   var buffer:Array<V>;
+   final buffer:Array<V>;
    #else
-   var buffer:haxe.ds.Vector<V>;
+   final buffer:haxe.ds.Vector<V>;
    #end
    var bufferStartIdx = 0;
    var bufferEndIdx = -1;
@@ -44,7 +44,7 @@ private class RingBufferImpl<V> {
 
 
    public var length(default, null):Int = 0;
-   public var size(default, null):Int;
+   public final size:Int;
 
 
    public function new(size:Int) {
@@ -91,7 +91,7 @@ private class RingBufferImpl<V> {
 
 
    public function toArray():Array<V> {
-      var arr = new Array<V>();
+      final arr = new Array<V>();
       for (i in this)
          arr.push(i);
       return arr;
@@ -103,7 +103,7 @@ private class RingBufferImpl<V> {
 @:noCompletion
 private class RingBufferIterator<V> {
 
-   var buff:RingBufferImpl<V>;
+   final buff:RingBufferImpl<V>;
    var idx = -1;
 
 

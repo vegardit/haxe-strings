@@ -19,8 +19,8 @@ using hx.strings.Strings;
 @:abstract
 class AbstractSpellChecker implements SpellChecker {
 
-   var alphabet:Array<Char>;
-   var dict:Dictionary;
+   final alphabet:Array<Char>;
+   final dict:Dictionary;
 
 
    /**
@@ -39,7 +39,7 @@ class AbstractSpellChecker implements SpellChecker {
 
 
    public function correctWord(word:String, timeoutMS:Int = 500):String {
-      var timeoutAt = haxe.Timer.stamp() + (timeoutMS / 1000);
+      final timeoutAt = haxe.Timer.stamp() + (timeoutMS / 1000);
 
       if(dict.exists(word))
          return word;
@@ -82,8 +82,8 @@ class AbstractSpellChecker implements SpellChecker {
     * @return the a list of word variations that are 1 character edit away from the given input string
     */
    function generateEdits(word:String, timeoutAt:Float):Array<String> {
-      var edits = new Array<String>();
-      var wordLen = word.length8();
+      final edits = new Array<String>();
+      final wordLen = word.length8();
       for (i in 0...wordLen) {
          // generate a word variation by leaving out 1 of the word's characters
          edits.push(word.substring8(0, i) + word.substring8(i + 1));
@@ -106,31 +106,31 @@ class AbstractSpellChecker implements SpellChecker {
 
 
    public function suggestWords(word:String, max:Int = 3, timeoutMS:Int = 1000):Array<String> {
-      var timeoutAt = haxe.Timer.stamp() + (timeoutMS / 1000);
+      final timeoutAt = haxe.Timer.stamp() + (timeoutMS / 1000);
       var candidates = new Array<{word:String, popularity:Int}>();
 
-      var edits = generateEdits(word, timeoutAt);
+      final edits = generateEdits(word, timeoutAt);
       for (edit in edits) {
-         var editPopularity = dict.popularity(edit);
+         final editPopularity = dict.popularity(edit);
          if (editPopularity > 0)
             candidates.push({word:edit,popularity:editPopularity});
       }
 
       candidates.sort(function(a, b) return a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
-      var result = Arrays.unique([for (candidate in candidates) candidate.word]);
+      final result = Arrays.unique([for (candidate in candidates) candidate.word]);
 
       if (result.length < max) {
          candidates = new Array<{word:String, popularity:Int}>();
 
          // check for words that are 2 edits away from the given input word
-         var edit2s = new StringSet();
+         final edit2s = new StringSet();
          for (edit in edits) {
             for (edit2 in generateEdits(edit, timeoutAt)) {
                // short cut
                if (result.indexOf(edit2) > -1 || edit2s.contains(edit2))
                   continue;
                edit2s.add(edit2);
-               var edit2Popularity = dict.popularity(edit2);
+               final edit2Popularity = dict.popularity(edit2);
                if (edit2Popularity > 0)
                   candidates.push({word:edit2,popularity:edit2Popularity});
             }

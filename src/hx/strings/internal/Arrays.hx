@@ -34,7 +34,7 @@ class Arrays {
     * </code></pre>
     */
    public static function unique<T>(items:Array<T>):Array<T> {
-      var filtered = new Array<T>();
+      final filtered = new Array<T>();
 
       for (i in items)
          if (filtered.indexOf(i) == -1) filtered.push(i);

@@ -21,9 +21,9 @@ using hx.strings.Strings;
 @threadSafe
 class Pattern {
 
-   public var pattern(default, null):String;
-   public var options(default, null):String;
-   var ereg:EReg;
+   public final pattern:String;
+   public final options:String;
+   final ereg:EReg;
 
 
    /**
@@ -235,30 +235,30 @@ abstract MatchingOption(String) {
    /**
     * case insensitive matching
     */
-   var IGNORE_CASE = "i";
+   final IGNORE_CASE = "i";
 
    /**
     * multiline matching, in the sense of that <code>^</code> and <code>$</code> represent the beginning and end of a line
     */
-   var MULTILINE = "m";
+   final MULTILINE = "m";
 
    #if !(cs || (js && !nodejs))
    /**
     * the dot <code>.</code> will also match new lines
     */
-   var DOTALL = "s";
+   final DOTALL = "s";
    #end
 
    /**
     * All map, split and replace operations are performed on all matches within the given string
     */
-   var MATCH_ALL = "g";
+   final MATCH_ALL = "g";
 }
 
 
 private class MatcherImpl implements Matcher {
+   final ereg:EReg;
    var isMatch:Null<Bool>;
-   var ereg:EReg;
    var str:String;
 
 
@@ -300,7 +300,7 @@ private class MatcherImpl implements Matcher {
       if(isMatch == null) matches();
       if(!isMatch) throw "No string matched";
 
-      var result = ereg.matched(n);
+      final result = ereg.matched(n);
 
       #if (cs || php) // workaround for targets with non-compliant implementation
          if(result == null) throw 'Group $n not found.';
@@ -345,26 +345,26 @@ private class MatcherImpl implements Matcher {
       // partially copy internal state (if possible) to reuse the inner pre-compiled pattern instance
       // and avoid expensive reparsing of the pattern string
       #if (neko || lua || cpp)
-         var clone = Type.createEmptyInstance(EReg);
+         final clone = Type.createEmptyInstance(EReg);
          Reflect.setField(clone, "r", Reflect.field(from, "r"));
          Reflect.setField(clone, "global", Reflect.field(from, "global"));
       #elseif java
-         var clone = Type.createEmptyInstance(EReg);
+         final clone = Type.createEmptyInstance(EReg);
          Reflect.setField(clone, "pattern", pattern);
          Reflect.setField(clone, "matcher", Reflect.field(from, "matcher"));
          Reflect.setField(clone, "isGlobal", Reflect.field(from, "isGlobal"));
       #elseif cs
-         var clone = Type.createEmptyInstance(EReg);
+         final clone = Type.createEmptyInstance(EReg);
          Reflect.setField(clone, "regex", Reflect.field(from, "regex"));
          Reflect.setField(clone, "isGlobal", Reflect.field(from, "isGlobal"));
       #elseif php
-         var clone = Type.createEmptyInstance(EReg);
+         final clone = Type.createEmptyInstance(EReg);
          Reflect.setField(clone, "pattern", pattern);
          Reflect.setField(clone, "options", Reflect.field(from, "options"));
          Reflect.setField(clone, "global", Reflect.field(from, "global"));
          Reflect.setField(clone, "re", Reflect.field(from, "re"));
       #elseif python
-         var clone = Type.createEmptyInstance(EReg);
+         final clone = Type.createEmptyInstance(EReg);
          Reflect.setField(clone, "pattern", Reflect.field(from, "pattern"));
          Reflect.setField(clone, "global", Reflect.field(from, "global"));
       #else
@@ -372,7 +372,7 @@ private class MatcherImpl implements Matcher {
          // - untested targets
          // - targets where the compiled pattern and matcher not separated internally (js, flash)
          // - targets where cloning results in runtime errors (hl)
-         var clone = new EReg(pattern, options);
+         final clone = new EReg(pattern, options);
       #end
       return clone;
    }

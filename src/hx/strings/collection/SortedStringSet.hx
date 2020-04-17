@@ -16,7 +16,7 @@ package hx.strings.collection;
  */
 class SortedStringSet extends StringSet {
 
-   var cmp:String -> String -> Int;
+   final cmp:String -> String -> Int;
 
 
    public function new(?initialItems:Array<String>, ?comparator:String -> String -> Int) {
@@ -27,6 +27,6 @@ class SortedStringSet extends StringSet {
 
    inline
    override
-   public function clear():Void
+   function _initMap():Void
       map = new SortedStringMap<Bool>(cmp);
 }

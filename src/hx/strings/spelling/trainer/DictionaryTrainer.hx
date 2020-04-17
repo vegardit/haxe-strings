@@ -21,7 +21,7 @@ interface DictionaryTrainer {
      *
      * @return count of words found in the file
      */
-    public function trainWithFile(dictionary:TrainableDictionary, filePath:String, ignoreUnknownWords:Bool = false):Int;
+    function trainWithFile(dictionary:TrainableDictionary, filePath:String, ignoreUnknownWords:Bool = false):Int;
     #end
 
     /**
@@ -31,7 +31,7 @@ interface DictionaryTrainer {
      *
      * @return count of words found in the resource
      */
-    public function trainWithInput(dictionary:TrainableDictionary, input:haxe.io.Input, ignoreUnknownWords:Bool = false, autoClose:Bool = true):Int;
+    function trainWithInput(dictionary:TrainableDictionary, input:haxe.io.Input, ignoreUnknownWords:Bool = false, autoClose:Bool = true):Int;
 
     /**
      * Populates the <b>dictionary</b> with words found in the given UTF-8 encoded Haxe resource.
@@ -40,7 +40,7 @@ interface DictionaryTrainer {
      *
      * @return count of words found in the resource
      */
-    public function trainWithResource(dictionary:TrainableDictionary, resourceName:String, ignoreUnknownWords:Bool = false):Int;
+    function trainWithResource(dictionary:TrainableDictionary, resourceName:String, ignoreUnknownWords:Bool = false):Int;
 
     /**
      * Populates the <b>dictionary</b> with words found in the given UTF-8 encoded content
@@ -49,5 +49,5 @@ interface DictionaryTrainer {
      *
      * @return count of words found in the string
      */
-    public function trainWithString(dictionary:TrainableDictionary, content:String, ignoreUnknownWords:Bool = false):Int;
+    function trainWithString(dictionary:TrainableDictionary, content:String, ignoreUnknownWords:Bool = false):Int;
 }
