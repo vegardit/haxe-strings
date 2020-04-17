@@ -10,6 +10,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ### Fixed
 - [PR#5](https://github.com/vegardit/haxe-strings/pull/5) `Ansi.cursor(RestorePos)` performs saves position instead of restoring it
 
+### Removed
+- deprecated hx.strings.Paths module (use `hx.files.Path` of the `haxe-files` haxelib instead)
+
 
 ## [5.2.4] - 2019-12-10
 
