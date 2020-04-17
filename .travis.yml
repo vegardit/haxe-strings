@@ -50,6 +50,14 @@ install:
   - haxelib dev haxe-strings .
   - haxelib install haxe-doctest
   - haxelib install travix
+  # install node 12 LTS as workaround for https://github.com/back2dos/travix/issues/120
+  - |- 
+    if [ "$HAXE_TARGET" == "js" ] && [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash && \
+      source $HOME/.nvm/nvm.sh && \
+      nvm install --lts && \
+      nvm use --lts
+    fi
 
 script:
   - haxelib run travix $HAXE_TARGET
