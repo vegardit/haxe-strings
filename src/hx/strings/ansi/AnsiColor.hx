@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributors.
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.ansi;
@@ -10,14 +10,14 @@ package hx.strings.ansi;
  */
 @:enum
 abstract AnsiColor(Int) {
-    var BLACK = 0;
-    var RED = 1;
-    var GREEN = 2;
-    var YELLOW = 3;
-    var BLUE = 4;
-    var MAGENTA = 5;
-    var CYAN = 6;
-    var WHITE = 7;
-    var DEFAULT = 9;
+   var BLACK = 0;
+   var RED = 1;
+   var GREEN = 2;
+   var YELLOW = 3;
+   var BLUE = 4;
+   var MAGENTA = 5;
+   var CYAN = 6;
+   var WHITE = 7;
+   var DEFAULT = 9;
 }
 

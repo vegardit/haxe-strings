@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributors.
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.spelling.dictionary;
@@ -11,23 +11,23 @@ package hx.strings.spelling.dictionary;
  */
 interface Dictionary {
 
-    /**
-     * @return true if the given word exists
-     */
-    public function exists(word:String):Bool;
+   /**
+    * @return true if the given word exists
+    */
+   function exists(word:String):Bool;
 
-    /**
-     * @return the popularity score of the given word or 0 if the word does not exist in the dictionary
-     */
-    public function popularity(word:String):Int;
+   /**
+    * @return the popularity score of the given word or 0 if the word does not exist in the dictionary
+    */
+   function popularity(word:String):Int;
 
-    /**
-     * @return number of words know to this dictionary
-     */
-    public function size():Int;
+   /**
+    * @return number of words know to this dictionary
+    */
+   function size():Int;
 
-    /**
-     * @return an iterator over all words known by the dictionary, no particular order is guranteed
-     */
-    public function words():Iterator<String>;
+   /**
+    * @return an iterator over all words known by the dictionary, no particular order is guranteed
+    */
+   function words():Iterator<String>;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributors.
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.spelling.checker;
@@ -12,25 +12,25 @@ package hx.strings.spelling.checker;
  */
 interface SpellChecker {
 
-    /**
-     * @param timeoutMS approximate maximum time in milliseconds per word the spell checker can try to find the best correction
-     *
-     * @return the text with each word replaced by it's best known correction
-     */
-    public function correctText(text:String, timeoutMS:Int = 1000):String;
+   /**
+    * @param timeoutMS approximate maximum time in milliseconds per word the spell checker can try to find the best correction
+    *
+    * @return the text with each word replaced by it's best known correction
+    */
+   function correctText(text:String, timeoutMS:Int = 1000):String;
 
-    /**
-     * @param timeoutMS approximate maximum time in milliseconds the spell checker can try to find the best correction
-     *
-     * @return the best known correction for the given word or the word itself if no correction is available
-     */
-    public function correctWord(word:String, timeoutMS:Int = 1000):String;
+   /**
+    * @param timeoutMS approximate maximum time in milliseconds the spell checker can try to find the best correction
+    *
+    * @return the best known correction for the given word or the word itself if no correction is available
+    */
+   function correctWord(word:String, timeoutMS:Int = 1000):String;
 
-    /**
-     * @param max maximum number of suggestions to return, may be less
-     * @param timeoutMS approximate maximum time in milliseconds the spell checker can try to find the best corrections
-     *
-     * @return an array of the best known corrections for the given word ordered by popularity. the array may be empty in case no corrections are available
-     */
-    public function suggestWords(word:String, max:Int = 3, timeoutMS:Int = 1000):Array<String>;
+   /**
+    * @param max maximum number of suggestions to return, may be less
+    * @param timeoutMS approximate maximum time in milliseconds the spell checker can try to find the best corrections
+    *
+    * @return an array of the best known corrections for the given word ordered by popularity. the array may be empty in case no corrections are available
+    */
+   function suggestWords(word:String, max:Int = 3, timeoutMS:Int = 1000):Array<String>;
 }

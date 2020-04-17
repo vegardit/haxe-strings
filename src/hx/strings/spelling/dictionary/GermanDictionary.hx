@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributors.
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.spelling.dictionary;
@@ -22,19 +22,18 @@ import hx.strings.internal.Macros;
  */
 class GermanDictionary extends InMemoryDictionary {
 
-    public static var INSTANCE(default, never) = new GermanDictionary();
+   public static var INSTANCE(default, never) = new GermanDictionary();
 
-    public function new() {
-        super();
+   public function new() {
+      super();
 
-        Macros.addResource("hx/strings/spelling/dictionary/GermanDictionary.txt", "GermanDictionary");
+      Macros.addResource("hx/strings/spelling/dictionary/GermanDictionary.txt", "GermanDictionary");
 
-        // not using loadWordsFromResource for full DCE support
-        loadWordsFromInput(new BytesInput(Resource.getBytes("GermanDictionary")));
-    }
+      // not using loadWordsFromResource for full DCE support
+      loadWordsFromInput(new BytesInput(Resource.getBytes("GermanDictionary")));
+   }
 
-    override
-    public function toString() {
-        return 'GermanDictionary[words=$dictSize]';
-    }
+   override
+   public function toString()
+      return 'GermanDictionary[words=$dictSize]';
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributors.
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.ansi;
@@ -12,61 +12,61 @@ package hx.strings.ansi;
 @:enum
 abstract AnsiTextAttribute(Int) {
 
-    /**
-     * All colors/text-attributes off
-     */
-    var RESET = 0;
+   /**
+    * All colors/text-attributes off
+    */
+   var RESET = 0;
 
-    var INTENSITY_BOLD = 1;
+   var INTENSITY_BOLD = 1;
 
-    /**
-     * Not widely supported.
-     */
-    var INTENSITY_FAINT = 2;
+   /**
+    * Not widely supported.
+    */
+   var INTENSITY_FAINT = 2;
 
-    /**
-     * Not widely supported.
-     */
-    var ITALIC = 3;
+   /**
+    * Not widely supported.
+    */
+   var ITALIC = 3;
 
-    var UNDERLINE_SINGLE = 4;
+   var UNDERLINE_SINGLE = 4;
 
-    var BLINK_SLOW = 5;
+   var BLINK_SLOW = 5;
 
-    /**
-     * Not widely supported.
-     */
-    var BLINK_FAST = 6;
+   /**
+    * Not widely supported.
+    */
+   var BLINK_FAST = 6;
 
-    var NEGATIVE = 7;
+   var NEGATIVE = 7;
 
-    /**
-     * Not widely supported.
-     */
-    var HIDDEN = 8;
+   /**
+    * Not widely supported.
+    */
+   var HIDDEN = 8;
 
-    /**
-     * Not widely supported.
-     */
-    var STRIKETHROUGH = 9;
+   /**
+    * Not widely supported.
+    */
+   var STRIKETHROUGH = 9;
 
-    /**
-     * Not widely supported.
-     */
-    var UNDERLINE_DOUBLE = 21;
+   /**
+    * Not widely supported.
+    */
+   var UNDERLINE_DOUBLE = 21;
 
-    var INTENSITY_OFF = 22;
+   var INTENSITY_OFF = 22;
 
-    var ITALIC_OFF = 23;
+   var ITALIC_OFF = 23;
 
-    var UNDERLINE_OFF = 24;
+   var UNDERLINE_OFF = 24;
 
-    var BLINK_OFF = 25;
+   var BLINK_OFF = 25;
 
-    var NEGATIVE_OFF = 27;
+   var NEGATIVE_OFF = 27;
 
-    var HIDDEN_OFF = 28;
+   var HIDDEN_OFF = 28;
 
-    var STRIKTHROUGH_OFF = 29;
+   var STRIKTHROUGH_OFF = 29;
 }
 

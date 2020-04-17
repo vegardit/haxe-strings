@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributors.
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.collection;
@@ -20,14 +20,13 @@ import hx.strings.internal.Either2;
  */
 class OrderedStringSet<V> extends StringSet {
 
-    inline
-    public function new(?initialItems:Either2<StringSet,Array<String>>) {
-        super(initialItems);
-    }
+   inline
+   public function new(?initialItems:Either2<StringSet,Array<String>>)
+      super(initialItems);
 
-    inline
-    override
-    public function clear():Void {
-        map = new OrderedStringMap<Bool>();
-    }
+
+   inline
+   override
+   public function clear():Void
+      map = new OrderedStringMap<Bool>();
 }

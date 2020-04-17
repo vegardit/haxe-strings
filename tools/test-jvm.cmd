@@ -3,13 +3,13 @@ REM Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributo
 REM SPDX-License-Identifier: Apache-2.0
 REM Author: Sebastian Thomschke, Vegard IT GmbH
 
-call %~dp0_test-prepare.cmd cs hxcs
+call %~dp0_test-prepare.cmd java hxjava
 
 echo Compiling...
-haxe %~dp0..\tests.hxml -cs target\cs
+haxe %~dp0..\tests.hxml -D jvm -java target\java
 set rc=%errorlevel%
 popd
 if not %rc% == 0 exit /b %rc%
 
 echo Testing...
-mono "%~dp0..\target\cs\bin\TestRunner-Debug.exe"
+java -jar "%~dp0..\target\java\TestRunner-Debug.jar"

@@ -1,5 +1,5 @@
 @echo off
-REM Copyright (c) 2016-2019 Vegard IT GmbH, https://vegardit.com
+REM Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributors.
 REM SPDX-License-Identifier: Apache-2.0
 REM Author: Sebastian Thomschke, Vegard IT GmbH
 
@@ -7,18 +7,18 @@ call %~dp0_test-prepare.cmd flash
 
 echo Compiling...
 haxe %~dp0..\tests.hxml ^
-  -D no-swf-compress ^
-  -D swf-script-timeout=180 ^
-  -swf-version 11.5 ^
-  -swf target\flash\TestRunner.swf
+   -D no-swf-compress ^
+   -D swf-script-timeout=180 ^
+   -swf-version 11.5 ^
+   -swf target\flash\TestRunner.swf
 set rc=%errorlevel%
 popd
 if not %rc% == 0 exit /b %rc%
 
 REM enable Flash logging
 (
-    echo ErrorReportingEnable=1
-    echo TraceOutputFileEnable=1
+   echo ErrorReportingEnable=1
+   echo TraceOutputFileEnable=1
 ) > "%HOME%\mm.cfg"
 
 REM add the flash target directory as trusted source to prevent "Only trusted local files may cause the Flash Player to exit."
@@ -30,7 +30,7 @@ setlocal enableextensions
 if not exist "%fptrust_dir%" ( md "%fptrust_dir%" )
 endlocal
 (
-    echo %target_dir_absolute%\flash
+   echo %target_dir_absolute%\flash
 ) > "%fptrust_dir%\HaxeDoctest.cfg"
 
 echo Testing...
@@ -44,5 +44,5 @@ type "%HOME%\AppData\Roaming\Macromedia\Flash Player\Logs\flashlog.txt"
 exit /b %rc%
 
 :normalize_path
-  SET RETVAL=%~dpfn1
-  exit /b
+   SET RETVAL=%~dpfn1
+   exit /b

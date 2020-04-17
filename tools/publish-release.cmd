@@ -1,5 +1,5 @@
 @echo off
-REM Copyright (c) 2016-2019 Vegard IT GmbH, https://vegardit.com
+REM Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributors.
 REM SPDX-License-Identifier: Apache-2.0
 REM Author: Sebastian Thomschke, Vegard IT GmbH
 
@@ -7,19 +7,19 @@ REM creates a new release in GitHub and haxelib.org
 
 where zip.exe /Q
 if %errorlevel% neq 0 (
-    echo Required command 'zip' not found. Download from http://www.info-zip.org/Zip.html#Downloads
-    exit /b 1
+   echo Required command 'zip' not found. Download from http://www.info-zip.org/Zip.html#Downloads
+   exit /b 1
 )
 
 where wget.exe /Q
 if %errorlevel% neq 0 (
-    echo Required command 'wget' not found. Download from https://eternallybored.org/misc/wget/
-    exit /b 1
+   echo Required command 'wget' not found. Download from https://eternallybored.org/misc/wget/
+   exit /b 1
 )
 
 if [%GITHUB_ACCESS_TOKEN%] == [] (
-    echo Required environment variable GITHUB_ACCESS_TOKEN is not set!
-    exit /b 1
+   echo Required environment variable GITHUB_ACCESS_TOKEN is not set!
+   exit /b 1
 )
 
 setlocal
@@ -59,7 +59,7 @@ if not exist target mkdir target
 
 REM create haxelib release
 if exist target\haxelib-upload.zip (
-    del target\haxelib-upload.zip
+   del target\haxelib-upload.zip
 )
 echo Building haxelib release...
 zip target\haxelib-upload.zip src extraParams.hxml haxelib.json LICENSE.txt CONTRIBUTING.md README.md -r -9 || goto :eof
@@ -67,14 +67,14 @@ zip target\haxelib-upload.zip src extraParams.hxml haxelib.json LICENSE.txt CONT
 REM create github release https://developer.github.com/v3/repos/releases/#create-a-release
 echo Creating GitHub release https://github.com/%REPO_NAME%/releases/tag/v%PROJECT_VERSION%...
 (
-  echo {
-  echo "tag_name":"v%PROJECT_VERSION%",
-  echo "name":"v%PROJECT_VERSION%",
-  echo "target_commitish":"master",
-  echo "body":"%RELEASE_NOTE%",
-  echo "draft":%DRAFT%,
-  echo "prerelease":%PREPRELEASE%
-  echo }
+   echo {
+   echo "tag_name":"v%PROJECT_VERSION%",
+   echo "name":"v%PROJECT_VERSION%",
+   echo "target_commitish":"master",
+   echo "body":"%RELEASE_NOTE%",
+   echo "draft":%DRAFT%,
+   echo "prerelease":%PREPRELEASE%
+   echo }
 )>target\github_release.json
 wget -qO- --post-file=target/github_release.json "https://api.github.com/repos/%REPO_NAME%/releases?access_token=%GITHUB_ACCESS_TOKEN%" || goto :eof
 

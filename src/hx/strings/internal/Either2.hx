@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2020 Vegard IT GmbH (https://vegardit.com) and contributors.
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.internal;
@@ -13,32 +13,31 @@ package hx.strings.internal;
 @:noCompletion
 abstract Either2<A, B>(_Either2<A, B>) {
 
-    inline
-    public function new(value:_Either2<A, B>) {
-        this = value;
-    }
+   inline
+   public function new(value:_Either2<A, B>)
+      this = value;
 
-    public var value(get,never):_Either2<A, B>;
-    inline
-    function get_value():_Either2<A, B> {
-        return this;
-    }
 
-    @:from
-    inline
-    static function fromA<A,B>(value:A):Either2<A, B> {
-        return new Either2(a(value));
-    }
+   public var value(get,never):_Either2<A, B>;
+   inline
+   function get_value():_Either2<A, B>
+      return this;
 
-    @:from
-    inline
-    static function fromB<A,B>(value:B):Either2<A, B> {
-        return new Either2(b(value));
-    }
+
+   @:from
+   inline
+   static function fromA<A,B>(value:A):Either2<A, B>
+      return new Either2(a(value));
+
+
+   @:from
+   inline
+   static function fromB<A,B>(value:B):Either2<A, B>
+      return new Either2(b(value));
 }
 
 @:noDoc @:dox(hide)
 private enum _Either2<A, B> {
-    a(v:A);
-    b(v:B);
+   a(v:A);
+   b(v:B);
 }

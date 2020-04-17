@@ -466,7 +466,6 @@ haxelib git haxe-strings https://github.com/vegardit/haxe-strings master D:\haxe
 
 All files are released under the [Apache License 2.0](LICENSE.txt).
 
-
 Individual files contain the following tag instead of the full license text:
 ```
 SPDX-License-Identifier: Apache-2.0
