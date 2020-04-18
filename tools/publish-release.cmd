@@ -76,7 +76,7 @@ echo Creating GitHub release https://github.com/%REPO_NAME%/releases/tag/v%PROJE
    echo "prerelease":%PREPRELEASE%
    echo }
 )>target\github_release.json
-wget -qO- --post-file=target/github_release.json "https://api.github.com/repos/%REPO_NAME%/releases?access_token=%GITHUB_ACCESS_TOKEN%" || goto :eof
+wget -qO- --header="Authorization: token %GITHUB_ACCESS_TOKEN%" --post-file=target/github_release.json "https://api.github.com/repos/%REPO_NAME%/releases" || goto :eof
 
 REM submit haxelib release
 echo Submitting haxelib release...
