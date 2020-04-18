@@ -34,4 +34,3 @@ class EnglishDictionary extends InMemoryDictionary {
    public function toString()
       return 'EnglishDictionary[words=$dictSize]';
 }
-

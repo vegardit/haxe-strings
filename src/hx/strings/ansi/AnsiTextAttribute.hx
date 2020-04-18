@@ -69,4 +69,3 @@ abstract AnsiTextAttribute(Int) {
 
    final STRIKTHROUGH_OFF = 29;
 }
-

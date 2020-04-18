@@ -163,4 +163,3 @@ class String8Generator {
    }
 }
 #end
-

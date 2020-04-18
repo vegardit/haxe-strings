@@ -573,4 +573,3 @@ abstract Version(VersionData) from VersionData to VersionData {
 enum VersionData {
    VersionEnum(major:Int, minor:Int, patch:Int, preRelease:String, buildMetadata:String);
 }
-

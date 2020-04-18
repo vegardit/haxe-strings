@@ -87,4 +87,3 @@ class StringMacros {
         return macro @:pos(pos) $v{comment};
     }
 }
-

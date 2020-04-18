@@ -20,4 +20,3 @@ abstract AnsiColor(Int) {
    final WHITE = 7;
    final DEFAULT = 9;
 }
-
