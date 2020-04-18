@@ -34,11 +34,11 @@ Java, JavaScript (Node.js and PhantomJS), Neko, PHP 7 and Python 3.
 
 ### Haxe compatiblity
 
-|haxe-strings | Haxe           |
-|-------------|:---------------|
-|v1.x - 4.x   | 3.2.1 or higher|
-|v5.x         | 3.4 or higher  |
-|v6.x         | 4.0 or higher  |
+|haxe-strings    |Haxe           |
+|----------------|---------------|
+|1.0.0 to 4.0.0  |3.2.1 or higher|
+|5.0.0 to 5.2.4  |3.4.2 or higher|
+|6.0.0 or higher |4.0.5 or higher|
 
 
 ## <a name="strings-class"></a>The `Strings` utility class
@@ -447,7 +447,7 @@ haxelib git haxe-strings https://github.com/vegardit/haxe-strings master D:\haxe
 
 1. check-out the master branch
     ```
-    git clone https://github.com/vegardit/haxe-strings --branch master --single-branch D:\haxe-projects\haxe-strings
+    git clone https://github.com/vegardit/haxe-strings --branch master --single-branch D:\haxe-projects\haxe-strings --depth=1
     ```
 
 2. register the development release with haxe
