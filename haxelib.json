@@ -1,14 +1,16 @@
 {
-    "name": "haxe-strings",
-    "url": "https://github.com/vegardit/haxe-strings",
-    "license": "Apache",
-    "classPath": "src/",
-    "tags": ["utility","string","collection","semver","ansi","random","version","vegardit","cross","cpp","cs","flash","hashlink","hl","java","js","neko","lua","php","python"],
-    "description": "A haxelib for consistent cross-platform UTF-8 string manipulation. Contains comprehensive String utility functions, SemVer.org version parsing, spell checker, ANSI escape sequence builder, RandomUUID generator, thread-safe regular expression API, StringBuilder, SortedStringMap, SortedStringSet, camelcase string formatting, filepath normalizing and globbing (wildcards).",
-    "contributors": [
-        "vegardit"
-    ],
-    "releasenote": "See https://github.com/vegardit/haxe-strings/blob/master/CHANGELOG.md",
-    "version": "6.0.0-DEV",
-    "dependencies": { }
+   "name": "haxe-strings",
+   "url": "https://github.com/vegardit/haxe-strings",
+   "license": "Apache",
+   "classPath": "src/",
+   "tags": [
+     "utility","string","collection","semver","ansi","random","version",
+     "cross","cpp","cs","flash","hashlink","hl","java","js","neko","lua","php","python",
+     "vegardit"
+   ],
+   "description": "A haxelib for consistent cross-platform UTF-8 string manipulation. Contains comprehensive String utility functions, SemVer.org version parsing, spell checker, ANSI escape sequence builder, RandomUUID generator, thread-safe regular expression API, StringBuilder, SortedStringMap, SortedStringSet, camelcase string formatting, filepath normalizing and globbing (wildcards).",
+   "contributors": ["vegardit"],
+   "releasenote": "See https://github.com/vegardit/haxe-strings/blob/master/CHANGELOG.md",
+   "version": "6.0.0-DEV",
+   "dependencies": {}
 }
