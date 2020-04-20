@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## [Unreleased]
 
+
+## [6.0.0] - 2020-04-20
+
 ### Added
 - property `CharIterator#current:Null<Char>`
 - method `CharPos#toString()`
@@ -21,14 +24,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - [PR#5](https://github.com/vegardit/haxe-strings/pull/5) `Ansi.cursor(RestorePos)` performs saves position instead of restoring it
 
 ### Removed
-- deprecated hx.strings.Paths module (use `hx.files.Path` of the `haxe-files` haxelib instead)
+- deprecated `hx.strings.Paths` module (use [hx.files.Path](https://github.com/vegardit/haxe-files/blob/master/src/hx/files/Path.hx) of the [haxe-files](https://lib.haxe.org/p/haxe-files/) haxelib instead)
 
 
 ## [5.2.4] - 2019-12-10
 
 ### Changed
-- enable Pattern.MatchingOption#DOTALL option for HL, Lua, NodeJS, Python targets
-- reduce usage of deprecated haxe.Utf8 class
+- enable `Pattern.MatchingOption#DOTALL` option for HL, Lua, NodeJS, Python targets
+- reduce usage of deprecated `haxe.Utf8` class
 
 
 ## [5.2.3] - 2019-09-20
@@ -52,17 +55,17 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ## [5.2.0] - 2018-11-27
 
 ### Added
-- method Pattern#remove()
-- type hx.strings.AnyAsString
+- method `Pattern#remove()`
+- type `hx.strings.AnyAsString`
 
 ### Fixed
-- OS.isWindows does not work with PhantomJS
+- `OS.isWindows` does not work with PhantomJS
 
 
 ## [5.1.0] - 2018-11-10
 
 ### Added
-- renderMethod parameter to Strings#ansiToHtml() (thanks to https://github.com/emugel)
+- renderMethod parameter to `Strings#ansiToHtml()` (thanks to https://github.com/emugel)
 
 ### Fixed
 - make Pattern, OrderedStringMap, StringBuilder compatible with Haxe 4 Preview 5
@@ -72,18 +75,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ### Changed
 - replaced license header by "SPDX-License-Identifier: Apache-2.0"
-- StringMap is now usable in Macro mode
-- deprecated hx.strings.Paths
+- `StringMap` is now usable in macro mode
+- deprecated `hx.strings.Paths`
 
 ### Fixed
-- OS.isWindows does not work with Node.js
+- `OS.isWindows` does not work with Node.js
 
 
 ## [5.0.0] - 2017-11-05
 
 ### Added
-- parameter 'interpolationPrefix' to hx.strings.StringMacros#multiline()
-- property hx.strings.collection.SortedStringMap#size
+- parameter 'interpolationPrefix' to `hx.strings.StringMacros#multiline()`
+- property `hx.strings.collection.SortedStringMap#size`
 
 ### Changed
 - minimum required Haxe version is now 3.4.x
