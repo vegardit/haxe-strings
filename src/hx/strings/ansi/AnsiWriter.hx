@@ -99,6 +99,7 @@ abstract StringBuf_StringBuilder_or_Output<T>(AbstractStringWriter<T>) {
 }
 
 
+@:abstract
 @:noDoc @:dox(hide)
 private class AbstractStringWriter<T> {
    public var out(default, null):T;

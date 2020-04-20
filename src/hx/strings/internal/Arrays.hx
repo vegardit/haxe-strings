@@ -24,7 +24,7 @@ class Arrays {
    // see https://github.com/HaxeFoundation/haxe/issues/6071
    inline
    #end
-   public static function first<T>(items:Array<T>):T
+   public static function first<T>(items:Array<T>):Null<T>
       return (items == null || items.length == 0) ? null : items[0];
 
 

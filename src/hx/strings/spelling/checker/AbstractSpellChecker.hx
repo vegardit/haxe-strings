@@ -44,7 +44,7 @@ class AbstractSpellChecker implements SpellChecker {
       if(dict.exists(word))
          return word;
 
-      var candidate:String = null;
+      var candidate:Null<String> = null;
       var candidatePopularity:Int = 0;
 
       var edits = generateEdits(word, timeoutAt);

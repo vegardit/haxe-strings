@@ -28,7 +28,7 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
    @:noCompletion
    @:noDoc @:dox(hide)
    inline
-   public function __arrayGet(key:String):V
+   public function __arrayGet(key:String):Null<V>
       return this.get(key);
 
 
@@ -47,7 +47,7 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
     *
     * <pre><code>
     * >>> new StringMap<Int>().size == 0
-    * >>> ({var m = new StringMap<Int>(); m.set("1", 1); m.set("2", 1); m; }).size == 2
+    * >>> ({var m = new StringMap<Int>(); m.set("1", 1); m.set("2", 1); m;}) == ["1" => 1, "2" => 1]
     * </code></pre>
     */
    public var size(get, never):Int;
@@ -101,7 +101,8 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
     * Copies all key-value pairs from the source map into this map.
     *
     * <pre><code>
-    * >>> new StringMap<Int>().setAll(null) == 0
+    * >>> ({var m = new StringMap<Int>(); m.setAll(["1" => 1, "2" => 1]); m;}) == ["1" => 1, "2" => 1]
+    * >>> new StringMap<Int>().setAll(null) throws "[items] must not be null!"
     * </code></pre>
     *
     * @param replace if true existing key-value pairs are replaced otherwise they will be skipped
@@ -109,7 +110,7 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
     */
    public function setAll(items:StringMap<V>, replace:Bool = true):Int {
       if (items == null)
-         return 0;
+         throw "[items] must not be null!";
 
       var count = 0;
       if(replace) {

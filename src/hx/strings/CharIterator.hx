@@ -31,7 +31,7 @@ class CharIterator {
     * @param prevBufferSize number of characters the iterator can go backwards
     */
    inline
-   public static function fromString(chars:AnyAsString, prevBufferSize = 0):CharIterator {
+   public static function fromString(chars:Null<AnyAsString>, prevBufferSize = 0):CharIterator {
       if (chars == null) return NullCharIterator.INSTANCE;
       return new StringCharIterator(chars, prevBufferSize);
    }
@@ -69,7 +69,7 @@ class CharIterator {
     * @param prevBufferSize number of characters the iterator can go backwards
     */
    inline
-   public static function fromInput(chars:Input, prevBufferSize = 0):CharIterator {
+   public static function fromInput(chars:Null<Input>, prevBufferSize = 0):CharIterator {
       if (chars == null) return NullCharIterator.INSTANCE;
       return new InputCharIterator(chars, prevBufferSize);
    }
@@ -87,7 +87,7 @@ class CharIterator {
     * @param prevBufferSize number of characters the iterator can go backwards
     */
    inline
-   public static function fromIterator(chars:Iterator<Char>, prevBufferSize = 0):CharIterator {
+   public static function fromIterator(chars:Null<Iterator<Char>>, prevBufferSize = 0):CharIterator {
       if (chars == null) return NullCharIterator.INSTANCE;
       return new IteratorCharIterator(chars, prevBufferSize);
    }
@@ -98,22 +98,23 @@ class CharIterator {
    var col = 0;
    var currChar = -1;
 
-   var usePrevBuffer:Bool;
-   var prevBuffer:RingBuffer<CharWithPos>;
+   final prevBuffer:Null<RingBuffer<CharWithPos>>;
    var prevBufferPrevIdx = -1;
    var prevBufferNextIdx = -1;
 
+
+   public var current(get, never):Null<Char>;
+   inline function get_current()
+      return index > -1 ? currChar : null;
+
+
    public var pos(get, never):CharPos;
-   inline function get_pos() return new CharPos(index, line, col);
+   inline function get_pos()
+      return new CharPos(index, line, col);
 
 
-   function new(prevBufferSize:Int) {
-      if (prevBufferSize > 0) {
-         usePrevBuffer = true;
-         prevBuffer = new RingBuffer<CharWithPos>(prevBufferSize + 1 /*currChar*/);
-      } else
-         usePrevBuffer = false;
-   }
+   function new(prevBufferSize:Int)
+      prevBuffer = prevBufferSize > 0 ? new RingBuffer<CharWithPos>(prevBufferSize + 1 /*currChar*/) : null;
 
 
    inline
@@ -127,7 +128,7 @@ class CharIterator {
     * @throws haxe.io.Eof if no previous character is available
     */
    public function prev():Char {
-      if (isEOF())
+      if (!hasPrev())
          throw new Eof();
 
       final prevChar = prevBuffer[prevBufferPrevIdx];
@@ -177,7 +178,7 @@ class CharIterator {
       col++;
       currChar = getChar();
 
-      if (usePrevBuffer) {
+      if (prevBuffer != null) {
          prevBuffer.add(new CharWithPos(currChar, index, col, line));
          prevBufferPrevIdx = prevBuffer.length - 2;
          prevBufferNextIdx = -1;

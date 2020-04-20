@@ -4,6 +4,7 @@
  */
 package hx.strings;
 
+import haxe.io.Eof;
 import hx.doctest.DocTestRunner;
 import hx.strings.Pattern;
 import hx.strings.collection.OrderedStringMap;
@@ -70,18 +71,29 @@ class TestRunner extends DocTestRunner {
     }
 
 
-   public function testCharIterator():Void {
+   public function testCharIterator_WithPrevBuffer():Void {
       var it = CharIterator.fromString("1234567890", 4);
-      assertFalse(it.hasPrev());
-      try { it.prev(); fail(); } catch (e:Dynamic) { };
 
-      assertTrue(it.hasNext());
-      assertEquals(it.next(), Char.of("1"));
       assertFalse(it.hasPrev());
-      try { it.prev(); fail(); } catch (e:Dynamic) { };
+      try { it.prev(); fail(); } catch (e:Eof) { };
+      assertEquals(it.current, null);
+      assertTrue(it.hasNext());
+
+      assertEquals(it.next(), Char.of("1"));
+      assertEquals(it.current, Char.of("1"));
+      assertEquals(it.pos.col, 1);
+      assertEquals(it.pos.index, 0);
+      assertEquals(it.pos.line, 1);
+      assertFalse(it.hasPrev());
+      try { it.prev(); fail(); } catch (e:Eof) { };
 
       assertEquals(it.next(), Char.of("2"));
+      assertEquals(it.current, Char.of("2"));
+      assertEquals(it.pos.col, 2);
+      assertEquals(it.pos.index, 1);
+      assertEquals(it.pos.line, 1);
       assertTrue(it.hasPrev());
+
       assertEquals(it.prev(), Char.of("1"));
       assertEquals(it.next(), Char.of("2"));
       assertEquals(it.next(), Char.of("3"));
@@ -111,7 +123,19 @@ class TestRunner extends DocTestRunner {
       assertEquals(it.next(), Char.of("9"));
       assertEquals(it.next(), Char.of("0"));
       assertFalse(it.hasNext());
-      try { it.next(); fail(); } catch (e:Dynamic) { };
+      try { it.next(); fail(); } catch (e:Eof) { };
+      assertEquals(it.current, Char.of("0"));
+   }
+
+   public function testCharIterator_WithoutPrevBuffer():Void {
+      var it = CharIterator.fromString("1234567890", 0);
+      assertFalse(it.hasPrev());
+      try { it.prev(); fail(); } catch (e:Eof) { };
+
+      assertTrue(it.hasNext());
+      assertEquals(it.next(), Char.of("1"));
+      assertFalse(it.hasPrev());
+      try { it.prev(); fail(); } catch (e:Eof) { };
    }
 
 

@@ -33,9 +33,9 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
     * >>> new StringArray(["a", "b"]).first == "a"
     * </code></pre>
     */
-   public var first(get, never): String;
+   public var first(get, never):Null<String>;
    inline
-   function get_first():String
+   function get_first():Null<String>
       return isEmpty() ? null : this[0];
 
 
@@ -46,10 +46,10 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
     * >>> new StringArray(["a", "b"]).last == "b"
     * </code></pre>
     */
-   public var last(get, never): String;
+   public var last(get, never):Null<String>;
    inline
-   function get_last():String
-        return isEmpty() ? null : this[this.length - 1];
+   function get_last():Null<String>
+      return isEmpty() ? null : this[this.length - 1];
 
 
    /**
@@ -87,7 +87,7 @@ abstract StringArray(Array<String>) from Array<String> to Array<String> {
 
    public function pushAll(items:Either2<StringSet,Array<String>>):Void {
       if (items == null)
-         return;
+         throw "[items] must not be null!";
 
       switch(items.value) {
          case a(set):

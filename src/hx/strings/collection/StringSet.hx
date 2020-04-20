@@ -18,7 +18,7 @@ import hx.strings.internal.Either2;
  */
 class StringSet {
 
-   var map = new StringMap<Bool>();
+   var map:StringMap<Bool>;
 
 
    /**
@@ -34,7 +34,8 @@ class StringSet {
    public function new(?initialItems:Either2<StringSet,Array<String>>) {
       _initMap();
 
-      addAll(initialItems);
+      if (initialItems != null)
+         addAll(initialItems);
    }
 
 
@@ -53,7 +54,8 @@ class StringSet {
     * @return true if item was added, false if it was already present
     */
    public function add(item:AnyAsString):Bool {
-      if (item == null) throw "[item] must not be null!";
+      if (item == null)
+         throw "[item] must not be null!";
 
       if (contains(item))
          return false;
@@ -66,17 +68,17 @@ class StringSet {
 
    /**
     * <pre><code>
-    * >>> new StringSet(["", "a", "b"]).addAll(null)      == 0
     * >>> new StringSet(["", "a", "b"]).addAll(["a", "b"]) == 0
     * >>> new StringSet(["", "a", "b"]).addAll(["a", "c"]) == 1
     * >>> new StringSet(["", "a", "b"]).addAll(["c", "d"]) == 2
+    * >>> new StringSet(["", "a", "b"]).addAll(null) throws "[items] must not be null!"
     * </code></pre>
     *
     * @return number of added items
     */
    public function addAll(items:Either2<StringSet,Array<String>>):Int {
       if (items == null)
-         return 0;
+         throw "[items] must not be null!";
 
       var count = 0;
       switch(items.value) {
@@ -119,7 +121,7 @@ class StringSet {
     * @return true if the item is present
     */
    inline
-   public function contains(item:String):Bool
+   public function contains(item:Null<String>):Bool
       return item == null ? false : map.exists(item);
 
 
@@ -153,7 +155,7 @@ class StringSet {
     *
     * @return true if the item was removed, false if it was not present
     */
-   public function remove(item:String):Bool {
+   public function remove(item:Null<String>):Bool {
       if (item == null)
          return false;
 
@@ -185,7 +187,7 @@ class StringSet {
     * >>> new StringSet(["b"]).toString()  == '[ "b" ]'
     * </code></pre>
     */
-   public function toString() {
+   public function toString():String {
       if (size == 0) return "[]";
       return '[ "' + toArray().join('", "') + '" ]';
    }

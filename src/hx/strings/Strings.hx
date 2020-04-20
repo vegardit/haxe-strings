@@ -2052,7 +2052,7 @@ class Strings {
          return null;
 
       if (separator == null)
-         throw "[seperator] must not be null";
+         throw "[separator] must not be null";
 
       return str.split8(separator).map(mapper);
    }
@@ -4146,6 +4146,9 @@ class CharPos {
     * First column is 1.
     */
    public var col(default, null):Int;
+
+   public function toString():String
+      return 'CharPos[index=$index, line=$line, col=$col]';
 }
 
 
@@ -4172,6 +4175,9 @@ class StringDiff {
     * diff of the right string
     */
    public var right:String;
+
+   public function toString():String
+      return 'StringDiff[at=$at, left=$left, right=$right]';
 }
 
 

@@ -16,7 +16,7 @@ package hx.strings.collection;
  */
 class SortedStringSet extends StringSet {
 
-   final cmp:String -> String -> Int;
+   final cmp:Null<String -> String -> Int>;
 
 
    public function new(?initialItems:Array<String>, ?comparator:String -> String -> Int) {

@@ -30,7 +30,7 @@ class Pattern {
     * @param pattern regular expression
     * @param options matching options
     */
-   public static function compile(pattern:String, options:Either3<String, MatchingOption, Array<MatchingOption>> = null):Pattern {
+   public static function compile(pattern:String, ?options:Either3<String, MatchingOption, Array<MatchingOption>>):Pattern {
       if(options == null)
          return new Pattern(pattern, "");
 
