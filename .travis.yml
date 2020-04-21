@@ -11,7 +11,7 @@ git:
 
 cache:
   directories:
-    - $HOME/haxe
+    - $HOME/haxe/lib
     - $HOME/.cache/luarocks
 
 haxe:
@@ -23,6 +23,7 @@ env:
   - HAXE_TARGET=cs
   - HAXE_TARGET="interp -D eval-stack"
   - HAXE_TARGET=flash
+  - HAXE_TARGET=hl
   - HAXE_TARGET=java
   - HAXE_TARGET="java -D jvm"
   - HAXE_TARGET=js
