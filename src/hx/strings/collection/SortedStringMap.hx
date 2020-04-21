@@ -81,9 +81,18 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
    /**
     * @param comparator used for sorting the String keys. Default is the UTF8 supporting Strings#compare() method
     */
-   public function new(?comparator:String -> String -> Int) {
+   public function new(?comparator:(String, String) -> Int) {
       super();
-      this.cmp = comparator == null ? Strings.compare : comparator;
+      if (comparator == null)
+         #if jvm
+            // TODO workaround for java.lang.IllegalAccessError: no such method: hx.strings.Strings.compare(String,String)int/invokeStatic
+            this.cmp = (s1, s2) -> Strings.compare(s1,s2);
+         #else
+            this.cmp = Strings.compare;
+         #end
+      else
+      this.cmp = comparator;
+
    }
 
 

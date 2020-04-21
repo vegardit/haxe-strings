@@ -2616,7 +2616,7 @@ class Strings {
     * @param separator one or multiple separators to use for splitting
     * @param maxParts the split limit, the maximum number of elements in the resulting array
     */
-   public static function split8(str:String, separator:OneOrMany<String>, ?maxParts:Int = 0):Array<String> {
+   public static function split8(str:String, separator:OneOrMany<String>, maxParts:Int = 0):Array<String> {
       if (str == null || separator == null)
          return null;
 
