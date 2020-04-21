@@ -314,8 +314,14 @@ private class MatcherImpl implements Matcher {
 
 
    inline
-   public function matchesInRegion(pos:Int, len:Int=-1):Bool
+   public function matchesInRegion(pos:Int, len:Int = -1):Bool {
+      #if eval
+      // https://github.com/HaxeFoundation/haxe/issues/9333
+      if (len < 0)
+         return isMatch = ereg.matchSub(str, pos);
+      #end
       return isMatch = ereg.matchSub(str, pos, len);
+   }
 
 
    public function matchedPos(): {pos:Int, len:Int} {
