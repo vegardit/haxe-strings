@@ -37,9 +37,7 @@ matrix:
   fast_finish: true
   allow_failures:
     - haxe: development
-    - env: HAXE_TARGET="interp -D eval-stack"
     - env: HAXE_TARGET=flash # see https://github.com/travis-ci/travis-ci/issues/8481
-    - env: HAXE_TARGET="java -D jvm"
     - env: HAXE_TARGET=lua   # https://github.com/HaxeFoundation/haxe/issues/9323
     - os: osx
   exclude:

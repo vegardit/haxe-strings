@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ## [Unreleased]
 
 
+## [6.0.1] - 2020-04-21
+
+### Fixed
+- added workarounds for JVM target bugs
+- added workaround for eval target bug
+
+
 ## [6.0.0] - 2020-04-20
 
 ### Added
