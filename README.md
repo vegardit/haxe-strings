@@ -26,7 +26,7 @@ A [haxelib](http://lib.haxe.org/documentation/using-haxelib/) for consistent cro
 
 All classes are located in the package `hx.strings` or below.
 
-The library has been extensively unit tested (over 1,700 individual test cases) on the targets C++, C#, Flash, [HashLink](https://hashlink.haxe.org/),
+The library has been extensively unit tested (over 1,700 individual test cases) on the targets C++, C#, [Eval](https://haxe.org/blog/eval/), Flash, [HashLink](https://hashlink.haxe.org/),
 Java, JavaScript ([Node.js](https://nodejs.org) and PhantomJS), [Neko](https://nekovm.org/), [PHP](https://www.php.net/) 7 and [Python](https://www.python.org/) 3.
 
 **Note:**
