@@ -7,6 +7,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ## [Unreleased]
 
 
+## [6.0.2] - 2020-07-14
+
+###
+- [Issue#8](https://github.com/vegardit/haxe-strings/issues/8) `Warning : __js__ is deprecated, use js.Syntax.code instead`
+
+
 ## [6.0.1] - 2020-04-21
 
 ### Fixed

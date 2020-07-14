@@ -11,6 +11,6 @@
    "description": "A haxelib for consistent cross-platform UTF-8 string manipulation. Contains comprehensive String utility functions, SemVer.org version parsing, spell checker, ANSI escape sequence builder, RandomUUID generator, thread-safe regular expression API, StringBuilder, SortedStringMap, SortedStringSet, camelcase string formatting, filepath normalizing and globbing (wildcards).",
    "contributors": ["vegardit"],
    "releasenote": "See https://github.com/vegardit/haxe-strings/blob/master/CHANGELOG.md",
-   "version": "6.0.1",
+   "version": "6.0.2",
    "dependencies": {}
 }
