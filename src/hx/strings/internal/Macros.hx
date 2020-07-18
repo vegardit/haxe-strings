@@ -69,68 +69,6 @@ class Macros {
 
 
    /**
-    * Usage:
-    * <pre><code>
-    * if(Macros.is(obj, (foo:Foo)) {
-    *    foo.bar();
-    * }
-    *
-    * // or
-    * if(Macros.is(obj, (foo:Foo<Int>)) {
-    *    foo.bar();
-    * }
-    * </code></pre>
-    *
-    * Also works with abstract types in constrast to <code>Std.is()</code>.
-    * Does not yet work with classes with private visiblity.
-    *
-    * Requires Haxe 3.3 or higher because of https://github.com/HaxeFoundation/haxe/issues/5249
-    */
-   macro
-   public static function is(value:Expr, assignableTo:Expr) {
-      return switch assignableTo {
-         case macro ($i{targetVarName}:$targetVarComplexType):
-            var targetTypeName:String = switch(ComplexTypeTools.toType(targetVarComplexType)) {
-               // if we target an abstract, resolve the underlying type because Std.is() does not support abstracts directly
-               case TAbstract(abstractTypeRef, params):
-
-                  switch(TypeTools.toComplexType(abstractTypeRef.get().type)) {
-
-                     // in case we have a TPath we build the fully qualified name manually, because TypeTools.toString()
-                     // creates a wrong path for sub-types of modules (it ommits the module name)
-                     // e.g. generates: hx.strings.collection.SortedStringMapImpl
-                     //     instead of: hx.strings.collection.SortedStringMap.SortedStringMapImpl
-                     case TPath(p):
-                        var path = p.pack;
-                        path.push(p.name);
-                        if (p.sub != null)
-                           path.push(p.sub);
-                        path.join(".");
-                     default:
-                        TypeTools.toString(abstractTypeRef.get().type);
-                  }
-
-               default:
-                  ComplexTypeTools.toString(targetVarComplexType);
-            }
-
-            final idxGenerics = targetTypeName.indexOf("<", 1);
-            if(idxGenerics > -1)  targetTypeName = targetTypeName.substring(0, idxGenerics);
-
-            var targetTypeExpr = MacroStringTools.toFieldExpr(targetTypeName.split("."));
-
-            macro @:mergeBlock {
-               var $targetVarName:$targetVarComplexType = Std.is($value, ${targetTypeExpr}) ? cast $value : null;
-               $i{targetVarName} != null;
-            }
-
-         default:
-           Context.error('Unsupported expression. Expecting e.g. "(myvar: MyType)"', assignableTo.pos);
-      };
-   }
-
-
-   /**
     * Implements assignment destructuring, see https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
     *
     * Usage:
