@@ -10,6 +10,7 @@ import hx.strings.Pattern;
 import hx.strings.collection.OrderedStringMap;
 import hx.strings.collection.SortedStringMap;
 import hx.strings.collection.StringMap;
+import hx.strings.internal.Types;
 import hx.strings.spelling.checker.*;
 import hx.strings.spelling.dictionary.*;
 import hx.strings.spelling.trainer.*;
@@ -30,11 +31,9 @@ class TestRunner extends DocTestRunner {
       runner.runAndExit();
    }
 
-
    function new() {
       super();
    }
-
 
    public function testMultiline():Void {
 
@@ -291,11 +290,11 @@ class TestRunner extends DocTestRunner {
 
    public function testStringMapCopy() {
       var ssm:StringMap<String> = new SortedStringMap<String>();
-      assertTrue(Std.is(ssm, SortedStringMapImpl));
-      assertTrue(Std.is(ssm.copy(), SortedStringMapImpl));
+      assertTrue(Types.isInstanceOf(ssm, SortedStringMapImpl));
+      assertTrue(Types.isInstanceOf(ssm.copy(), SortedStringMapImpl));
 
       var osm:OrderedStringMap<String> = new OrderedStringMap<String>();
-      assertTrue(Std.is(osm, OrderedStringMapImpl));
-      assertTrue(Std.is(osm.copy(), OrderedStringMapImpl));
+      assertTrue(Types.isInstanceOf(osm, OrderedStringMapImpl));
+      assertTrue(Types.isInstanceOf(osm.copy(), OrderedStringMapImpl));
    }
 }

@@ -8,10 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+### Fixed
+- [Issue#10](https://github.com/vegardit/haxe-strings/issues/10) `Warning : Std.is is deprecated. Use Std.isOfType instead.`
+
+
 ## [6.0.3] - 2020-07-18
 
 ### Fixed
-- [Issue#9](https://github.com/vegardit/haxe-strings/issues/9) `Warning : Using "is" as an identifier is deprecated
+- [Issue#9](https://github.com/vegardit/haxe-strings/issues/9) `Warning : Using "is" as an identifier is deprecated`
 
 
 ## [6.0.2] - 2020-07-14
