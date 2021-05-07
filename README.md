@@ -1,6 +1,6 @@
 # haxe-strings - [StringTools](http://api.haxe.org/StringTools.html) on steroids.
 
-[![Build Status](https://travis-ci.com/vegardit/haxe-strings.svg?branch=master)](https://travis-ci.com/vegardit/haxe-strings)
+[![Build Status](https://github.com/vegardit/haxe-strings/workflows/Build/badge.svg "GitHub Actions")](https://github.com/vegardit/haxe-strings/actions?query=workflow%3A%22Build%22)
 [![Release](https://img.shields.io/github/release/vegardit/haxe-strings.svg)](http://lib.haxe.org/p/haxe-strings)
 [![License](https://img.shields.io/github/license/vegardit/haxe-strings.svg?label=license)](#license)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
