@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Vegard IT GmbH, https://vegardit.com
+ * Copyright (c) 2016-2021 Vegard IT GmbH, https://vegardit.com
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings;

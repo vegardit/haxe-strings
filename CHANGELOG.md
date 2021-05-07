@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [6.0.4] - 2021-05-07
+
 ### Fixed
 - [Issue#10](https://github.com/vegardit/haxe-strings/issues/10) `Warning : Std.is is deprecated. Use Std.isOfType instead.`
 
