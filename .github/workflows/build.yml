@@ -26,7 +26,7 @@ jobs:
         - macos-latest
         - windows-latest
         haxe:
-        #- 4.2.1 TODO https://github.com/haxetink/tink_testrunner/issues/19
+        - 4.2.1
         - 4.1.5
         - 4.0.5
 
