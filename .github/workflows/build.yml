@@ -145,14 +145,10 @@ jobs:
         haxelib run travix node
 
     - name: Test [php]
-      run: |
-        php --version
-        haxelib run travix php
+      run: haxelib run travix php
 
     - name: Test [php7]
-      run: |
-        php --version
-        haxelib run travix php7
+      run: haxelib run travix php7
 
     - name: Test [python]
       run: |
