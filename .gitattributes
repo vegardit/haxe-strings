@@ -8,15 +8,23 @@
 # The above will handle all files NOT found below
 #
 # These files are text and should be normalized (Convert crlf => lf)
+.gitattributes  text
+.gitignore      text
+.editorconfig   text
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
 *.css           text diff=css
 *.htm           text diff=html
 *.html          text diff=html
 *.hx            text
+*.hxml          text
+*.hxproj        text
+*.java          text diff=java
 *.js            text
 *.json          text
 *.md            text
 *.properties    text
-*.sh            text
+*.sh            text diff=bash eol=lf
 *.txt           text
 *.xml           text
 *.yaml          text
@@ -24,8 +32,6 @@
 
 # These files are binary and should be left untouched
 # (binary is a macro for -text -diff)
-*.bat           binary
-*.cmd           binary
 *.gif           binary
 *.ico           binary
 *.jpg           binary
