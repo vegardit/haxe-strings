@@ -26,7 +26,7 @@ jobs:
         - macos-latest
         - windows-latest
         haxe:
-        - 4.2.1
+        - 4.2.3
         - 4.1.5
         - 4.0.5
 
@@ -42,9 +42,10 @@ jobs:
       uses: actions/cache@v2
       with:
         path: $RUNNER_TOOL_CACHE/haxe/${{ matrix.haxe }}/x64/lib
-        key: ${{ runner.os }}-haxelib-${{ hashFiles('**/haxelib.json') }}
+        # https://github.com/actions/cache/issues/342#issuecomment-673371329
+        key: ${{ runner.os }}-haxelib-${{ matrix.haxe }}-${{ github.run_id }}
         restore-keys: |
-          ${{ runner.os }}-haxelib-
+          ${{ runner.os }}-haxelib-${{ matrix.haxe }}-
 
     - name: Upgrade brew
       if: runner.os == 'macOS'
@@ -61,7 +62,7 @@ jobs:
         rm /usr/local/share/man/man1/*
         rm /usr/local/share/man/man5/*
 
-    - name: Set up Python 3
+    - name: "Install: Python 3"
       uses: actions/setup-python@v2 # https://github.com/actions/setup-python
       with:
         python-version: 3.9
@@ -75,12 +76,12 @@ jobs:
           mklink "%pythonLocation%\python3.exe" "%pythonLocation%\python.exe"
         )
 
-    - name: Install Haxe ${{ matrix.haxe }}
+    - name: "Install: Haxe ${{ matrix.haxe }}"
       uses: krdlab/setup-haxe@v1 # https://github.com/krdlab/setup-haxe
       with:
         haxe-version: ${{ matrix.haxe }}
 
-    - name: Install haxe libs
+    - name: "Install: Haxe Libraries"
       shell: bash
       run: |
         haxelib config
@@ -88,14 +89,9 @@ jobs:
         for lib in hx3compat haxe-doctest travix; do
           echo "::group::install_$lib"
           haxelib --always install  $lib
+          haxelib --always update $lib || true
           echo "::endgroup::"
         done
-
-        haxelib git travix https://github.com/back2dos/travix
-        pushd . 
-        cd $(haxelib config)travix/git
-        haxe build-neko.hxml -lib hx3compat
-        popd
 
         haxelib dev haxe-strings .
 
@@ -103,9 +99,6 @@ jobs:
     ##################################################
     # Tests
     ##################################################
-
-    - name: Test [cpp]
-      run: haxelib run travix cpp
 
     - name: Test [cs]
       continue-on-error: ${{ runner.os == 'Windows' }} # fails with: strings/collection/StringMap.hx:104: characters 9-102: [ERROR] 
@@ -121,7 +114,7 @@ jobs:
       run: haxelib run travix flash
 
     - name: Test [hl]
-      if: runner.os != 'Linux'
+      if: runner.os != 'Linux' # prebuild linux binary available yet
       run: haxelib run travix hl
 
     - name: Test [java]
@@ -147,10 +140,27 @@ jobs:
     - name: Test [php]
       run: haxelib run travix php
 
-    - name: Test [php7]
-      run: haxelib run travix php7
-
     - name: Test [python]
       run: |
         python --version
         haxelib run travix python
+
+    - name: Test [cpp] # testing C++ as last since it takes the longest to build
+      run: haxelib run travix cpp
+
+
+  ###########################################################
+  cleanup:
+  ###########################################################
+    runs-on: ubuntu-latest
+    needs: 
+      - build
+
+    steps:
+    - name: "Delete intermediate build artifacts"
+      uses: geekyeggo/delete-artifact@1-glob-support # https://github.com/GeekyEggo/delete-artifact/
+      with:
+        name: "*"
+        useGlob: true
+        failOnError: false
+      
