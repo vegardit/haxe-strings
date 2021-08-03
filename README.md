@@ -42,14 +42,14 @@ Java, JavaScript ([Node.js](https://nodejs.org) and PhantomJS), [Neko](https://n
 
 ## <a name="strings-class"></a>The `Strings` utility class
 
-The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class provides handy utility methods for string manipulations.
+The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/Strings.hx) class provides handy utility methods for string manipulations.
 
 It also contains improved implementations of functions provided by Haxe's [StringTools](http://api.haxe.org/StringTools.html) class.
 
 Methods ending with the letter `8` (e.g. `length8()`, `indexOf8()`, `toLowerCase8()`) are improved versions of similar methods
 provided by Haxe's [String](http://api.haxe.org/String.html) class, offering UTF-8 support and consistent behavior across all platforms (including Neko).
 
-The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Strings.hx) class can also be used as a [static extension](http://haxe.org/manual/lf-static-extension.html).
+The [hx.strings.Strings](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/Strings.hx) class can also be used as a [static extension](http://haxe.org/manual/lf-static-extension.html).
 
 
 ### <a name="strings-examples"></a>Some examples
@@ -155,9 +155,9 @@ The type declaration in the Strings8.hx file is nearly empty because all methods
 
 ## <a name="spell-checker"></a>The spell checker
 
-The package [hx.strings.spelling](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/spelling) contains an extensible spell checker implementation that is based on ideas outlined by Peter Norvig in his article [How to write a Spell Checker](http://www.norvig.com/spell-correct.html).
+The package [hx.strings.spelling](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/spelling) contains an extensible spell checker implementation that is based on ideas outlined by Peter Norvig in his article [How to write a Spell Checker](http://www.norvig.com/spell-correct.html).
 
-The [SpellChecker#correctWord()](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/spelling/checker/SpellChecker.hx#L38) method can for example be used to implement a Google-like "did you mean 'xyz'?" feature for a custom search engine.
+The [SpellChecker#correctWord()](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/spelling/checker/SpellChecker.hx#L38) method can for example be used to implement a Google-like "did you mean 'xyz'?" feature for a custom search engine.
 
 Now let's do some spell checking...
 
@@ -215,9 +215,9 @@ class Test {
 
 ## <a name="string-collections"></a>The string collection classes
 
-The package [hx.strings.collection](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection) contains some useful collection classes for strings.
+The package [hx.strings.collection](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/collection) contains some useful collection classes for strings.
 
-1. [StringSet](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/StringSet.hx) is a collection of unique strings. Each string is guaranteed to only exists once within the collection.
+1. [StringSet](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/collection/StringSet.hx) is a collection of unique strings. Each string is guaranteed to only exists once within the collection.
    ```haxe
    var set = new hx.strings.collection.StringSet();
    set.add("a");
@@ -227,14 +227,14 @@ The package [hx.strings.collection](https://github.com/vegardit/haxe-strings/blo
    // at this point the set only contains two elements: one 'a' and one 'b'
    ```
 
-2. [SortedStringSet](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/SortedStringSet.hx) is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
+2. [SortedStringSet](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/collection/SortedStringSet.hx) is a sorted collection of unique strings. A custom comparator can be provided for using different sorting algorithm.
 
-3. [SortedStringMap](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/collection/SortedStringMap.hx) is a map that is sorted by there keys (which are of type [String](http://api.haxe.org/String.html)).
+3. [SortedStringMap](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/collection/SortedStringMap.hx) is a map that is sorted by there keys (which are of type [String](http://api.haxe.org/String.html)).
 
 
 ## <a name="stringbuilder-class"></a>The `StringBuilder` class
 
-The [hx.strings.StringBuilder](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/StringBuilder.hx) class is an alternative to the built-in [StringBuf](http://api.haxe.org/StringBuf.html).
+The [hx.strings.StringBuilder](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/StringBuilder.hx) class is an alternative to the built-in [StringBuf](http://api.haxe.org/StringBuf.html).
 It provides an fluent API, cross-platform UTF-8 support and the ability to insert Strings at arbitrary positions.
 
 ```haxe
@@ -265,7 +265,7 @@ class Test {
 
 ## <a name="ansi-class"></a>The `Ansi` class
 
-The [hx.strings.ansi.Ansi](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/ansi/Ansi.hx) class provides functionalities to write [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code) in a type-safe manner.
+The [hx.strings.ansi.Ansi](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/ansi/Ansi.hx) class provides functionalities to write [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code) in a type-safe manner.
 
 ```haxe
 import hx.strings.ansi.Ansi;
@@ -315,7 +315,7 @@ class Test {
 
 ## <a name="version-type"></a>Semantic version parsing with the `Version` type
 
-The [hx.strings.Version](https://github.com/vegardit/haxe-strings/blob/master/src/hx/strings/Version.hx) type provides functionalities for parsing of and working with version strings following the [SemVer 2.0 Specification](https://semver.org).
+The [hx.strings.Version](https://github.com/vegardit/haxe-strings/blob/main/src/hx/strings/Version.hx) type provides functionalities for parsing of and working with version strings following the [SemVer 2.0 Specification](https://semver.org).
 
 ```haxe
 import hx.strings.Version;
@@ -377,14 +377,14 @@ class Test {
 ### Using `haxelib git`
 
 ```
-haxelib git haxe-strings https://github.com/vegardit/haxe-strings master D:\haxe-projects\haxe-strings
+haxelib git haxe-strings https://github.com/vegardit/haxe-strings main D:\haxe-projects\haxe-strings
 ```
 
 ###  Using Git
 
-1. check-out the master branch
+1. check-out the main branch
     ```
-    git clone https://github.com/vegardit/haxe-strings --branch master --single-branch D:\haxe-projects\haxe-strings --depth=1
+    git clone https://github.com/vegardit/haxe-strings --branch main --single-branch D:\haxe-projects\haxe-strings --depth=1
     ```
 
 2. register the development release with haxe

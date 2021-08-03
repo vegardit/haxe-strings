@@ -53,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [PR#5](https://github.com/vegardit/haxe-strings/pull/5) `Ansi.cursor(RestorePos)` performs saves position instead of restoring it
 
 ### Removed
-- deprecated `hx.strings.Paths` module (use [hx.files.Path](https://github.com/vegardit/haxe-files/blob/master/src/hx/files/Path.hx) of the [haxe-files](https://lib.haxe.org/p/haxe-files/) haxelib instead)
+- deprecated `hx.strings.Paths` module (use [hx.files.Path](https://github.com/vegardit/haxe-files/blob/main/src/hx/files/Path.hx) of the [haxe-files](https://lib.haxe.org/p/haxe-files/) haxelib instead)
 
 
 ## [5.2.4] - 2019-12-10
