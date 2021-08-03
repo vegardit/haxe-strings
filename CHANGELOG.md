@@ -7,8 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+### Added
+- method `Strings#toFloatOrNull`
+- method `Strings#toIntOrNull`
+
 ### Changed
 - enabled null safety
+- `Strings#toEReg()` now throws an exception instead of returning null if input string is null
+- changed signature of `Strings#toFloat` from `(String, Null<Float>):Null<Float>` to `(String, Float):Float`
+- changed signature of `Strings#toInt` from `(String, Null<Int>):Null<Int>` to `(String, Int):Int`
 
 
 ## [6.0.4] - 2021-05-07

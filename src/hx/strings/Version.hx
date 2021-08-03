@@ -84,7 +84,7 @@ abstract Version(VersionData) from VersionData to VersionData {
     * @throws if <b>str</b> is not a valid SemVer.org version string.
     */
    @:from
-   public static function of(str:Null<String>):Version {
+   public static function of(str:String):Version {
       if(str == null)
          throw '[null] is not a valid $SEM_VER_SPEC version string!';
 

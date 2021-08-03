@@ -3476,14 +3476,14 @@ class Strings {
     * @return an EReg object using the given string as regular expression pattern.
     *
     * <pre><code>
-    * >>> Strings.toEReg(null) == null
+    * >>> Strings.toEReg(null) throws "[str] must not be null"
     * >>> Strings.toEReg(".*").match("foo") == true
     * </code></pre>
     */
    inline
-   public static function toEReg(str:Null<String>, opt:String = ""):Null<EReg> {
+   public static function toEReg(str:String, opt:String = ""):EReg {
       if (str == null)
-         return null;
+         throw "[str] must not be null";
       return new EReg(str, opt);
    }
 
