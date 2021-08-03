@@ -21,11 +21,12 @@ class SortedStringSet extends StringSet {
 
    public function new(?initialItems:Array<String>, ?comparator:String -> String -> Int) {
       cmp = comparator;
+
+      @:nullSafety(Off) // TODO no idea why null-safety check fails
       super(initialItems);
    }
 
 
-   inline
    override
    function _initMap():Void
       map = new SortedStringMap<Bool>(cmp);

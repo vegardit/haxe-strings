@@ -20,13 +20,13 @@ import hx.strings.internal.Either2;
  */
 class OrderedStringSet<V> extends StringSet {
 
+
    inline
    public function new(?initialItems:Either2<StringSet,Array<String>>)
       super(initialItems);
 
 
-   inline
    override
-   public function _initMap():Void
+   function _initMap():Void
       map = new OrderedStringMap<Bool>();
 }

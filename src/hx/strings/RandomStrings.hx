@@ -94,7 +94,7 @@ class RandomStrings {
       if (chars == null)
          throw "[chars] must not be null";
 
-      final charsArray = switch(chars.value) {
+      final charsArray:Array<Char> = switch(chars.value) {
          case a(str): str.toChars();
          case b(chars): chars;
       }
@@ -122,9 +122,9 @@ class RandomStrings {
     *
     * @return a random substring from the given string.
     */
-   public static function randomSubstring(str:String, substringLength:Int = 1): String {
+   public static function randomSubstring<T:String>(str:T, substringLength:Int = 1):T {
       if (str == null)
-         return null;
+         return str;
 
       if (substringLength < 1)
          throw "[substringLength] must not be smaller than 1";
@@ -138,7 +138,7 @@ class RandomStrings {
          return str;
 
       final startAt = Math.floor((len - substringLength + 1) * Math.random());
-      return str.substr8(startAt, substringLength);
+      return cast str.substr8(startAt, substringLength);
    }
 
 

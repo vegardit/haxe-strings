@@ -18,7 +18,9 @@ import hx.strings.internal.Either2;
  */
 class StringSet {
 
-   var map:StringMap<Bool>;
+   private static final EMPTY_MAP = new StringMap<Bool>();
+
+   var map:StringMap<Bool> = EMPTY_MAP;
 
 
    /**
@@ -39,9 +41,8 @@ class StringSet {
    }
 
 
-   function _initMap():Void {
+   function _initMap():Void
       map = new StringMap<Bool>();
-   }
 
 
    /**

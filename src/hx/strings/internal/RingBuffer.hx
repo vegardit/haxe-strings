@@ -34,7 +34,7 @@ private class RingBufferImpl<V> {
 
    #if flash
    // using Array instead of Vector as workaround for https://github.com/HaxeFoundation/haxe/issues/6529
-   final buffer:Array<V>;
+   final buffer:Array<V> = [];
    #else
    final buffer:haxe.ds.Vector<V>;
    #end
@@ -46,14 +46,13 @@ private class RingBufferImpl<V> {
    public var length(default, null):Int = 0;
    public final size:Int;
 
-
+   #if hl @:nullSafety(Off) #end // TODO https://github.com/HaxeFoundation/haxe/issues/10312
+   #if python @:nullSafety(Off) #end // TODO
    public function new(size:Int) {
       if (size < 1)
          throw "[size] must be > 0";
 
-      #if flash
-      buffer = [];
-      #else
+      #if !flash
       buffer = new haxe.ds.Vector<V>(size);
       #end
       this.size = size;
@@ -82,6 +81,7 @@ private class RingBufferImpl<V> {
       var realIdx = bufferStartIdx + index;
       if (realIdx > bufferMaxIdx)
          realIdx -= length;
+      #if php @:nullSafety(Off) #end // TODO
       return buffer[realIdx];
    }
 

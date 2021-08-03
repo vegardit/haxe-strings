@@ -78,7 +78,10 @@ class InMemoryDictionary implements TrainableDictionary {
 
       final arr = [for (word => popularity in dict) {word:word, popularity:popularity}];
       arr.sort((a, b) -> a.popularity > b.popularity ? -1 : a.popularity == b.popularity ? 0 : 1);
+
+      #if python @:nullSafety(Off) #end // TODO
       final removables = arr.slice(n);
+
       for (r in removables)
          remove(r.word);
       return removables.length;

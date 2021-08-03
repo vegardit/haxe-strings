@@ -22,6 +22,7 @@ using hx.strings.Strings;
  *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
+@:nullSafety(Off)
 @:build(hx.strings.String8.String8Generator.generateMethods())
 abstract String8(String) from String to String {
 

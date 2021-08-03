@@ -184,5 +184,5 @@ private class ValueIterator<V> {
 
    inline
    public function next():V
-      return map.get(map.__keys[++pos]);
+      return cast map.get(map.__keys[++pos]);
 }

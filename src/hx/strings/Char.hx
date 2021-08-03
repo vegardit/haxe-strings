@@ -255,7 +255,7 @@ abstract Char(Int) from Int {
    public static inline final BRACKET_CURLY_RIGHT:Char = 125;
 
 
-    @:from
+   @:from
    inline
    static function fromString(str:String):Char
       return str.charCodeAt8(0);
@@ -563,7 +563,7 @@ abstract Char(Int) from Int {
     */
    inline
    public function isLowerCase():Bool
-      return CHAR_CASE_MAPPER.isLowerCase(this);
+      return @:nullSafety(Off) CHAR_CASE_MAPPER.isLowerCase(this);
 
 
    /**
@@ -575,7 +575,7 @@ abstract Char(Int) from Int {
     */
    inline
    public function isUpperCase():Bool
-      return CHAR_CASE_MAPPER.isUpperCase(this);
+      return @:nullSafety(Off) CHAR_CASE_MAPPER.isUpperCase(this);
 
 
    /**
@@ -641,6 +641,7 @@ abstract Char(Int) from Int {
 }
 
 
+@:nullSafety(Off)
 private class CharCaseMapper {
    final mapU2L = new IntMap<Char>();
    final mapL2U = new IntMap<Char>();
@@ -664,14 +665,14 @@ private class CharCaseMapper {
       return mapU2L.exists(ch);
 
 
-   inline
+   #if !php inline #end // TODO workaround for nullSafety false positive
    public function toLowerCase(ch:Char):Char {
       final lowerChar = mapU2L.get(ch);
       return lowerChar == null ? ch : lowerChar;
    }
 
 
-   inline
+   #if !php inline #end // TODO workaround for nullSafety false positive
    public function toUpperCase(ch:Char):Char {
       final upperChar = mapL2U.get(ch);
       return upperChar == null ? ch : upperChar;

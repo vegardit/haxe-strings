@@ -25,6 +25,8 @@ class OS {
       #else
       final os:String = Sys.systemName();
       #end
+
+      #if python @:nullSafety(Off) #end // TODO
       ~/win/i.match(os);
    }
 }

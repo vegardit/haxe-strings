@@ -35,7 +35,8 @@ class Pattern {
          return new Pattern(pattern, "");
 
       return new Pattern(pattern, switch(options.value) {
-         case a(str): str.toLowerCase8()
+         case a(str): @:nullSafety(Off)
+            str.toLowerCase8()
             // remove unsupported flags
             .filterChars((ch) -> ch == "i" || ch == "m" || ch == "g"
                #if (cpp || flash || java || neko || php)
@@ -253,7 +254,7 @@ abstract MatchingOption(String) {
    final MATCH_ALL = "g";
 }
 
-
+#if (haxe_ver < 4.1) @:nullSafety(Off) #else @:nullSafety(Strict) #end
 private class MatcherImpl implements Matcher {
    final ereg:EReg;
    var isMatch:Null<Bool>;
@@ -261,8 +262,8 @@ private class MatcherImpl implements Matcher {
 
 
    public function new(ereg:EReg, pattern:String, options:String, str:String) {
-      this.ereg = _cloneEReg(ereg, pattern, options);
-      reset(str);
+      this.ereg = @:nullSafety(Off) _cloneEReg(ereg, pattern, options);
+      this.str = str;
    }
 
 
@@ -295,8 +296,7 @@ private class MatcherImpl implements Matcher {
 
 
    public function matched(n:Int = 0):String {
-      if(isMatch == null) matches();
-      if(!isMatch) throw "No string matched";
+      if(!matches()) throw "No string matched";
 
       final result = ereg.matched(n);
 
@@ -307,10 +307,11 @@ private class MatcherImpl implements Matcher {
       return result;
    }
 
-
-   inline
-   public function matches():Bool
-      return isMatch = ereg.match(str);
+   #if python @:nullSafety(Off) #end // TODO
+   public function matches():Bool {
+      if (isMatch == null) isMatch = ereg.match(str);
+      return isMatch;
+   }
 
 
    inline
@@ -325,27 +326,26 @@ private class MatcherImpl implements Matcher {
 
 
    public function matchedPos(): {pos:Int, len:Int} {
-      if(isMatch == null) matches();
-      if(!isMatch) throw "No string matched";
+      if(!matches()) throw "No string matched";
       return ereg.matchedPos();
    }
 
 
    public function substringAfterMatch():String {
-      if(isMatch == null) matches();
-      if(!isMatch) return "";
+      if(!matches()) return "";
       return ereg.matchedRight();
    }
 
 
    public function substringBeforeMatch():String {
-      if(isMatch == null) matches();
-      if(!isMatch) return "";
+      if(!matches()) return "";
       return ereg.matchedLeft();
    }
 
 
-   function _cloneEReg(from:EReg, pattern:String, options:String) {
+   @:nullSafety(Off)
+   inline
+   function _cloneEReg(from:EReg, pattern:String, options:String):EReg {
       // partially copy internal state (if possible) to reuse the inner pre-compiled pattern instance
       // and avoid expensive reparsing of the pattern string
       #if (neko || lua || cpp)

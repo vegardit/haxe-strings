@@ -12,7 +12,7 @@ import hx.strings.AnyAsString;
 class AnsiWriter<T> {
 
    final _out:StringBuf_StringBuilder_or_Output<T>;
-   public var out(get, null):T;
+   public var out(get, never):T;
    inline function get_out():T return _out.out;
 
 
@@ -87,10 +87,10 @@ class AnsiWriter<T> {
 @:noCompletion
 @:noDoc @:dox(hide)
 @:forward
-abstract StringBuf_StringBuilder_or_Output<T>(AbstractStringWriter<T>) {
+abstract StringBuf_StringBuilder_or_Output<T>(StringWriter<T>) {
 
    inline
-   function new(writer:AbstractStringWriter<T>)
+   function new(writer:StringWriter<T>)
       this = writer;
 
    @:from inline static function fromStringBuilder<T:StringBuilder>  (out:T) return new StringBuf_StringBuilder_or_Output(new StringBuilderStringWriter(out));
@@ -99,53 +99,58 @@ abstract StringBuf_StringBuilder_or_Output<T>(AbstractStringWriter<T>) {
 }
 
 
-@:abstract
 @:noDoc @:dox(hide)
-private class AbstractStringWriter<T> {
+private interface StringWriter<T> {
    public var out(default, null):T;
-   public function flush() {};
-   public function write(str:String) throw "Not implemented";
+   public function flush():Void;
+   public function write(str:String):Void;
 }
 
 
 @:noDoc @:dox(hide)
-private class OutputStringWriter<T:haxe.io.Output> extends AbstractStringWriter<T> {
+private class OutputStringWriter<T:haxe.io.Output> implements StringWriter<T> {
+
+   public var out(default, null):T;
 
    inline
    public function new(out:T)
       this.out = out;
 
-   override
    public function flush()
       out.flush();
 
-   override
    public function write(str:String)
       out.writeString(str);
 }
 
 
 @:noDoc @:dox(hide)
-private class StringBufStringWriter<T:StringBuf> extends AbstractStringWriter<T> {
+private class StringBufStringWriter<T:StringBuf> implements StringWriter<T> {
+
+   public var out(default, null):T;
 
    inline
    public function new(out:T)
       this.out = out;
 
-   override
+   public function flush() {};
+
    public function write(str:String)
       out.add(str);
 }
 
 
 @:noDoc @:dox(hide)
-private class StringBuilderStringWriter<T:StringBuilder> extends AbstractStringWriter<T> {
+private class StringBuilderStringWriter<T:StringBuilder> implements StringWriter<T> {
+
+   public var out(default, null):T;
 
    inline
    public function new(out:T)
       this.out = out;
 
-   override
+   public function flush() {};
+
    public function write(str:String) {
       #if (cs||java)
          cast(out, StringBuilder).add(str);

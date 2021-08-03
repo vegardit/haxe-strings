@@ -38,6 +38,19 @@ class Macros {
    }
 
 
+   macro
+   public static function configureNullSafety() {
+      haxe.macro.Compiler.nullSafety("hx.strings",
+         #if (haxe_ver < 4.1)
+            Strict // Haxe 4.x does not have StrictThreaded
+         #else
+            StrictThreaded
+         #end
+      );
+      return macro {}
+   }
+
+
    /**
     * Embeds the given file as resource.
     *

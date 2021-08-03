@@ -49,7 +49,7 @@ class CharIterator {
     * @param prevBufferSize number of characters the iterator can go backwards
     */
    inline
-   public static function fromArray(chars:Array<Char>, prevBufferSize = 0):CharIterator {
+   public static function fromArray(chars:Null<Array<Char>>, prevBufferSize = 0):CharIterator {
       if (chars == null) return NullCharIterator.INSTANCE;
       return new ArrayCharIterator(chars, prevBufferSize);
    }
@@ -96,7 +96,7 @@ class CharIterator {
    var index = -1;
    var line = 0;
    var col = 0;
-   var currChar = -1;
+   var currChar:Char = -1;
 
    final prevBuffer:Null<RingBuffer<CharWithPos>>;
    var prevBufferPrevIdx = -1;
@@ -131,7 +131,7 @@ class CharIterator {
       if (!hasPrev())
          throw new Eof();
 
-      final prevChar = prevBuffer[prevBufferPrevIdx];
+      final prevChar = @:nullSafety(Off) prevBuffer[prevBufferPrevIdx];
       currChar = prevChar.char;
       index = prevChar.index;
       line = prevChar.line;
@@ -156,7 +156,7 @@ class CharIterator {
    @:final
    public function next():Char {
       if (prevBufferNextIdx > -1) {
-         var prevChar = prevBuffer[prevBufferNextIdx];
+         var prevChar = @:nullSafety(Off) prevBuffer[prevBufferNextIdx];
          currChar = prevChar.char;
          index = prevChar.index;
          line = prevChar.line;
@@ -243,7 +243,7 @@ private class ArrayCharIterator extends CharIterator {
 
 
    override
-   function getChar(): Char
+   function getChar():Char
       return chars[index];
 }
 
@@ -274,7 +274,7 @@ private class InputCharIterator extends CharIterator {
    var byteIndex = 0;
    final input:Input;
    var currCharIndex = -1;
-   var nextChar:Char;
+   var nextChar:Char = -1;
    var nextCharAvailable = TriState.UNKNOWN;
 
    public function new(chars:Input, prevBufferSize:Int) {
@@ -298,7 +298,7 @@ private class InputCharIterator extends CharIterator {
 
 
    override
-   function getChar(): Char {
+   function getChar():Char {
       if(index != currCharIndex) {
          currCharIndex = index;
          nextCharAvailable = UNKNOWN;
@@ -409,6 +409,6 @@ private class StringCharIterator extends CharIterator {
 
 
    override
-   function getChar(): Char
+   function getChar():Char
       return Strings._charCodeAt8Unsafe(chars, index);
 }

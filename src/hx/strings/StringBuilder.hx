@@ -17,12 +17,14 @@ using hx.strings.Strings;
  *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
+#if (haxe_ver < 4.1) @:nullSafety(Off) #else @:nullSafety(Strict) #end
+@notThreadSafe
 class StringBuilder {
 
    var sb = new StringBuf();
 
    #if !(java_src || cs)
-   var pre:Array<String> = null;
+   var pre:Null<Array<String>> = null;
    var len:Int = 0;
    #end
 
@@ -45,7 +47,7 @@ class StringBuilder {
     *
     * @return the length of the string representation of all added items
     */
-   public var length(get, null): Int;
+   public var length(get, never): Int;
    inline
    function get_length():Int
       #if (java_src || cs)
@@ -64,12 +66,8 @@ class StringBuilder {
     *
     * @return <code>this</code> for chained operations
     */
-   public function add(item:AnyAsString):StringBuilder {
-      #if cpp
-         //TODO AnyAsString.fromAny() is not invoked for 'null' values on Haxe4+CPP for some reason
-         if (item == null) item = "null";
-      #end
-      sb.add(item);
+   public function add(item:Null<AnyAsString>):StringBuilder {
+      sb.add(item == null ? "null" : item);
       #if !(java_src || cs)
          len += item.length8();
       #end
@@ -212,6 +210,7 @@ class StringBuilder {
          // insert the item into the pre[] array if required
          var pre_len = 0;
          if (pre != null) {
+            final pre = this.pre; // TODO workaround for null-safety bug
             final i = pre.length;
             for(i in 0...pre.length) {
                final next_pre_len = pre_len + pre[i].length8();
@@ -221,7 +220,7 @@ class StringBuilder {
                   return this;
                }
                if (next_pre_len > pos) {
-                  final preSplitted = pre[i].splitAt(pos - pre_len);
+                  final preSplitted:Array<String> = cast pre[i].splitAt(pos - pre_len);
                   pre[i] = preSplitted[0];
                   pre.insert(i + 1, item);
                   pre.insert(i + 2, preSplitted[1]);
@@ -237,7 +236,7 @@ class StringBuilder {
              return this;
          }
 
-         final sbSplitted = sb.toString().splitAt(pos - pre_len);
+         final sbSplitted:Array<String> = cast sb.toString().splitAt(pos - pre_len);
          sb = new StringBuf();
          sb.add(sbSplitted[0]);
          sb.add(item);
@@ -289,6 +288,7 @@ class StringBuilder {
          // insert the char into the pre[] array if required
          var pre_len = 0;
          if (pre != null) {
+            final pre = this.pre; // TODO workaround for null-safety bug
             final i = pre.length;
             for(i in 0...pre.length) {
                final next_pre_len = pre_len + pre[i].length8();
@@ -298,7 +298,7 @@ class StringBuilder {
                   return this;
                }
                if (next_pre_len > pos) {
-                  final preSplitted = pre[i].splitAt(pos - pre_len);
+                  final preSplitted:Array<String> = cast pre[i].splitAt(pos - pre_len);
                   pre[i] = preSplitted[0];
                   pre.insert(i + 1, ch);
                   pre.insert(i + 2, preSplitted[1]);
@@ -314,7 +314,7 @@ class StringBuilder {
             return this;
          }
 
-         final sbSplitted = sb.toString().splitAt(pos - pre_len);
+         final sbSplitted:Array<String> = cast sb.toString().splitAt(pos - pre_len);
          sb = new StringBuf();
          sb.add(sbSplitted[0]);
          addChar(ch);
@@ -355,6 +355,7 @@ class StringBuilder {
       #else
          if (pos == 0) {
             if (pre == null) pre = [];
+            final pre = this.pre; // TODO workaround for null-safety bug
             var i = items.length;
             while (i-- > 0) {
                final item = items[i];
@@ -367,6 +368,7 @@ class StringBuilder {
          // insert the items into the pre[] array if required
          var pre_len = 0;
          if (pre != null) {
+            final pre = this.pre; // TODO workaround for null-safety bug
             final i = pre.length;
             for(i in 0...pre.length) {
                final next_pre_len = pre_len + pre[i].length8();
@@ -380,7 +382,7 @@ class StringBuilder {
                   return this;
                }
                if (next_pre_len > pos) {
-                  final preSplitted = pre[i].splitAt(pos - pre_len);
+                  final preSplitted:Array<String> = cast pre[i].splitAt(pos - pre_len);
                   pre[i] = preSplitted[0];
                   pre.insert(i + 1, preSplitted[1]);
                   var j = items.length;
@@ -401,7 +403,7 @@ class StringBuilder {
             return this;
          }
 
-         final sbSplitted = sb.toString().splitAt(pos - pre_len);
+         final sbSplitted:Array<String> = cast sb.toString().splitAt(pos - pre_len);
          sb = new StringBuf();
          sb.add(sbSplitted[0]);
          for (item in items) {
@@ -451,10 +453,11 @@ class StringBuilder {
 }
 
 
+#if (haxe_ver < 4.1) @:nullSafety(Off) #else @:nullSafety(Strict) #end
 private class OutputWrapper extends Output {
 
    private final sb:StringBuilder;
-   private var bo:BytesOutput;
+   private var bo:Null<BytesOutput>;
 
    inline
    public function new(sb:StringBuilder)
