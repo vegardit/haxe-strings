@@ -150,12 +150,13 @@ class InMemoryDictionary implements TrainableDictionary {
          while (true) {
             lineNo++;
             line = input.readLine();
-            if (!line.contains(":")) {
+            final tuple = line.split8(":", 2);
+            if (tuple.length < 2) {
                trace('[WARN] Skipping line #$lineNo which misses the colon (:) separator');
                continue;
             }
-            final word = line.substringBeforeLast(":");
-            final popularity = line.substringAfterLast(":").toInt(0);
+            final word = tuple[0];
+            final popularity = tuple[1].toInt(0);
             if (popularity < 1) {
                trace('[WARN] Skipping line #$lineNo with popularity < 1');
                continue;
@@ -179,7 +180,6 @@ class InMemoryDictionary implements TrainableDictionary {
 
    public function toString()
       return 'InMemoryDictionary[words=$dictSize]';
-
 
 
    inline
