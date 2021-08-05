@@ -29,7 +29,11 @@ class GermanDictionary extends InMemoryDictionary {
 
       Macros.addResource("hx/strings/spelling/dictionary/GermanDictionary.txt", "GermanDictionary");
 
+      // workaround to prevent strange error: AttributeError: type object 'python_Lib' has no attribute 'lineEnd'
+      #if python python.Lib; #end
+
       // not using loadWordsFromResource for full DCE support
+      trace('[INFO] Loading words from embedded [GermanDictionary]...');
       loadWordsFromInput(new BytesInput(Resource.getBytes("GermanDictionary")));
    }
 

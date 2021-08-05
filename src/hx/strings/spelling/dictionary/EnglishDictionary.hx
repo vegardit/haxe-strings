@@ -25,7 +25,11 @@ class EnglishDictionary extends InMemoryDictionary {
 
       Macros.addResource("hx/strings/spelling/dictionary/EnglishDictionary.txt", "EnglishDictionary");
 
+      // workaround to prevent strange error: AttributeError: type object 'python_Lib' has no attribute 'lineEnd'
+      #if python python.Lib; #end
+
       // not using loadWordsFromResource for full DCE support
+      trace('[INFO] Loading words from embedded [EnglishDictionary]...');
       loadWordsFromInput(new BytesInput(Resource.getBytes("EnglishDictionary")));
    }
 

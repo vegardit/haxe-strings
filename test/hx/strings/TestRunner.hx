@@ -126,6 +126,7 @@ class TestRunner extends DocTestRunner {
       assertEquals(it.current, Char.of("0"));
    }
 
+
    public function testCharIterator_WithoutPrevBuffer():Void {
       var it = CharIterator.fromString("1234567890", 0);
       assertFalse(it.hasPrev());
