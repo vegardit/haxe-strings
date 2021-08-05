@@ -8,6 +8,7 @@ import haxe.Resource;
 import haxe.io.BytesInput;
 import haxe.io.Input;
 import haxe.io.Output;
+import hx.strings.internal.Exception;
 
 import hx.strings.collection.StringMap;
 
@@ -162,13 +163,14 @@ class InMemoryDictionary implements TrainableDictionary {
             if (!exists(word)) dictSize++;
             count++;
             dict.set(word, popularity);
-        }
+         }
       } catch(ex:haxe.io.Eof) {
          // expected --> https://github.com/HaxeFoundation/haxe/issues/5418
-      } catch (ex:Dynamic) {
-         trace('Exception while reading line #$lineNo. Previous line content was [$line]');
+      } catch (e:Dynamic) {
+         final ex = Exception.capture(e);
+         trace('[ERROR] Exception while reading line #$lineNo. Previous line content was [$line].');
          if (autoClose) input.close();
-         #if neko neko.Lib.rethrow #else throw #end (ex);
+         ex.rethrow();
       }
       if (autoClose) input.close();
       return count;
