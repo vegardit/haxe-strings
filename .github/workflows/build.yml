@@ -126,7 +126,7 @@ jobs:
       run: haxelib run travix java -D jvm
 
     - name: Test [lua]
-      continue-on-error: true
+      continue-on-error: true # https://github.com/HaxeFoundation/haxe/issues/10343
       run: haxelib run travix lua
 
     - name: Test [neko]
