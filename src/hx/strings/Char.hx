@@ -665,14 +665,14 @@ private class CharCaseMapper {
       return mapU2L.exists(ch);
 
 
-   #if !php inline #end // TODO workaround for nullSafety false positive
+   #if !(lua||php) inline #end // TODO workaround for null-safety false positive
    public function toLowerCase(ch:Char):Char {
       final lowerChar = mapU2L.get(ch);
       return lowerChar == null ? ch : lowerChar;
    }
 
 
-   #if !php inline #end // TODO workaround for nullSafety false positive
+   #if !(lua||php) inline #end // TODO workaround for null-safety false positive
    public function toUpperCase(ch:Char):Char {
       final upperChar = mapL2U.get(ch);
       return upperChar == null ? ch : upperChar;

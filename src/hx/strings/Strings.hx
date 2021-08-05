@@ -2656,6 +2656,7 @@ class Strings {
 
       #if target.unicode
          if (maxParts <= 0 && separators.length == 1)
+            #if lua @:nullSafety(Off) #end
             return str.split(separators[0]);
       #end
 
@@ -2670,12 +2671,15 @@ class Strings {
 
       if (separators.indexOf("") > -1) {
          if (maxParts <= 0)
+            #if lua @:nullSafety(Off) #end
             return [ for (i in 0...strLen) sub(str, i, 1) ];
 
          if (maxParts > strLen)
             maxParts = strLen;
          maxParts--;
+         #if lua @:nullSafety(Off) #end
          final result = [ for (i in 0...maxParts) sub(str, i, 1) ];
+         #if lua @:nullSafety(Off) #end
          result.push(sub(str, maxParts, strLen - maxParts));
          return result;
       }
@@ -2698,9 +2702,11 @@ class Strings {
          }
          resultCount++;
          if (foundAt == POS_NOT_FOUND || resultCount == maxParts) {
+            #if lua @:nullSafety(Off) #end
             result.push(sub(str, lastFoundAt, strLen - lastFoundAt));
             break;
          }
+         #if lua @:nullSafety(Off) #end
          result.push(sub(str, lastFoundAt, foundAt - lastFoundAt));
          lastFoundAt = foundAt + separatorLen;
       }
@@ -2957,6 +2963,7 @@ class Strings {
       #if php final str:String = str; #end
 
       #if target.unicode
+         #if lua @:nullSafety(Off) #end
          return cast str.substr(startAt, len);
       #else
          if (len < 0) {
