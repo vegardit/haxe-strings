@@ -18,15 +18,15 @@ class OS {
    #end
 
    public static var isWindows(default, never):Bool = {
-      #if flash
-      final os:String = flash.system.Capabilities.os;
-      #elseif js
-      final os:String = isNodeJS ? js.Syntax.code("process.platform") : js.Browser.navigator.platform;
-      #else
-      final os:String = Sys.systemName();
-      #end
-
-      #if python @:nullSafety(Off) #end // TODO
+      final os:String =
+         #if flash
+            flash.system.Capabilities.os
+         #elseif js
+            isNodeJS ? js.Syntax.code("process.platform") : js.Browser.navigator.platform
+         #else
+            Sys.systemName()
+         #end;
+      #if python @:nullSafety(Off) #end // TODO https://github.com/HaxeFoundation/haxe/issues/10273
       ~/win/i.match(os);
    }
 }
