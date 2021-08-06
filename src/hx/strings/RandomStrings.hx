@@ -113,18 +113,18 @@ class RandomStrings {
    /**
     * Returns a random substring from the given string.
     * <pre><code>
-    * >>> RandomStrings.randomSubstring(null)     == null
-    * >>> RandomStrings.randomSubstring("")       throws "[substringLength] must not be larger than str.length"
-    * >>> RandomStrings.randomSubstring("", 2)    throws "[substringLength] must not be larger than str.length"
+    * >>> RandomStrings.randomSubstring(null)     throws "[str] must not be null or empty"
+    * >>> RandomStrings.randomSubstring("")       throws "[str] must not be null or empty"
+    * >>> RandomStrings.randomSubstring(" ", 2)   throws "[substringLength] must not be larger than str.length"
     * >>> RandomStrings.randomSubstring("dog", 3) == "dog"
     * >>> ["ab", "bc"].indexOf(RandomStrings.randomSubstring("abc", 2)) > -1
     * </code></pre>
     *
     * @return a random substring from the given string.
     */
-   public static function randomSubstring<T:String>(str:T, substringLength:Int = 1):T {
-      if (str == null)
-         return str;
+   public static function randomSubstring(str:String, substringLength:Int = 1):String {
+      if (str.isEmpty())
+         throw "[str] must not be null or empty";
 
       if (substringLength < 1)
          throw "[substringLength] must not be smaller than 1";
@@ -138,7 +138,7 @@ class RandomStrings {
          return str;
 
       final startAt = Math.floor((len - substringLength + 1) * Math.random());
-      return cast str.substr8(startAt, substringLength);
+      return str.substr8(startAt, substringLength);
    }
 
 
@@ -156,6 +156,9 @@ class RandomStrings {
     * @param separator string to separate the UUID parts, default is a dash -
     */
    public static function randomUUIDv4(separator:String = "-"):String {
+      if (separator == null)
+         throw "[separator] must not be null";
+
       // set variant bits (i.e. 10xx) according to RFC4122 4.1.1. Variant: http://www.ietf.org/rfc/rfc4122.txt
       var variantByte = Math.floor(Math.random() * 16);
       variantByte = Bits.setBit(variantByte, 4); // set the 4th bit to 1

@@ -58,6 +58,19 @@ class Strings {
    public static final NEW_LINE = OS.isWindows ? NEW_LINE_WIN : NEW_LINE_NIX;
 
 
+   /*
+    * workaround for https://github.com/HaxeFoundation/haxe/issues/10343
+    */
+   inline
+   private static function _length(str:String):Int {
+      #if lua
+         return cast(str, String).length;
+      #else
+         return str.length;
+      #end
+   }
+
+
    inline
    private static function _getNotFoundDefault(str:Null<String>, notFoundDefault:StringNotFoundDefault):Null<String> {
       return switch(notFoundDefault) {
@@ -255,7 +268,7 @@ class Strings {
       if (str == null)
          return cast null;
 
-      if (str.length == 0)
+      if (str._length() == 0)
          return cast str + suffix;
 
       if (str.endsWith(suffix))
@@ -1572,7 +1585,7 @@ class Strings {
       if (str == null)
          return cast null;
 
-      if (str.length == 0 || indentWith.isEmpty())
+      if (str._length() == 0 || indentWith.isEmpty())
          return str;
 
       var isFirstLine = true;
@@ -1751,7 +1764,7 @@ class Strings {
     */
    inline
    public static function isEmpty(str:Null<String>):Bool
-      return str == null || str.length == 0;
+      return str == null || str._length() == 0;
 
 
    /**
@@ -1785,7 +1798,7 @@ class Strings {
     */
    inline
    public static function isNotEmpty(str:Null<String>):Bool
-      return str != null && str.length > 0;
+      return str != null && str._length() > 0;
 
 
    /**
@@ -1976,7 +1989,7 @@ class Strings {
          return 0;
 
       #if target.unicode
-         return str.length;
+         return str._length();
       #else
          return Utf8.length(str);
       #end
@@ -2347,7 +2360,7 @@ class Strings {
       #if php var searchIn:String = searchIn; #end
 
       while (searchIn.startsWith(searchFor)) {
-         searchIn = cast searchIn.substring(searchFor.length, searchIn.length);
+         searchIn = cast searchIn.substring(searchFor.length, searchIn._length());
       }
       return cast searchIn;
    }
@@ -2369,7 +2382,7 @@ class Strings {
     */
    inline
    public static function removeTags<T:String>(xml:T):T {
-      #if (jvm||hl) var xml:String = xml; #end
+      #if (jvm||hl) final xml:String = xml; #end
 
       if (xml.isEmpty())
          return cast xml;
@@ -2405,7 +2418,7 @@ class Strings {
       #if php var searchIn:String = searchIn; #end
 
       while (searchIn.endsWith(searchFor)) {
-         searchIn = cast searchIn.substring(0, searchIn.length - searchFor.length);
+         searchIn = cast searchIn.substring(0, searchIn._length() - searchFor.length);
       }
       return cast searchIn;
    }
@@ -2490,7 +2503,7 @@ class Strings {
          if (searchIn.length8() > 1)
             foundAt = 1;
          else
-            return searchIn
+            return searchIn;
       else
          foundAt = searchIn.indexOf8(searchFor);
 
@@ -2945,7 +2958,7 @@ class Strings {
     *
     * @return <b>len</b> characters of <b>str</b>, starting from <b>startAt</b>.
     */
-   public static function substr8<T:Null<String>>(str:T, startAt:CharIndex, ?len:Int):T {
+   public static function substr8<T:String>(str:T, startAt:CharIndex, ?len:Int):T {
       if (str.isEmpty())
          return str;
 
@@ -2960,10 +2973,10 @@ class Strings {
          if (startAt < 0) startAt = 0;
       }
 
-      #if php final str:String = str; #end
+      #if (php||lua) final str:String = str; #end
 
       #if target.unicode
-         #if lua @:nullSafety(Off) #end
+         #if (lua && haxe_ver < 4.1) @:nullSafety(Off) #end
          return cast str.substr(startAt, len);
       #else
          if (len < 0) {
@@ -3046,7 +3059,7 @@ class Strings {
       if (str == null)
          return str;
 
-      #if php final str:String = str; #end
+      #if (php||lua) final str:String = str; #end
 
       if (str == "" || searchFor == null || searchFor == "")
          return cast _getNotFoundDefault(str, notFoundDefault);
@@ -3075,7 +3088,7 @@ class Strings {
       if (str == null)
          return cast null;
 
-      #if php final str:String = str; #end
+      #if (php||lua) final str:String = str; #end
 
       if (str == "" || searchFor.isEmpty())
          return cast _getNotFoundDefault(str, notFoundDefault);
@@ -3189,7 +3202,7 @@ class Strings {
       if (str == null)
          return cast null;
 
-      #if php final str:String = str; #end
+      #if (php||lua) final str:String = str; #end
 
       if (str == "" || searchFor.isEmpty())
          return cast _getNotFoundDefault(str, notFoundDefault);
@@ -3220,7 +3233,7 @@ class Strings {
       if (str == null)
          return cast null;
 
-      #if php final str:String = str; #end
+      #if (php||lua) final str:String = str; #end
 
       if (str == "" || searchFor.isEmpty())
          return cast _getNotFoundDefault(str, notFoundDefault);
@@ -3317,7 +3330,7 @@ class Strings {
       if (str == null)
          return cast null;
 
-      #if php final str:String = str; #end
+      #if (php||lua) final str:String = str; #end
 
       if (str == "" || searchFor.isEmpty())
          return cast _getNotFoundDefault(str, notFoundDefault);

@@ -126,7 +126,8 @@ jobs:
       run: haxelib run travix java -D jvm
 
     - name: Test [lua]
-      continue-on-error: true # https://github.com/HaxeFoundation/haxe/issues/10343
+      if: runner.os == 'Linux'
+      continue-on-error: ${{ matrix.haxe == '4.0.5' || matrix.haxe == '4.1.5' }}
       run: haxelib run travix lua
 
     - name: Test [neko]
