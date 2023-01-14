@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.collection;
@@ -11,8 +12,6 @@ package hx.strings.collection;
  * >>> new SortedStringSet(["", "c", "a", "b", "a"]).toArray()  ==  [ "", "a", "b", "c" ]
  * >>> new SortedStringSet(["", "c", "a", "b", "a"]).toString() == '[ "", "a", "b", "c" ]'
  * </code></pre>
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class SortedStringSet extends StringSet {
 

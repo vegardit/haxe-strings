@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings;
@@ -10,8 +11,6 @@ using hx.strings.Strings;
  * Instances of this type represent SemVer 2.0 compliant versions.
  *
  * See http://www.semver.org for terminology and constraints.
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @immutable
 abstract Version(VersionData) from VersionData to VersionData {

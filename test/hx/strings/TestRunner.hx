@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH, https://vegardit.com
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings;
@@ -19,9 +20,6 @@ import hx.strings.StringMacros.multiline;
 
 using hx.strings.Strings;
 
-/**
- * @author Sebastian Thomschke, Vegard IT GmbH
- */
 @:build(hx.doctest.DocTestGenerator.generateDocTests())
 @:keep // prevent DCEing of manually created testXYZ() methods
 class TestRunner extends DocTestRunner {

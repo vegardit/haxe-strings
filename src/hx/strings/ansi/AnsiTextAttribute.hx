@@ -1,13 +1,12 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.ansi;
 
 /**
  * https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:enum
 abstract AnsiTextAttribute(Int) {

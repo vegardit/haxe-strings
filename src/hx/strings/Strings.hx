@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings;
@@ -27,8 +28,6 @@ using hx.strings.Strings;
  * Utility functions for Strings with UTF-8 support and consistent behavior across platforms.
  *
  * This class can be used as <a href="http://haxe.org/manual/lf-static-extension.html">static extension</a>.
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class Strings {
 

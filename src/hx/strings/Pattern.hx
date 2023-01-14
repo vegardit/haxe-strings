@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH, https://vegardit.com
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings;
@@ -14,8 +15,6 @@ using hx.strings.Strings;
  * UTF8 matching (EReg's 'u' flag) is enabled by default.
  *
  * @see http://haxe.org/manual/std-regex.html
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @immutable
 @threadSafe

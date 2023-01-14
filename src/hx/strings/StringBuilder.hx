@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings;
@@ -14,8 +15,6 @@ using hx.strings.Strings;
  * with additional functions such as <code>clear()</code>, <code>insert()</code>, <code>isEmpty()</code>
  * <br/>
  * This implementation tries to avoid the creation of intermediate String objects as much as possible.
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 #if (haxe_ver < 4.1) @:nullSafety(Off) #else @:nullSafety(Strict) #end
 @notThreadSafe

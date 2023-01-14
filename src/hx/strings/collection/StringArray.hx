@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.collection;
@@ -13,8 +14,6 @@ import hx.strings.internal.Either2;
  * >>> new StringArray().length == 0
  * >>> ({var a:StringArray = ["a", "b"]; a;}).length == 2
  * </code></pre>
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:forward
 abstract StringArray(Array<String>) from Array<String> to Array<String> {

@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.spelling.dictionary;
@@ -17,8 +18,6 @@ import hx.strings.internal.Macros;
  * 3) some German newspaper articles,
  * 4) the Top 10000 German word list of the University Leipzig (http://wortschatz.uni-leipzig.de/html/wliste.html), and
  * 5) the Free German Dictionary (https://sourceforge.net/projects/germandict/)
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 class GermanDictionary extends InMemoryDictionary {
 

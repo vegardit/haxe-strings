@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.spelling.checker;
@@ -7,8 +8,6 @@ package hx.strings.spelling.checker;
 /**
  * Word frequency/popularity based spell checker inspired by Peter Norvig's article
  * "How to Write a Spelling Corrector" http://www.norvig.com/spell-correct.html
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 interface SpellChecker {
 

@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings;
@@ -19,8 +20,6 @@ using hx.strings.Strings;
  * var str:String8 = "myString";
  * str.length();  // --> this is not the Haxe internal `length()` method but an implementation that with UTF-8 strings across platforms
  * </pre>
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:nullSafety(Off)
 @:build(hx.strings.String8.String8Generator.generateMethods())

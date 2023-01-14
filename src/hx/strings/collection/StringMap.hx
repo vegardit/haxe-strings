@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-2021 Vegard IT GmbH (https://vegardit.com) and contributors.
+ * SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+ * SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
  * SPDX-License-Identifier: Apache-2.0
  */
 package hx.strings.collection;
@@ -9,8 +10,6 @@ import hx.strings.internal.Types;
 
 /**
  * Abstract on <code>haxe.Constraints.IMap[String, V]</code>
- *
- * @author Sebastian Thomschke, Vegard IT GmbH
  */
 @:forward
 abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IMap<String, V> to haxe.Constraints.IMap<String, V> {
