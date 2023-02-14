@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
+# SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
+# SPDX-License-Identifier: Apache-2.0
+#
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
 name: Build
 
@@ -10,25 +14,45 @@ on:
     paths-ignore:
     - '**/*.adoc'
     - '**/*.md'
+    - '.editorconfig'
+    - '.git*'
     - '.github/*.yml'
+    - 'tools'
   pull_request:
   workflow_dispatch:
     # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
+    inputs:
+      debug-with-ssh:
+        description: "Start an SSH session for debugging purposes after tests ran:"
+        default: never
+        type: choice
+        options: [ always, on_failure, on_failure_or_cancelled, never ]
+      debug-with-ssh-only-for-actor:
+        description: "Limit access to the SSH session to the GitHub user that triggered the job."
+        default: true
+        type: boolean
+      debug-with-ssh-only-jobs-matching:
+        description: "Only start an SSH session for jobs matching this regex pattern:"
+        default: ".*"
+        type: string
+      test-target:
+        description: "If specified only the given target will be tested"
+        default: ""
+        type: choice
+        options: [ "", cpp, cs, eval, flash, hl, java, jvm, lua, neko, node, php, python ]
 
-env:
-  # https://docs.brew.sh/Manpage#environment
-  HOMEBREW_NO_ANALYTICS: 1
-  HOMEBREW_NO_AUTO_UPDATE: 1
-  HOMEBREW_NO_INSTALL_CLEANUP: 1
-  HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+defaults:
+  run:
+    shell: bash
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    # https://github.com/vegardit/haxe-reusable-workflows/
+    uses: vegardit/haxe-reusable-workflows/.github/workflows/test-with-haxe.yml@v1
     strategy:
       fail-fast: false
       matrix:
-        os: 
+        os:
         - ubuntu-latest
         - macos-latest
         - windows-latest
@@ -36,148 +60,28 @@ jobs:
         - 4.2.5
         - 4.1.5
         - 4.0.5
+    with:
+      runner-os: ${{ matrix.os }}
+      haxe-version: ${{ matrix.haxe }}
+      haxe-libs: haxe-doctest hx3compat
 
-    steps:
-    - name: Show environment variables
-      shell: bash
-      run: env | sort
+      debug-with-ssh: ${{ inputs.debug-with-ssh || 'never' }}
+      debug-with-ssh-only-for-actor: ${{ inputs.debug-with-ssh-only-for-actor || false }}
+      debug-with-ssh-only-jobs-matching: ${{ inputs.debug-with-ssh-only-jobs-matching }}
 
-    - name: Git Checkout
-      uses: actions/checkout@v3 #https://github.com/actions/checkout
-
-    - name: "Cache: Haxelib Repository"
-      uses: actions/cache@v3
-      with:
-        path: ${{ runner.tool_cache }}/haxe/${{ matrix.haxe }}/x64/lib
-        # https://github.com/actions/cache/issues/342#issuecomment-673371329
-        key: ${{ runner.os }}-haxelib-${{ matrix.haxe }}-${{ github.run_id }}
-        restore-keys: |
-          ${{ runner.os }}-haxelib-${{ matrix.haxe }}-
-
-    - name: Update brew formulas
-      if: runner.os == 'macOS'
-      run: |
-        echo "::group::brew update" && brew update && echo "::endgroup::"
-        echo "::group::brew config" && brew config && echo "::endgroup::"
-        echo "::group::brew list" && brew list --version && echo "::endgroup::"
-
-        # workaround to prevent "Error: The `brew link` step did not complete successfully" during "brew install mono"
-        rm -f \
-          /usr/local/share/man/man1/* \
-          /usr/local/share/man/man5/* \
-          /usr/local/bin/idle3 \
-          /usr/local/bin/2to3 \
-          /usr/local/bin/2to3 \
-          /usr/local/bin/idle3 \
-          /usr/local/bin/pydoc3 \
-          /usr/local/bin/python3 \
-          /usr/local/bin/python3-config
-
-    - name: "Install: Python 3"
-      uses: actions/setup-python@v4 # https://github.com/actions/setup-python
-      with:
-        python-version: "3.10"
-
-    - name: Configure Python 3 on Windows
-      if: runner.os == 'Windows'
-      shell: cmd
-      # workaround for https://github.com/actions/setup-python/issues/123
-      run:
-        if not exist "%pythonLocation%\python.exe" (
-          mklink "%pythonLocation%\python3.exe" "%pythonLocation%\python.exe"
-        )
-
-    - name: "Install: Haxe ${{ matrix.haxe }}"
-      uses: krdlab/setup-haxe@v1 # https://github.com/krdlab/setup-haxe
-      with:
-        haxe-version: ${{ matrix.haxe }}
-
-    - name: "Install: Haxe Libraries"
-      shell: bash
-      run: |
-        haxelib config
-
-        for lib in hx3compat haxe-doctest; do
-          echo "::group::install_$lib"
-          haxelib --always install  $lib
-          haxelib --always update $lib || true
-          echo "::endgroup::"
-        done
-
-        # install latest travix version
-        haxelib git travix https://github.com/back2dos/travix
-        pushd .
-        cd $(haxelib config)travix/git
-        haxe build-neko.hxml -lib hx3compat
-        popd
-
-        haxelib dev haxe-strings .
-
-
-    ##################################################
-    # Tests
-    ##################################################
-
-    - name: Test [cs]
-      continue-on-error: ${{ runner.os == 'Windows' }} # fails with: strings/collection/StringMap.hx:104: characters 9-102: [ERROR] 
-                                                       # ({var m = new StringMap<Int>(); m.setAll(["1" => 1, "2" => 1]); m;}) == ["1" => 1, "2" => 1] 
-                                                       # --> Left side `haxe.ds.StringMap`1[System.Int32]` does not equal `haxe.ds.StringMap`1[System.Int32]`.
-      run: haxelib run travix cs
-
-    - name: Test [eval]
-      run: haxelib run travix interp -D eval-stack
-
-    - name: Test [flash]
-      continue-on-error: true # fails with "Flash execution failed too many times, build failure." but test is actually ok
-      run: haxelib run travix flash
-
-    - name: Test [hl]
-      if: runner.os != 'Linux' # prebuild linux binary available yet
-      run: haxelib run travix hl
-
-    - name: Test [java]
-      run: |
-        java -version
-        haxelib run travix java
-
-    - name: Test [jvm]
-      run: haxelib run travix java -D jvm
-
-    - name: Test [lua]
-      continue-on-error: ${{ runner.os != 'Linux' || matrix.haxe == '4.0.5' || matrix.haxe == '4.1.5' }}
-      run: haxelib run travix lua
-
-    - name: Test [neko]
-      run: haxelib run travix neko
-
-    - name: Test [node]
-      run: |
-        node --version 
-        haxelib run travix node
-
-    - name: Test [php]
-      run: haxelib run travix php
-
-    - name: Test [python]
-      run: |
-        python --version
-        haxelib run travix python
-
-    - name: Test [cpp] # testing C++ as last since it takes the longest to build
-      run: haxelib run travix cpp
-
-
-  ###########################################################
-  cleanup:
-  ###########################################################
-    runs-on: ubuntu-latest
-    needs: 
-      - build
-
-    steps:
-    - name: "Delete intermediate build artifacts"
-      uses: geekyeggo/delete-artifact@v2 # https://github.com/GeekyEggo/delete-artifact/
-      with:
-        name: "*"
-        failOnError: false
-      
+      test-cpp:    ${{ inputs.test-target == '' || inputs.test-target == 'cpp' }}
+      test-cs:     ${{ inputs.test-target == '' || inputs.test-target == 'cs' }}
+      test-eval:   ${{ inputs.test-target == '' || inputs.test-target == 'eval' }}
+      test-flash: |
+        enabled: ${{ (inputs.test-target == '' || inputs.test-target == 'flash') && !startsWith(matrix.os, 'macos') }} # FlashPlayer hangs on MacOS
+        allow-failure: ${{ startsWith(matrix.os, 'ubuntu') }} # workaround for random "Application crashed with an unhandled SIGSEGV"
+      test-hl:     ${{ inputs.test-target == '' || inputs.test-target == 'hl' }}
+      test-java:   ${{ inputs.test-target == '' || inputs.test-target == 'java' }}
+      test-jvm:    ${{ inputs.test-target == '' || inputs.test-target == 'jvm' }}
+      test-lua: |
+        enabled: ${{ inputs.test-target == '' || inputs.test-target == 'lua' }}
+        allow-failure: ${{ inputs.haxe-version != '4.0.5' && inputs.haxe-version != '4.1.5' }}
+      test-neko:   ${{ inputs.test-target == '' || inputs.test-target == 'neko' }}
+      test-node:   ${{ inputs.test-target == '' || inputs.test-target == 'node' }}
+      test-php:    ${{ inputs.test-target == '' || inputs.test-target == 'php' }}
+      test-python: ${{ inputs.test-target == '' || inputs.test-target == 'python' }}
