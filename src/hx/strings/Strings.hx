@@ -947,21 +947,27 @@ class Strings {
     * >>> Strings.endsWith("dogcat", null)  == false
     * >>> Strings.endsWith("", "")          == true
     * >>> Strings.endsWith(null, "cat")     == false
+    * >>> Strings.endsWith("aňa", "ňa")     == true
     * >>> Strings.endsWith("はい", "い")     == true
     * >>> Strings.endsWith("はい", "は")     == false
+    * >>> Strings.endsWith("\u{1F604}\u{1F619}", "\u{1F604}\u{1F619}") == true
     * </code></pre>
     */
    public static function endsWith(searchIn:Null<String>, searchFor:Null<String>):Bool {
       if (searchIn == null || searchFor == null)
          return false;
 
-      #if cpp
+      #if lua
+         // dramatically faster than StringTools.endsWith
+         return searchFor == "" || untyped __lua__("{0}:sub(-#{1}) == {1}", searchIn, searchFor);
+      #elseif cpp
          // TODO StringTools.endsWith doesn't work with UTF8 chars on Haxe4+CPP
          final searchInLen = searchIn.length;
          final searchForLen = searchFor.length;
          return searchInLen >= searchForLen && searchIn.indexOf(searchFor, searchInLen - searchForLen) > POS_NOT_FOUND;
+      #else
+         return StringTools.endsWith(searchIn, searchFor);
       #end
-      return StringTools.endsWith(searchIn, searchFor);
    }
 
 
@@ -2851,15 +2857,20 @@ class Strings {
       if (searchIn == null || searchFor == null)
          return false;
 
-      if (searchFor.isEmpty() || searchIn == searchFor)
-         return true;
+      #if lua
+         // dramatically faster than StringTools.startsWith
+         return untyped __lua__("{0}:sub(1, #{1}) == {1}", searchIn, searchFor);
+      #else
+         if (searchFor.isEmpty() || searchIn == searchFor)
+            return true;
 
-      #if cpp
-         // TODO StringTools.startsWith doesn't work with UTF8 chars on Haxe4+CPP
-         return (searchIn.length >= searchFor.length && searchIn.lastIndexOf(searchFor, 0) == 0);
+         #if cpp
+            // TODO StringTools.startsWith doesn't work with UTF8 chars on Haxe4+CPP
+            return (searchIn.length >= searchFor.length && searchIn.lastIndexOf(searchFor, 0) == 0);
+         #else
+            return StringTools.startsWith(searchIn, searchFor);
+         #end
       #end
-
-      return StringTools.startsWith(searchIn, searchFor);
    }
 
 
