@@ -392,18 +392,6 @@ haxelib git haxe-strings https://github.com/vegardit/haxe-strings main D:\haxe-p
     haxelib dev haxe-strings D:\haxe-projects\haxe-strings
     ```
 
-###  Using Subversion
-
-1. check-out the trunk
-    ```
-    svn checkout https://github.com/vegardit/haxe-strings/trunk D:\haxe-projects\haxe-strings
-    ```
-
-2. register the development release with haxe
-    ```
-    haxelib dev haxe-strings D:\haxe-projects\haxe-strings
-    ```
-
 
 ## <a name="license"></a>License
 
