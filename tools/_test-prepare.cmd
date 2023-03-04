@@ -17,6 +17,7 @@ if exist target\%1 (
    echo Cleaning [target\%1]...
    rd /s /q target\%1
 )
+md target\%1
 shift
 
 REM install common libs

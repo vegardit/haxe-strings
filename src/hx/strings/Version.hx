@@ -322,8 +322,11 @@ abstract Version(VersionData) from VersionData to VersionData {
     * @return 0 if both instances represent the same version. A positive value if this version is greater and a negative value if this version is lower.
     */
    public function compareTo(other:Version, ignoreBuildMetadata=true):Int {
+
+      #if !cppia // throws hxSehException on cppia
       if ((other:VersionData) == this)
          return 0;
+      #end
 
       if (other == null)
          return 1;
