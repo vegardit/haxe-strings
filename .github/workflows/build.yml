@@ -58,6 +58,7 @@ jobs:
         - windows-latest
         haxe:
         - nightly
+        - 4.3.1
         - 4.2.5
         - 4.1.5
         - 4.0.5
