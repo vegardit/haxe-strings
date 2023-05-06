@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [7.0.3] - 2023-05-06
+
+### Fixed
+- `Warning : (WDeprecated) '@:enum abstract' is deprecated in favor of 'enum' with Haxe 4.3
+- `Version.compareTo` throws improve cppia support on CPPIA
+
+### Changed
+- Speed up Strings.(starts|ends)With on Lua
+
+
 ## [7.0.2] - 2021-08-06
 
 ### Fixed
