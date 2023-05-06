@@ -4333,7 +4333,7 @@ class StringDiff {
 /**
  * Specifies the default value to be used if a given substring was not found in a string operation
  */
-@:enum
+#if (haxe_ver < 4.3) @:enum #else enum #end
 abstract StringNotFoundDefault(Int) {
 
    /**

@@ -110,7 +110,7 @@ class CharIterator {
       return new CharPos(index, line, col);
 
 
-   function new(prevBufferSize:Int)
+   inline function new(prevBufferSize:Int)
       prevBuffer = prevBufferSize > 0 ? new RingBuffer<CharWithPos>(prevBufferSize + 1 /*currChar*/) : null;
 
 
@@ -124,7 +124,7 @@ class CharIterator {
     *
     * @throws haxe.io.Eof if no previous character is available
     */
-   public function prev():Char {
+   public final function prev():Char {
       if (!hasPrev())
          throw new Eof();
 
@@ -150,8 +150,7 @@ class CharIterator {
     *
     * @throws haxe.io.Eof if no more characters are available
     */
-   @:final
-   public function next():Char {
+   public final function next():Char {
       if (prevBufferNextIdx > -1) {
          var prevChar = @:nullSafety(Off) prevBuffer[prevBufferNextIdx];
          currChar = prevChar.char;

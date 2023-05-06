@@ -8,7 +8,7 @@ package hx.strings.ansi;
 /**
  * https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
  */
-@:enum
+#if (haxe_ver < 4.3) @:enum #else enum #end
 abstract AnsiTextAttribute(Int) {
 
    /**

@@ -5,7 +5,7 @@
  */
 package hx.strings.ansi;
 
-@:enum
+#if (haxe_ver < 4.3) @:enum #else enum #end
 abstract AnsiColor(Int) {
    final BLACK = 0;
    final RED = 1;

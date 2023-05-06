@@ -227,7 +227,7 @@ interface Matcher {
  *
  * @author Sebastian Thomschke, Vegard IT GmbH
  */
-@:enum
+#if (haxe_ver < 4.3) @:enum #else enum #end
 abstract MatchingOption(String) {
 
    /**

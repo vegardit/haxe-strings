@@ -8,7 +8,7 @@ package hx.strings.internal;
 /**
  * <b>IMPORTANT:</b> This class it not part of the API. Direct usage is discouraged.
  */
-@:enum
+#if (haxe_ver < 4.3) @:enum #else enum #end
 abstract TriState(Null<Bool>) from Null<Bool> to Null<Bool> {
    final TRUE = true;
    final FALSE = false;
