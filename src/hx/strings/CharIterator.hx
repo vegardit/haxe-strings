@@ -100,6 +100,11 @@ class CharIterator {
    var prevBufferNextIdx = -1;
 
 
+   var prevBufferLength(get,never):Int; 
+   inline function get_prevBufferLength():Int
+      return @:nullSafety(Off) prevBuffer.length;
+
+
    public var current(get, never):Null<Char>;
    inline function get_current()
       return index > -1 ? currChar : null;
@@ -134,7 +139,7 @@ class CharIterator {
       line = prevChar.line;
       col = prevChar.col;
 
-      prevBufferNextIdx = prevBufferPrevIdx + 1 < prevBuffer.length ? prevBufferPrevIdx + 1 : -1;
+      prevBufferNextIdx = prevBufferPrevIdx + 1 < prevBufferLength ? prevBufferPrevIdx + 1 : -1;
       prevBufferPrevIdx--;
       return currChar;
    }
@@ -158,7 +163,7 @@ class CharIterator {
          line = prevChar.line;
          col = prevChar.col;
          prevBufferPrevIdx = prevBufferNextIdx - 1;
-         prevBufferNextIdx = prevBufferNextIdx + 1 < prevBuffer.length ? prevBufferNextIdx + 1 : -1;
+         prevBufferNextIdx = prevBufferNextIdx + 1 < prevBufferLength ? prevBufferNextIdx + 1 : -1;
          return currChar;
       }
 
@@ -176,7 +181,7 @@ class CharIterator {
 
       if (prevBuffer != null) {
          prevBuffer.add(new CharWithPos(currChar, index, col, line));
-         prevBufferPrevIdx = prevBuffer.length - 2;
+         prevBufferPrevIdx = prevBufferLength - 2;
          prevBufferNextIdx = -1;
       }
 
