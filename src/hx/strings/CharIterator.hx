@@ -100,6 +100,11 @@ class CharIterator {
    var prevBufferNextIdx = -1;
 
 
+   var prevBufferLength(get,never):Int; 
+   inline function get_prevBufferLength():Int
+      return @:nullSafety(Off) prevBuffer.length;
+
+
    public var current(get, never):Null<Char>;
    inline function get_current()
       return index > -1 ? currChar : null;
@@ -134,21 +139,16 @@ class CharIterator {
       line = prevChar.line;
       col = prevChar.col;
 
-      prevBufferNextIdx =  prevBufferPrevIdx + 1 < prevBufferLength ? prevBufferPrevIdx + 1 : -1;
+      prevBufferNextIdx = prevBufferPrevIdx + 1 < prevBufferLength ? prevBufferPrevIdx + 1 : -1;
       prevBufferPrevIdx--;
       return currChar;
    }
+
 
    inline
    public function hasNext():Bool
       return prevBufferNextIdx > -1 ? true : !isEOF();
 
-   private var prevBufferLength(get,never):Int;
-   
-   inline 
-   private function get_prevBufferLength():Int{
-      return @:nullSafety(Off) prevBuffer.length;
-   }
 
    /**
     * Moves to the next character in the input sequence and returns it.
@@ -162,7 +162,6 @@ class CharIterator {
          index = prevChar.index;
          line = prevChar.line;
          col = prevChar.col;
-
          prevBufferPrevIdx = prevBufferNextIdx - 1;
          prevBufferNextIdx = prevBufferNextIdx + 1 < prevBufferLength ? prevBufferNextIdx + 1 : -1;
          return currChar;
