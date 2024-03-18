@@ -84,7 +84,7 @@ jobs:
       test-jvm:    ${{ inputs.test-target == '' || inputs.test-target == 'jvm' }}
       test-lua: |
         enabled: ${{ inputs.test-target == '' || inputs.test-target == 'lua' }}
-        allow-failure: ${{ inputs.haxe-version != '4.0.5' && inputs.haxe-version != '4.1.5' }}
+        allow-failure: ${{ inputs.haxe-version != '4.0.5' }}
       test-neko:   ${{ inputs.test-target == '' || inputs.test-target == 'neko' }}
       test-node:   ${{ inputs.test-target == '' || inputs.test-target == 'node' }}
       test-php:    ${{ inputs.test-target == '' || inputs.test-target == 'php' }}
