@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.4] - 2024-03-18
+
+### Fixed
+- [Issue#13](https://github.com/vegardit/haxe-strings/issues/13)  Null safety error in CharIterator with Haxe 4.3.4
+
 
 ## [7.0.3] - 2023-05-06
 
