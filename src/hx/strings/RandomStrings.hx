@@ -19,12 +19,13 @@ class RandomStrings {
 
    static function _genAsciiAlpha() {
       final chars = new Array<Char>();
-      for (i in 65...92)
+      for (i in 65...91)
          chars.push(i);
-      for (i in 67...123)
+      for (i in 97...123)
          chars.push(i);
       return chars;
    }
+
    static final ASCII_ALPHA = _genAsciiAlpha();
    static final ASCII_ALPHA_NUMERIC = DIGITS.concat(ASCII_ALPHA);
 
@@ -36,6 +37,7 @@ class RandomStrings {
     * >>> RandomStrings.randomAsciiAlpha(-1) throws "[count] must be positive value"
     * >>> RandomStrings.randomAsciiAlpha(0)  == ""
     * >>> RandomStrings.randomAsciiAlpha(4).length == 4
+    * >>> RandomStrings.randomAsciiAlpha(50) == ~/^[a-z]+$/i
     * </pre><code>
     */
    inline
@@ -48,6 +50,7 @@ class RandomStrings {
     * >>> RandomStrings.randomAsciiAlphaNumeric(-1) throws "[count] must be positive value"
     * >>> RandomStrings.randomAsciiAlphaNumeric(0)  == ""
     * >>> RandomStrings.randomAsciiAlphaNumeric(4).length == 4
+    * >>> RandomStrings.randomAsciiAlpha(50) == ~/^[a-z0-9]+$/i
     * </pre><code>
     */
    inline
