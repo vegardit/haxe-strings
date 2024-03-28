@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.5] - 2024-03-28
+
+### Fixed
+- [Issue#14](https://github.com/vegardit/haxe-strings/issues/14) `RandomStrings.randomAsciiAlpha` returns illegal chars (thanks to https://github.com/singpolyma)
+
+
 ## [7.0.4] - 2024-03-18
 
 ### Fixed
