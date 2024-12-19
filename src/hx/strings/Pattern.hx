@@ -253,7 +253,7 @@ abstract MatchingOption(String) {
    final MATCH_ALL = "g";
 }
 
-#if (haxe_ver < 4.1) @:nullSafety(Off) #else @:nullSafety(Strict) #end
+@:nullSafety(Strict)
 private class MatcherImpl implements Matcher {
    final ereg:EReg;
    var isMatch:Null<Bool>;

@@ -16,7 +16,7 @@ using hx.strings.Strings;
  * <br/>
  * This implementation tries to avoid the creation of intermediate String objects as much as possible.
  */
-#if (haxe_ver < 4.1) @:nullSafety(Off) #else @:nullSafety(Strict) #end
+@:nullSafety(Strict)
 @notThreadSafe
 class StringBuilder {
 
@@ -452,7 +452,7 @@ class StringBuilder {
 }
 
 
-#if (haxe_ver < 4.1) @:nullSafety(Off) #else @:nullSafety(Strict) #end
+@:nullSafety(Strict)
 private class OutputWrapper extends Output {
 
    private final sb:StringBuilder;

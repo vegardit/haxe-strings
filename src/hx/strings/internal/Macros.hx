@@ -15,12 +15,12 @@ import haxe.macro.*;
 class Macros {
 
    static var __static_init = {
-      #if (haxe_ver < 4)
-         throw 'ERROR: As of haxe-strings 6.0.0, Haxe 4.x or higher is required!';
+      #if (haxe_ver < 4.2)
+         throw 'ERROR: Haxe 4.2.x or higher is required!';
       #end
 
       #if (php && !php7)
-          throw 'ERROR: As of haxe-strings 6.0.0, for PHP the php7 target is required!';
+          throw 'ERROR: For PHP the php7 target is required!';
       #end
    };
 
@@ -39,13 +39,7 @@ class Macros {
 
    macro
    public static function configureNullSafety() {
-      haxe.macro.Compiler.nullSafety("hx.strings",
-         #if (haxe_ver < 4.1)
-            Strict // Haxe 4.x does not have StrictThreaded
-         #else
-            StrictThreaded
-         #end
-      );
+      haxe.macro.Compiler.nullSafety("hx.strings", StrictThreaded);
       return macro {}
    }
 

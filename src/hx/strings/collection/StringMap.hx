@@ -6,7 +6,6 @@
 package hx.strings.collection;
 
 import hx.strings.internal.Macros;
-import hx.strings.internal.Types;
 
 /**
  * Abstract on <code>haxe.Constraints.IMap[String, V]</code>
@@ -68,12 +67,12 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
     * </code></pre>
     */
    public function copy():StringMap<V> {
-      if (Types.isInstanceOf(this, SortedStringMap.SortedStringMapImpl)) {
+      if (Std.isOfType(this, SortedStringMap.SortedStringMapImpl)) {
          final m:SortedStringMap<V> = cast this;
          return m.copy();
       }
 
-      if (Types.isInstanceOf(this, OrderedStringMap.OrderedStringMapImpl)) {
+      if (Std.isOfType(this, OrderedStringMap.OrderedStringMapImpl)) {
          final m:OrderedStringMap<V> = cast this;
          return m.copy();
       }

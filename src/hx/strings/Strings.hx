@@ -2986,7 +2986,6 @@ class Strings {
       #if (php||lua) final str:String = str; #end
 
       #if target.unicode
-         #if (lua && haxe_ver < 4.1) @:nullSafety(Off) #end
          return cast str.substr(startAt, len);
       #else
          if (len < 0) {

@@ -11,7 +11,6 @@ import hx.strings.Pattern;
 import hx.strings.collection.OrderedStringMap;
 import hx.strings.collection.SortedStringMap;
 import hx.strings.collection.StringMap;
-import hx.strings.internal.Types;
 import hx.strings.spelling.checker.*;
 import hx.strings.spelling.dictionary.*;
 import hx.strings.spelling.trainer.*;
@@ -289,11 +288,11 @@ class TestRunner extends DocTestRunner {
 
    public function testStringMapCopy() {
       var ssm:StringMap<String> = new SortedStringMap<String>();
-      assertTrue(Types.isInstanceOf(ssm, SortedStringMapImpl));
-      assertTrue(Types.isInstanceOf(ssm.copy(), SortedStringMapImpl));
+      assertTrue(Std.isOfType(ssm, SortedStringMapImpl));
+      assertTrue(Std.isOfType(ssm.copy(), SortedStringMapImpl));
 
       var osm:OrderedStringMap<String> = new OrderedStringMap<String>();
-      assertTrue(Types.isInstanceOf(osm, OrderedStringMapImpl));
-      assertTrue(Types.isInstanceOf(osm.copy(), OrderedStringMapImpl));
+      assertTrue(Std.isOfType(osm, OrderedStringMapImpl));
+      assertTrue(Std.isOfType(osm.copy(), OrderedStringMapImpl));
    }
 }
