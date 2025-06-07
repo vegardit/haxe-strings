@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [7.0.6] - 2025-06-07
+
+### Fixed
+- Fix potential null value issues in `InMemoryDictionary`
+
 ### Changed
 - minimum required Haxe version is now 4.2.x
 
