@@ -132,7 +132,10 @@ class InMemoryDictionary implements TrainableDictionary {
     */
    public function loadWordsFromResource(resourceName:String):Int {
       trace('[INFO] Loading words from resource [$resourceName]...');
-      return loadWordsFromInput(new BytesInput(Resource.getBytes(resourceName)));
+      final bytes = Resource.getBytes(resourceName);
+      if (bytes == null)
+         throw 'Resource [$resourceName] not found!';
+      return loadWordsFromInput(new BytesInput(bytes));
    }
 
 

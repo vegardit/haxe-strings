@@ -29,7 +29,7 @@ class EnglishDictionary extends InMemoryDictionary {
 
       // not using loadWordsFromResource for full DCE support
       trace('[INFO] Loading words from embedded [EnglishDictionary]...');
-      loadWordsFromInput(new BytesInput(Resource.getBytes("EnglishDictionary")));
+      loadWordsFromResource("EnglishDictionary");
    }
 
 

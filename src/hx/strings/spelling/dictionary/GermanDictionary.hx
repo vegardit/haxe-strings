@@ -33,7 +33,7 @@ class GermanDictionary extends InMemoryDictionary {
 
       // not using loadWordsFromResource for full DCE support
       trace('[INFO] Loading words from embedded [GermanDictionary]...');
-      loadWordsFromInput(new BytesInput(Resource.getBytes("GermanDictionary")));
+      loadWordsFromResource("GermanDictionary");
    }
 
    override
