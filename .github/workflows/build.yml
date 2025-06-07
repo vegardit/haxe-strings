@@ -92,8 +92,10 @@ jobs:
       debug-with-ssh-only-for-actor: ${{ inputs.debug-with-ssh-only-for-actor || false }}
       debug-with-ssh-only-jobs-matching: ${{ inputs.debug-with-ssh-only-jobs-matching }}
 
-      test-cpp:    ${{ inputs.test-target == '' || inputs.test-target == 'cpp' }}
-      test-cs:     ${{ (inputs.test-target == '' || inputs.test-target == 'cs') && matrix.haxe != 'nightly'}}  # Haxe 5 drops C# Support
+      test-cpp: |
+          enabled: ${{ inputs.test-target == '' || inputs.test-target == 'cpp' }}
+          allow-failure: ${{ matrix.haxe == 'nightly' }}  # null-analysis in nightly currently broken for CPP
+      test-cs:     ${{ (inputs.test-target == '' || inputs.test-target == 'cs') && matrix.haxe != 'nightly' }}  # Haxe 5 drops C# Support
       test-eval:   ${{ inputs.test-target == '' || inputs.test-target == 'eval' }}
       test-flash: |
         enabled: ${{ (inputs.test-target == '' || inputs.test-target == 'flash') && !startsWith(matrix.os, 'macos') }} # FlashPlayer hangs on MacOS
