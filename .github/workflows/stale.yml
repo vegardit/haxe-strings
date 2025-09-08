@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v5  # https://github.com/actions/checkout
 
     - name: Run stale action
-      uses: actions/stale@v9  # https://github.com/actions/stale
+      uses: actions/stale@v10  # https://github.com/actions/stale
       with:
         days-before-stale: 90
         days-before-close: 14
@@ -37,7 +37,7 @@ jobs:
           security
 
     - name: Run stale action (for enhancements)
-      uses: actions/stale@v9  # https://github.com/actions/stale
+      uses: actions/stale@v10  # https://github.com/actions/stale
       with:
         days-before-stale: 360
         days-before-close: 14
