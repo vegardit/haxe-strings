@@ -26,6 +26,7 @@ class OS {
             Sys.systemName()
          #end;
       #if python @:nullSafety(Off) #end // TODO https://github.com/HaxeFoundation/haxe/issues/10273
-      ~/win/i.match(os);
+      // match only at beginning to avoid false positives like "darwin"
+      ~/^win/i.match(os);
    }
 }
