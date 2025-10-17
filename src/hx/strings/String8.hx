@@ -71,7 +71,7 @@ class String8Generator {
                      if ("String" != t.toString())
                         continue;
                   case TAbstract(t, params):
-                     if ("hx.strings.internal.AnyAsString" != t.toString())
+                     if ("hx.strings.AnyAsString" != t.toString())
                         continue;
                   default:
                }
