@@ -180,7 +180,7 @@ class CharIterator {
       currChar = getChar();
 
       if (prevBuffer != null) {
-         prevBuffer.add(new CharWithPos(currChar, index, col, line));
+         prevBuffer.add(new CharWithPos(currChar, index, line, col));
          prevBufferPrevIdx = prevBufferLength - 2;
          prevBufferNextIdx = -1;
       }
