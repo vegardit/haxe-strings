@@ -1,11 +1,15 @@
 # SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com) and contributors
 # SPDX-FileContributor: Sebastian Thomschke, Vegard IT GmbH
 # SPDX-License-Identifier: Apache-2.0
+# SPDX-ArtifactOfProjectHomePage: https://github.com/vegardit/haxe-strings
 #
-# https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions
+# https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
 name: Build
 
-on:
+on:  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows
+  schedule:
+    # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule
+    - cron: '0 15 1 * *'
   push:
     branches-ignore:  # build all branches except:
     - 'dependabot/**'  # prevent GHA triggered twice (once for commit to the branch and once for opening/syncing the PR)
@@ -17,6 +21,7 @@ on:
     - '.editorconfig'
     - '.git*'
     - '.github/*.yml'
+    - '.github/ISSUE_TEMPLATE/*'
     - '.github/workflows/stale.yml'
     - 'tools'
   pull_request:
@@ -28,11 +33,8 @@ on:
     - '.github/*.yml'
     - '.github/workflows/stale.yml'
     - 'tools'
-  schedule:
-    # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows
-    - cron: '0 15 1 * *'
   workflow_dispatch:
-    # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#workflow_dispatch
+    # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch
     inputs:
       debug-with-ssh:
         description: "Start an SSH session for debugging purposes at the end of the build:"
@@ -71,7 +73,7 @@ jobs:
       matrix:
         os:  # https://github.com/actions/runner-images#available-images
         - ubuntu-latest
-        - macos-13 # Intel
+        - macos-15-intel
         - windows-latest
         haxe:
         - nightly

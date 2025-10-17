@@ -4,7 +4,6 @@ _LOCAL/
 # Eclipse
 .settings/
 .project
-**/.*.md.html
 
 # IntelliJ
 .idea
