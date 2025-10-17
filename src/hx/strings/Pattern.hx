@@ -50,11 +50,9 @@ class Pattern {
 
    function new(pattern:String, options:String) {
       this.pattern = pattern;
-      this.options = options;
-      this.ereg = new EReg(pattern, options);
-
-      // explicitly enable UTF8
-      this.options += "u";
+      // Ensure UTF-8 ('u') flag is always enabled
+      this.options = options.indexOf("u") == -1 ? options + "u" : options;
+      this.ereg = new EReg(pattern, this.options);
    }
 
 
