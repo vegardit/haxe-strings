@@ -66,7 +66,8 @@ class StringBuilder {
     * @return <code>this</code> for chained operations
     */
    public function add(item:Null<AnyAsString>):StringBuilder {
-      sb.add(item == null ? "null" : item);
+      if (item == null) item = "null";
+      sb.add(item);
       #if !(java_src || cs)
          len += item.length8();
       #end
