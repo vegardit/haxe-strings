@@ -8,7 +8,7 @@ package hx.strings.internal;
 import haxe.macro.*;
 
 /**
- * <b>IMPORTANT:</b> This class it not part of the API. Direct usage is discouraged.
+ * <b>IMPORTANT:</b> This class is not part of the API. Direct usage is discouraged.
  */
 @:noDoc @:dox(hide)
 @:noCompletion

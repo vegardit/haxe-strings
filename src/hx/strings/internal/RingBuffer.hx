@@ -6,7 +6,7 @@
 package hx.strings.internal;
 
 /**
- * <b>IMPORTANT:</b> This class it not part of the API. Direct usage is discouraged.
+ * <b>IMPORTANT:</b> This class is not part of the API. Direct usage is discouraged.
  *
  * <pre><code>
  * >>> ({var b = new RingBuffer<String>(2); b.add("a"); b.add("b"); b.add("c"); b; }).toArray() == [ "b", "c" ]

@@ -151,7 +151,7 @@ abstract Char(Int) from Int {
    /**
     * character code for 3
     */
-   public static inline final TRHEE:Char = 51;
+   public static inline final THREE:Char = 51;
 
    /**
     * character code for 4

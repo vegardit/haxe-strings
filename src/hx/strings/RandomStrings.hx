@@ -164,7 +164,7 @@ class RandomStrings {
       // set variant bits (i.e. 10xx) according to RFC4122 4.1.1. Variant: http://www.ietf.org/rfc/rfc4122.txt
       var variantByte = Math.floor(Math.random() * 16);
       variantByte = Bits.setBit(variantByte, 4); // set the 4th bit to 1
-      variantByte = Bits.clearBit(variantByte, 3); // set the 3nd bit to 0
+      variantByte = Bits.clearBit(variantByte, 3); // set the 3rd bit to 0
 
       return (
          StringTools.hex(Math.floor(Math.random() * 65536), 4) + //
