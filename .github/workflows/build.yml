@@ -95,14 +95,17 @@ jobs:
       debug-with-ssh-only-jobs-matching: ${{ inputs.debug-with-ssh-only-jobs-matching }}
 
       test-cpp: |
-          enabled: ${{ inputs.test-target == '' || inputs.test-target == 'cpp' }}
-          allow-failure: ${{ matrix.haxe == 'nightly' }}  # null-analysis in nightly currently broken for CPP
+        enabled: ${{ inputs.test-target == '' || inputs.test-target == 'cpp' }}
+        allow-failure: ${{ matrix.haxe == 'nightly' }}  # null-analysis in nightly currently broken for CPP
       test-cs:     ${{ (inputs.test-target == '' || inputs.test-target == 'cs') && matrix.haxe != 'nightly' }}  # Haxe 5 drops C# Support
       test-eval:   ${{ inputs.test-target == '' || inputs.test-target == 'eval' }}
       test-flash: |
         enabled: ${{ (inputs.test-target == '' || inputs.test-target == 'flash') && !startsWith(matrix.os, 'macos') }} # FlashPlayer hangs on MacOS
         allow-failure: ${{ startsWith(matrix.os, 'ubuntu-') }} # workaround for random "Application crashed with an unhandled SIGSEGV"
-      test-hl:     ${{ inputs.test-target == '' || inputs.test-target == 'hl' }}
+      test-hl: |
+        enabled: ${{ inputs.test-target == '' || inputs.test-target == 'hl' }}
+        allow-failure:  ${{ startsWith(matrix.os, 'macos-') }} # TODO workaround for "[ERROR] Char.of(" ").isLowerCase() == false --> Left side `true` does not equal `false`"
+                                                               # using latest HashLink 1.16 dev build
       test-java:   ${{ (inputs.test-target == '' || inputs.test-target == 'java') && matrix.haxe != 'nightly' }} # Haxe 5 drops Java Support
       test-jvm:    ${{ inputs.test-target == '' || inputs.test-target == 'jvm' }}
       test-lua: |
