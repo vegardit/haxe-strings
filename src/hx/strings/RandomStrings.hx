@@ -50,7 +50,7 @@ class RandomStrings {
     * >>> RandomStrings.randomAsciiAlphaNumeric(-1) throws "[count] must be positive value"
     * >>> RandomStrings.randomAsciiAlphaNumeric(0)  == ""
     * >>> RandomStrings.randomAsciiAlphaNumeric(4).length == 4
-    * >>> RandomStrings.randomAsciiAlpha(50) == ~/^[a-z0-9]+$/i
+    * >>> RandomStrings.randomAsciiAlphaNumeric(50) == ~/^[a-z0-9]+$/i
     * </pre><code>
     */
    inline
