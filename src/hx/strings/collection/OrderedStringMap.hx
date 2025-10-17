@@ -51,10 +51,14 @@ class OrderedStringMapImpl<V> implements haxe.Constraints.IMap<String,V> {
    final __map = new StringMap<V>();
 
 
+   #if (haxe_ver < 5)
    public var size(get, never):Int;
    inline
    private function get_size():Int
       return __keys.length;
+   #else
+   public function size():Int return __keys.length;
+   #end
 
 
    inline

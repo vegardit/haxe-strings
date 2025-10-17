@@ -55,6 +55,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
    final cmp:String -> String -> Int;
 
 
+   #if (haxe_ver < 5)
    /**
     * <b>IMPORTANT:</b> There is currently no native support for getting the size of a map,
     * therefore this is emulated for now by using an iterator - which impacts performance.
@@ -75,7 +76,7 @@ class SortedStringMapImpl<V> extends BalancedTree<String, V> implements haxe.Con
       }
       return count;
    }
-
+   #end
 
    /**
     * @param comparator used for sorting the String keys. Default is the UTF8 supporting Strings#compare() method

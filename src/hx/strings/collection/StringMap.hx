@@ -5,8 +5,6 @@
  */
 package hx.strings.collection;
 
-import hx.strings.internal.Macros;
-
 /**
  * Abstract on <code>haxe.Constraints.IMap[String, V]</code>
  */
@@ -40,6 +38,8 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
       return v;
    }
 
+
+   #if (haxe_ver < 5)
    /**
     * <b>IMPORTANT:</b> There is currently no native support for getting the size of a map,
     * therefore this is emulated for now by using an iterator - which impacts performance.
@@ -60,6 +60,8 @@ abstract StringMap<V>(haxe.Constraints.IMap<String, V>) from haxe.Constraints.IM
       }
       return count;
    }
+   #end
+
 
    /**
     * <pre><code>
