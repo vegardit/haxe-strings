@@ -74,12 +74,10 @@ private class RingBufferImpl<V> {
 
 
    public function get(index:Int):V {
-      if (index < 0 || index > bufferMaxIdx)
-         throw '[index] $index is out of bound';
+      if (index < 0 || index >= length)
+         throw '[index] $index is out of bounds (length=$length)';
 
-      var realIdx = bufferStartIdx + index;
-      if (realIdx > bufferMaxIdx)
-         realIdx -= length;
+      final realIdx = (bufferStartIdx + index) % size;
       #if php @:nullSafety(Off) #end // TODO
       return buffer[realIdx];
    }
