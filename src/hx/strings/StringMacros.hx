@@ -37,7 +37,7 @@ class StringMacros {
 
         final end = str.lastIndexOf("*/");
         if(end < 0) Context.error("Cannot find multi-line comment end marker '*/'.", pos);
-        if(end < start) Context.error("Multi-line comment end marker most be placed after start marker.", pos);
+        if(end < start) Context.error("Multi-line comment end marker must be placed after start marker.", pos);
 
         var comment:String = str.substring(start + 2, end);
 
