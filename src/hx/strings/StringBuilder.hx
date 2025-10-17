@@ -467,7 +467,7 @@ private class OutputWrapper extends Output {
    public function flush() {
       if (bo != null && bo.length > 0) {
          sb.add(bo.getBytes().toString());
-         bo == null;
+         bo = null;
       }
    }
 
