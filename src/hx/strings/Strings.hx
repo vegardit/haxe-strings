@@ -2831,7 +2831,7 @@ class Strings {
     * Splits all lines.
     *
     * <pre><code>
-    * >>> Strings.splitLines(null)             == []
+    * >>> Strings.splitLines(null)             == null
     * >>> Strings.splitLines("")               == []
     * >>> Strings.splitLines(" dog ")          == [ " dog " ]
     * >>> Strings.splitLines(" dog \n cat ")   == [ " dog ", " cat " ]
@@ -2840,7 +2840,7 @@ class Strings {
     */
    inline
    public static function splitLines(str:Null<String>):Null<Array<String>>
-      return str.isEmpty() ? [] : REGEX_SPLIT_LINES.split(str);
+      return str == null ? null : str.isEmpty() ? [] : REGEX_SPLIT_LINES.split(str);
 
 
    /**
