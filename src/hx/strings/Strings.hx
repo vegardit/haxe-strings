@@ -680,13 +680,14 @@ class Strings {
     * >>> Strings.countMatches("", "a")            == 0
     * >>> Strings.countMatches(null, null)         == 0
     * >>> Strings.countMatches(null, "")           == 0
+    * >>> Strings.countMatchesIgnoreCase("😀a a", "a") == 2
     * </code></pre>
     *
     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting
     *         from the given character position.
     */
    public static function countMatches(searchIn:Null<String>, searchFor:Null<String>, startAt:CharIndex = 0):Int {
-      if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length)
+      if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length8())
          return 0;
 
       if (startAt < 0)
@@ -694,7 +695,7 @@ class Strings {
 
       var count = 0;
       var foundAt = startAt > -1 ? startAt - 1 : 0;
-      while ((foundAt = searchIn.indexOf(searchFor, foundAt + 1)) > -1)
+      while ((foundAt = searchIn.indexOf8(searchFor, foundAt + 1)) > -1)
          count++;
       return count;
    }
@@ -712,13 +713,14 @@ class Strings {
     * >>> Strings.countMatchesIgnoreCase("", null)           == 0
     * >>> Strings.countMatchesIgnoreCase("", "a")            == 0
     * >>> Strings.countMatchesIgnoreCase("КОТКОТ", "от")     == 2
+    * >>> Strings.countMatchesIgnoreCase("😀a a", "A")       == 2
     * </code></pre>
     *
     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting
     *         from the given character position ignoring case.
     */
    public static function countMatchesIgnoreCase(searchIn:Null<String>, searchFor:Null<String>, startAt:CharIndex = 0):Int {
-      if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length)
+      if (searchIn.isEmpty() || searchFor.isEmpty() || startAt >= searchIn.length8())
          return 0;
 
       if (startAt < 0)
@@ -731,7 +733,7 @@ class Strings {
 
       var count = 0;
       var foundAt = startAt > -1 ? startAt - 1 : 0;
-      while ((foundAt = searchIn.indexOf(searchFor, foundAt + 1)) > -1)
+      while ((foundAt = searchIn.indexOf8(searchFor, foundAt + 1)) > -1)
          count++;
       return count;
    }
