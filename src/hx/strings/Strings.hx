@@ -2108,17 +2108,17 @@ class Strings {
     * >>> Strings.prependIfMissing("いは", "は")   == "はいは"
     * </code></pre>
     */
-   public static function prependIfMissing<T:String>(str:T, suffix:Null<String>):T {
+   public static function prependIfMissing<T:String>(str:T, prefix:Null<String>):T {
       if (str == null)
          return cast null;
 
       if (str.length == 0)
-         return cast suffix + str;
+         return cast prefix + str;
 
-      if (str.startsWith(suffix))
+      if (str.startsWith(prefix))
          return str;
 
-      return cast suffix + str;
+      return cast prefix + str;
    }
 
 
@@ -2315,7 +2315,7 @@ class Strings {
 
 
    /**
-    *  Removes the first occurrence of <b>searchFor</b> in <b>searchIn</b> ignorning the case.
+    *  Removes the first occurrence of <b>searchFor</b> in <b>searchIn</b> ignoring the case.
     *
     * <pre><code>
     * >>> Strings.removeFirstIgnoreCase(null, "dog")           == null
@@ -2524,7 +2524,7 @@ class Strings {
 
 
    /**
-    * Replaces the first occurrence of <b>searchFor</b> in <b>searchIn</b> by <b>replaceWith</b> ignorning the case.
+    * Replaces the first occurrence of <b>searchFor</b> in <b>searchIn</b> by <b>replaceWith</b> ignoring the case.
     *
     * <pre><code>
     * >>> Strings.replaceFirstIgnoreCase(null, "dog", "***")           == null
