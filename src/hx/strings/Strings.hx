@@ -747,7 +747,7 @@ class Strings {
     * >>>  Strings.compare("к--", "К--")  > 0
     * >>>  Strings.compare("к--", "т--")  < 0
     * >>>  Strings.compare("кот", "КОТ")  > 0
-    * </core></pre>
+    * </code></pre>
     *
     * @return a positive value if `str > other`, negative value if `str < other`, 0 if `str == other`
     */
@@ -780,7 +780,7 @@ class Strings {
     * >>>  Strings.compareIgnoreCase("к--", "К--") == 0
     * >>>  Strings.compareIgnoreCase("к--", "т--")  < 0
     * >>>  Strings.compareIgnoreCase("кот", "КОТ") == 0
-    * </core></pre>
+    * </code></pre>
     *
     * @return a positive value if `str > other`, negative value if `str < other`, 0 if `str == other`
     */
@@ -2273,7 +2273,7 @@ class Strings {
 
 
    /**
-    * Removes all occurences of <b>searchFor</b> from the given string.
+    * Removes all occurrences of <b>searchFor</b> from the given string.
     *
     * <pre><code>
     * >>> Strings.removeAll(null, null)      == null
@@ -2308,7 +2308,7 @@ class Strings {
 
 
    /**
-    *  Removes the first occurrence of <b>searchFor</b> in <b>searchIn</b> igorning the case.
+    *  Removes the first occurrence of <b>searchFor</b> in <b>searchIn</b> ignorning the case.
     *
     * <pre><code>
     * >>> Strings.removeFirstIgnoreCase(null, "dog")           == null
@@ -2517,7 +2517,7 @@ class Strings {
 
 
    /**
-    * Replaces the first occurrence of <b>searchFor</b> in <b>searchIn</b> by <b>replaceWith</b> igorning the case.
+    * Replaces the first occurrence of <b>searchFor</b> in <b>searchIn</b> by <b>replaceWith</b> ignorning the case.
     *
     * <pre><code>
     * >>> Strings.replaceFirstIgnoreCase(null, "dog", "***")           == null

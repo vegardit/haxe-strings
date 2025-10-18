@@ -66,5 +66,5 @@ abstract AnsiTextAttribute(Int) {
 
    final HIDDEN_OFF = 28;
 
-   final STRIKTHROUGH_OFF = 29;
+   final STRIKETHROUGH_OFF = 29;
 }

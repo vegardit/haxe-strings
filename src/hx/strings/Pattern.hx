@@ -43,7 +43,7 @@ class Pattern {
                #end
             );
          case b(opt): Std.string(opt);
-         case c(arr): arr.filter((m) -> m != null /* remove null enties */).join("");
+         case c(arr): arr.filter((m) -> m != null /* remove null entries */).join("");
       });
    }
 
@@ -133,7 +133,7 @@ interface Matcher {
    function map(mapper:Matcher -> String):String;
 
    /**
-    * If no match attempt was made before Matcher#matches() will be excuted implicitly.
+    * If no match attempt was made before Matcher#matches() will be executed implicitly.
     *
     * @return the substring captured by the n-th group of the current match.
     *         If <b>n</b> is <code>0</code>, then returns the whole string of the current match.
@@ -143,7 +143,7 @@ interface Matcher {
    function matched(n:Int = 0):String;
 
    /**
-    * If no match attempt was made before Matcher#matches() will be excuted implicitly.
+    * If no match attempt was made before Matcher#matches() will be executed implicitly.
     *
     * @return the position of the current match
     *
@@ -193,7 +193,7 @@ interface Matcher {
    function reset(str:String):Matcher;
 
    /**
-    * If no match attempt was made before Matcher#matches() will be excuted implicitly.
+    * If no match attempt was made before Matcher#matches() will be executed implicitly.
     *
     * @return the substring after the current match or "" if no match was found
     *
@@ -206,7 +206,7 @@ interface Matcher {
    function substringAfterMatch():String;
 
    /**
-    * If no match attempt was made before Matcher#matches() will be excuted implicitly.
+    * If no match attempt was made before Matcher#matches() will be executed implicitly.
     *
     * @return the substring before the current match or "" if no match was found
     *

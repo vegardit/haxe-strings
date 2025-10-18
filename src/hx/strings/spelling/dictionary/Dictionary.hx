@@ -26,7 +26,7 @@ interface Dictionary {
    function size():Int;
 
    /**
-    * @return an iterator over all words known by the dictionary, no particular order is guranteed
+    * @return an iterator over all words known by the dictionary, no particular order is guaranteed
     */
    function words():Iterator<String>;
 }
