@@ -29,8 +29,6 @@ class RandomStrings {
    static final ASCII_ALPHA = _genAsciiAlpha();
    static final ASCII_ALPHA_NUMERIC = DIGITS.concat(ASCII_ALPHA);
 
-   static inline final MAX_INT = 2147483647;
-
 
    /**
     * <pre><code>

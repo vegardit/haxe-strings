@@ -17,7 +17,7 @@ import hx.strings.internal.Either2;
  * >>> new OrderedStringSet(["", "c", "a", "b", "a"]).toString() == '[ "", "c", "a", "b" ]'
  * </code></pre>
  */
-class OrderedStringSet<V> extends StringSet {
+class OrderedStringSet extends StringSet {
 
 
    inline
