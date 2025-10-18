@@ -116,7 +116,7 @@ class Strings {
                words.push(currentWord.toString());
                currentWord.clear();
             } else if (ch.isUpperCase()) {
-               if (chNext.isUpperCase() && chars.length > i + 2) {
+               if (chNext.isUpperCase() && i + 2 < len) {
                   if (!chars[i + 2].isUpperCase()) {
                      words.push(currentWord.toString());
                      currentWord.clear();
