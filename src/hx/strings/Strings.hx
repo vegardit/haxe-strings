@@ -2455,7 +2455,7 @@ class Strings {
       if (count == 1)
          return str;
 
-      return cast [ for(i in 0...count) str ].join(separator);
+      return cast [ for(_ in 0...count) str ].join(separator);
    }
 
 

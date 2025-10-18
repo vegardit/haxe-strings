@@ -5,8 +5,6 @@
  */
 package hx.strings.spelling.dictionary;
 
-import haxe.Resource;
-import haxe.io.BytesInput;
 import hx.strings.internal.Macros;
 
 /**

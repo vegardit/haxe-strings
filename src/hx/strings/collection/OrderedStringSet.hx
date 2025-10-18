@@ -5,8 +5,6 @@
  */
 package hx.strings.collection;
 
-import haxe.ds.StringMap;
-
 import hx.strings.internal.Either2;
 
 /**
@@ -18,7 +16,6 @@ import hx.strings.internal.Either2;
  * </code></pre>
  */
 class OrderedStringSet extends StringSet {
-
 
    inline
    public function new(?initialItems:Either2<StringSet,Array<String>>)

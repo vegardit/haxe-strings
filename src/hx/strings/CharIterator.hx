@@ -7,7 +7,6 @@ package hx.strings;
 
 import haxe.io.Eof;
 import haxe.io.Input;
-import hx.strings.Strings.CharPos;
 import hx.strings.internal.Bits;
 import hx.strings.internal.RingBuffer;
 import hx.strings.internal.TriState;
