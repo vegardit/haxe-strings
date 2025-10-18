@@ -211,7 +211,6 @@ class StringBuilder {
          var pre_len = 0;
          if (pre != null) {
             final pre = this.pre; // TODO workaround for null-safety bug
-            final i = pre.length;
             for(i in 0...pre.length) {
                final next_pre_len = pre_len + pre[i].length8();
                if (next_pre_len == pos) {
@@ -289,7 +288,6 @@ class StringBuilder {
          var pre_len = 0;
          if (pre != null) {
             final pre = this.pre; // TODO workaround for null-safety bug
-            final i = pre.length;
             for(i in 0...pre.length) {
                final next_pre_len = pre_len + pre[i].length8();
                if (next_pre_len == pos) {
@@ -369,7 +367,6 @@ class StringBuilder {
          var pre_len = 0;
          if (pre != null) {
             final pre = this.pre; // TODO workaround for null-safety bug
-            final i = pre.length;
             for(i in 0...pre.length) {
                final next_pre_len = pre_len + pre[i].length8();
                if (next_pre_len == pos) {
