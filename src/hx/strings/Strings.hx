@@ -421,15 +421,15 @@ class Strings {
     * Tests if <b>searchIn</b> contains <b>searchFor</b> as a substring
     *
     * <pre><code>
-    * >>>   Strings.contains("dog", "")  == true
-    * >>>   Strings.contains("dog", "g") == true
-    * >>>   Strings.contains("dog", "t") == false
-    * >>>   Strings.contains("", null)   == false
-    * >>>   Strings.contains("", "")     == true
-    * >>>   Strings.contains(null, null) == false
-    * >>>   Strings.contains(null, "")   == false
-    * >>>   Strings.contains("はい", "い") == true
-    * >>>   Strings.contains("はは", "い") == false
+    * >>> Strings.contains("dog", "")  == true
+    * >>> Strings.contains("dog", "g") == true
+    * >>> Strings.contains("dog", "t") == false
+    * >>> Strings.contains("", null)   == false
+    * >>> Strings.contains("", "")     == true
+    * >>> Strings.contains(null, null) == false
+    * >>> Strings.contains(null, "")   == false
+    * >>> Strings.contains("はい", "い") == true
+    * >>> Strings.contains("はは", "い") == false
     * </code></pre>
     */
    inline
@@ -447,14 +447,14 @@ class Strings {
     * Tests if <b>searchIn</b> contains only the allowed characters
     *
     * <pre><code>
-    * >>>   Strings.containsOnly(null, null)  == true
-    * >>>   Strings.containsOnly("", null)    == true
-    * >>>   Strings.containsOnly("a", null)   == false
-    * >>>   Strings.containsOnly("AA", [65])  == true
-    * >>>   Strings.containsOnly("Aa", [65])  == false
-    * >>>   Strings.containsOnly("AA", "A")   == true
-    * >>>   Strings.containsOnly("Aa", "A")   == false
-    * >>>   Strings.containsOnly("Aa", "Aa")  == true
+    * >>> Strings.containsOnly(null, null)  == true
+    * >>> Strings.containsOnly("", null)    == true
+    * >>> Strings.containsOnly("a", null)   == false
+    * >>> Strings.containsOnly("AA", [65])  == true
+    * >>> Strings.containsOnly("Aa", [65])  == false
+    * >>> Strings.containsOnly("AA", "A")   == true
+    * >>> Strings.containsOnly("Aa", "A")   == false
+    * >>> Strings.containsOnly("Aa", "Aa")  == true
     * </code></pre>
     */
    public static function containsOnly(searchIn:Null<String>, allowedChars:Null<Either2<String, Array<Char>>>):Bool {
@@ -481,17 +481,17 @@ class Strings {
     * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
     *
     * <pre><code>
-    * >>>   Strings.containsAll("dog", ["c", ""])  == false
-    * >>>   Strings.containsAll("dog", ["c", "g"]) == false
-    * >>>   Strings.containsAll("dog", ["c", "a"]) == false
-    * >>>   Strings.containsAll("dog", ["d", "g"]) == true
-    * >>>   Strings.containsAll("dog", [""])       == true
-    * >>>   Strings.containsAll("", null)          == false
-    * >>>   Strings.containsAll("", [""])          == true
-    * >>>   Strings.containsAll(null, null)        == false
-    * >>>   Strings.containsAll(null, [""])        == false
-    * >>>   Strings.containsAll("はい", ["い"])     == true
-    * >>>   Strings.containsAll("はは", ["い"])     == false
+    * >>> Strings.containsAll("dog", ["c", ""])  == false
+    * >>> Strings.containsAll("dog", ["c", "g"]) == false
+    * >>> Strings.containsAll("dog", ["c", "a"]) == false
+    * >>> Strings.containsAll("dog", ["d", "g"]) == true
+    * >>> Strings.containsAll("dog", [""])       == true
+    * >>> Strings.containsAll("", null)          == false
+    * >>> Strings.containsAll("", [""])          == true
+    * >>> Strings.containsAll(null, null)        == false
+    * >>> Strings.containsAll(null, [""])        == false
+    * >>> Strings.containsAll("はい", ["い"])     == true
+    * >>> Strings.containsAll("はは", ["い"])     == false
     * </code></pre>
     */
    public static function containsAll(searchIn:Null<String>, searchFor:Null<Array<String>>):Bool {
@@ -510,27 +510,28 @@ class Strings {
     * Tests if <b>searchIn</b> contains all of <b>searchFor</b> as a substring
     *
     * <pre><code>
-    * >>>   Strings.containsAllIgnoreCase("dog", ["c", ""])  == false
-    * >>>   Strings.containsAllIgnoreCase("dog", ["c", "G"]) == false
-    * >>>   Strings.containsAllIgnoreCase("dog", ["c", "a"]) == false
-    * >>>   Strings.containsAllIgnoreCase("dog", ["d", "G"]) == true
-    * >>>   Strings.containsAllIgnoreCase("dog", [""])       == true
-    * >>>   Strings.containsAllIgnoreCase("", null)          == false
-    * >>>   Strings.containsAllIgnoreCase("", [""])          == true
-    * >>>   Strings.containsAllIgnoreCase(null, null)        == false
-    * >>>   Strings.containsAllIgnoreCase(null, [""])        == false
-    * >>>   Strings.containsAllIgnoreCase("はい", ["い"])     == true
-    * >>>   Strings.containsAllIgnoreCase("はは", ["い"])     == false
+    * >>> Strings.containsAllIgnoreCase("dog", ["c", ""])  == false
+    * >>> Strings.containsAllIgnoreCase("dog", ["c", "G"]) == false
+    * >>> Strings.containsAllIgnoreCase("dog", ["c", "a"]) == false
+    * >>> Strings.containsAllIgnoreCase("dog", ["d", "G"]) == true
+    * >>> Strings.containsAllIgnoreCase("dog", [""])       == true
+    * >>> Strings.containsAllIgnoreCase("", null)          == false
+    * >>> Strings.containsAllIgnoreCase("", [""])          == true
+    * >>> Strings.containsAllIgnoreCase(null, null)        == false
+    * >>> Strings.containsAllIgnoreCase(null, [""])        == false
+    * >>> Strings.containsAllIgnoreCase("はい", ["い"])     == true
+    * >>> Strings.containsAllIgnoreCase("はは", ["い"])     == false
+    * >>> Strings.containsAllIgnoreCase("МЯУ", ["м", "я"]) == true
     * </code></pre>
     */
    public static function containsAllIgnoreCase(searchIn:Null<String>, searchFor:Null<Array<String>>):Bool {
       if (searchIn == null || searchFor == null)
          return false;
 
-      searchIn = searchIn.toLowerCase();
+      searchIn = searchIn.toLowerCase8();
 
       for (candidate in searchFor) {
-         if (!contains(searchIn, candidate.toLowerCase()))
+         if (!contains(searchIn, candidate.toLowerCase8()))
             return false;
       }
       return true;
@@ -541,18 +542,18 @@ class Strings {
     * Tests if <b>searchIn</b> contains any of <b>searchFor</b> as a substring
     *
     * <pre><code>
-    * >>>   Strings.containsAny("dog", ["c", ""])  == true
-    * >>>   Strings.containsAny("dog", ["c", "g"]) == true
-    * >>>   Strings.containsAny("dog", ["", "g"])  == true
-    * >>>   Strings.containsAny("dog", ["c", "a"]) == false
-    * >>>   Strings.containsAny("dog", ["d", "g"]) == true
-    * >>>   Strings.containsAny("dog", [""])       == true
-    * >>>   Strings.containsAny("", null)          == false
-    * >>>   Strings.containsAny("", [""])          == true
-    * >>>   Strings.containsAny(null, null)        == false
-    * >>>   Strings.containsAny(null, [""])        == false
-    * >>>   Strings.containsAny("はい", ["い"])     == true
-    * >>>   Strings.containsAny("はは", ["い"])     == false
+    * >>> Strings.containsAny("dog", ["c", ""])  == true
+    * >>> Strings.containsAny("dog", ["c", "g"]) == true
+    * >>> Strings.containsAny("dog", ["", "g"])  == true
+    * >>> Strings.containsAny("dog", ["c", "a"]) == false
+    * >>> Strings.containsAny("dog", ["d", "g"]) == true
+    * >>> Strings.containsAny("dog", [""])       == true
+    * >>> Strings.containsAny("", null)          == false
+    * >>> Strings.containsAny("", [""])          == true
+    * >>> Strings.containsAny(null, null)        == false
+    * >>> Strings.containsAny(null, [""])        == false
+    * >>> Strings.containsAny("はい", ["い"])     == true
+    * >>> Strings.containsAny("はは", ["い"])     == false
     * </code></pre>
     */
    public static function containsAny(searchIn:Null<String>, searchFor:Null<Array<String>>):Bool {
@@ -571,17 +572,17 @@ class Strings {
     * Tests if <b>searchIn</b> contains any of <b>searchFor</b> as a substring
     *
     * <pre><code>
-    * >>>   Strings.containsAnyIgnoreCase("dog", ["c", ""])  == true
-    * >>>   Strings.containsAnyIgnoreCase("dog", ["c", "G"]) == true
-    * >>>   Strings.containsAnyIgnoreCase("dog", ["c", "a"]) == false
-    * >>>   Strings.containsAnyIgnoreCase("dog", ["d", "G"]) == true
-    * >>>   Strings.containsAnyIgnoreCase("dog", [""])       == true
-    * >>>   Strings.containsAnyIgnoreCase("", null)          == false
-    * >>>   Strings.containsAnyIgnoreCase("", [""])          == true
-    * >>>   Strings.containsAnyIgnoreCase(null, null)        == false
-    * >>>   Strings.containsAnyIgnoreCase(null, [""])        == false
-    * >>>   Strings.containsAnyIgnoreCase("はい", ["い"])     == true
-    * >>>   Strings.containsAnyIgnoreCase("はは", ["い"])     == false
+    * >>> Strings.containsAnyIgnoreCase("dog", ["c", ""])  == true
+    * >>> Strings.containsAnyIgnoreCase("dog", ["c", "G"]) == true
+    * >>> Strings.containsAnyIgnoreCase("dog", ["c", "a"]) == false
+    * >>> Strings.containsAnyIgnoreCase("dog", ["d", "G"]) == true
+    * >>> Strings.containsAnyIgnoreCase("dog", [""])       == true
+    * >>> Strings.containsAnyIgnoreCase("", null)          == false
+    * >>> Strings.containsAnyIgnoreCase("", [""])          == true
+    * >>> Strings.containsAnyIgnoreCase(null, null)        == false
+    * >>> Strings.containsAnyIgnoreCase(null, [""])        == false
+    * >>> Strings.containsAnyIgnoreCase("はい", ["い"])     == true
+    * >>> Strings.containsAnyIgnoreCase("はは", ["い"])     == false
     * </code></pre>
     */
    public static function containsAnyIgnoreCase(searchIn:Null<String>, searchFor:Null<Array<String>>):Bool {
@@ -602,17 +603,17 @@ class Strings {
     * Checks that <b>searchIn</b> contains none of <b>searchFor</b> as a substring
     *
     * <pre><code>
-    * >>>   Strings.containsNone("dog", ["c", ""])  == false
-    * >>>   Strings.containsNone("dog", ["c", "g"]) == false
-    * >>>   Strings.containsNone("dog", ["c", "a"]) == true
-    * >>>   Strings.containsNone("dog", ["d", "g"]) == false
-    * >>>   Strings.containsNone("dog", [""])       == false
-    * >>>   Strings.containsNone("", null)          == true
-    * >>>   Strings.containsNone("", [""])          == false
-    * >>>   Strings.containsNone(null, null)        == true
-    * >>>   Strings.containsNone(null, [""])        == true
-    * >>>   Strings.containsNone("はい", ["い"])     == false
-    * >>>   Strings.containsNone("はは", ["い"])     == true
+    * >>> Strings.containsNone("dog", ["c", ""])  == false
+    * >>> Strings.containsNone("dog", ["c", "g"]) == false
+    * >>> Strings.containsNone("dog", ["c", "a"]) == true
+    * >>> Strings.containsNone("dog", ["d", "g"]) == false
+    * >>> Strings.containsNone("dog", [""])       == false
+    * >>> Strings.containsNone("", null)          == true
+    * >>> Strings.containsNone("", [""])          == false
+    * >>> Strings.containsNone(null, null)        == true
+    * >>> Strings.containsNone(null, [""])        == true
+    * >>> Strings.containsNone("はい", ["い"])     == false
+    * >>> Strings.containsNone("はは", ["い"])     == true
     * </code></pre>
     */
    inline
@@ -624,17 +625,17 @@ class Strings {
     * Checks that <b>searchIn</b> contains none of <b>searchFor</b> as a substring
     *
     * <pre><code>
-    * >>>   Strings.containsNoneIgnoreCase("dog", ["c", ""])  == false
-    * >>>   Strings.containsNoneIgnoreCase("dog", ["c", "G"]) == false
-    * >>>   Strings.containsNoneIgnoreCase("dog", ["c", "a"]) == true
-    * >>>   Strings.containsNoneIgnoreCase("dog", ["d", "G"]) == false
-    * >>>   Strings.containsNoneIgnoreCase("dog", [""])       == false
-    * >>>   Strings.containsNoneIgnoreCase("", null)          == true
-    * >>>   Strings.containsNoneIgnoreCase("", [""])          == false
-    * >>>   Strings.containsNoneIgnoreCase(null, null)        == true
-    * >>>   Strings.containsNoneIgnoreCase(null, [""])        == true
-    * >>>   Strings.containsNoneIgnoreCase("はい", ["い"])     == false
-    * >>>   Strings.containsNoneIgnoreCase("はは", ["い"])     == true
+    * >>> Strings.containsNoneIgnoreCase("dog", ["c", ""])  == false
+    * >>> Strings.containsNoneIgnoreCase("dog", ["c", "G"]) == false
+    * >>> Strings.containsNoneIgnoreCase("dog", ["c", "a"]) == true
+    * >>> Strings.containsNoneIgnoreCase("dog", ["d", "G"]) == false
+    * >>> Strings.containsNoneIgnoreCase("dog", [""])       == false
+    * >>> Strings.containsNoneIgnoreCase("", null)          == true
+    * >>> Strings.containsNoneIgnoreCase("", [""])          == false
+    * >>> Strings.containsNoneIgnoreCase(null, null)        == true
+    * >>> Strings.containsNoneIgnoreCase(null, [""])        == true
+    * >>> Strings.containsNoneIgnoreCase("はい", ["い"])     == false
+    * >>> Strings.containsNoneIgnoreCase("はは", ["い"])     == true
     * </code></pre>
     */
    inline
@@ -646,13 +647,13 @@ class Strings {
     * Tests if <b>searchIn</b> contains any whitespaces
     *
     * <pre><code>
-    * >>>   Strings.containsWhitespaces(" ")        == true
-    * >>>   Strings.containsWhitespaces("dog cat")  == true
-    * >>>   Strings.containsWhitespaces("dog\tcat") == true
-    * >>>   Strings.containsWhitespaces("")         == false
-    * >>>   Strings.containsWhitespaces(null)       == false
-    * >>>   Strings.containsWhitespaces("はい")      == false
-    * >>>   Strings.containsWhitespaces("は い")     == true
+    * >>> Strings.containsWhitespaces(" ")        == true
+    * >>> Strings.containsWhitespaces("dog cat")  == true
+    * >>> Strings.containsWhitespaces("dog\tcat") == true
+    * >>> Strings.containsWhitespaces("")         == false
+    * >>> Strings.containsWhitespaces(null)       == false
+    * >>> Strings.containsWhitespaces("はい")      == false
+    * >>> Strings.containsWhitespaces("は い")     == true
     * </code></pre>
     */
    public static function containsWhitespaces(searchIn:Null<String>):Bool {
@@ -670,15 +671,15 @@ class Strings {
 
    /**
     * <pre><code>
-    * >>>   Strings.countMatches("dogdog", "g")      == 2
-    * >>>   Strings.countMatches("dogdog", "og", 1)  == 2
-    * >>>   Strings.countMatches("dogdog", "og", 3)  == 1
-    * >>>   Strings.countMatches("dogdog", "og", 9)  == 0
-    * >>>   Strings.countMatches("dogdog", "og", -1) == 2
-    * >>>   Strings.countMatches("", null)           == 0
-    * >>>   Strings.countMatches("", "a")            == 0
-    * >>>   Strings.countMatches(null, null)         == 0
-    * >>>   Strings.countMatches(null, "")           == 0
+    * >>> Strings.countMatches("dogdog", "g")      == 2
+    * >>> Strings.countMatches("dogdog", "og", 1)  == 2
+    * >>> Strings.countMatches("dogdog", "og", 3)  == 1
+    * >>> Strings.countMatches("dogdog", "og", 9)  == 0
+    * >>> Strings.countMatches("dogdog", "og", -1) == 2
+    * >>> Strings.countMatches("", null)           == 0
+    * >>> Strings.countMatches("", "a")            == 0
+    * >>> Strings.countMatches(null, null)         == 0
+    * >>> Strings.countMatches(null, "")           == 0
     * </code></pre>
     *
     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting
@@ -701,15 +702,16 @@ class Strings {
 
    /**
     * <pre><code>
-    * >>>   Strings.countMatchesIgnoreCase("dogdog", "G")      == 2
-    * >>>   Strings.countMatchesIgnoreCase("dogdog", "OG", 1)  == 2
-    * >>>   Strings.countMatchesIgnoreCase("dogdog", "OG", 3)  == 1
-    * >>>   Strings.countMatchesIgnoreCase("dogdog", "OG", 9)  == 0
-    * >>>   Strings.countMatchesIgnoreCase("dogdog", "OG", -1) == 2
-    * >>>   Strings.countMatchesIgnoreCase(null, null)         == 0
-    * >>>   Strings.countMatchesIgnoreCase(null, "")           == 0
-    * >>>   Strings.countMatchesIgnoreCase("", null)           == 0
-    * >>>   Strings.countMatchesIgnoreCase("", "a")            == 0
+    * >>> Strings.countMatchesIgnoreCase("dogdog", "G")      == 2
+    * >>> Strings.countMatchesIgnoreCase("dogdog", "OG", 1)  == 2
+    * >>> Strings.countMatchesIgnoreCase("dogdog", "OG", 3)  == 1
+    * >>> Strings.countMatchesIgnoreCase("dogdog", "OG", 9)  == 0
+    * >>> Strings.countMatchesIgnoreCase("dogdog", "OG", -1) == 2
+    * >>> Strings.countMatchesIgnoreCase(null, null)         == 0
+    * >>> Strings.countMatchesIgnoreCase(null, "")           == 0
+    * >>> Strings.countMatchesIgnoreCase("", null)           == 0
+    * >>> Strings.countMatchesIgnoreCase("", "a")            == 0
+    * >>> Strings.countMatchesIgnoreCase("КОТКОТ", "от")     == 2
     * </code></pre>
     *
     * @return the number of occurrences of <b>searchFor</b> within <b>searchIn</b> starting
@@ -722,8 +724,10 @@ class Strings {
       if (startAt < 0)
          startAt = 0;
 
-      searchIn = searchIn.toLowerCase();
-      searchFor = searchFor.toLowerCase();
+      @:nullSafety(Off)
+      searchIn = searchIn.toLowerCase8();
+      @:nullSafety(Off)
+      searchFor = searchFor.toLowerCase8();
 
       var count = 0;
       var foundAt = startAt > -1 ? startAt - 1 : 0;
@@ -1032,6 +1036,7 @@ class Strings {
     * >>> Strings.endsWithIgnoreCase("dogcat", "dog") == false
     * >>> Strings.endsWithIgnoreCase("はい", "い")     == true
     * >>> Strings.endsWithIgnoreCase("はい", "は")     == false
+    * >>> Strings.endsWithIgnoreCase("Кот", "ОТ")     == true
     * </code></pre>
     */
    inline
@@ -1039,7 +1044,7 @@ class Strings {
       if (searchIn == null || searchFor == null)
          return false;
 
-      return endsWith(searchIn.toLowerCase(), searchFor.toLowerCase());
+      return endsWith(searchIn.toLowerCase8(), searchFor.toLowerCase8());
    }
 
 
@@ -2474,7 +2479,7 @@ class Strings {
     * </code></pre>
     */
    public static function replaceAll<T:String>(searchIn:T, searchFor:Null<String>, replaceWith:Null<String>):T {
-      if (searchIn == null || searchIn.isEmpty() || searchFor == null)
+      if (searchIn.isEmpty() || searchFor == null)
          return searchIn;
 
       if (replaceWith == null) replaceWith = "null";
@@ -2498,7 +2503,7 @@ class Strings {
     * </code></pre>
     */
    public static function replaceFirst<T:String>(searchIn:T, searchFor:Null<String>, replaceWith:Null<String>):T {
-      if (searchIn == null || searchIn.isEmpty() || searchFor == null)
+      if (searchIn.isEmpty() || searchFor == null)
          return searchIn;
 
       if (replaceWith == null) replaceWith = "null";
@@ -2528,15 +2533,17 @@ class Strings {
     * >>> Strings.replaceFirstIgnoreCase("dogCATdogCAT", null, "cat")  == "dogCATdogCAT"
     * >>> Strings.replaceFirstIgnoreCase("dogCATdogCAT", "", ",")      == "d,ogCATdogCAT"
     * >>> Strings.replaceFirstIgnoreCase("はいはい", "は", "い")          == "いいはい"
+    * >>> Strings.replaceFirstIgnoreCase("КотКот", "КОТ", "Пес")       == "ПесКот"
     * </code></pre>
     */
    public static function replaceFirstIgnoreCase<T:String>(searchIn:T, searchFor:Null<String>, replaceWith:Null<String>):T {
-      if (searchIn == null || searchIn.isEmpty() || searchFor == null)
+      if (searchIn.isEmpty() || searchFor == null)
          return searchIn;
 
       if (replaceWith == null) replaceWith = "null";
 
-      searchFor = searchFor.toLowerCase();
+      @:nullSafety(Off)
+      searchFor = searchFor.toLowerCase8();
 
       var foundAt;
       if (searchFor.length == 0)
@@ -2545,7 +2552,7 @@ class Strings {
          else
             return searchIn;
       else
-         foundAt = searchIn.toLowerCase().indexOf8(searchFor);
+         foundAt = searchIn.toLowerCase8().indexOf8(searchFor);
 
       return cast searchIn.substr8(0, foundAt) + replaceWith + searchIn.substr8(foundAt + searchFor.length8());
    }
@@ -2934,6 +2941,7 @@ class Strings {
     * >>> Strings.startsWithIgnoreCase("dogcat", "")    == true
     * >>> Strings.startsWithIgnoreCase("dogcat", "DOG") == true
     * >>> Strings.startsWithIgnoreCase("dogcat", "cat") == false
+    * >>> Strings.startsWithIgnoreCase("Кот", "КО")     == true
     * </code></pre>
     */
    public static function startsWithIgnoreCase(searchIn:Null<String>, searchFor:Null<String>):Bool {
@@ -2943,7 +2951,7 @@ class Strings {
       if (searchFor.isEmpty())
          return true;
 
-      return startsWith(searchIn.toLowerCase(), searchFor.toLowerCase());
+      return startsWith(searchIn.toLowerCase8(), searchFor.toLowerCase8());
    }
 
 
@@ -3091,6 +3099,7 @@ class Strings {
     * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "cow") == ""
     * >>> Strings.substringAfterIgnoreCase("dogCATdogCAT", "cow", INPUT) == "dogCATdogCAT"
     * >>> Strings.substringAfterIgnoreCase("はいはい", "い")        == "はい"
+    * >>> Strings.substringAfterIgnoreCase("Кото", "Ко")          == "то"
     * </code></pre>
     */
    public static function substringAfterIgnoreCase<T:String>(str:T, searchFor:Null<String>, notFoundDefault:StringNotFoundDefault = EMPTY):T {
@@ -3102,13 +3111,13 @@ class Strings {
       if (str == "" || searchFor.isEmpty())
          return cast _getNotFoundDefault(str, notFoundDefault);
 
-      searchFor = searchFor.toLowerCase();
+      searchFor = searchFor.toLowerCase8();
 
-      final foundAt = str.toLowerCase().indexOf(searchFor);
+      final foundAt = str.toLowerCase8().indexOf8(searchFor);
       if (foundAt == POS_NOT_FOUND)
          return cast _getNotFoundDefault(str, notFoundDefault);
 
-      return cast str.substring(foundAt + searchFor.length);
+      return cast str.substring8(foundAt + searchFor.length8());
    }
 
 
