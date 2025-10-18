@@ -2543,7 +2543,7 @@ class Strings {
          if (searchIn.length8() > 1)
             foundAt = 1;
          else
-            return searchIn
+            return searchIn;
       else
          foundAt = searchIn.toLowerCase().indexOf8(searchFor);
 
