@@ -30,8 +30,6 @@ for %%i in (haxe-doctest) do (
    )
 )
 
-goto :eof
-
 REM install additional libs
 :iterate
 

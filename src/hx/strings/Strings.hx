@@ -3582,6 +3582,65 @@ class Strings {
     * Static extension for <code>Int</code>.
     *
     * <pre><code>
+    * >>> Strings.toBinary(1)            == "1"
+    * >>> Strings.toBinary(2)            == "10"
+    * >>> Strings.toBinary(10)           == "1010"
+    * >>> Strings.toBinary(10, 8)        == "00001010"
+    * >>> Strings.toBinary(255)          == "11111111"
+    * >>> Strings.toBinary(-1)           == "11111111111111111111111111111111"
+    * >>> Strings.toBinary(-10, 8)       == "11110110"
+    * </code></pre>
+    *
+    * @param minDigits the resulting string is left padded with <code>0</code> until it length equals <code>minDigits</code>
+    * @return the binary representation of <b>num</b>
+    */
+   public static function toBinary(num:Int, ?minDigits:Int):String {
+       var result:String;
+
+       #if cs
+       result = cs.system.Convert.ToString(num, 2);
+       #elseif java
+       result = java.lang.Integer.toBinaryString(num);
+       #elseif js
+       result = untyped (num >>> 0).toString(2);
+       #elseif php
+       // Force 32-bit two's complement for negatives, then decbin
+       result = (php.Syntax.code("decbin({0} & 0xFFFFFFFF)", num) : String);
+       #elseif python
+       // Keep 32-bit two's complement for negatives (match other targets)
+       result = python.Syntax.code("format({0} & 0xFFFFFFFF, 'b')", num);
+       #else
+       if (num == 0) {
+          result = "0";
+       } else {
+          var bits = new Array<String>();
+          var v = num;
+          // Logical shift to shrink even negative ints to 0 in 32 steps
+          while (v != 0) {
+             bits.push(((v & 1) != 0) ? "1" : "0");
+             v >>>= 1;
+          }
+          bits.reverse();
+          result = bits.join("");
+       }
+       #end
+
+       if (minDigits != null) {
+           // For negatives we want the rightmost minDigits bits (trim leading ones from 32-bit form)
+           if (num < 0 && result.length > minDigits) {
+               result = result.substr(result.length - minDigits);
+           }
+           // Then pad with zeros on the left if still shorter
+           result = StringTools.lpad(result, "0", minDigits);
+       }
+       return result;
+   }
+
+
+   /**
+    * Static extension for <code>Int</code>.
+    *
+    * <pre><code>
     * >>> Strings.toHex(1)              == "1"
     * >>> Strings.toHex(10)             == "A"
     * >>> Strings.toHex(100)            == "64"
